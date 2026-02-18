@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { products, categories } from "@/data/mockData";
 import ProductCard from "@/components/product/ProductCard";
@@ -8,6 +8,10 @@ const Shop = () => {
   const [searchParams] = useSearchParams();
   const catParam = searchParams.get("cat") || "";
   const [selectedCat, setSelectedCat] = useState(catParam);
+
+  useEffect(() => {
+    setSelectedCat(catParam);
+  }, [catParam]);
   const [sortBy, setSortBy] = useState("newest");
 
   const filtered = useMemo(() => {
