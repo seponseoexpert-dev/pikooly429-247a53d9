@@ -7,31 +7,31 @@ const CategoryGrid = () => {
   const { ref, isVisible } = useScrollAnimation();
 
   return (
-    <section ref={ref} className="py-12 md:py-16 section-container" aria-label="Shop by Category">
-      <div className="text-center mb-10">
-        <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
+    <section ref={ref} className="py-8 md:py-14 section-container" aria-label="Shop by Category">
+      <div className="text-center mb-6 md:mb-10">
+        <h2 className="text-2xl md:text-4xl font-display font-bold text-foreground">
           Shop by Category
         </h2>
-        <div className="flex items-center justify-center gap-3 text-primary/40 mt-3">
-          <span className="h-px w-12 bg-primary/30" />
-          <span className="text-xl">✿</span>
-          <span className="h-px w-12 bg-primary/30" />
+        <div className="flex items-center justify-center gap-3 text-primary/40 mt-2">
+          <span className="h-px w-8 bg-primary/30" />
+          <span className="text-base">✿</span>
+          <span className="h-px w-8 bg-primary/30" />
         </div>
       </div>
 
-      <div className="grid grid-cols-4 md:grid-cols-8 gap-3 md:gap-5">
+      <div className="grid grid-cols-4 gap-4 md:grid-cols-8 md:gap-6">
         {categories.map((cat, i) => (
           <motion.div
             key={cat.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={isVisible ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: i * 0.06, duration: 0.4 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={isVisible ? { opacity: 1, scale: 1 } : {}}
+            transition={{ delay: i * 0.05, duration: 0.35 }}
           >
             <Link
               to={`/shop?cat=${cat.slug}`}
               className="flex flex-col items-center gap-2 group"
             >
-              <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden bg-muted border-2 border-transparent group-hover:border-primary transition-all duration-300 group-hover:shadow-md">
+              <div className="w-[72px] h-[72px] md:w-24 md:h-24 rounded-2xl overflow-hidden bg-secondary shadow-sm border border-border/30 group-hover:border-primary/40 group-hover:shadow-md transition-all duration-300">
                 <img
                   src={cat.image}
                   alt={cat.name}
@@ -39,7 +39,7 @@ const CategoryGrid = () => {
                   loading="lazy"
                 />
               </div>
-              <span className="text-xs md:text-sm font-medium text-muted-foreground group-hover:text-primary transition-colors text-center">
+              <span className="text-[11px] md:text-sm font-medium text-foreground/70 group-hover:text-primary transition-colors text-center leading-tight">
                 {cat.name}
               </span>
             </Link>
