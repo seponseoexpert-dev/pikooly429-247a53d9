@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { heroSlides } from "@/data/mockData";
-import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 const HeroSection = () => {
@@ -16,74 +15,68 @@ const HeroSection = () => {
   const slide = heroSlides[current];
 
   return (
-    <section className="relative h-[60vh] md:h-[75vh] overflow-hidden" aria-label="Featured promotions">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={current}
-          initial={{ opacity: 0, scale: 1.05 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.7 }}
-          className="absolute inset-0"
-        >
-          <img
-            src={slide.image}
-            alt={slide.title}
-            className="w-full h-full object-cover"
-            loading={current === 0 ? "eager" : "lazy"}
-          />
-          <div className={`absolute inset-0 bg-gradient-to-r ${slide.gradient}`} />
-        </motion.div>
-      </AnimatePresence>
-
-      <div className="relative z-10 h-full flex items-center section-container">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={current}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="max-w-xl"
-          >
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-white leading-tight mb-4 drop-shadow-lg">
-              {slide.title}
-            </h1>
-            <p className="text-lg md:text-xl text-white/90 mb-8 drop-shadow">
-              {slide.subtitle}
-            </p>
-            <Link to="/shop">
-              <Button size="lg" className="rounded-full px-10 h-13 text-base font-semibold shadow-lg hover:shadow-xl transition-shadow">
+    <section className="relative py-4 md:py-8 section-container" aria-label="Featured promotions">
+      <div className="relative overflow-hidden rounded-2xl" style={{ backgroundColor: slide.bgColor }}>
+        <div className="flex items-center min-h-[220px] md:min-h-[350px] px-6 md:px-12">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={current}
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -30 }}
+              transition={{ duration: 0.4 }}
+              className="max-w-xs md:max-w-md"
+            >
+              <h1 className="text-2xl md:text-4xl font-display font-bold text-foreground leading-tight mb-4">
+                {slide.title}
+              </h1>
+              <Link
+                to="/shop"
+                className="inline-block px-6 py-2.5 bg-primary text-primary-foreground text-sm font-semibold uppercase tracking-wider rounded-md hover:bg-primary/90 transition-colors"
+              >
                 {slide.cta}
-              </Button>
-            </Link>
-          </motion.div>
-        </AnimatePresence>
+              </Link>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Decorative image on right */}
+          <div className="absolute right-4 md:right-12 top-1/2 -translate-y-1/2 w-24 h-24 md:w-40 md:h-40 opacity-60">
+            <img
+              src={slide.image}
+              alt=""
+              className="w-full h-full object-cover rounded-2xl"
+              loading={current === 0 ? "eager" : "lazy"}
+            />
+          </div>
+        </div>
+
+        {/* Arrows */}
+        <button
+          onClick={() => setCurrent((p) => (p - 1 + heroSlides.length) % heroSlides.length)}
+          className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-card border border-border flex items-center justify-center text-foreground hover:bg-muted transition-colors"
+          aria-label="Previous slide"
+        >
+          <ChevronLeft size={18} />
+        </button>
+        <button
+          onClick={() => setCurrent((p) => (p + 1) % heroSlides.length)}
+          className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-card border border-border flex items-center justify-center text-foreground hover:bg-muted transition-colors"
+          aria-label="Next slide"
+        >
+          <ChevronRight size={18} />
+        </button>
       </div>
 
-      {/* Arrows */}
-      <button
-        onClick={() => setCurrent((p) => (p - 1 + heroSlides.length) % heroSlides.length)}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/40 transition-colors"
-        aria-label="Previous slide"
-      >
-        <ChevronLeft size={20} />
-      </button>
-      <button
-        onClick={() => setCurrent((p) => (p + 1) % heroSlides.length)}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/40 transition-colors"
-        aria-label="Next slide"
-      >
-        <ChevronRight size={20} />
-      </button>
-
-      {/* Dots */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex gap-2">
+      {/* Dots with counter */}
+      <div className="flex items-center justify-center gap-2 mt-3">
+        <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+          {current + 1}/{heroSlides.length}
+        </span>
         {heroSlides.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrent(i)}
-            className={`h-2 rounded-full transition-all duration-300 ${i === current ? "w-8 bg-white" : "w-2 bg-white/50"}`}
+            className={`h-2 rounded-full transition-all duration-300 ${i === current ? "w-6 bg-foreground" : "w-2 bg-border"}`}
             aria-label={`Go to slide ${i + 1}`}
           />
         ))}

@@ -16,6 +16,7 @@ export interface Category {
   slug: string;
   icon: string;
   image: string;
+  badge?: string;
 }
 
 export interface CartItem {
