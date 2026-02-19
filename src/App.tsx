@@ -15,6 +15,8 @@ import Index from "./pages/Index";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import Blog from "./pages/Blog";
+import Checkout from "./pages/Checkout";
+import OrderSuccess from "./pages/OrderSuccess";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -54,6 +56,8 @@ const App = () => (
               <Route path="/shop" element={<PublicLayout><Shop /></PublicLayout>} />
               <Route path="/product/:id" element={<PublicLayout><ProductDetail /></PublicLayout>} />
               <Route path="/blog" element={<PublicLayout><Blog /></PublicLayout>} />
+              <Route path="/checkout" element={<PublicLayout><Checkout /></PublicLayout>} />
+              <Route path="/order-success/:orderNumber" element={<PublicLayout><OrderSuccess /></PublicLayout>} />
 
               {/* Admin routes */}
               <Route path="/admin/login" element={<AdminLogin />} />
