@@ -134,7 +134,7 @@ const AdminCategories = () => {
               </div>
               <div className="space-y-2">
                 <Label>Short Description</Label>
-                <Textarea value={form.short_description} onChange={(e) => setForm({ ...form, short_description: e.target.value })} rows={2} placeholder="Brief category summary shown on cards" />
+                <RichTextEditor value={form.short_description} onChange={(html) => setForm({ ...form, short_description: html })} />
               </div>
               <div className="space-y-2">
                 <Label>Long Description</Label>
