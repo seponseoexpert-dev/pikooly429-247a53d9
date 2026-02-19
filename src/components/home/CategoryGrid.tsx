@@ -39,11 +39,11 @@ const CategoryGrid = () => {
               to={`/shop?cat=${cat.slug}`}
               className="flex flex-col items-center gap-2 group"
             >
-              <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-2xl overflow-hidden bg-secondary border border-border/30 group-hover:border-primary/40 group-hover:shadow-lg transition-all duration-300">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 aspect-square rounded-2xl overflow-hidden bg-secondary border border-border/30 group-hover:border-primary/40 group-hover:shadow-lg transition-all duration-300">
                 <img
                   src={cat.image_url || "/placeholder.svg"}
                   alt={cat.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center"
                   loading="lazy"
                 />
               </div>
