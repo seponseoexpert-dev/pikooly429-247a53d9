@@ -7,17 +7,17 @@ const AboutSection = () => {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <section ref={ref} className="py-10 md:py-14 section-container" aria-label="About PikoolyFlora">
+    <section ref={ref} className="py-8 sm:py-10 md:py-12 lg:py-14 section-container" aria-label="About PikoolyFlora">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={isVisible ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.6 }}
         className="max-w-3xl"
       >
-        <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-4">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-foreground mb-3 md:mb-4">
           PikoolyFlora: Online Flower Shop in Bangladesh
         </h2>
-        <div className="text-sm md:text-base text-muted-foreground leading-relaxed space-y-3">
+        <div className="text-xs sm:text-sm md:text-base text-muted-foreground leading-relaxed space-y-2 sm:space-y-3">
           <p>
             Welcome to PikoolyFlora-Online website. This is the best place for fresh flowers and beauti
             {!expanded && "..."}
@@ -38,7 +38,7 @@ const AboutSection = () => {
         </div>
         <button
           onClick={() => setExpanded(!expanded)}
-          className="text-primary font-medium text-sm mt-2 hover:underline"
+          className="text-primary font-medium text-xs sm:text-sm mt-2 hover:underline"
         >
           {expanded ? "Show less" : "Read more"}
         </button>

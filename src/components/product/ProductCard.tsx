@@ -21,7 +21,7 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.05, duration: 0.4 }}
-      className="group bg-card rounded-2xl overflow-hidden border border-border/50 hover:shadow-lg transition-all duration-300"
+      className="group bg-card rounded-xl sm:rounded-2xl overflow-hidden border border-border/50 hover:shadow-lg transition-all duration-300"
     >
       {/* Image */}
       <Link to={`/product/${product.id}`} className="block relative overflow-hidden aspect-square bg-secondary/50">
@@ -33,39 +33,39 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
         />
         {/* Wishlist heart */}
         <button
-          className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-card/90 border border-border/50 flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors"
+          className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-card/90 border border-border/50 flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors"
           aria-label="Add to wishlist"
           onClick={(e) => e.preventDefault()}
         >
-          <Heart size={15} />
+          <Heart size={13} className="sm:w-[15px] sm:h-[15px]" />
         </button>
         {/* Discount badge */}
         {discount > 0 && (
-          <span className="absolute bottom-2.5 right-2.5 px-2.5 py-1 text-[11px] font-bold bg-primary text-primary-foreground rounded-full">
+          <span className="absolute bottom-2 right-2 sm:bottom-2.5 sm:right-2.5 px-2 sm:px-2.5 py-0.5 sm:py-1 text-[10px] sm:text-[11px] font-bold bg-primary text-primary-foreground rounded-full">
             {discount}% off
           </span>
         )}
       </Link>
 
       {/* Info */}
-      <div className="p-3">
+      <div className="p-2.5 sm:p-3 md:p-4">
         <Link to={`/product/${product.id}`}>
-          <h3 className="font-medium text-sm text-foreground truncate hover:text-primary transition-colors">
+          <h3 className="font-medium text-xs sm:text-sm md:text-base text-foreground truncate hover:text-primary transition-colors">
             {product.name}
           </h3>
         </Link>
-        <div className="flex items-center gap-2 mt-1.5">
-          <span className="font-bold text-foreground text-base">৳ {product.price.toLocaleString()}</span>
+        <div className="flex items-center gap-1.5 sm:gap-2 mt-1 sm:mt-1.5">
+          <span className="font-bold text-foreground text-sm sm:text-base md:text-lg">৳ {product.price.toLocaleString()}</span>
           {product.rating && (
-            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-bold bg-primary text-primary-foreground rounded">
+            <span className="inline-flex items-center gap-0.5 px-1 sm:px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold bg-primary text-primary-foreground rounded">
               {product.rating} ★
             </span>
           )}
         </div>
         {product.originalPrice && (
-          <div className="flex items-center gap-2 mt-0.5">
-            <span className="text-xs text-muted-foreground line-through">৳{product.originalPrice.toLocaleString()}</span>
-            <span className="text-xs text-primary font-medium">{discount}% off</span>
+          <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5">
+            <span className="text-[10px] sm:text-xs text-muted-foreground line-through">৳{product.originalPrice.toLocaleString()}</span>
+            <span className="text-[10px] sm:text-xs text-primary font-medium">{discount}% off</span>
           </div>
         )}
       </div>

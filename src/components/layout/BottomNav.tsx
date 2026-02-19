@@ -15,8 +15,8 @@ const BottomNav = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border md:hidden">
-      <div className="flex items-center justify-around h-14">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border md:hidden safe-area-bottom">
+      <div className="flex items-center justify-around h-13 sm:h-14">
         {links.map(({ icon: Icon, label, href, isCart }) => {
           const isActive = !isCart && (location.pathname === href || (href !== "/" && location.pathname + location.search === href));
           
