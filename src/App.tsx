@@ -11,6 +11,7 @@ import BottomNav from "@/components/layout/BottomNav";
 import CartDrawer from "@/components/layout/CartDrawer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import ProtectedAdminRoute from "@/components/admin/ProtectedAdminRoute";
+import DynamicHead from "@/components/layout/DynamicHead";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
@@ -47,6 +48,7 @@ const App = () => (
     <TooltipProvider>
       <AuthProvider>
         <CartProvider>
+          <DynamicHead />
           <Toaster />
           <Sonner />
           <BrowserRouter>
