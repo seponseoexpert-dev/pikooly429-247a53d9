@@ -326,7 +326,7 @@ const ProductDetail = () => {
               <h3 className="text-lg font-bold text-foreground mb-1">Description</h3>
               <div className="w-12 h-0.5 bg-primary mb-4" />
               {product.description ? (
-                <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{product.description}</p>
+                <div className="prose prose-sm max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: product.description }} />
               ) : (
                 <p className="text-sm text-muted-foreground">No description available.</p>
               )}
