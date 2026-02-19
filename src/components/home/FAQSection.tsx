@@ -11,7 +11,7 @@ const FAQSection = () => {
   const { ref, isVisible } = useScrollAnimation();
 
   return (
-    <section ref={ref} className="py-8 sm:py-10 md:py-12 lg:py-14 section-container" aria-label="Frequently Asked Questions">
+    <section ref={ref} className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Frequently Asked Questions">
       <div className="max-w-3xl mx-auto">
         <div className="mb-5 sm:mb-6 md:mb-8 text-center">
           <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-1 sm:mb-2">

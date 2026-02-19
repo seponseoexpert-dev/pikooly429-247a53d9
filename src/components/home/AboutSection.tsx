@@ -9,7 +9,7 @@ const AboutSection = () => {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <section ref={ref} className="py-8 sm:py-10 md:py-12 lg:py-14 section-container" aria-label="About PikoolyFlora">
+    <section ref={ref} className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="About PikoolyFlora">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={isVisible ? { opacity: 1, y: 0 } : {}}
@@ -46,7 +46,7 @@ const AboutSection = () => {
         </button>
 
         {/* Medals */}
-        <div className="flex items-center justify-center gap-4 mt-4 sm:mt-6">
+        <div className="flex items-center justify-center gap-4 mt-3 sm:mt-4">
           <img src={medal1} alt="PikoolyFlora Badge" className="h-12 sm:h-14 md:h-16 w-auto" />
           <img src={medal2} alt="PikoolyFlora Badge" className="h-12 sm:h-14 md:h-16 w-auto" />
         </div>
