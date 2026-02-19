@@ -108,7 +108,7 @@ const Shop = () => {
 
       {/* Short Description */}
       {activeCategory && (activeCategory as any).short_description && (
-        <div className="mb-6 text-sm text-muted-foreground leading-relaxed max-w-3xl prose prose-sm" dangerouslySetInnerHTML={{ __html: (activeCategory as any).short_description }} />
+        <div className="mb-6 text-muted-foreground leading-relaxed max-w-3xl prose prose-headings:text-foreground prose-headings:font-display" dangerouslySetInnerHTML={{ __html: (activeCategory as any).short_description }} />
       )}
 
       {/* Category pills - only show if no specific category is selected */}
