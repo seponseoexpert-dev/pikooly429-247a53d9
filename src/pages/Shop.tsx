@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import ProductCard from "@/components/product/ProductCard";
@@ -10,10 +10,15 @@ const Shop = () => {
   const [searchParams] = useSearchParams();
   const catParam = searchParams.get("cat") || "";
   const [selectedCat, setSelectedCat] = useState(catParam);
+  const [shortDescExpanded, setShortDescExpanded] = useState(false);
+  const shortDescRef = useRef<HTMLDivElement>(null);
+  const [needsTruncation, setNeedsTruncation] = useState(false);
 
   useEffect(() => {
     setSelectedCat(catParam);
+    setShortDescExpanded(false);
   }, [catParam]);
+
   const [sortBy, setSortBy] = useState("newest");
 
   const { data: products = [] } = useQuery({
@@ -46,6 +51,14 @@ const Shop = () => {
     if (!selectedCat) return null;
     return categories.find((c: any) => c.slug === selectedCat) || null;
   }, [selectedCat, categories]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (shortDescRef.current) {
+        setNeedsTruncation(shortDescRef.current.scrollHeight > 72);
+      }
+    }, 100);
+  }, [activeCategory]);
 
   const activeCategoryName = activeCategory?.name || "All Products";
   const { settings } = useSiteSettings();
@@ -108,7 +121,19 @@ const Shop = () => {
 
       {/* Short Description */}
       {activeCategory && (activeCategory as any).short_description && (
-        <div className="mb-6 text-muted-foreground leading-relaxed max-w-3xl prose prose-headings:text-foreground prose-headings:font-display" dangerouslySetInnerHTML={{ __html: (activeCategory as any).short_description }} />
+        <div className="mb-6 max-w-3xl">
+          <div
+            ref={shortDescRef}
+            className={`text-muted-foreground leading-relaxed prose prose-headings:text-foreground prose-headings:font-display overflow-hidden transition-all duration-300 ${!shortDescExpanded ? "max-h-[4.5em]" : ""}`}
+            dangerouslySetInnerHTML={{ __html: (activeCategory as any).short_description }}
+          />
+          <button
+            onClick={() => setShortDescExpanded(!shortDescExpanded)}
+            className="text-primary text-sm font-medium mt-1 hover:underline"
+          >
+            {shortDescExpanded ? "Read Less" : "Read More..."}
+          </button>
+        </div>
       )}
 
       {/* Category pills - only show if no specific category is selected */}
