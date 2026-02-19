@@ -2,16 +2,18 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Heart, Minus, Plus, Star, Phone, MessageCircle } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProductCard from "@/components/product/ProductCard";
 import ReviewSection from "@/components/product/ReviewSection";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addItem } = useCart();
+  const { settings } = useSiteSettings();
   const [qty, setQty] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [activeTab, setActiveTab] = useState<"specification" | "description" | "reviews">("specification");
@@ -52,6 +54,28 @@ const ProductDetail = () => {
     },
     enabled: !!product?.category_id,
   });
+
+  // Dynamic SEO meta tags
+  useEffect(() => {
+    if (!product) return;
+    const siteName = settings.site_title || "Store";
+    const seoTitle = (product as any).seo_title || `${product.name} - ${siteName}`;
+    document.title = seoTitle;
+
+    // Meta description
+    const seoDesc = (product as any).seo_description || product.description || "";
+    let metaDesc = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
+    if (!metaDesc) {
+      metaDesc = document.createElement("meta");
+      metaDesc.name = "description";
+      document.head.appendChild(metaDesc);
+    }
+    metaDesc.content = seoDesc.slice(0, 160);
+
+    return () => {
+      document.title = siteName;
+    };
+  }, [product, settings]);
 
   if (isLoading) {
     return (
