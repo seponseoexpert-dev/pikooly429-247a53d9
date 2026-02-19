@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { motion } from "framer-motion";
+import medal1 from "@/assets/medal-1.png";
+import medal2 from "@/assets/medal-2.png";
 
 const AboutSection = () => {
   const { ref, isVisible } = useScrollAnimation();
@@ -42,6 +44,12 @@ const AboutSection = () => {
         >
           {expanded ? "Show less" : "Read more"}
         </button>
+
+        {/* Medals */}
+        <div className="flex items-center gap-4 mt-4 sm:mt-6">
+          <img src={medal1} alt="PikoolyFlora Badge" className="h-12 sm:h-14 md:h-16 w-auto" />
+          <img src={medal2} alt="PikoolyFlora Badge" className="h-12 sm:h-14 md:h-16 w-auto" />
+        </div>
       </motion.div>
     </section>
   );
