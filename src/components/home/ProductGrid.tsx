@@ -24,7 +24,7 @@ const ProductGrid = () => {
     <section ref={ref} className="py-6 sm:py-8 md:py-10 lg:py-14 section-container" aria-label="Products">
       {/* Trending Gifts header */}
       <div className="flex items-center justify-between mb-4 md:mb-6">
-        <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-display font-bold text-foreground">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold text-foreground">
           Trending Gifts
         </h2>
         <Link
@@ -55,15 +55,15 @@ const ProductGrid = () => {
       </div>
 
       {/* Tailored For Your Occasions */}
-      <div className="mb-4 md:mb-6">
-        <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-display font-bold text-foreground mb-1 md:mb-2">
+      <div className="mb-4 md:mb-6 text-center">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold text-foreground mb-1 md:mb-2">
           Tailored For Your Occasions
         </h2>
-        <p className="text-muted-foreground text-xs sm:text-sm md:text-base">Find the perfect gift for every moment</p>
+        <p className="text-muted-foreground text-sm sm:text-base md:text-lg">Find the perfect gift for every moment</p>
       </div>
 
       {/* Occasion tabs */}
-      <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-3 mb-4 md:mb-6 scrollbar-hide">
+      <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-3 mb-4 md:mb-6 scrollbar-hide justify-center">
         {tabs.map(({ label, icon: Icon }) => (
           <button
             key={label}
@@ -90,7 +90,7 @@ const ProductGrid = () => {
       <div className="text-center mt-6 md:mt-8">
         <Link
           to="/shop"
-          className="inline-block px-6 sm:px-8 py-2.5 sm:py-3 border-2 border-primary text-primary rounded-full text-xs sm:text-sm font-semibold hover:bg-primary hover:text-primary-foreground transition-all"
+          className="inline-block px-8 sm:px-10 py-3 sm:py-3.5 border-2 border-primary text-primary rounded-full text-sm sm:text-base font-semibold hover:bg-primary hover:text-primary-foreground transition-all"
         >
           View All Trending Gifts →
         </Link>
