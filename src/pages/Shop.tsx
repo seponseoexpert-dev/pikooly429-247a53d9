@@ -29,13 +29,13 @@ const Shop = () => {
 
   return (
     <main className="section-container py-6 md:py-10 pb-24 md:pb-10">
-      <h1 className="text-3xl md:text-4xl font-display font-bold mb-6">Shop</h1>
+      <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold mb-4 sm:mb-6">Shop</h1>
 
-      <div className="flex flex-wrap items-center gap-3 mb-8">
-        <div className="flex gap-2 overflow-x-auto flex-1 scrollbar-hide">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
+        <div className="flex gap-1.5 sm:gap-2 overflow-x-auto flex-1 scrollbar-hide">
           <button
             onClick={() => setSelectedCat("")}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${!selectedCat ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+            className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${!selectedCat ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
           >
             All
           </button>
@@ -43,7 +43,7 @@ const Shop = () => {
             <button
               key={cat.id}
               onClick={() => setSelectedCat(cat.slug)}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${selectedCat === cat.slug ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${selectedCat === cat.slug ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
             >
               {cat.icon} {cat.name}
             </button>
@@ -55,7 +55,7 @@ const Shop = () => {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="text-sm bg-muted border-none rounded-lg px-3 py-2 outline-none"
+            className="text-xs sm:text-sm bg-muted border-none rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 outline-none"
           >
             <option value="newest">Newest</option>
             <option value="price-low">Price: Low → High</option>
@@ -65,7 +65,7 @@ const Shop = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3 md:gap-5">
         {filtered.map((product, i) => (
           <ProductCard key={product.id} product={product} index={i} />
         ))}
@@ -73,7 +73,7 @@ const Shop = () => {
 
       {filtered.length === 0 && (
         <div className="text-center py-20 text-muted-foreground">
-          <p className="text-lg">No products found in this category.</p>
+          <p className="text-sm sm:text-base md:text-lg">No products found in this category.</p>
         </div>
       )}
     </main>
