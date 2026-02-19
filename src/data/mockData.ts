@@ -24,6 +24,11 @@ export const products: Product[] = [
   { id: "10", name: "Lavender Dream Bouquet", price: 1600, image: "https://images.pexels.com/photos/931177/pexels-photo-931177.jpeg?auto=compress&cs=tinysrgb&w=400", category: "flowers", rating: 4.6, inStock: true },
   { id: "11", name: "Classic Perfume Set", price: 5500, image: "https://images.pexels.com/photos/965989/pexels-photo-965989.jpeg?auto=compress&cs=tinysrgb&w=400", category: "perfumes", rating: 4.8, inStock: true },
   { id: "12", name: "Red Velvet Cake", price: 2800, originalPrice: 3200, image: "https://images.pexels.com/photos/1721932/pexels-photo-1721932.jpeg?auto=compress&cs=tinysrgb&w=400", category: "cake", badge: "Hot", rating: 4.9, inStock: true },
+  { id: "13", name: "Sunflower Delight", price: 950, originalPrice: 1200, image: "https://images.pexels.com/photos/1624076/pexels-photo-1624076.jpeg?auto=compress&cs=tinysrgb&w=400", category: "flowers", badge: "New", rating: 4.5, inStock: true },
+  { id: "14", name: "Mixed Fruit Cake", price: 2200, image: "https://images.pexels.com/photos/1854652/pexels-photo-1854652.jpeg?auto=compress&cs=tinysrgb&w=400", category: "cake", rating: 4.6, inStock: true },
+  { id: "15", name: "Royal Orchid Basket", price: 3800, originalPrice: 4500, image: "https://images.pexels.com/photos/1005715/pexels-photo-1005715.jpeg?auto=compress&cs=tinysrgb&w=400", category: "premium", badge: "Premium", rating: 4.8, inStock: true },
+  { id: "16", name: "Anniversary Combo Box", price: 4200, originalPrice: 5000, image: "https://images.pexels.com/photos/1303081/pexels-photo-1303081.jpeg?auto=compress&cs=tinysrgb&w=400", category: "combos", badge: "Popular", rating: 4.7, inStock: true },
+  { id: "17", name: "Indoor Money Plant", price: 750, image: "https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&w=400", category: "plants", rating: 4.4, inStock: true },
 ];
 
 export const blogPosts: BlogPost[] = [
