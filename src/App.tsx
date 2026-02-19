@@ -20,11 +20,12 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminCategories from "./pages/admin/AdminCategories";
+import AdminOrders from "./pages/admin/AdminOrders";
+import AdminCustomers from "./pages/admin/AdminCustomers";
 
 const queryClient = new QueryClient();
 
 // Placeholder admin pages
-const AdminOrders = () => <div><h2 className="text-2xl font-display font-bold mb-4">Orders</h2><p className="text-muted-foreground">Order management coming in Phase 3.</p></div>;
 const AdminBlog = () => <div><h2 className="text-2xl font-display font-bold mb-4">Blog</h2><p className="text-muted-foreground">Blog management coming in Phase 4.</p></div>;
 
 const PublicLayout = ({ children }: { children: React.ReactNode }) => (
@@ -59,6 +60,7 @@ const App = () => (
               <Route path="/admin/products" element={<ProtectedAdminRoute><AdminProducts /></ProtectedAdminRoute>} />
               <Route path="/admin/categories" element={<ProtectedAdminRoute><AdminCategories /></ProtectedAdminRoute>} />
               <Route path="/admin/orders" element={<ProtectedAdminRoute><AdminOrders /></ProtectedAdminRoute>} />
+              <Route path="/admin/customers" element={<ProtectedAdminRoute><AdminCustomers /></ProtectedAdminRoute>} />
               <Route path="/admin/blog" element={<ProtectedAdminRoute><AdminBlog /></ProtectedAdminRoute>} />
 
               <Route path="*" element={<NotFound />} />
