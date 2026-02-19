@@ -49,9 +49,38 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
     if (url) editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
   };
 
+  const currentHeading = () => {
+    for (let i = 1; i <= 6; i++) {
+      if (editor.isActive("heading", { level: i })) return `h${i}`;
+    }
+    return "p";
+  };
+
+  const setBlock = (val: string) => {
+    if (val === "p") {
+      editor.chain().focus().setParagraph().run();
+    } else {
+      const level = parseInt(val.replace("h", "")) as 1 | 2 | 3 | 4 | 5 | 6;
+      editor.chain().focus().toggleHeading({ level }).run();
+    }
+  };
+
   return (
     <div className="border rounded-lg overflow-hidden">
-      <div className="flex flex-wrap gap-0.5 p-1.5 border-b bg-muted/30">
+      <div className="flex flex-wrap items-center gap-0.5 p-1.5 border-b bg-muted/30">
+        <select
+          value={currentHeading()}
+          onChange={(e) => setBlock(e.target.value)}
+          className="h-8 text-xs bg-background border border-border rounded px-2 outline-none cursor-pointer mr-1"
+        >
+          <option value="p">Paragraph</option>
+          <option value="h1">Heading 1</option>
+          <option value="h2">Heading 2</option>
+          <option value="h3">Heading 3</option>
+          <option value="h4">Heading 4</option>
+          <option value="h5">Heading 5</option>
+          <option value="h6">Heading 6</option>
+        </select>
         <ToolBtn active={editor.isActive("bold")} onClick={() => editor.chain().focus().toggleBold().run()}><Bold size={15} /></ToolBtn>
         <ToolBtn active={editor.isActive("italic")} onClick={() => editor.chain().focus().toggleItalic().run()}><Italic size={15} /></ToolBtn>
         <ToolBtn active={editor.isActive("bulletList")} onClick={() => editor.chain().focus().toggleBulletList().run()}><List size={15} /></ToolBtn>
