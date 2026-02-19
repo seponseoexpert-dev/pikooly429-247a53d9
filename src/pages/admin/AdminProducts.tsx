@@ -30,6 +30,7 @@ const AdminProducts = () => {
   const defaultForm = {
     name: "", slug: "", description: "", price: 0, original_price: 0,
     image_url: "", category_id: "", is_active: true, is_featured: false, stock: 0, tags: "",
+    specifications: [] as Array<{ item: string; value: string }>,
   };
   const [form, setForm] = useState(defaultForm);
 
@@ -51,12 +52,14 @@ const AdminProducts = () => {
 
   const openEdit = (p: Product) => {
     setEditing(p);
+    const specs = (p.specifications as Array<{ item: string; value: string }>) || [];
     setForm({
       name: p.name, slug: p.slug, description: p.description || "",
       price: p.price, original_price: p.original_price || 0,
       image_url: p.image_url || "", category_id: p.category_id || "",
       is_active: p.is_active, is_featured: p.is_featured, stock: p.stock,
       tags: (p.tags || []).join(", "),
+      specifications: specs,
     });
     setImageFile(null);
     setDialogOpen(true);
@@ -84,11 +87,13 @@ const AdminProducts = () => {
 
     const slug = form.slug || generateSlug(form.name);
     const tags = form.tags ? form.tags.split(",").map((t) => t.trim()).filter(Boolean) : [];
+    const specs = form.specifications.filter(s => s.item.trim() || s.value.trim());
     const payload = {
       name: form.name.trim(), slug, description: form.description || null,
       price: form.price, original_price: form.original_price || null,
       image_url: imageUrl || null, category_id: form.category_id || null,
       is_active: form.is_active, is_featured: form.is_featured, stock: form.stock, tags,
+      specifications: specs.length > 0 ? specs : null,
     };
 
     if (editing) {
@@ -178,6 +183,34 @@ const AdminProducts = () => {
               <div className="space-y-2">
                 <Label>Tags (comma separated)</Label>
                 <Input value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} placeholder="flowers, birthday, gift" />
+              </div>
+              {/* Specifications */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label>Specifications</Label>
+                  <Button type="button" variant="outline" size="sm" onClick={() => setForm({ ...form, specifications: [...form.specifications, { item: "", value: "" }] })}>
+                    <Plus className="h-3 w-3 mr-1" />Add
+                  </Button>
+                </div>
+                {form.specifications.map((spec, i) => (
+                  <div key={i} className="flex gap-2 items-center">
+                    <Input placeholder="Item name" value={spec.item} onChange={(e) => {
+                      const specs = [...form.specifications];
+                      specs[i] = { ...specs[i], item: e.target.value };
+                      setForm({ ...form, specifications: specs });
+                    }} className="flex-1" />
+                    <Input placeholder="Value" value={spec.value} onChange={(e) => {
+                      const specs = [...form.specifications];
+                      specs[i] = { ...specs[i], value: e.target.value };
+                      setForm({ ...form, specifications: specs });
+                    }} className="flex-1" />
+                    <Button type="button" variant="ghost" size="icon" onClick={() => {
+                      setForm({ ...form, specifications: form.specifications.filter((_, idx) => idx !== i) });
+                    }}>
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
+                ))}
               </div>
               <div className="flex gap-6">
                 <div className="flex items-center gap-2">
