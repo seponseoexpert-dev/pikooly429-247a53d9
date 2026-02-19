@@ -1,5 +1,4 @@
 import { useState } from "react";
-import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -79,7 +78,7 @@ const AdminCoupons = () => {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-coupons"] });
-      toast({ title: editId ? "কুপন আপডেট হয়েছে" : "কুপন তৈরি হয়েছে" });
+      toast({ title: editId ? "Coupon updated" : "Coupon created" });
       setOpen(false);
       setForm(empty);
       setEditId(null);
@@ -94,7 +93,7 @@ const AdminCoupons = () => {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-coupons"] });
-      toast({ title: "কুপন মুছে ফেলা হয়েছে" });
+      toast({ title: "Coupon deleted" });
     },
   });
 
@@ -120,135 +119,133 @@ const AdminCoupons = () => {
   );
 
   return (
-    <AdminLayout>
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-display font-bold">কুপন ম্যানেজমেন্ট</h2>
-            <p className="text-muted-foreground text-sm">প্রোমো কোড ও কুপন পরিচালনা</p>
-          </div>
-          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { setForm(empty); setEditId(null); } }}>
-            <DialogTrigger asChild>
-              <Button><Plus className="h-4 w-4 mr-2" />নতুন কুপন</Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-md">
-              <DialogHeader>
-                <DialogTitle>{editId ? "কুপন এডিট" : "নতুন কুপন"}</DialogTitle>
-              </DialogHeader>
-              <form
-                onSubmit={(e) => { e.preventDefault(); saveMutation.mutate(form); }}
-                className="space-y-4"
-              >
-                <div>
-                  <label className="text-sm font-medium">কোড *</label>
-                  <Input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} required placeholder="SAVE20" className="uppercase" />
-                </div>
-                <div>
-                  <label className="text-sm font-medium">বিবরণ</label>
-                  <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="২০% ছাড়" />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-sm font-medium">ধরন</label>
-                    <select
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                      value={form.discount_type}
-                      onChange={(e) => setForm({ ...form, discount_type: e.target.value as any })}
-                    >
-                      <option value="percentage">শতাংশ (%)</option>
-                      <option value="fixed">নির্দিষ্ট (৳)</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium">মান</label>
-                    <Input type="number" value={form.discount_value} onChange={(e) => setForm({ ...form, discount_value: Number(e.target.value) })} min={0} />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-sm font-medium">সর্বনিম্ন অর্ডার (৳)</label>
-                    <Input type="number" value={form.min_order_amount} onChange={(e) => setForm({ ...form, min_order_amount: Number(e.target.value) })} min={0} />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium">সর্বোচ্চ ব্যবহার</label>
-                    <Input type="number" value={form.max_uses ?? ""} onChange={(e) => setForm({ ...form, max_uses: e.target.value ? Number(e.target.value) : null })} placeholder="সীমাহীন" />
-                  </div>
-                </div>
-                <div>
-                  <label className="text-sm font-medium">মেয়াদ শেষ</label>
-                  <Input type="datetime-local" value={form.expires_at} onChange={(e) => setForm({ ...form, expires_at: e.target.value })} />
-                </div>
-                <div className="flex items-center gap-2">
-                  <input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} id="active" />
-                  <label htmlFor="active" className="text-sm">সক্রিয়</label>
-                </div>
-                <Button type="submit" className="w-full" disabled={saveMutation.isPending}>
-                  {saveMutation.isPending ? "সেভ হচ্ছে..." : "সেভ করুন"}
-                </Button>
-              </form>
-            </DialogContent>
-          </Dialog>
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-display font-bold">Coupon Management</h2>
+          <p className="text-muted-foreground text-sm">Manage promo codes & coupons</p>
         </div>
-
-        <div className="relative max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="কুপন খুঁজুন..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
-        </div>
-
-        {isLoading ? (
-          <p className="text-muted-foreground">লোড হচ্ছে...</p>
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground">
-            <Ticket className="h-12 w-12 mx-auto mb-3 opacity-50" />
-            <p>কোনো কুপন পাওয়া যায়নি</p>
-          </div>
-        ) : (
-          <div className="border rounded-lg overflow-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>কোড</TableHead>
-                  <TableHead>ছাড়</TableHead>
-                  <TableHead>সর্বনিম্ন</TableHead>
-                  <TableHead>ব্যবহার</TableHead>
-                  <TableHead>স্ট্যাটাস</TableHead>
-                  <TableHead>মেয়াদ</TableHead>
-                  <TableHead className="w-20">অ্যাকশন</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filtered.map((c: any) => (
-                  <TableRow key={c.id} className="cursor-pointer" onClick={() => openEdit(c)}>
-                    <TableCell className="font-mono font-bold">{c.code}</TableCell>
-                    <TableCell>
-                      {c.discount_type === "percentage" ? `${c.discount_value}%` : `৳${c.discount_value}`}
-                    </TableCell>
-                    <TableCell>৳{c.min_order_amount}</TableCell>
-                    <TableCell>{c.used_count}{c.max_uses ? `/${c.max_uses}` : ""}</TableCell>
-                    <TableCell>
-                      <Badge variant={c.is_active ? "default" : "secondary"}>
-                        {c.is_active ? "সক্রিয়" : "নিষ্ক্রিয়"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-xs">
-                      {c.expires_at ? format(new Date(c.expires_at), "dd MMM yyyy") : "সীমাহীন"}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost" size="icon"
-                        onClick={(e) => { e.stopPropagation(); deleteMutation.mutate(c.id); }}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        )}
+        <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { setForm(empty); setEditId(null); } }}>
+          <DialogTrigger asChild>
+            <Button><Plus className="h-4 w-4 mr-2" />New Coupon</Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>{editId ? "Edit Coupon" : "New Coupon"}</DialogTitle>
+            </DialogHeader>
+            <form
+              onSubmit={(e) => { e.preventDefault(); saveMutation.mutate(form); }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="text-sm font-medium">Code *</label>
+                <Input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} required placeholder="SAVE20" className="uppercase" />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Description</label>
+                <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="20% off" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-sm font-medium">Type</label>
+                  <select
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    value={form.discount_type}
+                    onChange={(e) => setForm({ ...form, discount_type: e.target.value as any })}
+                  >
+                    <option value="percentage">Percentage (%)</option>
+                    <option value="fixed">Fixed (৳)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Value</label>
+                  <Input type="number" value={form.discount_value} onChange={(e) => setForm({ ...form, discount_value: Number(e.target.value) })} min={0} />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-sm font-medium">Min Order (৳)</label>
+                  <Input type="number" value={form.min_order_amount} onChange={(e) => setForm({ ...form, min_order_amount: Number(e.target.value) })} min={0} />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Max Uses</label>
+                  <Input type="number" value={form.max_uses ?? ""} onChange={(e) => setForm({ ...form, max_uses: e.target.value ? Number(e.target.value) : null })} placeholder="Unlimited" />
+                </div>
+              </div>
+              <div>
+                <label className="text-sm font-medium">Expires At</label>
+                <Input type="datetime-local" value={form.expires_at} onChange={(e) => setForm({ ...form, expires_at: e.target.value })} />
+              </div>
+              <div className="flex items-center gap-2">
+                <input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} id="active" />
+                <label htmlFor="active" className="text-sm">Active</label>
+              </div>
+              <Button type="submit" className="w-full" disabled={saveMutation.isPending}>
+                {saveMutation.isPending ? "Saving..." : "Save"}
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
-    </AdminLayout>
+
+      <div className="relative max-w-sm">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input placeholder="Search coupons..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+      </div>
+
+      {isLoading ? (
+        <p className="text-muted-foreground">Loading...</p>
+      ) : filtered.length === 0 ? (
+        <div className="text-center py-12 text-muted-foreground">
+          <Ticket className="h-12 w-12 mx-auto mb-3 opacity-50" />
+          <p>No coupons found</p>
+        </div>
+      ) : (
+        <div className="border rounded-lg overflow-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Code</TableHead>
+                <TableHead>Discount</TableHead>
+                <TableHead>Minimum</TableHead>
+                <TableHead>Usage</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Expires</TableHead>
+                <TableHead className="w-20">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filtered.map((c: any) => (
+                <TableRow key={c.id} className="cursor-pointer" onClick={() => openEdit(c)}>
+                  <TableCell className="font-mono font-bold">{c.code}</TableCell>
+                  <TableCell>
+                    {c.discount_type === "percentage" ? `${c.discount_value}%` : `৳${c.discount_value}`}
+                  </TableCell>
+                  <TableCell>৳{c.min_order_amount}</TableCell>
+                  <TableCell>{c.used_count}{c.max_uses ? `/${c.max_uses}` : ""}</TableCell>
+                  <TableCell>
+                    <Badge variant={c.is_active ? "default" : "secondary"}>
+                      {c.is_active ? "Active" : "Inactive"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-xs">
+                    {c.expires_at ? format(new Date(c.expires_at), "dd MMM yyyy") : "Unlimited"}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="ghost" size="icon"
+                      onClick={(e) => { e.stopPropagation(); deleteMutation.mutate(c.id); }}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
+    </div>
   );
 };
 

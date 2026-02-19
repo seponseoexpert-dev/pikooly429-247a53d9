@@ -46,29 +46,29 @@ const ReviewSection = ({ productId }: ReviewSectionProps) => {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("আপনার রিভিউ সাবমিট হয়েছে! অ্যাডমিন অনুমোদনের পর প্রদর্শিত হবে।");
+      toast.success("Your review has been submitted! It will be displayed after admin approval.");
       setRating(0);
       setComment("");
       setCustomerName("");
       queryClient.invalidateQueries({ queryKey: ["reviews", productId] });
     },
     onError: () => {
-      toast.error("রিভিউ সাবমিট করতে সমস্যা হয়েছে।");
+      toast.error("Failed to submit review.");
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
-      toast.error("রিভিউ দিতে লগইন করুন।");
+      toast.error("Please login to submit a review.");
       return;
     }
     if (rating === 0) {
-      toast.error("রেটিং দিন।");
+      toast.error("Please give a rating.");
       return;
     }
     if (!customerName.trim()) {
-      toast.error("আপনার নাম লিখুন।");
+      toast.error("Please enter your name.");
       return;
     }
     submitReview.mutate();
@@ -80,7 +80,7 @@ const ReviewSection = ({ productId }: ReviewSectionProps) => {
 
   return (
     <section className="mt-10 sm:mt-16">
-      <h2 className="text-xl sm:text-2xl font-display font-bold mb-6">কাস্টমার রিভিউ</h2>
+      <h2 className="text-xl sm:text-2xl font-display font-bold mb-6">Customer Reviews</h2>
 
       {/* Summary */}
       <div className="flex items-center gap-3 mb-6">
@@ -91,14 +91,14 @@ const ReviewSection = ({ productId }: ReviewSectionProps) => {
               <Star key={i} size={16} className={i < Math.round(Number(avgRating)) ? "fill-amber-400 text-amber-400" : "text-border"} />
             ))}
           </div>
-          <p className="text-xs text-muted-foreground mt-0.5">{reviews.length} টি রিভিউ</p>
+          <p className="text-xs text-muted-foreground mt-0.5">{reviews.length} reviews</p>
         </div>
       </div>
 
       {/* Review Form */}
       {user ? (
         <form onSubmit={handleSubmit} className="border border-border rounded-xl p-4 sm:p-6 mb-8 bg-card">
-          <h3 className="text-sm font-semibold mb-3">আপনার রিভিউ দিন</h3>
+          <h3 className="text-sm font-semibold mb-3">Write a Review</h3>
           <div className="flex items-center gap-1 mb-3">
             {[1, 2, 3, 4, 5].map((s) => (
               <button
@@ -121,14 +121,14 @@ const ReviewSection = ({ productId }: ReviewSectionProps) => {
             ))}
           </div>
           <Input
-            placeholder="আপনার নাম"
+            placeholder="Your name"
             value={customerName}
             onChange={(e) => setCustomerName(e.target.value)}
             maxLength={100}
             className="mb-3"
           />
           <Textarea
-            placeholder="আপনার মতামত লিখুন (ঐচ্ছিক)"
+            placeholder="Write your review (optional)"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             maxLength={1000}
@@ -136,20 +136,20 @@ const ReviewSection = ({ productId }: ReviewSectionProps) => {
             className="mb-3"
           />
           <Button type="submit" disabled={submitReview.isPending} size="sm">
-            {submitReview.isPending ? "সাবমিট হচ্ছে..." : "রিভিউ সাবমিট করুন"}
+            {submitReview.isPending ? "Submitting..." : "Submit Review"}
           </Button>
         </form>
       ) : (
         <div className="border border-border rounded-xl p-4 sm:p-6 mb-8 bg-card text-center">
-          <p className="text-sm text-muted-foreground">রিভিউ দিতে <a href="/admin-login" className="text-primary underline">লগইন</a> করুন।</p>
+          <p className="text-sm text-muted-foreground">Please <a href="/admin-login" className="text-primary underline">login</a> to write a review.</p>
         </div>
       )}
 
       {/* Reviews List */}
       {isLoading ? (
-        <p className="text-sm text-muted-foreground">লোড হচ্ছে...</p>
+        <p className="text-sm text-muted-foreground">Loading...</p>
       ) : reviews.length === 0 ? (
-        <p className="text-sm text-muted-foreground">এখনো কোনো রিভিউ নেই। প্রথম রিভিউ দিন!</p>
+        <p className="text-sm text-muted-foreground">No reviews yet. Be the first to review!</p>
       ) : (
         <div className="space-y-4">
           {reviews.map((r) => (
@@ -157,7 +157,7 @@ const ReviewSection = ({ productId }: ReviewSectionProps) => {
               <div className="flex items-center justify-between mb-1">
                 <span className="text-sm font-semibold text-foreground">{r.customer_name}</span>
                 <span className="text-xs text-muted-foreground">
-                  {new Date(r.created_at).toLocaleDateString("bn-BD")}
+                  {new Date(r.created_at).toLocaleDateString("en-GB")}
                 </span>
               </div>
               <div className="flex items-center gap-0.5 mb-2">

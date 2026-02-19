@@ -46,12 +46,12 @@ const Checkout = () => {
     e.preventDefault();
 
     if (!form.fullName.trim() || !form.phone.trim() || !form.address.trim()) {
-      toast.error("অনুগ্রহ করে সব প্রয়োজনীয় তথ্য পূরণ করুন");
+      toast.error("Please fill in all required fields");
       return;
     }
 
     if (items.length === 0) {
-      toast.error("আপনার কার্ট খালি");
+      toast.error("Your cart is empty");
       return;
     }
 
@@ -98,11 +98,11 @@ const Checkout = () => {
       if (itemsError) throw itemsError;
 
       clearCart();
-      toast.success("অর্ডার সফলভাবে প্লেস হয়েছে! 🎉");
+      toast.success("Order placed successfully! 🎉");
       navigate(`/order-success/${order.order_number}`);
     } catch (error: any) {
       console.error("Order error:", error);
-      toast.error("অর্ডার প্লেস করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+      toast.error("Failed to place order. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -113,10 +113,10 @@ const Checkout = () => {
       <main className="min-h-screen bg-background pt-24 pb-32">
         <div className="container mx-auto px-4 text-center py-20">
           <ShoppingBag size={64} className="mx-auto mb-4 text-muted-foreground/30" />
-          <h2 className="text-xl font-bold mb-2">আপনার কার্ট খালি</h2>
-          <p className="text-muted-foreground mb-6">চেকআউট করতে প্রোডাক্ট যোগ করুন</p>
+          <h2 className="text-xl font-bold mb-2">Your cart is empty</h2>
+          <p className="text-muted-foreground mb-6">Add products to checkout</p>
           <Button onClick={() => navigate("/shop")} className="rounded-full">
-            শপে যান
+            Go to Shop
           </Button>
         </div>
       </main>
@@ -126,7 +126,7 @@ const Checkout = () => {
   return (
     <main className="min-h-screen bg-background pt-24 pb-32">
       <div className="container mx-auto px-4">
-        <h1 className="text-2xl md:text-3xl font-display font-bold mb-8">চেকআউট</h1>
+        <h1 className="text-2xl md:text-3xl font-display font-bold mb-8">Checkout</h1>
 
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -136,14 +136,14 @@ const Checkout = () => {
               <section className="bg-card rounded-2xl p-6 border border-border">
                 <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
                   <CreditCard size={20} className="text-primary" />
-                  বিলিং তথ্য
+                  Billing Details
                 </h2>
                 <div className="space-y-5">
                   <div>
-                    <Label htmlFor="fullName">আপনার পুরো নাম <span className="text-destructive">*</span></Label>
+                    <Label htmlFor="fullName">Full Name <span className="text-destructive">*</span></Label>
                     <Input
                       id="fullName"
-                      placeholder="আপনার নাম লিখুন"
+                      placeholder="Enter your name"
                       value={form.fullName}
                       onChange={(e) => handleChange("fullName", e.target.value)}
                       className="mt-1.5"
@@ -158,7 +158,7 @@ const Checkout = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor="phone">ফোন নম্বর <span className="text-destructive">*</span></Label>
+                    <Label htmlFor="phone">Phone Number <span className="text-destructive">*</span></Label>
                     <Input
                       id="phone"
                       type="tel"
@@ -172,7 +172,7 @@ const Checkout = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor="email">ইমেইল (ঐচ্ছিক)</Label>
+                    <Label htmlFor="email">Email (Optional)</Label>
                     <Input
                       id="email"
                       type="email"
@@ -190,14 +190,14 @@ const Checkout = () => {
               <section className="bg-card rounded-2xl p-6 border border-border">
                 <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
                   <Truck size={20} className="text-primary" />
-                  ডেলিভারি তথ্য
+                  Delivery Information
                 </h2>
                 <div className="space-y-5">
                   <div>
-                    <Label htmlFor="address">পূর্ণ ঠিকানা <span className="text-destructive">*</span></Label>
+                    <Label htmlFor="address">Full Address <span className="text-destructive">*</span></Label>
                     <Input
                       id="address"
-                      placeholder="বাড়ি নম্বর, রাস্তার নাম, এলাকা"
+                      placeholder="House no, Street, Area"
                       value={form.address}
                       onChange={(e) => handleChange("address", e.target.value)}
                       className="mt-1.5"
@@ -207,10 +207,10 @@ const Checkout = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor="notes">অর্ডার নোট (ঐচ্ছিক)</Label>
+                    <Label htmlFor="notes">Order Notes (Optional)</Label>
                     <Textarea
                       id="notes"
-                      placeholder="ডেলিভারি সম্পর্কে বিশেষ নির্দেশনা..."
+                      placeholder="Special instructions for delivery..."
                       value={form.notes}
                       onChange={(e) => handleChange("notes", e.target.value)}
                       className="mt-1.5 min-h-[100px]"
@@ -220,7 +220,7 @@ const Checkout = () => {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="deliveryDate">ডেলিভারি তারিখ (ঐচ্ছিক)</Label>
+                      <Label htmlFor="deliveryDate">Delivery Date (Optional)</Label>
                       <Input
                         id="deliveryDate"
                         type="date"
@@ -231,10 +231,10 @@ const Checkout = () => {
                       />
                     </div>
                     <div>
-                      <Label>ডেলিভারি সময় (ঐচ্ছিক)</Label>
+                      <Label>Delivery Time (Optional)</Label>
                       <Select value={form.deliveryTime} onValueChange={(v) => handleChange("deliveryTime", v)}>
                         <SelectTrigger className="mt-1.5">
-                          <SelectValue placeholder="সময় নির্বাচন করুন" />
+                          <SelectValue placeholder="Select time" />
                         </SelectTrigger>
                         <SelectContent>
                           {deliveryTimeSlots.map((slot) => (
@@ -249,12 +249,12 @@ const Checkout = () => {
 
               {/* Payment Method */}
               <section className="bg-card rounded-2xl p-6 border border-border">
-                <h2 className="text-lg font-bold mb-6">পেমেন্ট পদ্ধতি</h2>
+                <h2 className="text-lg font-bold mb-6">Payment Method</h2>
                 <div className="space-y-3">
                   {[
-                    { value: "cod", label: "ক্যাশ অন ডেলিভারি", desc: "ডেলিভারির সময় পেমেন্ট করুন" },
-                    { value: "bkash", label: "bKash", desc: "বিকাশ মোবাইল পেমেন্ট" },
-                    { value: "nagad", label: "Nagad", desc: "নগদ মোবাইল পেমেন্ট" },
+                    { value: "cod", label: "Cash on Delivery", desc: "Pay when you receive your order" },
+                    { value: "bkash", label: "bKash", desc: "bKash mobile payment" },
+                    { value: "nagad", label: "Nagad", desc: "Nagad mobile payment" },
                   ].map((method) => (
                     <label
                       key={method.value}
@@ -285,7 +285,7 @@ const Checkout = () => {
             {/* Right - Order Summary */}
             <div className="lg:col-span-1">
               <div className="bg-card rounded-2xl p-6 border border-border sticky top-28">
-                <h2 className="text-lg font-bold mb-4">অর্ডার সারাংশ</h2>
+                <h2 className="text-lg font-bold mb-4">Order Summary</h2>
                 <div className="space-y-3 max-h-[300px] overflow-y-auto">
                   {items.map((item) => (
                     <div key={item.product.id} className="flex gap-3">
@@ -307,11 +307,11 @@ const Checkout = () => {
 
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">সাবটোটাল</span>
+                    <span className="text-muted-foreground">Subtotal</span>
                     <span>৳{totalPrice.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">ডেলিভারি ফি</span>
+                    <span className="text-muted-foreground">Delivery Fee</span>
                     <span>৳{deliveryFee}</span>
                   </div>
                 </div>
@@ -319,7 +319,7 @@ const Checkout = () => {
                 <Separator className="my-4" />
 
                 <div className="flex justify-between text-lg font-bold">
-                  <span>মোট</span>
+                  <span>Total</span>
                   <span className="text-primary">৳{grandTotal.toLocaleString()}</span>
                 </div>
 
@@ -329,9 +329,9 @@ const Checkout = () => {
                   disabled={loading}
                 >
                   {loading ? (
-                    <><Loader2 className="animate-spin mr-2" size={18} /> প্রসেসিং...</>
+                    <><Loader2 className="animate-spin mr-2" size={18} /> Processing...</>
                   ) : (
-                    `অর্ডার প্লেস করুন — ৳${grandTotal.toLocaleString()}`
+                    `Place Order — ৳${grandTotal.toLocaleString()}`
                   )}
                 </Button>
               </div>
