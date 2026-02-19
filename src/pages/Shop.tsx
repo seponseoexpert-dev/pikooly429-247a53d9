@@ -4,6 +4,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import ProductCard from "@/components/product/ProductCard";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const Shop = () => {
   const [searchParams] = useSearchParams();
@@ -47,6 +48,28 @@ const Shop = () => {
   }, [selectedCat, categories]);
 
   const activeCategoryName = activeCategory?.name || "All Products";
+  const { settings } = useSiteSettings();
+
+  // Dynamic SEO meta tags
+  useEffect(() => {
+    const siteName = settings.site_title || "Pikooly";
+    const catName = activeCategory?.name;
+    const metaDesc = activeCategory?.description || (activeCategory as any)?.short_description || "";
+
+    document.title = catName ? `${catName} - ${siteName}` : `Shop - ${siteName}`;
+
+    let metaTag = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
+    if (!metaTag) {
+      metaTag = document.createElement("meta");
+      metaTag.name = "description";
+      document.head.appendChild(metaTag);
+    }
+    metaTag.content = metaDesc || `Shop ${catName || "all products"} at ${siteName}`;
+
+    return () => {
+      document.title = siteName;
+    };
+  }, [activeCategory, settings]);
 
   const filtered = useMemo(() => {
     let list = selectedCat
