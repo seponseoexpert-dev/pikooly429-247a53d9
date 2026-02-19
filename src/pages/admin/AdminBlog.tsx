@@ -24,7 +24,7 @@ const AdminBlog = () => {
   const [saving, setSaving] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
-  const defaultForm = { title: "", slug: "", content: "", excerpt: "", image_url: "", is_published: false };
+  const defaultForm = { title: "", slug: "", content: "", excerpt: "", image_url: "", is_published: false, seo_title: "", seo_description: "" };
   const [form, setForm] = useState(defaultForm);
 
   const fetchBlogs = async () => {
@@ -45,6 +45,7 @@ const AdminBlog = () => {
     setForm({
       title: blog.title, slug: blog.slug, content: blog.content || "",
       excerpt: blog.excerpt || "", image_url: blog.image_url || "", is_published: blog.is_published,
+      seo_title: (blog as any).seo_title || "", seo_description: (blog as any).seo_description || "",
     });
     setImageFile(null);
     setDialogOpen(true);
@@ -77,6 +78,8 @@ const AdminBlog = () => {
       is_published: form.is_published,
       published_at: form.is_published ? new Date().toISOString() : null,
       author_id: user?.id || null,
+      seo_title: form.seo_title.trim() || null,
+      seo_description: form.seo_description.trim() || null,
     };
 
     if (editing) {
@@ -120,7 +123,7 @@ const AdminBlog = () => {
           <DialogTrigger asChild>
             <Button onClick={() => { resetForm(); setDialogOpen(true); }}><Plus className="h-4 w-4 mr-2" />New Post</Button>
           </DialogTrigger>
-          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editing ? "Edit Post" : "New Post"}</DialogTitle>
             </DialogHeader>
@@ -150,6 +153,50 @@ const AdminBlog = () => {
                 <Switch checked={form.is_published} onCheckedChange={(c) => setForm({ ...form, is_published: c })} />
                 <Label>Publish immediately</Label>
               </div>
+
+              {/* Yoast-style SEO Section */}
+              <div className="border border-border rounded-lg p-4 space-y-4 bg-muted/30">
+                <h3 className="font-semibold text-sm flex items-center gap-2">🔍 SEO Preview</h3>
+                {/* Google Preview */}
+                <div className="bg-background rounded-lg p-4 border border-border space-y-1">
+                  <p className="text-[#1a0dab] text-lg leading-snug truncate">
+                    {form.seo_title || form.title || "Blog Post Title"}
+                  </p>
+                  <p className="text-[#006621] text-sm truncate">
+                    yoursite.com/blog/{form.slug || "post-slug"}
+                  </p>
+                  <p className="text-sm text-[#545454] line-clamp-2">
+                    {form.seo_description || form.excerpt || "Add a meta description for search engines..."}
+                  </p>
+                </div>
+                {/* SEO Fields */}
+                <div className="space-y-2">
+                  <Label>SEO Title</Label>
+                  <Input
+                    value={form.seo_title}
+                    onChange={(e) => setForm({ ...form, seo_title: e.target.value })}
+                    placeholder={form.title || "SEO title..."}
+                    maxLength={60}
+                  />
+                  <p className={`text-xs ${form.seo_title.length > 60 ? "text-destructive" : "text-muted-foreground"}`}>
+                    {form.seo_title.length}/60 characters
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label>Meta Description</Label>
+                  <Textarea
+                    value={form.seo_description}
+                    onChange={(e) => setForm({ ...form, seo_description: e.target.value })}
+                    placeholder={form.excerpt || "Meta description..."}
+                    rows={3}
+                    maxLength={160}
+                  />
+                  <p className={`text-xs ${form.seo_description.length > 160 ? "text-destructive" : "text-muted-foreground"}`}>
+                    {form.seo_description.length}/160 characters
+                  </p>
+                </div>
+              </div>
+
               <Button type="submit" className="w-full" disabled={saving}>{saving ? "Saving..." : editing ? "Update" : "Create"}</Button>
             </form>
           </DialogContent>
