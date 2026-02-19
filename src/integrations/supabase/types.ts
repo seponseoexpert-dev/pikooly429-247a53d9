@@ -61,10 +61,13 @@ export type Database = {
           created_at: string
           description: string | null
           display_order: number
+          faq: Json | null
           id: string
           image_url: string | null
           is_active: boolean
+          long_description: string | null
           name: string
+          short_description: string | null
           slug: string
           updated_at: string
         }
@@ -72,10 +75,13 @@ export type Database = {
           created_at?: string
           description?: string | null
           display_order?: number
+          faq?: Json | null
           id?: string
           image_url?: string | null
           is_active?: boolean
+          long_description?: string | null
           name: string
+          short_description?: string | null
           slug: string
           updated_at?: string
         }
@@ -83,10 +89,13 @@ export type Database = {
           created_at?: string
           description?: string | null
           display_order?: number
+          faq?: Json | null
           id?: string
           image_url?: string | null
           is_active?: boolean
+          long_description?: string | null
           name?: string
+          short_description?: string | null
           slug?: string
           updated_at?: string
         }

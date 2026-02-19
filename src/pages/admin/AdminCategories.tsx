@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, GripVertical } from "lucide-react";
+import { Plus, Pencil, Trash2, GripVertical, PlusCircle, MinusCircle } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Category = Tables<"categories">;
@@ -19,7 +19,7 @@ const AdminCategories = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Category | null>(null);
-  const [form, setForm] = useState({ name: "", slug: "", description: "", image_url: "", is_active: true, display_order: 0 });
+  const [form, setForm] = useState({ name: "", slug: "", description: "", short_description: "", long_description: "", faq: "[]", image_url: "", is_active: true, display_order: 0 });
   const [saving, setSaving] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -38,7 +38,7 @@ const AdminCategories = () => {
   const generateSlug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
   const resetForm = () => {
-    setForm({ name: "", slug: "", description: "", image_url: "", is_active: true, display_order: 0 });
+    setForm({ name: "", slug: "", description: "", short_description: "", long_description: "", faq: "[]", image_url: "", is_active: true, display_order: 0 });
     setEditing(null);
     setImageFile(null);
   };
@@ -51,6 +51,9 @@ const AdminCategories = () => {
       name: cat.name,
       slug: cat.slug,
       description: cat.description || "",
+      short_description: (cat as any).short_description || "",
+      long_description: (cat as any).long_description || "",
+      faq: JSON.stringify((cat as any).faq || []),
       image_url: cat.image_url || "",
       is_active: cat.is_active,
       display_order: cat.display_order,
@@ -80,7 +83,9 @@ const AdminCategories = () => {
     }
 
     const slug = form.slug || generateSlug(form.name);
-    const payload = { name: form.name.trim(), slug, description: form.description || null, image_url: imageUrl || null, is_active: form.is_active, display_order: form.display_order };
+    let parsedFaq: any[] = [];
+    try { parsedFaq = JSON.parse(form.faq); } catch { parsedFaq = []; }
+    const payload = { name: form.name.trim(), slug, description: form.description || null, short_description: form.short_description || null, long_description: form.long_description || null, faq: parsedFaq, image_url: imageUrl || null, is_active: form.is_active, display_order: form.display_order };
 
     if (editing) {
       const { error } = await supabase.from("categories").update(payload).eq("id", editing.id);
@@ -113,7 +118,7 @@ const AdminCategories = () => {
           <DialogTrigger asChild>
             <Button onClick={openCreate}><Plus className="h-4 w-4 mr-2" />Add Category</Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editing ? "Edit Category" : "New Category"}</DialogTitle>
             </DialogHeader>
@@ -127,8 +132,16 @@ const AdminCategories = () => {
                 <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
               </div>
               <div className="space-y-2">
-                <Label>Description</Label>
-                <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} />
+                <Label>Short Description</Label>
+                <Textarea value={form.short_description} onChange={(e) => setForm({ ...form, short_description: e.target.value })} rows={2} placeholder="Brief category summary shown on cards" />
+              </div>
+              <div className="space-y-2">
+                <Label>Long Description</Label>
+                <Textarea value={form.long_description} onChange={(e) => setForm({ ...form, long_description: e.target.value })} rows={6} placeholder="Detailed category description with full details..." />
+              </div>
+              <div className="space-y-2">
+                <Label>SEO Description (meta)</Label>
+                <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} placeholder="Meta description for SEO" />
               </div>
               <div className="space-y-2">
                 <Label>Image</Label>
@@ -142,6 +155,44 @@ const AdminCategories = () => {
               <div className="flex items-center gap-2">
                 <Switch checked={form.is_active} onCheckedChange={(checked) => setForm({ ...form, is_active: checked })} />
                 <Label>Active</Label>
+              </div>
+              {/* FAQ Section */}
+              <div className="space-y-3 border-t pt-4">
+                <div className="flex items-center justify-between">
+                  <Label className="text-base font-semibold">FAQ</Label>
+                  <Button type="button" variant="outline" size="sm" onClick={() => {
+                    const faqs = JSON.parse(form.faq || "[]");
+                    faqs.push({ question: "", answer: "" });
+                    setForm({ ...form, faq: JSON.stringify(faqs) });
+                  }}>
+                    <PlusCircle className="h-4 w-4 mr-1" /> Add FAQ
+                  </Button>
+                </div>
+                {(() => {
+                  let faqs: { question: string; answer: string }[] = [];
+                  try { faqs = JSON.parse(form.faq || "[]"); } catch { faqs = []; }
+                  return faqs.map((faq, idx) => (
+                    <div key={idx} className="space-y-2 p-3 border rounded-lg bg-muted/30 relative">
+                      <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 h-6 w-6" onClick={() => {
+                        const updated = [...faqs];
+                        updated.splice(idx, 1);
+                        setForm({ ...form, faq: JSON.stringify(updated) });
+                      }}>
+                        <MinusCircle className="h-4 w-4 text-destructive" />
+                      </Button>
+                      <Input placeholder="Question" value={faq.question} onChange={(e) => {
+                        const updated = [...faqs];
+                        updated[idx] = { ...updated[idx], question: e.target.value };
+                        setForm({ ...form, faq: JSON.stringify(updated) });
+                      }} />
+                      <Textarea placeholder="Answer" rows={2} value={faq.answer} onChange={(e) => {
+                        const updated = [...faqs];
+                        updated[idx] = { ...updated[idx], answer: e.target.value };
+                        setForm({ ...form, faq: JSON.stringify(updated) });
+                      }} />
+                    </div>
+                  ));
+                })()}
               </div>
               <Button type="submit" className="w-full" disabled={saving}>{saving ? "Saving..." : editing ? "Update" : "Create"}</Button>
             </form>
