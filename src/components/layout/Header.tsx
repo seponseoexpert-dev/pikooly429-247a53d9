@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, ShoppingBag, Menu, X } from "lucide-react";
+import { Search, ShoppingBag } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -17,6 +18,9 @@ const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const { totalItems, setIsOpen } = useCart();
+  const { settings } = useSiteSettings();
+
+  const logoUrl = settings.company_logo || "";
 
   return (
     <>
@@ -33,10 +37,18 @@ const Header = () => {
 
             {/* Logo */}
             <Link to="/" className="flex items-center">
-              <span className="text-lg sm:text-xl md:text-2xl font-display font-bold">
-                <span className="text-foreground">Pikooly</span>
-                <span className="text-primary">Flora</span>
-              </span>
+              {logoUrl ? (
+                <img
+                  src={logoUrl}
+                  alt={settings.store_name || "PikoolyFlora"}
+                  className="h-8 sm:h-9 md:h-10 w-auto object-contain"
+                />
+              ) : (
+                <span className="text-lg sm:text-xl md:text-2xl font-display font-bold">
+                  <span className="text-foreground">Pikooly</span>
+                  <span className="text-primary">Flora</span>
+                </span>
+              )}
             </Link>
 
             {/* Desktop nav */}
