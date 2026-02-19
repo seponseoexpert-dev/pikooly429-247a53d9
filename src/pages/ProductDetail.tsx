@@ -1,7 +1,7 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, Heart, Minus, Plus, Star, ArrowLeft } from "lucide-react";
+import { ShoppingBag, Heart, Minus, Plus, Star, Phone, MessageCircle } from "lucide-react";
 import { useState } from "react";
 import ProductCard from "@/components/product/ProductCard";
 import { useQuery } from "@tanstack/react-query";
@@ -9,13 +9,14 @@ import { supabase } from "@/integrations/supabase/client";
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { addItem } = useCart();
   const [qty, setQty] = useState(1);
+  const [selectedImage, setSelectedImage] = useState(0);
 
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", id],
     queryFn: async () => {
-      // Try slug first, then id
       let { data, error } = await supabase
         .from("products")
         .select("*, categories(name, slug)")
@@ -61,79 +62,181 @@ const ProductDetail = () => {
   if (!product) {
     return (
       <main className="section-container py-20 text-center">
-        <p className="text-sm sm:text-base md:text-lg text-muted-foreground">Product not found.</p>
-        <Link to="/shop" className="text-primary mt-4 inline-block text-xs sm:text-sm">← Back to shop</Link>
+        <p className="text-muted-foreground">Product not found.</p>
+        <Link to="/shop" className="text-primary mt-4 inline-block text-sm">← Back to shop</Link>
       </main>
     );
   }
 
-  const imgSrc = product.image_url || "/placeholder.svg";
+  const mainImg = product.image_url || "/placeholder.svg";
+  const allImages = product.images?.length ? product.images : [mainImg];
+  const currentImg = allImages[selectedImage] || mainImg;
+
   const cartProduct = {
     id: product.id,
     name: product.name,
     price: product.price,
     originalPrice: product.original_price ?? undefined,
-    image: imgSrc,
+    image: mainImg,
     category: product.categories?.slug || "",
     inStock: product.stock > 0,
   };
 
-  return (
-    <main className="section-container py-6 md:py-10 pb-24 md:pb-10">
-      <Link to="/shop" className="inline-flex items-center gap-1 text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors mb-4 sm:mb-6">
-        <ArrowLeft size={16} /> Back to Shop
-      </Link>
+  const handleAddToCart = () => {
+    for (let i = 0; i < qty; i++) addItem(cartProduct);
+  };
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12">
-        <div className="aspect-square rounded-2xl overflow-hidden bg-muted">
-          <img src={imgSrc} alt={product.name} className="w-full h-full object-cover" />
+  const handleBuyNow = () => {
+    for (let i = 0; i < qty; i++) addItem(cartProduct);
+    navigate("/checkout");
+  };
+
+  const whatsappUrl = `https://wa.me/8801XXXXXXXXX?text=${encodeURIComponent(`Hi! I want to order: ${product.name} (৳${product.price}) x ${qty}`)}`;
+  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
+
+  return (
+    <main className="section-container py-4 md:py-8 pb-24 md:pb-10">
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6">
+        <Link to="/" className="hover:text-primary transition-colors">Home</Link>
+        <span>›</span>
+        <Link to="/shop" className="hover:text-primary transition-colors">Products</Link>
+        {product.categories?.name && (
+          <>
+            <span>›</span>
+            <span className="text-foreground">{product.categories.name}</span>
+          </>
+        )}
+      </nav>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+        {/* Image Gallery */}
+        <div>
+          <div className="aspect-square rounded-xl overflow-hidden bg-muted mb-3">
+            <img src={currentImg} alt={product.name} className="w-full h-full object-cover" />
+          </div>
+          {allImages.length > 1 && (
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {allImages.map((img, i) => (
+                <button
+                  key={i}
+                  onClick={() => setSelectedImage(i)}
+                  className={`w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 flex-shrink-0 transition-all ${
+                    selectedImage === i ? "border-primary" : "border-border/50 opacity-70 hover:opacity-100"
+                  }`}
+                >
+                  <img src={img} alt={`${product.name} ${i + 1}`} className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        <div className="flex flex-col justify-center">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-foreground mb-2 sm:mb-3">
+        {/* Product Info */}
+        <div className="flex flex-col">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-foreground mb-2">
             {product.name}
           </h1>
-          {product.rating && product.rating > 0 && (
-            <div className="flex items-center gap-1 mb-3 sm:mb-4">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={14} className={`sm:w-4 sm:h-4 ${i < Math.floor(product.rating!) ? "fill-gold text-gold" : "text-border"}`} />
-              ))}
-              <span className="text-xs sm:text-sm text-muted-foreground ml-1">({product.rating})</span>
+
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xl sm:text-2xl font-bold text-foreground">৳{product.price.toLocaleString()}</span>
+            <button className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors" aria-label="Add to wishlist">
+              <Heart size={18} />
+            </button>
+          </div>
+
+          {/* Rating */}
+          <div className="flex items-center gap-1 mb-3">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} size={14} className={i < Math.floor(product.rating || 0) ? "fill-amber-400 text-amber-400" : "text-border"} />
+            ))}
+            <span className="text-xs text-muted-foreground ml-1">({product.review_count || 0} Reviews)</span>
+          </div>
+
+          {product.original_price && (
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-sm text-muted-foreground line-through">৳{product.original_price.toLocaleString()}</span>
+              <span className="text-sm text-primary font-medium">
+                {Math.round((1 - product.price / product.original_price) * 100)}% off
+              </span>
             </div>
           )}
-          <div className="flex items-baseline gap-2 sm:gap-3 mb-4 sm:mb-6">
-            <span className="text-2xl sm:text-3xl font-bold text-primary">৳{product.price.toLocaleString()}</span>
-            {product.original_price && (
-              <span className="text-sm sm:text-lg text-muted-foreground line-through">৳{product.original_price.toLocaleString()}</span>
-            )}
-          </div>
 
           {product.description && (
-            <p className="text-xs sm:text-sm md:text-base text-muted-foreground mb-4 sm:mb-6 leading-relaxed">
-              {product.description}
-            </p>
+            <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{product.description}</p>
           )}
 
-          <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-            <span className="text-xs sm:text-sm font-medium">Quantity:</span>
-            <div className="flex items-center gap-3 border border-border rounded-full px-2">
-              <button onClick={() => setQty(Math.max(1, qty - 1))} className="p-1.5 sm:p-2 hover:text-primary transition-colors"><Minus size={14} /></button>
-              <span className="w-6 sm:w-8 text-center text-sm sm:text-base font-medium">{qty}</span>
-              <button onClick={() => setQty(qty + 1)} className="p-1.5 sm:p-2 hover:text-primary transition-colors"><Plus size={14} /></button>
+          {/* Quantity */}
+          <div className="flex items-center gap-3 mb-5">
+            <span className="text-sm font-medium">Quantity:</span>
+            <div className="flex items-center border border-border rounded-lg">
+              <button onClick={() => setQty(Math.max(1, qty - 1))} className="px-3 py-2 hover:bg-muted transition-colors rounded-l-lg">
+                <Minus size={14} />
+              </button>
+              <span className="w-10 text-center text-sm font-medium border-x border-border py-2">{qty}</span>
+              <button onClick={() => setQty(qty + 1)} className="px-3 py-2 hover:bg-muted transition-colors rounded-r-lg">
+                <Plus size={14} />
+              </button>
             </div>
           </div>
 
-          <div className="flex gap-2 sm:gap-3">
+          {/* Add to Cart & Buy Now */}
+          <div className="flex gap-3 mb-3">
             <Button
               size="lg"
-              className="flex-1 rounded-full h-11 sm:h-13 text-sm sm:text-base font-semibold"
-              onClick={() => { for (let i = 0; i < qty; i++) addItem(cartProduct); }}
+              className="flex-1 h-12 text-sm font-semibold rounded-lg"
+              onClick={handleAddToCart}
             >
-              <ShoppingBag size={18} /> Add to Cart
+              <ShoppingBag size={18} /> ADD TO CART
             </Button>
-            <Button size="lg" variant="outline" className="rounded-full h-11 sm:h-13 px-4 sm:px-5">
-              <Heart size={18} />
+            <Button
+              size="lg"
+              className="flex-1 h-12 text-sm font-semibold rounded-lg bg-purple-600 hover:bg-purple-700 text-white"
+              onClick={handleBuyNow}
+            >
+              BUY NOW
             </Button>
+          </div>
+
+          {/* WhatsApp Order */}
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 w-full h-12 rounded-lg bg-[hsl(142,70%,45%)] hover:bg-[hsl(142,70%,40%)] text-white font-semibold text-sm transition-colors mb-3"
+          >
+            <MessageCircle size={18} /> Order On WhatsApp
+          </a>
+
+          {/* Call For Order */}
+          <a
+            href="tel:+8801XXXXXXXXX"
+            className="flex items-center justify-center gap-2 w-full h-12 rounded-lg bg-[hsl(240,60%,35%)] hover:bg-[hsl(240,60%,30%)] text-white font-semibold text-sm transition-colors mb-5"
+          >
+            <Phone size={18} /> Call For Order
+          </a>
+
+          {/* Share */}
+          <div>
+            <span className="text-sm font-medium text-foreground">Share Now :</span>
+            <div className="flex items-center gap-2 mt-2">
+              {[
+                { label: "Facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}` },
+                { label: "Twitter", href: `https://twitter.com/intent/tweet?url=${shareUrl}` },
+                { label: "WhatsApp", href: `https://wa.me/?text=${encodeURIComponent(shareUrl)}` },
+              ].map((s) => (
+                <a
+                  key={s.label}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors text-xs font-bold"
+                  aria-label={`Share on ${s.label}`}
+                >
+                  {s.label[0]}
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </div>
