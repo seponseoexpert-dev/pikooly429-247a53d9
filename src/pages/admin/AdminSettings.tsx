@@ -255,7 +255,7 @@ const AdminSettings = () => {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-settings"] });
-      toast({ title: "সেটিংস সেভ হয়েছে ✓" });
+      toast({ title: "Settings saved successfully ✓" });
     },
     onError: (e: any) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
@@ -273,8 +273,8 @@ const AdminSettings = () => {
     <>
       <div className="space-y-4">
         <div>
-          <h2 className="text-2xl font-display font-bold">সেটিংস</h2>
-          <p className="text-muted-foreground text-sm">স্টোর কনফিগারেশন পরিচালনা করুন</p>
+          <h2 className="text-2xl font-display font-bold">Settings</h2>
+          <p className="text-muted-foreground text-sm">Manage store configuration</p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-4">
@@ -310,7 +310,7 @@ const AdminSettings = () => {
           <div className="flex-1 min-w-0">
             {isLoading ? (
               <div className="bg-card border rounded-lg p-8 text-center text-muted-foreground">
-                লোড হচ্ছে...
+                Loading...
               </div>
             ) : (
               <form onSubmit={handleSubmit}>
