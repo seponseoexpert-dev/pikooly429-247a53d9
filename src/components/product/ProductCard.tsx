@@ -1,6 +1,8 @@
 import { useCart } from "@/contexts/CartContext";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { ShoppingCart } from "lucide-react";
+import { useState } from "react";
 
 interface ProductCardProps {
   product: {
@@ -23,6 +25,7 @@ interface ProductCardProps {
 
 const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
   const { addItem } = useCart();
+  const [isAdding, setIsAdding] = useState(false);
   const origPrice = product.original_price ?? product.originalPrice;
   const discount = origPrice
     ? Math.round((1 - product.price / origPrice) * 100)
@@ -64,6 +67,7 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
         <button
           onClick={(e) => {
             e.preventDefault();
+            setIsAdding(true);
             addItem({
               id: product.id,
               name: product.name,
@@ -72,9 +76,17 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
               category: product.category || "",
               inStock: product.stock !== 0,
             });
+            setTimeout(() => setIsAdding(false), 600);
           }}
-          className="mt-2.5 sm:mt-3 w-full py-2 sm:py-2.5 rounded-lg bg-primary text-primary-foreground text-xs sm:text-sm font-semibold hover:bg-primary/90 transition-colors uppercase tracking-wide"
+          className="mt-2.5 sm:mt-3 w-full py-2 sm:py-2.5 rounded-lg bg-primary text-primary-foreground text-xs sm:text-sm font-semibold hover:bg-primary/90 transition-colors uppercase tracking-wide flex items-center justify-center gap-2"
         >
+          <motion.span
+            key={isAdding ? "adding" : "idle"}
+            animate={isAdding ? { scale: [1, 1.4, 1], rotate: [0, -15, 15, 0] } : {}}
+            transition={{ duration: 0.5 }}
+          >
+            <ShoppingCart size={16} />
+          </motion.span>
           Add to Cart
         </button>
       </div>
