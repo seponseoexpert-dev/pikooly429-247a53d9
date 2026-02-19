@@ -46,7 +46,7 @@ const ProductDetail = () => {
         .eq("is_active", true)
         .eq("category_id", product!.category_id!)
         .neq("id", product!.id)
-        .limit(4);
+        .limit(5);
       if (error) throw error;
       return data;
     },
@@ -318,7 +318,7 @@ const ProductDetail = () => {
       {related.length > 0 && (
         <section className="mt-10 sm:mt-16">
           <h2 className="text-xl sm:text-2xl font-display font-bold mb-4 sm:mb-6">You May Also Like</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 md:gap-5">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-2.5 sm:gap-3 md:gap-5">
             {related.map((p: any, i: number) => <ProductCard key={p.id} product={p} index={i} />)}
           </div>
         </section>
