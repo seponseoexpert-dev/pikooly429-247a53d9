@@ -63,7 +63,7 @@ const Shop = () => {
   const activeCategoryName = activeCategory?.name || "All Products";
   const { settings } = useSiteSettings();
 
-  // Dynamic SEO meta tags
+  // Dynamic SEO meta tags + FAQ Schema
   useEffect(() => {
     const siteName = settings.site_title || "Pikooly";
     const catName = activeCategory?.name;
@@ -79,8 +79,35 @@ const Shop = () => {
     }
     metaTag.content = metaDesc || `Shop ${catName || "all products"} at ${siteName}`;
 
+    // FAQ Schema.org JSON-LD
+    const existingSchema = document.getElementById("faq-schema-jsonld");
+    if (existingSchema) existingSchema.remove();
+
+    const faqs = (activeCategory as any)?.faq;
+    if (Array.isArray(faqs) && faqs.length > 0) {
+      const schema = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faqs.map((faq: any) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.answer,
+          },
+        })),
+      };
+      const script = document.createElement("script");
+      script.id = "faq-schema-jsonld";
+      script.type = "application/ld+json";
+      script.textContent = JSON.stringify(schema);
+      document.head.appendChild(script);
+    }
+
     return () => {
       document.title = siteName;
+      const schemaTag = document.getElementById("faq-schema-jsonld");
+      if (schemaTag) schemaTag.remove();
     };
   }, [activeCategory, settings]);
 
