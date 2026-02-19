@@ -1,4 +1,4 @@
-import { Heart, ShoppingBag, Star } from "lucide-react";
+import { Heart } from "lucide-react";
 import { Product } from "@/types";
 import { useCart } from "@/contexts/CartContext";
 import { Link } from "react-router-dom";
@@ -11,6 +11,9 @@ interface ProductCardProps {
 
 const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
   const { addItem } = useCart();
+  const discount = product.originalPrice
+    ? Math.round((1 - product.price / product.originalPrice) * 100)
+    : 0;
 
   return (
     <motion.div
@@ -18,62 +21,53 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.05, duration: 0.4 }}
-      className="group bg-card rounded-2xl overflow-hidden border border-border/50 hover:border-primary/30 hover:shadow-xl transition-all duration-400"
+      className="group bg-card rounded-2xl overflow-hidden border border-border/50 hover:shadow-lg transition-all duration-300"
     >
       {/* Image */}
-      <Link to={`/product/${product.id}`} className="block relative overflow-hidden aspect-square">
+      <Link to={`/product/${product.id}`} className="block relative overflow-hidden aspect-square bg-secondary/50">
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
         />
-        {product.badge && (
-          <span className="absolute top-3 left-3 px-3 py-1 text-[10px] font-bold uppercase tracking-wider bg-primary text-primary-foreground rounded-full">
-            {product.badge}
-          </span>
-        )}
-        {product.originalPrice && (
-          <span className="absolute top-3 right-3 px-2 py-1 text-[10px] font-bold bg-accent text-accent-foreground rounded-full">
-            -{Math.round((1 - product.price / product.originalPrice) * 100)}%
-          </span>
-        )}
+        {/* Wishlist heart */}
         <button
-          className="absolute bottom-3 right-3 w-9 h-9 rounded-full bg-card/90 backdrop-blur-sm flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-card transition-all opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 duration-300"
+          className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-card/90 border border-border/50 flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors"
           aria-label="Add to wishlist"
+          onClick={(e) => e.preventDefault()}
         >
-          <Heart size={16} />
+          <Heart size={15} />
         </button>
+        {/* Discount badge */}
+        {discount > 0 && (
+          <span className="absolute bottom-2.5 right-2.5 px-2.5 py-1 text-[11px] font-bold bg-primary text-primary-foreground rounded-full">
+            {discount}% off
+          </span>
+        )}
       </Link>
 
       {/* Info */}
-      <div className="p-3 md:p-4">
+      <div className="p-3">
         <Link to={`/product/${product.id}`}>
-          <h3 className="font-medium text-sm md:text-base text-foreground truncate hover:text-primary transition-colors">
+          <h3 className="font-medium text-sm text-foreground truncate hover:text-primary transition-colors">
             {product.name}
           </h3>
         </Link>
-        {product.rating && (
-          <div className="flex items-center gap-1 mt-1">
-            <Star size={12} className="fill-gold text-gold" />
-            <span className="text-xs text-muted-foreground">{product.rating}</span>
+        <div className="flex items-center gap-2 mt-1.5">
+          <span className="font-bold text-foreground text-base">৳ {product.price.toLocaleString()}</span>
+          {product.rating && (
+            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-bold bg-primary text-primary-foreground rounded">
+              {product.rating} ★
+            </span>
+          )}
+        </div>
+        {product.originalPrice && (
+          <div className="flex items-center gap-2 mt-0.5">
+            <span className="text-xs text-muted-foreground line-through">৳{product.originalPrice.toLocaleString()}</span>
+            <span className="text-xs text-primary font-medium">{discount}% off</span>
           </div>
         )}
-        <div className="flex items-center justify-between mt-2">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-primary text-base">৳{product.price.toLocaleString()}</span>
-            {product.originalPrice && (
-              <span className="text-xs text-muted-foreground line-through">৳{product.originalPrice.toLocaleString()}</span>
-            )}
-          </div>
-          <button
-            onClick={() => addItem(product)}
-            className="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors shadow-sm hover:shadow-md"
-            aria-label="Add to cart"
-          >
-            <ShoppingBag size={15} />
-          </button>
-        </div>
       </div>
     </motion.div>
   );
