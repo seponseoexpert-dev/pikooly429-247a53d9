@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useSearchParams, Link } from "react-router-dom";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import ProductCard from "@/components/product/ProductCard";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -40,11 +41,12 @@ const Shop = () => {
     },
   });
 
-  const activeCategoryName = useMemo(() => {
-    if (!selectedCat) return "All Products";
-    const cat = categories.find((c: any) => c.slug === selectedCat);
-    return cat?.name || "All Products";
+  const activeCategory = useMemo(() => {
+    if (!selectedCat) return null;
+    return categories.find((c: any) => c.slug === selectedCat) || null;
   }, [selectedCat, categories]);
+
+  const activeCategoryName = activeCategory?.name || "All Products";
 
   const filtered = useMemo(() => {
     let list = selectedCat
@@ -81,6 +83,13 @@ const Shop = () => {
         </select>
       </div>
 
+      {/* Short Description */}
+      {activeCategory && (activeCategory as any).short_description && (
+        <div className="mb-6 text-sm text-muted-foreground leading-relaxed max-w-3xl">
+          {(activeCategory as any).short_description}
+        </div>
+      )}
+
       {/* Category pills - only show if no specific category is selected */}
       {!catParam && (
         <div className="flex gap-2 overflow-x-auto mb-5 md:mb-8 scrollbar-hide">
@@ -114,6 +123,30 @@ const Shop = () => {
           <p className="text-sm sm:text-base md:text-lg">No products found in this category.</p>
         </div>
       )}
+
+      {/* Long Description */}
+      {activeCategory && (activeCategory as any).long_description && (
+        <div className="mt-10 prose prose-sm max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: (activeCategory as any).long_description }} />
+      )}
+
+      {/* FAQ Section */}
+      {activeCategory && (() => {
+        const faqs = (activeCategory as any).faq;
+        if (!Array.isArray(faqs) || faqs.length === 0) return null;
+        return (
+          <div className="mt-10">
+            <h2 className="text-xl font-display font-bold mb-4">Frequently Asked Questions</h2>
+            <Accordion type="single" collapsible className="w-full max-w-3xl">
+              {faqs.map((faq: any, i: number) => (
+                <AccordionItem key={i} value={`faq-${i}`}>
+                  <AccordionTrigger className="text-sm font-medium text-left">{faq.question}</AccordionTrigger>
+                  <AccordionContent className="text-sm text-muted-foreground">{faq.answer}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        );
+      })()}
     </main>
   );
 };
