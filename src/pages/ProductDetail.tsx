@@ -14,6 +14,7 @@ const ProductDetail = () => {
   const { addItem } = useCart();
   const [qty, setQty] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [activeTab, setActiveTab] = useState<"specification" | "description" | "reviews">("specification");
 
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", id],
@@ -242,7 +243,77 @@ const ProductDetail = () => {
         </div>
       </div>
 
-      <ReviewSection productId={product.id} />
+      {/* Tabbed Section */}
+      <div className="mt-10 sm:mt-14 border border-border rounded-xl bg-card overflow-hidden">
+        <div className="flex border-b border-border">
+          {[
+            { key: "specification" as const, label: "Specification" },
+            { key: "description" as const, label: "Description" },
+            { key: "reviews" as const, label: `Customer Reviews (${product.review_count || 0})` },
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`px-4 sm:px-6 py-3 text-sm font-medium transition-colors ${
+                activeTab === tab.key
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="p-4 sm:p-6">
+          {activeTab === "specification" && (
+            <div>
+              <h3 className="text-lg font-bold text-foreground mb-1">Specification</h3>
+              <div className="w-12 h-0.5 bg-primary mb-4" />
+              {(() => {
+                const specs = product.specifications as Array<{ item: string; value: string }> | null;
+                if (!specs || specs.length === 0) {
+                  return <p className="text-sm text-muted-foreground">No specifications available.</p>;
+                }
+                return (
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-border">
+                        <th className="text-left py-3 font-semibold text-foreground w-1/2">Item</th>
+                        <th className="text-left py-3 font-semibold text-foreground">Quantity</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {specs.map((spec, i) => (
+                        <tr key={i} className="border-b border-border last:border-0">
+                          <td className="py-3 text-foreground">{spec.item}</td>
+                          <td className="py-3 text-muted-foreground">{spec.value}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                );
+              })()}
+            </div>
+          )}
+
+          {activeTab === "description" && (
+            <div>
+              <h3 className="text-lg font-bold text-foreground mb-1">Description</h3>
+              <div className="w-12 h-0.5 bg-primary mb-4" />
+              {product.description ? (
+                <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{product.description}</p>
+              ) : (
+                <p className="text-sm text-muted-foreground">No description available.</p>
+              )}
+            </div>
+          )}
+
+          {activeTab === "reviews" && (
+            <ReviewSection productId={product.id} />
+          )}
+        </div>
+      </div>
 
       {related.length > 0 && (
         <section className="mt-10 sm:mt-16">
