@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -12,6 +12,7 @@ import {
   Bell, BellRing, Share2, Cookie, BarChart3, Palette, Image,
   DollarSign, Users, Store, Gift, Ruler, Receipt, FileText,
   Shield, Languages, MessageSquare, CreditCard, Award, Settings,
+  Upload, X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -51,8 +52,8 @@ const sectionFields: Record<string, { key: string; label: string; type?: string 
     { key: "store_email", label: "Email" },
     { key: "store_address", label: "Address" },
     { key: "company_website", label: "Website" },
-    { key: "company_logo", label: "Logo URL" },
-    { key: "company_favicon", label: "Favicon URL" },
+    { key: "company_logo", label: "Logo", type: "image_upload" },
+    { key: "company_favicon", label: "Favicon", type: "image_upload" },
   ],
   site: [
     { key: "site_title", label: "Site Title" },
@@ -126,13 +127,13 @@ const sectionFields: Record<string, { key: string; label: string; type?: string 
     { key: "dark_mode_enabled", label: "Dark Mode", type: "switch" },
   ],
   sliders: [
-    { key: "slider_1_image", label: "Slider 1 Image URL" },
+    { key: "slider_1_image", label: "Slider 1 Image", type: "image_upload" },
     { key: "slider_1_title", label: "Slider 1 Title" },
     { key: "slider_1_link", label: "Slider 1 Link" },
-    { key: "slider_2_image", label: "Slider 2 Image URL" },
+    { key: "slider_2_image", label: "Slider 2 Image", type: "image_upload" },
     { key: "slider_2_title", label: "Slider 2 Title" },
     { key: "slider_2_link", label: "Slider 2 Link" },
-    { key: "slider_3_image", label: "Slider 3 Image URL" },
+    { key: "slider_3_image", label: "Slider 3 Image", type: "image_upload" },
     { key: "slider_3_title", label: "Slider 3 Title" },
     { key: "slider_3_link", label: "Slider 3 Link" },
   ],
@@ -209,6 +210,89 @@ const sectionFields: Record<string, { key: string; label: string; type?: string 
   ],
 };
 
+const ImageUploadField = ({
+  fieldKey,
+  value,
+  onChange,
+}: {
+  fieldKey: string;
+  value: string;
+  onChange: (url: string) => void;
+}) => {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const { toast } = useToast();
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const filePath = `settings/${fieldKey}-${Date.now()}.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("images")
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage
+        .from("images")
+        .getPublicUrl(filePath);
+
+      onChange(urlData.publicUrl);
+      toast({ title: "Image uploaded successfully ✓" });
+    } catch (err: any) {
+      toast({ title: "Upload failed", description: err.message, variant: "destructive" });
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      {value && (
+        <div className="relative inline-block">
+          <img
+            src={value}
+            alt={fieldKey}
+            className="w-24 h-24 object-contain rounded-lg border bg-muted"
+          />
+          <button
+            type="button"
+            onClick={() => onChange("")}
+            className="absolute -top-2 -right-2 w-5 h-5 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center"
+          >
+            <X size={12} />
+          </button>
+        </div>
+      )}
+      <div className="flex gap-2">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => fileRef.current?.click()}
+          disabled={uploading}
+        >
+          <Upload className="h-4 w-4 mr-2" />
+          {uploading ? "Uploading..." : "Upload Image"}
+        </Button>
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleUpload}
+        />
+      </div>
+    </div>
+  );
+};
+
 const AdminSettings = () => {
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -234,13 +318,11 @@ const AdminSettings = () => {
 
   const saveMutation = useMutation({
     mutationFn: async (vals: Record<string, string>) => {
-      // Get all keys for current section
       const fields = sectionFields[activeSection] || [];
       const keys = fields.map(f => f.key);
 
       const promises = keys.map(async (key) => {
         const value = vals[key] || "";
-        // Check if key exists
         const existing = settings.find((s: any) => s.key === key);
         if (existing) {
           return supabase.from("site_settings").update({ value }).eq("key", key);
@@ -255,6 +337,7 @@ const AdminSettings = () => {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-settings"] });
+      qc.invalidateQueries({ queryKey: ["site-settings"] });
       toast({ title: "Settings saved successfully ✓" });
     },
     onError: (e: any) => toast({ title: "Error", description: e.message, variant: "destructive" }),
@@ -334,7 +417,15 @@ const AdminSettings = () => {
                       currentFields.map((field) => (
                         <div key={field.key} className="space-y-1.5">
                           <label className="text-sm font-medium">{field.label}</label>
-                          {field.type === "textarea" ? (
+                          {field.type === "image_upload" ? (
+                            <ImageUploadField
+                              fieldKey={field.key}
+                              value={formValues[field.key] || ""}
+                              onChange={(url) =>
+                                setFormValues({ ...formValues, [field.key]: url })
+                              }
+                            />
+                          ) : field.type === "textarea" ? (
                             <Textarea
                               rows={4}
                               value={formValues[field.key] || ""}
