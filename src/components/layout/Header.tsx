@@ -28,14 +28,8 @@ const Header = () => {
       <header className="sticky top-0 z-50 bg-card border-b border-border/50">
         <div className="section-container">
           <div className="flex items-center justify-between h-12 sm:h-14 md:h-16">
-            {/* Mobile menu button */}
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden p-1.5 sm:p-2 text-foreground"
-              aria-label="Toggle menu"
-            >
-              {menuOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
+            {/* Spacer for mobile to keep logo centered */}
+            <div className="w-8 md:hidden" />
 
             {/* Logo */}
             <Link to="/" className="flex items-center">
