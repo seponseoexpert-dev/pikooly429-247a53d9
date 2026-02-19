@@ -121,15 +121,15 @@ const Shop = () => {
 
       {/* Short Description */}
       {activeCategory && (activeCategory as any).short_description && (
-        <div className="mb-6 max-w-3xl">
+        <div className="mb-6 max-w-none">
           <div
             ref={shortDescRef}
-            className={`text-muted-foreground leading-relaxed prose prose-headings:text-foreground prose-headings:font-display overflow-hidden transition-all duration-300 ${!shortDescExpanded ? "max-h-[4.5em]" : ""}`}
+            className={`prose prose-lg max-w-none prose-headings:text-foreground prose-headings:font-display prose-headings:text-2xl prose-headings:md:text-3xl prose-p:text-muted-foreground prose-p:text-sm prose-p:md:text-base prose-p:leading-relaxed overflow-hidden transition-all duration-300 ${!shortDescExpanded ? "max-h-[6rem]" : ""}`}
             dangerouslySetInnerHTML={{ __html: (activeCategory as any).short_description }}
           />
           <button
             onClick={() => setShortDescExpanded(!shortDescExpanded)}
-            className="text-primary text-sm font-medium mt-1 hover:underline"
+            className="text-primary text-sm font-medium mt-2 hover:underline"
           >
             {shortDescExpanded ? "Read Less" : "Read More..."}
           </button>
