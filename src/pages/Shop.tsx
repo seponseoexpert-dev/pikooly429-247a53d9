@@ -180,16 +180,31 @@ const Shop = () => {
         const faqs = (activeCategory as any).faq;
         if (!Array.isArray(faqs) || faqs.length === 0) return null;
         return (
-          <div className="mt-10">
-            <h2 className="text-xl font-display font-bold mb-4">Frequently Asked Questions</h2>
-            <Accordion type="single" collapsible className="w-full max-w-3xl">
-              {faqs.map((faq: any, i: number) => (
-                <AccordionItem key={i} value={`faq-${i}`}>
-                  <AccordionTrigger className="text-sm font-medium text-left">{faq.question}</AccordionTrigger>
-                  <AccordionContent className="text-sm text-muted-foreground">{faq.answer}</AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+          <div className="mt-14 mb-8">
+            <div className="text-center mb-8">
+              <h2 className="text-xl md:text-2xl font-display font-semibold text-foreground">
+                Frequently Asked Questions
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">Find answers to common questions about {activeCategory?.name}</p>
+            </div>
+            <div className="max-w-3xl mx-auto">
+              <Accordion type="single" collapsible className="w-full space-y-3">
+                {faqs.map((faq: any, i: number) => (
+                  <AccordionItem
+                    key={i}
+                    value={`faq-${i}`}
+                    className="border border-border/60 rounded-xl px-5 bg-card shadow-sm data-[state=open]:shadow-md transition-shadow duration-200"
+                  >
+                    <AccordionTrigger className="text-sm md:text-base font-medium text-left text-foreground py-4 hover:no-underline">
+                      {faq.question}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-sm text-muted-foreground pb-4 leading-relaxed">
+                      {faq.answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
           </div>
         );
       })()}
