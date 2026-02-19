@@ -21,37 +21,37 @@ const Header = () => {
   return (
     <>
       {/* Announcement Bar */}
-      <div className="bg-primary text-primary-foreground text-center text-xs md:text-sm py-2 px-4 font-medium">
+      <div className="bg-primary text-primary-foreground text-center text-[11px] sm:text-xs md:text-sm py-1.5 sm:py-2 px-4 font-medium">
         🌸 Same Day Delivery Available in 500+ Cities
       </div>
 
       <header className="sticky top-0 z-50 bg-card border-b border-border/50">
         <div className="section-container">
-          <div className="flex items-center justify-between h-14 md:h-16">
+          <div className="flex items-center justify-between h-12 sm:h-14 md:h-16">
             {/* Mobile menu button */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden p-2 text-foreground"
+              className="md:hidden p-1.5 sm:p-2 text-foreground"
               aria-label="Toggle menu"
             >
-              {menuOpen ? <X size={22} /> : <Menu size={22} />}
+              {menuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
 
             {/* Logo */}
             <Link to="/" className="flex items-center">
-              <span className="text-xl md:text-2xl font-display font-bold">
+              <span className="text-lg sm:text-xl md:text-2xl font-display font-bold">
                 <span className="text-foreground">Pikooly</span>
                 <span className="text-primary">Flora</span>
               </span>
             </Link>
 
             {/* Desktop nav */}
-            <nav className="hidden md:flex items-center gap-8">
+            <nav className="hidden md:flex items-center gap-5 lg:gap-8">
               {navLinks.map((link) => (
                 <Link
                   key={link.label}
                   to={link.href}
-                  className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                  className="text-sm lg:text-base font-medium text-muted-foreground hover:text-primary transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -59,22 +59,22 @@ const Header = () => {
             </nav>
 
             {/* Right icons */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2">
               <button
                 onClick={() => setSearchOpen(!searchOpen)}
-                className="p-2 text-foreground"
+                className="p-1.5 sm:p-2 text-foreground"
                 aria-label="Search"
               >
-                <Search size={20} />
+                <Search size={18} className="sm:w-5 sm:h-5" />
               </button>
               <button
                 onClick={() => setIsOpen(true)}
-                className="relative p-2 text-foreground"
+                className="relative p-1.5 sm:p-2 text-foreground"
                 aria-label="Cart"
               >
-                <ShoppingBag size={20} />
+                <ShoppingBag size={18} className="sm:w-5 sm:h-5" />
                 {totalItems > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 bg-primary text-primary-foreground text-[10px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-bold">
+                  <span className="absolute -top-0.5 -right-0.5 bg-primary text-primary-foreground text-[9px] sm:text-[10px] w-4 h-4 sm:w-4.5 sm:h-4.5 rounded-full flex items-center justify-center font-bold">
                     {totalItems}
                   </span>
                 )}
@@ -96,7 +96,7 @@ const Header = () => {
                   <input
                     type="text"
                     placeholder="Search flowers, cakes, gifts..."
-                    className="w-full pl-11 pr-4 py-2.5 rounded-full bg-muted border border-border focus:border-primary outline-none text-sm"
+                    className="w-full pl-11 pr-4 py-2 sm:py-2.5 rounded-full bg-muted border border-border focus:border-primary outline-none text-xs sm:text-sm"
                     autoFocus
                   />
                 </div>
@@ -113,9 +113,9 @@ const Header = () => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed inset-0 top-[calc(2rem+3.5rem)] z-40 bg-card md:hidden"
+              className="fixed inset-0 top-[calc(2rem+3rem)] sm:top-[calc(2rem+3.5rem)] z-40 bg-card md:hidden"
             >
-              <nav className="flex flex-col p-6 gap-1">
+              <nav className="flex flex-col p-4 sm:p-6 gap-1">
                 {navLinks.map((link, i) => (
                   <motion.div
                     key={link.label}
@@ -126,7 +126,7 @@ const Header = () => {
                     <Link
                       to={link.href}
                       onClick={() => setMenuOpen(false)}
-                      className="block py-3 px-4 text-lg font-medium text-foreground hover:text-primary hover:bg-muted rounded-lg transition-all"
+                      className="block py-2.5 sm:py-3 px-3 sm:px-4 text-base sm:text-lg font-medium text-foreground hover:text-primary hover:bg-muted rounded-lg transition-all"
                     >
                       {link.label}
                     </Link>
