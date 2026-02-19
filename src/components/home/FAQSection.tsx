@@ -14,7 +14,7 @@ const FAQSection = () => {
     <section ref={ref} className="py-8 sm:py-10 md:py-12 lg:py-14 section-container" aria-label="Frequently Asked Questions">
       <div className="max-w-3xl mx-auto">
         <div className="mb-5 sm:mb-6 md:mb-8 text-center">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-foreground mb-1 sm:mb-2">
+          <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-1 sm:mb-2">
             Frequently Asked Questions
           </h2>
           <p className="text-muted-foreground text-xs sm:text-sm">
