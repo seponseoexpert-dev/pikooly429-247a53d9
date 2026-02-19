@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import AdminLayout from "@/components/admin/AdminLayout";
+
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -270,7 +270,7 @@ const AdminSettings = () => {
   const SectionIcon = currentSection?.icon || Settings;
 
   return (
-    <AdminLayout>
+    <>
       <div className="space-y-4">
         <div>
           <h2 className="text-2xl font-display font-bold">সেটিংস</h2>
@@ -377,7 +377,7 @@ const AdminSettings = () => {
           </div>
         </div>
       </div>
-    </AdminLayout>
+    </>
   );
 };
 
