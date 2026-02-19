@@ -124,7 +124,7 @@ const Shop = () => {
         <div className="mb-6 max-w-none">
           <div
             ref={shortDescRef}
-            className={`prose max-w-none prose-headings:text-foreground prose-headings:font-display prose-headings:text-base prose-headings:md:text-xl prose-headings:lg:text-2xl prose-headings:!text-left prose-headings:mb-1 prose-p:text-muted-foreground prose-p:text-xs prose-p:md:text-sm prose-p:leading-relaxed prose-p:!text-left prose-p:mt-0 [&_*]:!text-left overflow-hidden transition-all duration-300 ${!shortDescExpanded ? "[&_p]:line-clamp-3" : ""}`}
+            className={`prose max-w-none prose-headings:text-foreground prose-headings:font-display prose-headings:text-base prose-headings:md:text-xl prose-headings:lg:text-2xl prose-headings:mb-1 prose-p:text-muted-foreground prose-p:text-xs prose-p:md:text-sm prose-p:leading-relaxed prose-p:mt-0 overflow-hidden transition-all duration-300 ${!shortDescExpanded ? "[&_p]:line-clamp-3" : ""}`}
             dangerouslySetInnerHTML={{ __html: (activeCategory as any).short_description }}
           />
           <button
