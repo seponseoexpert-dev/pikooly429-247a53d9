@@ -31,6 +31,7 @@ const AdminProducts = () => {
     name: "", slug: "", description: "", price: 0, original_price: 0,
     image_url: "", category_id: "", is_active: true, is_featured: false, stock: 0, tags: "",
     specifications: [] as Array<{ item: string; value: string }>,
+    seo_title: "", seo_description: "",
   };
   const [form, setForm] = useState(defaultForm);
 
@@ -60,6 +61,7 @@ const AdminProducts = () => {
       is_active: p.is_active, is_featured: p.is_featured, stock: p.stock,
       tags: (p.tags || []).join(", "),
       specifications: specs,
+      seo_title: (p as any).seo_title || "", seo_description: (p as any).seo_description || "",
     });
     setImageFile(null);
     setDialogOpen(true);
@@ -94,6 +96,7 @@ const AdminProducts = () => {
       image_url: imageUrl || null, category_id: form.category_id || null,
       is_active: form.is_active, is_featured: form.is_featured, stock: form.stock, tags,
       specifications: specs.length > 0 ? specs : null,
+      seo_title: form.seo_title.trim() || null, seo_description: form.seo_description.trim() || null,
     };
 
     if (editing) {
@@ -212,6 +215,51 @@ const AdminProducts = () => {
                   </div>
                 ))}
               </div>
+              {/* SEO Section */}
+              <div className="space-y-4 border-t pt-4 mt-2">
+                <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">🔍 SEO Settings</h3>
+                {/* Google Preview */}
+                <div className="bg-muted/50 rounded-lg p-4 space-y-1">
+                  <p className="text-xs text-muted-foreground mb-2 font-medium">Google Search Preview</p>
+                  <p className="text-[#1a0dab] text-lg leading-snug truncate font-medium">
+                    {form.seo_title || form.name || "Product Title"}
+                  </p>
+                  <p className="text-[#006621] text-sm truncate">
+                    yoursite.com/product/{form.slug || "product-slug"}
+                  </p>
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    {form.seo_description || form.description || "Product description will appear here..."}
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label>SEO Title</Label>
+                    <span className={`text-xs ${(form.seo_title || form.name).length > 60 ? "text-destructive" : "text-muted-foreground"}`}>
+                      {(form.seo_title || form.name).length}/60
+                    </span>
+                  </div>
+                  <Input value={form.seo_title} onChange={(e) => setForm({ ...form, seo_title: e.target.value })} placeholder={form.name || "Custom SEO title..."} />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label>Permalink (Slug)</Label>
+                    <span className={`text-xs ${form.slug.length > 75 ? "text-destructive" : "text-muted-foreground"}`}>
+                      {form.slug.length}/75
+                    </span>
+                  </div>
+                  <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label>Meta Description</Label>
+                    <span className={`text-xs ${(form.seo_description || form.description).length > 160 ? "text-destructive" : "text-muted-foreground"}`}>
+                      {(form.seo_description || form.description).length}/160
+                    </span>
+                  </div>
+                  <Textarea value={form.seo_description} onChange={(e) => setForm({ ...form, seo_description: e.target.value })} placeholder={form.description || "Custom meta description..."} rows={2} />
+                </div>
+              </div>
+
               <div className="flex gap-6">
                 <div className="flex items-center gap-2">
                   <Switch checked={form.is_active} onCheckedChange={(c) => setForm({ ...form, is_active: c })} />
