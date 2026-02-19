@@ -85,7 +85,7 @@ const AdminCategories = () => {
     const slug = form.slug || generateSlug(form.name);
     let parsedFaq: any[] = [];
     try { parsedFaq = JSON.parse(form.faq); } catch { parsedFaq = []; }
-    const payload = { name: form.name.trim(), slug, description: form.description || null, short_description: form.short_description || null, long_description: form.long_description || null, faq: parsedFaq, image_url: imageUrl || null, is_active: form.is_active, display_order: form.display_order };
+    const payload = { name: form.name.trim(), slug, description: form.description || null, short_description: form.short_description || null, long_description: form.long_description || null, faq: parsedFaq, image_url: imageUrl || null, is_active: form.is_active, display_order: form.display_order } as any;
 
     if (editing) {
       const { error } = await supabase.from("categories").update(payload).eq("id", editing.id);
