@@ -21,7 +21,7 @@ const ProductGrid = () => {
     : products.filter((p) => p.category.toLowerCase() === activeTab.toLowerCase());
 
   return (
-    <section ref={ref} className="py-6 sm:py-8 md:py-10 lg:py-14 section-container" aria-label="Products">
+    <section ref={ref} className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Products">
       {/* Trending Gifts header */}
       <div className="flex items-center justify-between mb-4 md:mb-6">
         <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground">
@@ -43,7 +43,7 @@ const ProductGrid = () => {
       </div>
 
       {/* Stats bar */}
-      <div className="my-6 sm:my-8 md:my-10 lg:my-12 bg-secondary rounded-2xl py-4 sm:py-5 md:py-6 px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 md:gap-12">
+      <div className="my-4 sm:my-6 md:my-8 lg:my-10 bg-secondary rounded-2xl py-4 sm:py-5 md:py-6 px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 md:gap-12">
         <div className="flex items-center gap-2 text-foreground">
           <span className="text-lg sm:text-xl">⭐</span>
           <span className="font-semibold text-sm sm:text-base">Rated 4.8/5</span>
