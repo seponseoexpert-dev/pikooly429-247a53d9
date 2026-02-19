@@ -27,8 +27,8 @@ const CartDrawer = () => {
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-border">
-              <h2 className="font-display text-xl font-bold flex items-center gap-2">
-                <ShoppingBag size={20} /> Cart ({totalItems})
+              <h2 className="font-display text-base sm:text-lg md:text-xl font-bold flex items-center gap-2">
+                <ShoppingBag size={18} className="sm:w-5 sm:h-5" /> Cart ({totalItems})
               </h2>
               <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-muted rounded-full transition-colors">
                 <X size={20} />
@@ -40,8 +40,8 @@ const CartDrawer = () => {
               {items.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">
                   <ShoppingBag size={48} className="mx-auto mb-4 opacity-30" />
-                  <p className="font-medium">Your cart is empty</p>
-                  <p className="text-sm mt-1">Start adding some beautiful items!</p>
+                  <p className="font-medium text-sm sm:text-base">Your cart is empty</p>
+                  <p className="text-xs sm:text-sm mt-1">Start adding some beautiful items!</p>
                 </div>
               ) : (
                 items.map((item) => (
@@ -53,8 +53,8 @@ const CartDrawer = () => {
                       loading="lazy"
                     />
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-sm truncate">{item.product.name}</h4>
-                      <p className="text-primary font-bold text-sm mt-1">৳{item.product.price}</p>
+                      <h4 className="font-medium text-xs sm:text-sm truncate">{item.product.name}</h4>
+                      <p className="text-primary font-bold text-xs sm:text-sm mt-1">৳{item.product.price}</p>
                       <div className="flex items-center gap-2 mt-2">
                         <button
                           onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
@@ -85,12 +85,12 @@ const CartDrawer = () => {
             {/* Footer */}
             {items.length > 0 && (
               <div className="p-4 border-t border-border space-y-3">
-                <div className="flex justify-between text-lg font-bold">
+                <div className="flex justify-between text-base sm:text-lg font-bold">
                   <span>Total</span>
                   <span className="text-primary">৳{totalPrice.toLocaleString()}</span>
                 </div>
                 <Link to="/checkout" onClick={() => setIsOpen(false)}>
-                  <Button className="w-full rounded-full h-12 text-base font-semibold">
+                  <Button className="w-full rounded-full h-11 sm:h-12 text-sm sm:text-base font-semibold">
                     Checkout — ৳{totalPrice.toLocaleString()}
                   </Button>
                 </Link>
