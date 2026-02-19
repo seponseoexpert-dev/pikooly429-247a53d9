@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import {
-  LayoutDashboard, Package, ShoppingCart, FileText, Tag, LogOut, Menu, X, Users, Star,
+  LayoutDashboard, Package, ShoppingCart, FileText, Tag, LogOut, Menu, X, Users, Star, Ticket, Settings,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -16,6 +16,8 @@ const navItems = [
   { label: "Customers", icon: Users, path: "/admin/customers" },
   { label: "Reviews", icon: Star, path: "/admin/reviews" },
   { label: "Blog", icon: FileText, path: "/admin/blog" },
+  { label: "Coupons", icon: Ticket, path: "/admin/coupons" },
+  { label: "Settings", icon: Settings, path: "/admin/settings" },
 ];
 
 const AdminLayout = ({ children }: { children: ReactNode }) => {
