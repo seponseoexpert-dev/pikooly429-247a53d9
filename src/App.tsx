@@ -22,11 +22,10 @@ import AdminProducts from "./pages/admin/AdminProducts";
 import AdminCategories from "./pages/admin/AdminCategories";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminCustomers from "./pages/admin/AdminCustomers";
+import AdminBlog from "./pages/admin/AdminBlog";
+import AdminReviews from "./pages/admin/AdminReviews";
 
 const queryClient = new QueryClient();
-
-// Placeholder admin pages
-const AdminBlog = () => <div><h2 className="text-2xl font-display font-bold mb-4">Blog</h2><p className="text-muted-foreground">Blog management coming in Phase 4.</p></div>;
 
 const PublicLayout = ({ children }: { children: React.ReactNode }) => (
   <>
@@ -62,6 +61,7 @@ const App = () => (
               <Route path="/admin/orders" element={<ProtectedAdminRoute><AdminOrders /></ProtectedAdminRoute>} />
               <Route path="/admin/customers" element={<ProtectedAdminRoute><AdminCustomers /></ProtectedAdminRoute>} />
               <Route path="/admin/blog" element={<ProtectedAdminRoute><AdminBlog /></ProtectedAdminRoute>} />
+              <Route path="/admin/reviews" element={<ProtectedAdminRoute><AdminReviews /></ProtectedAdminRoute>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>
