@@ -14,7 +14,7 @@ const AboutSection = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={isVisible ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.6 }}
-        className="max-w-3xl"
+        className="max-w-3xl mx-auto text-center"
       >
         <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-3 md:mb-4">
           PikoolyFlora: Online Flower Shop in Bangladesh
@@ -46,7 +46,7 @@ const AboutSection = () => {
         </button>
 
         {/* Medals */}
-        <div className="flex items-center gap-4 mt-4 sm:mt-6">
+        <div className="flex items-center justify-center gap-4 mt-4 sm:mt-6">
           <img src={medal1} alt="PikoolyFlora Badge" className="h-12 sm:h-14 md:h-16 w-auto" />
           <img src={medal2} alt="PikoolyFlora Badge" className="h-12 sm:h-14 md:h-16 w-auto" />
         </div>

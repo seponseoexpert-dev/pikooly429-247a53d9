@@ -63,7 +63,7 @@ const ProductGrid = () => {
       </div>
 
       {/* Occasion tabs */}
-      <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-3 mb-4 md:mb-6 scrollbar-hide justify-center">
+      <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-3 mb-4 md:mb-6 scrollbar-hide justify-start sm:justify-center px-1">
         {tabs.map(({ label, icon: Icon }) => (
           <button
             key={label}
