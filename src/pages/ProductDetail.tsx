@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingBag, Heart, Minus, Plus, Star, Phone, MessageCircle } from "lucide-react";
 import { useState } from "react";
 import ProductCard from "@/components/product/ProductCard";
+import ReviewSection from "@/components/product/ReviewSection";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -240,6 +241,8 @@ const ProductDetail = () => {
           </div>
         </div>
       </div>
+
+      <ReviewSection productId={product.id} />
 
       {related.length > 0 && (
         <section className="mt-10 sm:mt-16">
