@@ -9,7 +9,7 @@ const BottomNav = () => {
   const links = [
     { icon: Home, label: "Home", href: "/" },
     { icon: Truck, label: "Same Day", href: "/shop?cat=same-day" },
-    { icon: Gift, label: "All Gifts", href: "/shop" },
+    { icon: Gift, label: "All Gifts", href: "/all-gifts" },
     { icon: ShoppingCart, label: "Cart", href: "#cart", isCart: true },
     { icon: User, label: "Account", href: "/account" },
   ];
