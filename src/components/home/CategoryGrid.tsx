@@ -19,7 +19,7 @@ const CategoryGrid = () => {
           >
             <Link
               to={`/shop?cat=${cat.slug}`}
-              className="flex flex-col items-center gap-1.5 sm:gap-2 group w-[72px] sm:w-20 md:w-24 lg:w-28"
+              className="flex flex-col items-center gap-1.5 sm:gap-2 group w-20 sm:w-24 md:w-28 lg:w-32"
             >
               <div className="relative">
                 {cat.badge && (
@@ -27,12 +27,17 @@ const CategoryGrid = () => {
                     {cat.badge}
                   </span>
                 )}
-                <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-[88px] lg:h-[88px] rounded-2xl overflow-hidden bg-secondary border border-border/30 group-hover:border-primary/40 group-hover:shadow-md transition-all duration-300 flex items-center justify-center">
-                  <span className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px]">{cat.icon}</span>
+                <div className="w-[72px] h-[72px] sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-2xl overflow-hidden bg-[hsl(38,40%,93%)] border border-border/20 group-hover:border-primary/40 group-hover:shadow-lg transition-all duration-300">
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
                 </div>
               </div>
-              <span className="text-[10px] sm:text-[11px] md:text-xs lg:text-sm font-medium text-foreground/70 group-hover:text-primary transition-colors text-center leading-tight whitespace-pre-line">
-                {cat.name}
+              <span className="text-[11px] sm:text-xs md:text-sm font-medium text-foreground/80 group-hover:text-primary transition-colors text-center leading-tight">
+                {cat.name.replace('\n', ' ')}
               </span>
             </Link>
           </motion.div>
