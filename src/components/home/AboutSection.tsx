@@ -14,7 +14,7 @@ const AboutSection = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={isVisible ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.6 }}
-        className="max-w-3xl mx-auto text-center"
+        className="max-w-3xl mx-auto"
       >
         <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-3 md:mb-4">
           PikoolyFlora: Online Flower Shop in Bangladesh
