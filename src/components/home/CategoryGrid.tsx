@@ -8,14 +8,14 @@ const CategoryGrid = () => {
 
   return (
     <section ref={ref} className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Shop by Category">
-      <div className="flex gap-3 sm:gap-4 md:gap-5 lg:gap-6 overflow-x-auto pb-2 scrollbar-hide md:justify-center md:flex-wrap md:overflow-visible">
+      <div className="grid grid-cols-4 gap-3 sm:gap-4 md:flex md:gap-5 lg:gap-6 md:justify-center md:flex-wrap">
         {categories.map((cat, i) => (
           <motion.div
             key={cat.id}
             initial={{ opacity: 0, y: 10 }}
             animate={isVisible ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: i * 0.05, duration: 0.3 }}
-            className="flex-shrink-0 md:flex-shrink"
+            className="flex justify-center"
           >
             <Link
               to={`/shop?cat=${cat.slug}`}
