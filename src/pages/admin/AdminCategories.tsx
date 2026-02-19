@@ -20,7 +20,7 @@ const AdminCategories = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Category | null>(null);
-  const [form, setForm] = useState({ name: "", slug: "", description: "", short_description: "", long_description: "", faq: "[]", image_url: "", is_active: true, display_order: 0 });
+  const [form, setForm] = useState({ name: "", slug: "", description: "", short_description: "", long_description: "", faq: "[]", image_url: "", is_active: true, display_order: 0, seo_title: "" });
   const [saving, setSaving] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -39,7 +39,7 @@ const AdminCategories = () => {
   const generateSlug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
   const resetForm = () => {
-    setForm({ name: "", slug: "", description: "", short_description: "", long_description: "", faq: "[]", image_url: "", is_active: true, display_order: 0 });
+    setForm({ name: "", slug: "", description: "", short_description: "", long_description: "", faq: "[]", image_url: "", is_active: true, display_order: 0, seo_title: "" });
     setEditing(null);
     setImageFile(null);
   };
@@ -58,6 +58,7 @@ const AdminCategories = () => {
       image_url: cat.image_url || "",
       is_active: cat.is_active,
       display_order: cat.display_order,
+      seo_title: (cat as any).seo_title || "",
     });
     setImageFile(null);
     setDialogOpen(true);
@@ -86,7 +87,7 @@ const AdminCategories = () => {
     const slug = form.slug || generateSlug(form.name);
     let parsedFaq: any[] = [];
     try { parsedFaq = JSON.parse(form.faq); } catch { parsedFaq = []; }
-    const payload = { name: form.name.trim(), slug, description: form.description || null, short_description: form.short_description || null, long_description: form.long_description || null, faq: parsedFaq, image_url: imageUrl || null, is_active: form.is_active, display_order: form.display_order } as any;
+    const payload = { name: form.name.trim(), slug, description: form.description || null, short_description: form.short_description || null, long_description: form.long_description || null, faq: parsedFaq, image_url: imageUrl || null, is_active: form.is_active, display_order: form.display_order, seo_title: form.seo_title || null } as any;
 
     if (editing) {
       const { error } = await supabase.from("categories").update(payload).eq("id", editing.id);
@@ -140,9 +141,49 @@ const AdminCategories = () => {
                 <Label>Long Description</Label>
                 <RichTextEditor value={form.long_description} onChange={(html) => setForm({ ...form, long_description: html })} />
               </div>
-              <div className="space-y-2">
-                <Label>SEO Description (meta)</Label>
-                <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} placeholder="Meta description for SEO" />
+              {/* SEO Section */}
+              <div className="space-y-4 border-t pt-4">
+                <Label className="text-base font-semibold">SEO Preview</Label>
+                {/* Google Preview */}
+                <div className="p-4 border rounded-lg bg-background space-y-1">
+                  <p className="text-xs text-muted-foreground mb-1">Preview</p>
+                  <p className="text-sm text-muted-foreground truncate">https://pikooly.com.bd/product-category/{form.slug || "..."}/</p>
+                  <p className="text-lg text-blue-700 font-medium leading-tight truncate">{form.seo_title || form.name || "Page Title"}</p>
+                  <p className="text-sm text-muted-foreground line-clamp-2">{form.description || "Meta description will appear here..."}</p>
+                </div>
+                {/* SEO Title */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label>SEO Title</Label>
+                    <span className={`text-xs ${(form.seo_title || "").length > 60 ? "text-destructive" : "text-muted-foreground"}`}>
+                      {(form.seo_title || "").length} / 60
+                    </span>
+                  </div>
+                  <Input value={form.seo_title} onChange={(e) => setForm({ ...form, seo_title: e.target.value })} placeholder="SEO title for search results" />
+                  <p className="text-xs text-muted-foreground">This will appear as the title in search results.</p>
+                </div>
+                {/* Permalink */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label>Permalink</Label>
+                    <span className={`text-xs ${(form.slug || "").length > 75 ? "text-destructive" : "text-muted-foreground"}`}>
+                      {(form.slug || "").length} / 75
+                    </span>
+                  </div>
+                  <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
+                  <p className="text-xs text-muted-foreground">The unique URL slug for this category.</p>
+                </div>
+                {/* Meta Description */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label>Meta Description</Label>
+                    <span className={`text-xs ${(form.description || "").length > 160 ? "text-destructive" : "text-muted-foreground"}`}>
+                      {(form.description || "").length} / 160
+                    </span>
+                  </div>
+                  <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} placeholder="Meta description for SEO" />
+                  <p className="text-xs text-muted-foreground">This will appear as the description in search results.</p>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label>Image</Label>
