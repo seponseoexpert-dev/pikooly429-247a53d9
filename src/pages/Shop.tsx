@@ -1,8 +1,9 @@
 import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { products, categories } from "@/data/mockData";
 import ProductCard from "@/components/product/ProductCard";
 import { SlidersHorizontal } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Shop = () => {
   const [searchParams] = useSearchParams();
@@ -14,18 +15,44 @@ const Shop = () => {
   }, [catParam]);
   const [sortBy, setSortBy] = useState("newest");
 
+  const { data: products = [] } = useQuery({
+    queryKey: ["shop-products"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*, categories(name, slug)")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ["public-categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("*")
+        .eq("is_active", true)
+        .order("display_order");
+      if (error) throw error;
+      return data;
+    },
+  });
+
   const filtered = useMemo(() => {
     let list = selectedCat
-      ? products.filter((p) => p.category === selectedCat)
+      ? products.filter((p: any) => p.categories?.slug === selectedCat)
       : products;
 
     switch (sortBy) {
-      case "price-low": return [...list].sort((a, b) => a.price - b.price);
-      case "price-high": return [...list].sort((a, b) => b.price - a.price);
-      case "rating": return [...list].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      case "price-low": return [...list].sort((a: any, b: any) => a.price - b.price);
+      case "price-high": return [...list].sort((a: any, b: any) => b.price - a.price);
+      case "rating": return [...list].sort((a: any, b: any) => (b.rating || 0) - (a.rating || 0));
       default: return list;
     }
-  }, [selectedCat, sortBy]);
+  }, [selectedCat, sortBy, products]);
 
   return (
     <main className="section-container py-6 md:py-10 pb-24 md:pb-10">
@@ -39,13 +66,13 @@ const Shop = () => {
           >
             All
           </button>
-          {categories.map((cat) => (
+          {categories.map((cat: any) => (
             <button
               key={cat.id}
               onClick={() => setSelectedCat(cat.slug)}
               className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${selectedCat === cat.slug ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
             >
-              {cat.icon} {cat.name}
+              {cat.name}
             </button>
           ))}
         </div>
@@ -66,7 +93,7 @@ const Shop = () => {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3 md:gap-5">
-        {filtered.map((product, i) => (
+        {filtered.map((product: any, i: number) => (
           <ProductCard key={product.id} product={product} index={i} />
         ))}
       </div>
