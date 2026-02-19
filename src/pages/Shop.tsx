@@ -67,9 +67,10 @@ const Shop = () => {
   useEffect(() => {
     const siteName = settings.site_title || "Pikooly";
     const catName = activeCategory?.name;
+    const seoTitle = (activeCategory as any)?.seo_title;
     const metaDesc = activeCategory?.description || (activeCategory as any)?.short_description || "";
 
-    document.title = catName ? `${catName} - ${siteName}` : `Shop - ${siteName}`;
+    document.title = seoTitle || (catName ? `${catName} - ${siteName}` : `Shop - ${siteName}`);
 
     let metaTag = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
     if (!metaTag) {
