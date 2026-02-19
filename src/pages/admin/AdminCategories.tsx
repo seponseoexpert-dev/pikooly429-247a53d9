@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { toast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, GripVertical, PlusCircle, MinusCircle } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
+import RichTextEditor from "@/components/admin/RichTextEditor";
 
 type Category = Tables<"categories">;
 
@@ -137,7 +138,7 @@ const AdminCategories = () => {
               </div>
               <div className="space-y-2">
                 <Label>Long Description</Label>
-                <Textarea value={form.long_description} onChange={(e) => setForm({ ...form, long_description: e.target.value })} rows={6} placeholder="Detailed category description with full details..." />
+                <RichTextEditor value={form.long_description} onChange={(html) => setForm({ ...form, long_description: html })} />
               </div>
               <div className="space-y-2">
                 <Label>SEO Description (meta)</Label>
@@ -214,6 +215,8 @@ const AdminCategories = () => {
                   <TableHead>Image</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Slug</TableHead>
+                  <TableHead>Short Desc</TableHead>
+                  <TableHead>FAQ</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -227,6 +230,10 @@ const AdminCategories = () => {
                     </TableCell>
                     <TableCell className="font-medium">{cat.name}</TableCell>
                     <TableCell className="text-muted-foreground text-sm">{cat.slug}</TableCell>
+                    <TableCell className="text-muted-foreground text-xs max-w-[200px] truncate">{(cat as any).short_description || "—"}</TableCell>
+                    <TableCell className="text-muted-foreground text-xs">
+                      {(() => { try { const f = (cat as any).faq; return Array.isArray(f) ? `${f.length} items` : "—"; } catch { return "—"; } })()}
+                    </TableCell>
                     <TableCell>
                       <span className={`text-xs px-2 py-1 rounded-full ${cat.is_active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
                         {cat.is_active ? "Active" : "Inactive"}
