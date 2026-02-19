@@ -9,15 +9,18 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
 const Shop = () => {
   const [searchParams] = useSearchParams();
   const catParam = searchParams.get("cat") || "";
+  const subParam = searchParams.get("sub") || "";
   const [selectedCat, setSelectedCat] = useState(catParam);
+  const [selectedSub, setSelectedSub] = useState(subParam);
   const [shortDescExpanded, setShortDescExpanded] = useState(false);
   const shortDescRef = useRef<HTMLDivElement>(null);
   const [needsTruncation, setNeedsTruncation] = useState(false);
 
   useEffect(() => {
     setSelectedCat(catParam);
+    setSelectedSub(subParam);
     setShortDescExpanded(false);
-  }, [catParam]);
+  }, [catParam, subParam]);
 
   const [sortBy, setSortBy] = useState("newest");
 
@@ -47,10 +50,28 @@ const Shop = () => {
     },
   });
 
+  const { data: subcategories = [] } = useQuery({
+    queryKey: ["public-subcategories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("subcategories")
+        .select("*")
+        .eq("is_active", true)
+        .order("display_order");
+      if (error) throw error;
+      return data as any[];
+    },
+  });
+
   const activeCategory = useMemo(() => {
     if (!selectedCat) return null;
     return categories.find((c: any) => c.slug === selectedCat) || null;
   }, [selectedCat, categories]);
+
+  const activeSubs = useMemo(() => {
+    if (!activeCategory) return [];
+    return subcategories.filter((s: any) => s.category_id === activeCategory.id);
+  }, [activeCategory, subcategories]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -117,13 +138,21 @@ const Shop = () => {
       ? products.filter((p: any) => p.categories?.slug === selectedCat)
       : products;
 
+    // Filter by subcategory if selected
+    if (selectedSub) {
+      const sub = subcategories.find((s: any) => s.slug === selectedSub);
+      if (sub) {
+        list = list.filter((p: any) => (p as any).subcategory_id === sub.id);
+      }
+    }
+
     switch (sortBy) {
       case "price-low": return [...list].sort((a: any, b: any) => a.price - b.price);
       case "price-high": return [...list].sort((a: any, b: any) => b.price - a.price);
       case "rating": return [...list].sort((a: any, b: any) => (b.rating || 0) - (a.rating || 0));
       default: return list;
     }
-  }, [selectedCat, sortBy, products]);
+  }, [selectedCat, selectedSub, sortBy, products, subcategories]);
 
   return (
     <main className="section-container py-4 md:py-8 pb-24 md:pb-10">
@@ -185,7 +214,28 @@ const Shop = () => {
         </div>
       )}
 
-      {/* Product Grid */}
+      {/* Subcategory pills - show when a category is selected and has subcategories */}
+      {selectedCat && activeSubs.length > 0 && (
+        <div className="flex gap-2 overflow-x-auto mb-5 md:mb-8 scrollbar-hide">
+          <button
+            onClick={() => setSelectedSub("")}
+            className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${!selectedSub ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
+          >
+            All {activeCategory?.name}
+          </button>
+          {activeSubs.map((sub: any) => (
+            <button
+              key={sub.id}
+              onClick={() => setSelectedSub(sub.slug)}
+              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${selectedSub === sub.slug ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
+            >
+              {sub.name}
+            </button>
+          ))}
+        </div>
+      )}
+
+
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
         {filtered.map((product: any, i: number) => (
           <ProductCard key={product.id} product={product} index={i} />

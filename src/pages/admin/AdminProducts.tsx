@@ -17,9 +17,18 @@ import type { Tables } from "@/integrations/supabase/types";
 type Product = Tables<"products">;
 type Category = Tables<"categories">;
 
+interface Subcategory {
+  id: string;
+  category_id: string;
+  name: string;
+  slug: string;
+  is_active: boolean;
+}
+
 const AdminProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
@@ -30,19 +39,21 @@ const AdminProducts = () => {
 
   const defaultForm = {
     name: "", slug: "", description: "", price: 0, original_price: 0,
-    image_url: "", category_id: "", is_active: true, is_featured: false, stock: 0, tags: "",
+    image_url: "", category_id: "", subcategory_id: "", is_active: true, is_featured: false, stock: 0, tags: "",
     specifications: [] as Array<{ item: string; value: string }>,
     seo_title: "", seo_description: "",
   };
   const [form, setForm] = useState(defaultForm);
 
   const fetchData = async () => {
-    const [prodRes, catRes] = await Promise.all([
+    const [prodRes, catRes, subRes] = await Promise.all([
       supabase.from("products").select("*").order("created_at", { ascending: false }),
       supabase.from("categories").select("*").order("display_order"),
+      supabase.from("subcategories").select("*").order("display_order"),
     ]);
     if (prodRes.data) setProducts(prodRes.data);
     if (catRes.data) setCategories(catRes.data);
+    if (subRes.data) setSubcategories(subRes.data as Subcategory[]);
     setLoading(false);
   };
 
@@ -59,6 +70,7 @@ const AdminProducts = () => {
       name: p.name, slug: p.slug, description: p.description || "",
       price: p.price, original_price: p.original_price || 0,
       image_url: p.image_url || "", category_id: p.category_id || "",
+      subcategory_id: (p as any).subcategory_id || "",
       is_active: p.is_active, is_featured: p.is_featured, stock: p.stock,
       tags: (p.tags || []).join(", "),
       specifications: specs,
@@ -67,6 +79,8 @@ const AdminProducts = () => {
     setImageFile(null);
     setDialogOpen(true);
   };
+
+  const filteredSubs = subcategories.filter(s => s.category_id === form.category_id);
 
   const uploadImage = async (file: File): Promise<string | null> => {
     const ext = file.name.split(".").pop();
@@ -95,6 +109,7 @@ const AdminProducts = () => {
       name: form.name.trim(), slug, description: form.description || null,
       price: form.price, original_price: form.original_price || null,
       image_url: imageUrl || null, category_id: form.category_id || null,
+      subcategory_id: form.subcategory_id || null,
       is_active: form.is_active, is_featured: form.is_featured, stock: form.stock, tags,
       specifications: specs.length > 0 ? specs : null,
       seo_title: form.seo_title.trim() || null, seo_description: form.seo_description.trim() || null,
@@ -167,13 +182,25 @@ const AdminProducts = () => {
                 </div>
                 <div className="space-y-2">
                   <Label>Category</Label>
-                  <Select value={form.category_id} onValueChange={(v) => setForm({ ...form, category_id: v })}>
+                  <Select value={form.category_id} onValueChange={(v) => setForm({ ...form, category_id: v, subcategory_id: "" })}>
                     <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
                     <SelectContent>
                       {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
+                {filteredSubs.length > 0 && (
+                  <div className="space-y-2">
+                    <Label>Subcategory (optional)</Label>
+                    <Select value={form.subcategory_id} onValueChange={(v) => setForm({ ...form, subcategory_id: v })}>
+                      <SelectTrigger><SelectValue placeholder="Select subcategory" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">None</SelectItem>
+                        {filteredSubs.map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
               </div>
               <div className="space-y-2">
                 <Label>Description</Label>

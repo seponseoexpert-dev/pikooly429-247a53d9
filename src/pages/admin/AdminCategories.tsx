@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,14 +9,28 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, GripVertical, PlusCircle, MinusCircle } from "lucide-react";
+import { Plus, Pencil, Trash2, GripVertical, PlusCircle, MinusCircle, ChevronDown, ChevronRight } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 
 type Category = Tables<"categories">;
 
+interface Subcategory {
+  id: string;
+  category_id: string;
+  name: string;
+  slug: string;
+  image_url: string | null;
+  description: string | null;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 const AdminCategories = () => {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Category | null>(null);
@@ -24,13 +38,22 @@ const AdminCategories = () => {
   const [saving, setSaving] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
+  // Subcategory state
+  const [subDialogOpen, setSubDialogOpen] = useState(false);
+  const [editingSub, setEditingSub] = useState<Subcategory | null>(null);
+  const [subForm, setSubForm] = useState({ name: "", slug: "", description: "", image_url: "", is_active: true, display_order: 0, category_id: "" });
+  const [subImageFile, setSubImageFile] = useState<File | null>(null);
+  const [savingSub, setSavingSub] = useState(false);
+  const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set());
+
   const fetchCategories = async () => {
-    const { data, error } = await supabase.from("categories").select("*").order("display_order");
-    if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    } else {
-      setCategories(data || []);
-    }
+    const [catRes, subRes] = await Promise.all([
+      supabase.from("categories").select("*").order("display_order"),
+      supabase.from("subcategories").select("*").order("display_order"),
+    ]);
+    if (catRes.error) toast({ title: "Error", description: catRes.error.message, variant: "destructive" });
+    else setCategories(catRes.data || []);
+    if (!subRes.error) setSubcategories((subRes.data as Subcategory[]) || []);
     setLoading(false);
   };
 
@@ -49,24 +72,20 @@ const AdminCategories = () => {
   const openEdit = (cat: Category) => {
     setEditing(cat);
     setForm({
-      name: cat.name,
-      slug: cat.slug,
-      description: cat.description || "",
+      name: cat.name, slug: cat.slug, description: cat.description || "",
       short_description: (cat as any).short_description || "",
       long_description: (cat as any).long_description || "",
       faq: JSON.stringify((cat as any).faq || []),
-      image_url: cat.image_url || "",
-      is_active: cat.is_active,
-      display_order: cat.display_order,
+      image_url: cat.image_url || "", is_active: cat.is_active, display_order: cat.display_order,
       seo_title: (cat as any).seo_title || "",
     });
     setImageFile(null);
     setDialogOpen(true);
   };
 
-  const uploadImage = async (file: File): Promise<string | null> => {
+  const uploadImage = async (file: File, folder: string): Promise<string | null> => {
     const ext = file.name.split(".").pop();
-    const path = `categories/${Date.now()}.${ext}`;
+    const path = `${folder}/${Date.now()}.${ext}`;
     const { error } = await supabase.storage.from("images").upload(path, file);
     if (error) { toast({ title: "Upload failed", description: error.message, variant: "destructive" }); return null; }
     const { data } = supabase.storage.from("images").getPublicUrl(path);
@@ -80,7 +99,7 @@ const AdminCategories = () => {
 
     let imageUrl = form.image_url;
     if (imageFile) {
-      const uploaded = await uploadImage(imageFile);
+      const uploaded = await uploadImage(imageFile, "categories");
       if (uploaded) imageUrl = uploaded;
     }
 
@@ -91,12 +110,12 @@ const AdminCategories = () => {
 
     if (editing) {
       const { error } = await supabase.from("categories").update(payload).eq("id", editing.id);
-      if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
-      else { toast({ title: "Category updated" }); }
+      if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+      else toast({ title: "Category updated" });
     } else {
       const { error } = await supabase.from("categories").insert(payload);
-      if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
-      else { toast({ title: "Category created" }); }
+      if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+      else toast({ title: "Category created" });
     }
 
     setSaving(false);
@@ -108,9 +127,72 @@ const AdminCategories = () => {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this category?")) return;
     const { error } = await supabase.from("categories").delete().eq("id", id);
-    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
+    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
     else { toast({ title: "Category deleted" }); fetchCategories(); }
   };
+
+  // Subcategory handlers
+  const resetSubForm = () => { setSubForm({ name: "", slug: "", description: "", image_url: "", is_active: true, display_order: 0, category_id: "" }); setEditingSub(null); setSubImageFile(null); };
+
+  const openCreateSub = (categoryId: string) => {
+    resetSubForm();
+    setSubForm(prev => ({ ...prev, category_id: categoryId }));
+    setSubDialogOpen(true);
+  };
+
+  const openEditSub = (sub: Subcategory) => {
+    setEditingSub(sub);
+    setSubForm({ name: sub.name, slug: sub.slug, description: sub.description || "", image_url: sub.image_url || "", is_active: sub.is_active, display_order: sub.display_order, category_id: sub.category_id });
+    setSubImageFile(null);
+    setSubDialogOpen(true);
+  };
+
+  const handleSubSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!subForm.name.trim() || !subForm.category_id) return;
+    setSavingSub(true);
+
+    let imageUrl = subForm.image_url;
+    if (subImageFile) {
+      const uploaded = await uploadImage(subImageFile, "subcategories");
+      if (uploaded) imageUrl = uploaded;
+    }
+
+    const slug = subForm.slug || generateSlug(subForm.name);
+    const payload = { name: subForm.name.trim(), slug, description: subForm.description || null, image_url: imageUrl || null, is_active: subForm.is_active, display_order: subForm.display_order, category_id: subForm.category_id };
+
+    if (editingSub) {
+      const { error } = await supabase.from("subcategories").update(payload).eq("id", editingSub.id);
+      if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+      else toast({ title: "Subcategory updated" });
+    } else {
+      const { error } = await supabase.from("subcategories").insert(payload);
+      if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+      else toast({ title: "Subcategory created" });
+    }
+
+    setSavingSub(false);
+    setSubDialogOpen(false);
+    resetSubForm();
+    fetchCategories();
+  };
+
+  const handleDeleteSub = async (id: string) => {
+    if (!confirm("Delete this subcategory?")) return;
+    const { error } = await supabase.from("subcategories").delete().eq("id", id);
+    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+    else { toast({ title: "Subcategory deleted" }); fetchCategories(); }
+  };
+
+  const toggleExpand = (catId: string) => {
+    setExpandedCats(prev => {
+      const next = new Set(prev);
+      if (next.has(catId)) next.delete(catId); else next.add(catId);
+      return next;
+    });
+  };
+
+  const getSubsForCat = (catId: string) => subcategories.filter(s => s.category_id === catId);
 
   return (
     <div>
@@ -144,45 +226,32 @@ const AdminCategories = () => {
               {/* SEO Section */}
               <div className="space-y-4 border-t pt-4">
                 <Label className="text-base font-semibold">SEO Preview</Label>
-                {/* Google Preview */}
                 <div className="p-4 border rounded-lg bg-background space-y-1">
                   <p className="text-xs text-muted-foreground mb-1">Preview</p>
                   <p className="text-sm text-muted-foreground truncate">https://pikooly.com.bd/product-category/{form.slug || "..."}/</p>
                   <p className="text-lg text-blue-700 font-medium leading-tight truncate">{form.seo_title || form.name || "Page Title"}</p>
                   <p className="text-sm text-muted-foreground line-clamp-2">{form.description || "Meta description will appear here..."}</p>
                 </div>
-                {/* SEO Title */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label>SEO Title</Label>
-                    <span className={`text-xs ${(form.seo_title || "").length > 60 ? "text-destructive" : "text-muted-foreground"}`}>
-                      {(form.seo_title || "").length} / 60
-                    </span>
+                    <span className={`text-xs ${(form.seo_title || "").length > 60 ? "text-destructive" : "text-muted-foreground"}`}>{(form.seo_title || "").length} / 60</span>
                   </div>
                   <Input value={form.seo_title} onChange={(e) => setForm({ ...form, seo_title: e.target.value })} placeholder="SEO title for search results" />
-                  <p className="text-xs text-muted-foreground">This will appear as the title in search results.</p>
                 </div>
-                {/* Permalink */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label>Permalink</Label>
-                    <span className={`text-xs ${(form.slug || "").length > 75 ? "text-destructive" : "text-muted-foreground"}`}>
-                      {(form.slug || "").length} / 75
-                    </span>
+                    <span className={`text-xs ${(form.slug || "").length > 75 ? "text-destructive" : "text-muted-foreground"}`}>{(form.slug || "").length} / 75</span>
                   </div>
                   <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
-                  <p className="text-xs text-muted-foreground">The unique URL slug for this category.</p>
                 </div>
-                {/* Meta Description */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label>Meta Description</Label>
-                    <span className={`text-xs ${(form.description || "").length > 160 ? "text-destructive" : "text-muted-foreground"}`}>
-                      {(form.description || "").length} / 160
-                    </span>
+                    <span className={`text-xs ${(form.description || "").length > 160 ? "text-destructive" : "text-muted-foreground"}`}>{(form.description || "").length} / 160</span>
                   </div>
                   <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} placeholder="Meta description for SEO" />
-                  <p className="text-xs text-muted-foreground">This will appear as the description in search results.</p>
                 </div>
               </div>
               <div className="space-y-2">
@@ -216,20 +285,17 @@ const AdminCategories = () => {
                   return faqs.map((faq, idx) => (
                     <div key={idx} className="space-y-2 p-3 border rounded-lg bg-muted/30 relative">
                       <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 h-6 w-6" onClick={() => {
-                        const updated = [...faqs];
-                        updated.splice(idx, 1);
+                        const updated = [...faqs]; updated.splice(idx, 1);
                         setForm({ ...form, faq: JSON.stringify(updated) });
                       }}>
                         <MinusCircle className="h-4 w-4 text-destructive" />
                       </Button>
                       <Input placeholder="Question" value={faq.question} onChange={(e) => {
-                        const updated = [...faqs];
-                        updated[idx] = { ...updated[idx], question: e.target.value };
+                        const updated = [...faqs]; updated[idx] = { ...updated[idx], question: e.target.value };
                         setForm({ ...form, faq: JSON.stringify(updated) });
                       }} />
                       <Textarea placeholder="Answer" rows={2} value={faq.answer} onChange={(e) => {
-                        const updated = [...faqs];
-                        updated[idx] = { ...updated[idx], answer: e.target.value };
+                        const updated = [...faqs]; updated[idx] = { ...updated[idx], answer: e.target.value };
                         setForm({ ...form, faq: JSON.stringify(updated) });
                       }} />
                     </div>
@@ -241,6 +307,43 @@ const AdminCategories = () => {
           </DialogContent>
         </Dialog>
       </div>
+
+      {/* Subcategory Dialog */}
+      <Dialog open={subDialogOpen} onOpenChange={(open) => { setSubDialogOpen(open); if (!open) resetSubForm(); }}>
+        <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editingSub ? "Edit Subcategory" : "New Subcategory"}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSubSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label>Name *</Label>
+              <Input value={subForm.name} onChange={(e) => setSubForm({ ...subForm, name: e.target.value, slug: generateSlug(e.target.value) })} required />
+            </div>
+            <div className="space-y-2">
+              <Label>Slug</Label>
+              <Input value={subForm.slug} onChange={(e) => setSubForm({ ...subForm, slug: e.target.value })} />
+            </div>
+            <div className="space-y-2">
+              <Label>Description</Label>
+              <Textarea value={subForm.description} onChange={(e) => setSubForm({ ...subForm, description: e.target.value })} rows={2} />
+            </div>
+            <div className="space-y-2">
+              <Label>Image</Label>
+              <Input type="file" accept="image/*" onChange={(e) => setSubImageFile(e.target.files?.[0] || null)} />
+              {subForm.image_url && <img src={subForm.image_url} alt="" className="h-12 w-12 object-cover rounded" />}
+            </div>
+            <div className="space-y-2">
+              <Label>Display Order</Label>
+              <Input type="number" value={subForm.display_order} onChange={(e) => setSubForm({ ...subForm, display_order: parseInt(e.target.value) || 0 })} />
+            </div>
+            <div className="flex items-center gap-2">
+              <Switch checked={subForm.is_active} onCheckedChange={(c) => setSubForm({ ...subForm, is_active: c })} />
+              <Label>Active</Label>
+            </div>
+            <Button type="submit" className="w-full" disabled={savingSub}>{savingSub ? "Saving..." : editingSub ? "Update" : "Create"}</Button>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       <Card>
         <CardContent className="p-0">
@@ -256,36 +359,71 @@ const AdminCategories = () => {
                   <TableHead>Image</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Slug</TableHead>
-                  <TableHead>Short Desc</TableHead>
-                  <TableHead>FAQ</TableHead>
+                  <TableHead>Subcategories</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {categories.map((cat) => (
-                  <TableRow key={cat.id}>
-                    <TableCell><GripVertical className="h-4 w-4 text-muted-foreground" /></TableCell>
-                    <TableCell>
-                      {cat.image_url ? <img src={cat.image_url} alt="" className="h-10 w-10 object-cover rounded" /> : <div className="h-10 w-10 bg-muted rounded" />}
-                    </TableCell>
-                    <TableCell className="font-medium">{cat.name}</TableCell>
-                    <TableCell className="text-muted-foreground text-sm">{cat.slug}</TableCell>
-                    <TableCell className="text-muted-foreground text-xs max-w-[200px] truncate">{(cat as any).short_description || "—"}</TableCell>
-                    <TableCell className="text-muted-foreground text-xs">
-                      {(() => { try { const f = (cat as any).faq; return Array.isArray(f) ? `${f.length} items` : "—"; } catch { return "—"; } })()}
-                    </TableCell>
-                    <TableCell>
-                      <span className={`text-xs px-2 py-1 rounded-full ${cat.is_active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
-                        {cat.is_active ? "Active" : "Inactive"}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" onClick={() => openEdit(cat)}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDelete(cat.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {categories.map((cat) => {
+                  const subs = getSubsForCat(cat.id);
+                  const isExpanded = expandedCats.has(cat.id);
+                  return (
+                    <>
+                      <TableRow key={cat.id}>
+                        <TableCell><GripVertical className="h-4 w-4 text-muted-foreground" /></TableCell>
+                        <TableCell>
+                          {cat.image_url ? <img src={cat.image_url} alt="" className="h-10 w-10 object-cover rounded" /> : <div className="h-10 w-10 bg-muted rounded" />}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            {subs.length > 0 && (
+                              <button onClick={() => toggleExpand(cat.id)} className="p-0.5 hover:bg-muted rounded">
+                                {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                              </button>
+                            )}
+                            <span className="font-medium">{cat.name}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground text-sm">{cat.slug}</TableCell>
+                        <TableCell>
+                          <Button variant="ghost" size="sm" className="text-xs" onClick={() => openCreateSub(cat.id)}>
+                            <PlusCircle className="h-3 w-3 mr-1" />{subs.length > 0 ? `${subs.length} subs` : "Add sub"}
+                          </Button>
+                        </TableCell>
+                        <TableCell>
+                          <span className={`text-xs px-2 py-1 rounded-full ${cat.is_active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                            {cat.is_active ? "Active" : "Inactive"}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button variant="ghost" size="icon" onClick={() => openEdit(cat)}><Pencil className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="icon" onClick={() => handleDelete(cat.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                        </TableCell>
+                      </TableRow>
+                      {isExpanded && subs.map((sub) => (
+                        <TableRow key={sub.id} className="bg-muted/20">
+                          <TableCell></TableCell>
+                          <TableCell>
+                            {sub.image_url ? <img src={sub.image_url} alt="" className="h-8 w-8 object-cover rounded" /> : <div className="h-8 w-8 bg-muted rounded" />}
+                          </TableCell>
+                          <TableCell className="pl-12 text-sm">↳ {sub.name}</TableCell>
+                          <TableCell className="text-muted-foreground text-xs">{sub.slug}</TableCell>
+                          <TableCell></TableCell>
+                          <TableCell>
+                            <span className={`text-xs px-2 py-1 rounded-full ${sub.is_active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                              {sub.is_active ? "Active" : "Inactive"}
+                            </span>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button variant="ghost" size="icon" onClick={() => openEditSub(sub)}><Pencil className="h-4 w-4" /></Button>
+                            <Button variant="ghost" size="icon" onClick={() => handleDeleteSub(sub.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </>
+                  );
+                })}
               </TableBody>
             </Table>
           )}
