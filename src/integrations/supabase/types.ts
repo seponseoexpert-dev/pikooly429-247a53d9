@@ -292,6 +292,7 @@ export type Database = {
           slug: string
           specifications: Json | null
           stock: number
+          subcategory_id: string | null
           tags: string[] | null
           updated_at: string
         }
@@ -314,6 +315,7 @@ export type Database = {
           slug: string
           specifications?: Json | null
           stock?: number
+          subcategory_id?: string | null
           tags?: string[] | null
           updated_at?: string
         }
@@ -336,6 +338,7 @@ export type Database = {
           slug?: string
           specifications?: Json | null
           stock?: number
+          subcategory_id?: string | null
           tags?: string[] | null
           updated_at?: string
         }
@@ -345,6 +348,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_subcategory_id_fkey"
+            columns: ["subcategory_id"]
+            isOneToOne: false
+            referencedRelation: "subcategories"
             referencedColumns: ["id"]
           },
         ]
@@ -479,6 +489,53 @@ export type Database = {
           value?: string | null
         }
         Relationships: []
+      }
+      subcategories: {
+        Row: {
+          category_id: string
+          created_at: string
+          description: string | null
+          display_order: number
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subcategories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
