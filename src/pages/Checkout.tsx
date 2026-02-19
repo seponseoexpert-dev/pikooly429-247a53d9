@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useCart } from "@/contexts/CartContext";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { Loader2, ShoppingBag, Truck, CreditCard } from "lucide-react";
+import { Loader2, ShoppingBag, Truck, CreditCard, Minus, Plus, X } from "lucide-react";
 
 const deliveryTimeSlots = [
   "10:00 AM - 12:00 PM",
@@ -20,9 +21,10 @@ const deliveryTimeSlots = [
 ];
 
 const Checkout = () => {
-  const { items, totalPrice, clearCart } = useCart();
+  const { items, totalPrice, clearCart, updateQuantity, removeItem } = useCart();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [selectedDistrict, setSelectedDistrict] = useState("");
 
   const [form, setForm] = useState({
     fullName: "",
@@ -35,7 +37,21 @@ const Checkout = () => {
     paymentMethod: "cod",
   });
 
-  const deliveryFee = 60;
+  const { data: districts = [] } = useQuery({
+    queryKey: ["shipping-districts"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("shipping_districts")
+        .select("*")
+        .eq("is_active", true)
+        .order("display_order");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const activeDistrict = districts.find((d) => d.id === selectedDistrict);
+  const deliveryFee = activeDistrict?.delivery_fee ?? 0;
   const grandTotal = totalPrice + deliveryFee;
 
   const handleChange = (field: string, value: string) => {
@@ -47,6 +63,11 @@ const Checkout = () => {
 
     if (!form.fullName.trim() || !form.phone.trim() || !form.address.trim()) {
       toast.error("Please fill in all required fields");
+      return;
+    }
+
+    if (!selectedDistrict) {
+      toast.error("Please select a shipping district");
       return;
     }
 
@@ -66,7 +87,7 @@ const Checkout = () => {
           customer_name: form.fullName.trim(),
           customer_phone: form.phone.trim(),
           customer_email: form.email.trim() || null,
-          delivery_address: form.address.trim(),
+          delivery_address: `${activeDistrict?.name || ""} - ${form.address.trim()}`,
           notes: form.notes.trim() || null,
           delivery_date: form.deliveryDate || null,
           delivery_time: form.deliveryTime || null,
@@ -126,7 +147,7 @@ const Checkout = () => {
   return (
     <main className="min-h-screen bg-background pt-24 pb-32">
       <div className="container mx-auto px-4">
-        <h1 className="text-2xl md:text-3xl font-display font-bold mb-8">Checkout</h1>
+        <h1 className="text-2xl md:text-3xl font-display font-bold mb-8 text-center">YOUR ORDER</h1>
 
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -285,42 +306,88 @@ const Checkout = () => {
             {/* Right - Order Summary */}
             <div className="lg:col-span-1">
               <div className="bg-card rounded-2xl p-6 border border-border sticky top-28">
-                <h2 className="text-lg font-bold mb-4">Order Summary</h2>
-                <div className="space-y-3 max-h-[300px] overflow-y-auto">
+                <h2 className="text-sm font-bold mb-4 uppercase tracking-wide">Product</h2>
+                
+                <div className="space-y-4 max-h-[300px] overflow-y-auto">
                   {items.map((item) => (
-                    <div key={item.product.id} className="flex gap-3">
+                    <div key={item.product.id} className="flex gap-3 items-start">
                       <img
                         src={(item.product as any).image_url || item.product.image}
                         alt={item.product.name}
-                        className="w-14 h-14 object-cover rounded-lg"
+                        className="w-14 h-14 object-cover rounded-lg bg-muted"
                       />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{item.product.name}</p>
-                        <p className="text-xs text-muted-foreground">{item.quantity} × ৳{item.product.price}</p>
+                        <p className="text-sm font-medium leading-tight">{item.product.name}</p>
+                        <div className="flex items-center gap-2 mt-1.5">
+                          <button
+                            type="button"
+                            onClick={() => removeItem(item.product.id)}
+                            className="text-muted-foreground hover:text-destructive"
+                          >
+                            <X size={14} />
+                          </button>
+                          <div className="flex items-center border rounded-full">
+                            <button
+                              type="button"
+                              onClick={() => updateQuantity(item.product.id, Math.max(1, item.quantity - 1))}
+                              className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground"
+                            >
+                              <Minus size={12} />
+                            </button>
+                            <span className="text-xs font-medium w-6 text-center">{item.quantity}</span>
+                            <button
+                              type="button"
+                              onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                              className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground"
+                            >
+                              <Plus size={12} />
+                            </button>
+                          </div>
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1">৳ {(item.product.price * item.quantity).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</p>
                       </div>
-                      <p className="text-sm font-bold whitespace-nowrap">৳{(item.product.price * item.quantity).toLocaleString()}</p>
                     </div>
                   ))}
                 </div>
 
                 <Separator className="my-4" />
 
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Subtotal</span>
-                    <span>৳{totalPrice.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Delivery Fee</span>
-                    <span>৳{deliveryFee}</span>
-                  </div>
+                <div className="flex justify-between text-sm">
+                  <span className="font-semibold">Subtotal</span>
+                  <span>৳ {totalPrice.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
+                </div>
+
+                <Separator className="my-4" />
+
+                {/* Shipping District */}
+                <div>
+                  <Label className="text-sm font-semibold">
+                    Shipping District <span className="text-destructive">*</span>
+                  </Label>
+                  <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
+                    <SelectTrigger className="mt-1.5">
+                      <SelectValue placeholder="Select district" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {districts.map((d) => (
+                        <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {activeDistrict && (
+                    <div className="mt-2 flex justify-between items-center bg-muted/50 rounded-lg px-3 py-2 text-sm">
+                      <span className="text-muted-foreground">{activeDistrict.delivery_label}</span>
+                      <span className="font-medium">৳ {activeDistrict.delivery_fee.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
+                    </div>
+                  )}
                 </div>
 
                 <Separator className="my-4" />
 
                 <div className="flex justify-between text-lg font-bold">
                   <span>Total</span>
-                  <span className="text-primary">৳{grandTotal.toLocaleString()}</span>
+                  <span className="text-primary">৳ {grandTotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
                 </div>
 
                 <Button
