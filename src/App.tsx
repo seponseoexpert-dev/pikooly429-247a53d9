@@ -16,6 +16,7 @@ import Index from "./pages/Index";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import Blog from "./pages/Blog";
+import AllGifts from "./pages/AllGifts";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
 import NotFound from "./pages/NotFound";
@@ -57,6 +58,7 @@ const App = () => (
               {/* Public routes */}
               <Route path="/" element={<PublicLayout><Index /></PublicLayout>} />
               <Route path="/shop" element={<PublicLayout><Shop /></PublicLayout>} />
+              <Route path="/all-gifts" element={<PublicLayout><AllGifts /></PublicLayout>} />
               <Route path="/product/:id" element={<PublicLayout><ProductDetail /></PublicLayout>} />
               <Route path="/blog" element={<PublicLayout><Blog /></PublicLayout>} />
               <Route path="/checkout" element={<PublicLayout><Checkout /></PublicLayout>} />
