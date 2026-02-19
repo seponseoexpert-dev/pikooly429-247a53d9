@@ -1,4 +1,3 @@
-import { Heart } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -37,44 +36,47 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.05, duration: 0.4 }}
-      className="group bg-card rounded-xl sm:rounded-2xl overflow-hidden border border-border/50 hover:shadow-lg transition-all duration-300"
+      className="group bg-card rounded-xl sm:rounded-2xl overflow-hidden border border-border/50 hover:shadow-lg transition-all duration-300 flex flex-col"
     >
-      <Link to={linkTo} className="block relative overflow-hidden aspect-square bg-secondary/50">
+      <Link to={linkTo} className="block relative overflow-hidden aspect-square bg-secondary/30">
         <img src={imgSrc} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
-        <button
-          className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-card/90 border border-border/50 flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors"
-          aria-label="Add to wishlist"
-          onClick={(e) => e.preventDefault()}
-        >
-          <Heart size={13} className="sm:w-[15px] sm:h-[15px]" />
-        </button>
         {discount > 0 && (
-          <span className="absolute bottom-2 right-2 sm:bottom-2.5 sm:right-2.5 px-2 sm:px-2.5 py-0.5 sm:py-1 text-[10px] sm:text-[11px] font-bold bg-primary text-primary-foreground rounded-full">
+          <span className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 px-2 sm:px-2.5 py-0.5 sm:py-1 text-[10px] sm:text-[11px] font-bold bg-primary text-primary-foreground rounded-full">
             {discount}% off
           </span>
         )}
       </Link>
 
-      <div className="p-2.5 sm:p-3 md:p-4">
+      <div className="p-2.5 sm:p-3 md:p-4 flex flex-col flex-1">
         <Link to={linkTo}>
-          <h3 className="font-medium text-xs sm:text-sm md:text-base text-foreground truncate hover:text-primary transition-colors">
+          <h3 className="font-medium text-xs sm:text-sm md:text-base text-foreground line-clamp-2 hover:text-primary transition-colors leading-snug min-h-[2.5em]">
             {product.name}
           </h3>
         </Link>
-        <div className="flex items-center gap-1.5 sm:gap-2 mt-1 sm:mt-1.5">
-          <span className="font-bold text-foreground text-sm sm:text-base md:text-lg">৳ {product.price.toLocaleString()}</span>
-          {product.rating && product.rating > 0 && (
-            <span className="inline-flex items-center gap-0.5 px-1 sm:px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold bg-primary text-primary-foreground rounded">
-              {product.rating} ★
-            </span>
+
+        <div className="mt-1.5 sm:mt-2">
+          <span className="font-bold text-primary text-sm sm:text-base">৳ {product.price.toLocaleString()}</span>
+          {origPrice && (
+            <span className="text-[10px] sm:text-xs text-muted-foreground line-through ml-1.5">৳{origPrice.toLocaleString()}</span>
           )}
         </div>
-        {origPrice && (
-          <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5">
-            <span className="text-[10px] sm:text-xs text-muted-foreground line-through">৳{origPrice.toLocaleString()}</span>
-            <span className="text-[10px] sm:text-xs text-primary font-medium">{discount}% off</span>
-          </div>
-        )}
+
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            addItem({
+              id: product.id,
+              name: product.name,
+              price: product.price,
+              image: imgSrc,
+              category: product.category || "",
+              inStock: product.stock !== 0,
+            });
+          }}
+          className="mt-2.5 sm:mt-3 w-full py-2 sm:py-2.5 rounded-lg bg-primary text-primary-foreground text-xs sm:text-sm font-semibold hover:bg-primary/90 transition-colors uppercase tracking-wide"
+        >
+          Add to Cart
+        </button>
       </div>
     </motion.div>
   );
