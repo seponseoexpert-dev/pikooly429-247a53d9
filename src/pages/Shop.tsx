@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import ProductCard from "@/components/product/ProductCard";
-import { SlidersHorizontal } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -41,6 +40,12 @@ const Shop = () => {
     },
   });
 
+  const activeCategoryName = useMemo(() => {
+    if (!selectedCat) return "All Products";
+    const cat = categories.find((c: any) => c.slug === selectedCat);
+    return cat?.name || "All Products";
+  }, [selectedCat, categories]);
+
   const filtered = useMemo(() => {
     let list = selectedCat
       ? products.filter((p: any) => p.categories?.slug === selectedCat)
@@ -55,14 +60,33 @@ const Shop = () => {
   }, [selectedCat, sortBy, products]);
 
   return (
-    <main className="section-container py-6 md:py-10 pb-24 md:pb-10">
-      <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold mb-4 sm:mb-6">Shop</h1>
+    <main className="section-container py-4 md:py-8 pb-24 md:pb-10">
+      {/* Breadcrumb + Sort row */}
+      <div className="flex items-center justify-between mb-5 md:mb-8">
+        <nav className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <Link to="/" className="hover:text-primary transition-colors">Home</Link>
+          <span>/</span>
+          <span className="font-semibold text-foreground">{activeCategoryName}</span>
+        </nav>
 
-      <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
-        <div className="flex gap-1.5 sm:gap-2 overflow-x-auto flex-1 scrollbar-hide">
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          className="text-xs sm:text-sm bg-card border border-border rounded-lg px-3 py-2 outline-none text-foreground cursor-pointer"
+        >
+          <option value="newest">Default sorting</option>
+          <option value="price-low">Price: Low → High</option>
+          <option value="price-high">Price: High → Low</option>
+          <option value="rating">Top Rated</option>
+        </select>
+      </div>
+
+      {/* Category pills - only show if no specific category is selected */}
+      {!catParam && (
+        <div className="flex gap-2 overflow-x-auto mb-5 md:mb-8 scrollbar-hide">
           <button
             onClick={() => setSelectedCat("")}
-            className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${!selectedCat ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+            className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${!selectedCat ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
           >
             All
           </button>
@@ -70,29 +94,16 @@ const Shop = () => {
             <button
               key={cat.id}
               onClick={() => setSelectedCat(cat.slug)}
-              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${selectedCat === cat.slug ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${selectedCat === cat.slug ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
             >
               {cat.name}
             </button>
           ))}
         </div>
+      )}
 
-        <div className="flex items-center gap-2">
-          <SlidersHorizontal size={16} className="text-muted-foreground" />
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="text-xs sm:text-sm bg-muted border-none rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 outline-none"
-          >
-            <option value="newest">Newest</option>
-            <option value="price-low">Price: Low → High</option>
-            <option value="price-high">Price: High → Low</option>
-            <option value="rating">Top Rated</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3 md:gap-5">
+      {/* Product Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
         {filtered.map((product: any, i: number) => (
           <ProductCard key={product.id} product={product} index={i} />
         ))}
