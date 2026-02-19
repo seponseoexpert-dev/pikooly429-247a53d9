@@ -281,6 +281,8 @@ export type Database = {
           price: number
           rating: number | null
           review_count: number | null
+          seo_description: string | null
+          seo_title: string | null
           slug: string
           specifications: Json | null
           stock: number
@@ -301,6 +303,8 @@ export type Database = {
           price?: number
           rating?: number | null
           review_count?: number | null
+          seo_description?: string | null
+          seo_title?: string | null
           slug: string
           specifications?: Json | null
           stock?: number
@@ -321,6 +325,8 @@ export type Database = {
           price?: number
           rating?: number | null
           review_count?: number | null
+          seo_description?: string | null
+          seo_title?: string | null
           slug?: string
           specifications?: Json | null
           stock?: number
