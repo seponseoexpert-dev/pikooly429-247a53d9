@@ -16,7 +16,7 @@ const AboutSection = () => {
         transition={{ duration: 0.6 }}
         className="max-w-3xl"
       >
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-foreground mb-3 md:mb-4">
+        <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-3 md:mb-4">
           PikoolyFlora: Online Flower Shop in Bangladesh
         </h2>
         <div className="text-xs sm:text-sm md:text-base text-muted-foreground leading-relaxed space-y-2 sm:space-y-3">

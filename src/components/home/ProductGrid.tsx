@@ -24,7 +24,7 @@ const ProductGrid = () => {
     <section ref={ref} className="py-6 sm:py-8 md:py-10 lg:py-14 section-container" aria-label="Products">
       {/* Trending Gifts header */}
       <div className="flex items-center justify-between mb-4 md:mb-6">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold text-foreground">
+        <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground">
           Trending Gifts
         </h2>
         <Link
@@ -56,7 +56,7 @@ const ProductGrid = () => {
 
       {/* Tailored For Your Occasions */}
       <div className="mb-4 md:mb-6 text-center">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold text-foreground mb-1 md:mb-2">
+        <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-1 md:mb-2">
           Tailored For Your Occasions
         </h2>
         <p className="text-muted-foreground text-sm sm:text-base md:text-lg">Find the perfect gift for every moment</p>
