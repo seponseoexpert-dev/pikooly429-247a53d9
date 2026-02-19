@@ -99,14 +99,14 @@ const AdminDashboard = () => {
   }, []);
 
   const summaryCards = [
-    { label: "মোট রেভিনিউ", value: `৳${stats.totalRevenue.toLocaleString()}`, icon: DollarSign, color: "text-green-600" },
-    { label: "আজকের রেভিনিউ", value: `৳${stats.todayRevenue.toLocaleString()}`, icon: TrendingUp, color: "text-primary" },
-    { label: "মোট অর্ডার", value: stats.orders, icon: ShoppingCart, color: "text-blue-600" },
-    { label: "আজকের অর্ডার", value: stats.todayOrders, icon: Clock, color: "text-orange-600" },
-    { label: "প্রোডাক্ট", value: stats.products, icon: Package, color: "text-purple-600" },
-    { label: "ক্যাটাগরি", value: stats.categories, icon: Tag, color: "text-accent-foreground" },
-    { label: "কাস্টমার", value: stats.customers, icon: Users, color: "text-teal-600" },
-    { label: "ব্লগ পোস্ট", value: stats.blogs, icon: FileText, color: "text-rose-600" },
+    { label: "Total Revenue", value: `৳${stats.totalRevenue.toLocaleString()}`, icon: DollarSign, color: "text-green-600" },
+    { label: "Today's Revenue", value: `৳${stats.todayRevenue.toLocaleString()}`, icon: TrendingUp, color: "text-primary" },
+    { label: "Total Orders", value: stats.orders, icon: ShoppingCart, color: "text-blue-600" },
+    { label: "Today's Orders", value: stats.todayOrders, icon: Clock, color: "text-orange-600" },
+    { label: "Products", value: stats.products, icon: Package, color: "text-purple-600" },
+    { label: "Categories", value: stats.categories, icon: Tag, color: "text-accent-foreground" },
+    { label: "Customers", value: stats.customers, icon: Users, color: "text-teal-600" },
+    { label: "Blog Posts", value: stats.blogs, icon: FileText, color: "text-rose-600" },
   ];
 
   return (
@@ -132,7 +132,7 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">সাপ্তাহিক রেভিনিউ</CardTitle>
+            <CardTitle className="text-base">Weekly Revenue</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={250}>
@@ -149,7 +149,7 @@ const AdminDashboard = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">সাপ্তাহিক অর্ডার</CardTitle>
+            <CardTitle className="text-base">Weekly Orders</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={250}>
@@ -168,23 +168,23 @@ const AdminDashboard = () => {
       {/* Recent Orders */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">সাম্প্রতিক অর্ডার</CardTitle>
+          <CardTitle className="text-base">Recent Orders</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <p className="text-muted-foreground">লোড হচ্ছে...</p>
+            <p className="text-muted-foreground">Loading...</p>
           ) : recentOrders.length === 0 ? (
-            <p className="text-muted-foreground text-sm">কোনো অর্ডার নেই</p>
+            <p className="text-muted-foreground text-sm">No orders yet</p>
           ) : (
             <div className="overflow-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b text-muted-foreground text-left">
-                    <th className="pb-2 font-medium">অর্ডার নং</th>
-                    <th className="pb-2 font-medium">কাস্টমার</th>
-                    <th className="pb-2 font-medium">মোট</th>
-                    <th className="pb-2 font-medium">স্ট্যাটাস</th>
-                    <th className="pb-2 font-medium">তারিখ</th>
+                    <th className="pb-2 font-medium">Order #</th>
+                    <th className="pb-2 font-medium">Customer</th>
+                    <th className="pb-2 font-medium">Total</th>
+                    <th className="pb-2 font-medium">Status</th>
+                    <th className="pb-2 font-medium">Date</th>
                   </tr>
                 </thead>
                 <tbody>
