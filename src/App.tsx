@@ -18,12 +18,12 @@ import Blog from "./pages/Blog";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminProducts from "./pages/admin/AdminProducts";
+import AdminCategories from "./pages/admin/AdminCategories";
 
 const queryClient = new QueryClient();
 
 // Placeholder admin pages
-const AdminProducts = () => <div><h2 className="text-2xl font-display font-bold mb-4">Products</h2><p className="text-muted-foreground">Product management coming in Phase 2.</p></div>;
-const AdminCategories = () => <div><h2 className="text-2xl font-display font-bold mb-4">Categories</h2><p className="text-muted-foreground">Category management coming in Phase 2.</p></div>;
 const AdminOrders = () => <div><h2 className="text-2xl font-display font-bold mb-4">Orders</h2><p className="text-muted-foreground">Order management coming in Phase 3.</p></div>;
 const AdminBlog = () => <div><h2 className="text-2xl font-display font-bold mb-4">Blog</h2><p className="text-muted-foreground">Blog management coming in Phase 4.</p></div>;
 
