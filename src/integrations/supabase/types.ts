@@ -399,6 +399,39 @@ export type Database = {
           },
         ]
       }
+      shipping_districts: {
+        Row: {
+          created_at: string
+          delivery_fee: number
+          delivery_label: string | null
+          display_order: number
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          delivery_fee?: number
+          delivery_label?: string | null
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          delivery_fee?: number
+          delivery_label?: string | null
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           created_at: string
