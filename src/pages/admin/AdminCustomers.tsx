@@ -1,0 +1,136 @@
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Search, Users } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import type { Tables } from "@/integrations/supabase/types";
+
+type Profile = Tables<"profiles">;
+
+interface CustomerWithOrders extends Profile {
+  order_count: number;
+  total_spent: number;
+}
+
+const AdminCustomers = () => {
+  const [customers, setCustomers] = useState<CustomerWithOrders[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+
+  const fetchCustomers = async () => {
+    // Get all profiles
+    const { data: profiles, error: profileError } = await supabase
+      .from("profiles")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (profileError) {
+      toast({ title: "Error", description: profileError.message, variant: "destructive" });
+      setLoading(false);
+      return;
+    }
+
+    // Get order stats per user
+    const { data: orders } = await supabase
+      .from("orders")
+      .select("user_id, total");
+
+    const orderStats: Record<string, { count: number; spent: number }> = {};
+    (orders || []).forEach((o) => {
+      if (!o.user_id) return;
+      if (!orderStats[o.user_id]) orderStats[o.user_id] = { count: 0, spent: 0 };
+      orderStats[o.user_id].count++;
+      orderStats[o.user_id].spent += Number(o.total);
+    });
+
+    const result: CustomerWithOrders[] = (profiles || []).map((p) => ({
+      ...p,
+      order_count: orderStats[p.user_id]?.count || 0,
+      total_spent: orderStats[p.user_id]?.spent || 0,
+    }));
+
+    setCustomers(result);
+    setLoading(false);
+  };
+
+  useEffect(() => { fetchCustomers(); }, []);
+
+  const filtered = customers.filter((c) => {
+    const term = search.toLowerCase();
+    return (c.full_name || "").toLowerCase().includes(term) ||
+      (c.phone || "").includes(term) ||
+      c.user_id.includes(term);
+  });
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-display font-bold">Customers</h2>
+        <Badge variant="outline" className="text-sm">{customers.length} total</Badge>
+      </div>
+
+      <div className="relative mb-4 max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input placeholder="Search by name or phone..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10" />
+      </div>
+
+      <Card>
+        <CardContent className="p-0">
+          {loading ? (
+            <p className="p-6 text-muted-foreground">Loading...</p>
+          ) : filtered.length === 0 ? (
+            <div className="p-12 text-center">
+              <Users className="h-12 w-12 mx-auto text-muted-foreground/40 mb-3" />
+              <p className="text-muted-foreground">No customers found.</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Phone</TableHead>
+                    <TableHead>Orders</TableHead>
+                    <TableHead>Total Spent</TableHead>
+                    <TableHead>Joined</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filtered.map((c) => (
+                    <TableRow key={c.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          {c.avatar_url ? (
+                            <img src={c.avatar_url} alt="" className="h-8 w-8 rounded-full object-cover" />
+                          ) : (
+                            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">
+                              {(c.full_name || "?")[0].toUpperCase()}
+                            </div>
+                          )}
+                          <span className="font-medium">{c.full_name || "—"}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-sm">{c.phone || "—"}</TableCell>
+                      <TableCell>
+                        <Badge variant="secondary">{c.order_count}</Badge>
+                      </TableCell>
+                      <TableCell className="font-medium">৳{c.total_spent.toFixed(2)}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {new Date(c.created_at).toLocaleDateString("en-GB")}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default AdminCustomers;
