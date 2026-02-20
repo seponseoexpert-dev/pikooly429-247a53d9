@@ -132,6 +132,30 @@ const Checkout = () => {
 
       if (itemsError) throw itemsError;
 
+      // If EPS payment, redirect to EPS gateway
+      if (form.paymentMethod === "eps") {
+        try {
+          const { data: epsData, error: epsError } = await supabase.functions.invoke("eps-payment", {
+            body: { action: "initialize", order_id: order.id },
+          });
+
+          if (epsError || !epsData?.redirectUrl) {
+            toast.error(epsData?.error || "EPS payment initialization failed. Please try again.");
+            setLoading(false);
+            return;
+          }
+
+          // Redirect to EPS payment page
+          window.location.href = epsData.redirectUrl;
+          return;
+        } catch (epsErr: any) {
+          console.error("EPS error:", epsErr);
+          toast.error("Failed to connect to EPS payment gateway.");
+          setLoading(false);
+          return;
+        }
+      }
+
       clearCart();
       toast.success("Order placed successfully! 🎉");
       navigate(`/order-success/${order.order_number}`);
@@ -249,6 +273,7 @@ const Checkout = () => {
                     { value: "cod", label: "Cash on Delivery", desc: "Pay when you receive your order" },
                     { value: "bkash", label: "bKash", desc: "bKash mobile payment" },
                     { value: "nagad", label: "Nagad", desc: "Nagad mobile payment" },
+                    { value: "eps", label: "EPS Payment", desc: "Pay securely via EPS Payment Gateway" },
                   ].map((method) => (
                     <label
                       key={method.value}
