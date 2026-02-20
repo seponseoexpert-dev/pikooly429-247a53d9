@@ -49,7 +49,7 @@ const Header = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("categories")
-        .select("id, name, slug")
+        .select("id, name, slug, image_url")
         .eq("is_active", true)
         .eq("show_in_header", true)
         .order("display_order");
@@ -334,27 +334,39 @@ const Header = () => {
                     {subs.length > 0 && <ChevronDown size={12} className="ml-0.5 opacity-60" />}
                   </Link>
                   {subs.length > 0 && hoveredCat === cat.id && (
-                    <div className="absolute left-1/2 -translate-x-1/2 top-full z-[100] bg-card border border-border rounded-xl shadow-xl overflow-hidden py-3 px-3">
-                      <div className="grid grid-cols-3 gap-2 min-w-[360px]" style={{ gridTemplateColumns: `repeat(${Math.min(subs.length, 4)}, minmax(0, 1fr))` }}>
-                        {subs.map((sub) => (
+                    <div className="absolute left-0 top-full z-[100] bg-card border border-border rounded-xl shadow-xl overflow-hidden">
+                      <div className="flex">
+                        {/* Subcategory list */}
+                        <div className="py-3 px-2 min-w-[200px]">
+                          <p className="px-3 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide">{cat.name}</p>
+                          {subs.map((sub) => (
+                            <Link
+                              key={sub.id}
+                              to={`/shop?cat=${cat.slug}&sub=${sub.slug}`}
+                              className="block px-3 py-1.5 text-sm text-foreground hover:text-primary hover:bg-muted rounded-md transition-colors"
+                              onClick={() => setHoveredCat(null)}
+                            >
+                              {sub.name}
+                            </Link>
+                          ))}
                           <Link
-                            key={sub.id}
-                            to={`/shop?cat=${cat.slug}&sub=${sub.slug}`}
-                            className="flex flex-col items-center gap-1.5 p-2 rounded-lg hover:bg-muted transition-colors group text-center"
+                            to={`/shop?cat=${cat.slug}`}
+                            className="block px-3 py-1.5 mt-1 text-sm font-medium text-primary hover:underline"
                             onClick={() => setHoveredCat(null)}
                           >
-                            <div className="w-16 h-16 rounded-xl overflow-hidden bg-secondary border border-border/30 group-hover:border-primary/40 transition-all">
-                              <img
-                                src={sub.image_url || "/placeholder.svg"}
-                                alt={sub.name}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                            <span className="text-xs font-medium text-foreground/80 group-hover:text-primary transition-colors leading-tight">
-                              {sub.name}
-                            </span>
+                            View All →
                           </Link>
-                        ))}
+                        </div>
+                        {/* Category image */}
+                        {cat.image_url && (
+                          <div className="w-[180px] shrink-0 relative overflow-hidden rounded-r-xl">
+                            <img
+                              src={cat.image_url}
+                              alt={cat.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
