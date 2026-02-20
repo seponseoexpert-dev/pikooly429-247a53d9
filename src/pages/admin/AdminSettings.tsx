@@ -60,6 +60,10 @@ const sectionFields: Record<string, { key: string; label: string; type?: string 
     { key: "site_description", label: "Site Description", type: "textarea" },
     { key: "site_footer_text", label: "Footer Text" },
     { key: "site_copyright", label: "Copyright Text" },
+    { key: "announcement_bar_text", label: "Announcement Bar Text" },
+    { key: "announcement_bar_enabled", label: "Show Announcement Bar", type: "switch" },
+    { key: "header_delivery_text", label: "Header Delivery Text (e.g. Where to deliver?)" },
+    { key: "header_delivery_subtext", label: "Header Delivery Subtext (e.g. Location missing)" },
     { key: "maintenance_mode", label: "Maintenance Mode", type: "switch" },
   ],
   mail: [
