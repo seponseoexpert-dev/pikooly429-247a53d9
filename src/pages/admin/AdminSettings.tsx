@@ -671,6 +671,56 @@ const PaymentGatewaySection = ({
   );
 };
 
+const SendTestEmailButton = () => {
+  const [testEmail, setTestEmail] = useState("");
+  const [sending, setSending] = useState(false);
+  const { toast } = useToast();
+
+  const handleSendTest = async () => {
+    if (!testEmail.trim()) {
+      toast({ title: "Enter an email address", variant: "destructive" });
+      return;
+    }
+    setSending(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("send-email", {
+        body: {
+          to: testEmail.trim(),
+          subject: "PikoolyFlora - Test Email",
+          html: `<div style="font-family:sans-serif;padding:20px;"><h2 style="color:#e85d5d;">🎉 Mail Configuration Working!</h2><p>This is a test email from <strong>PikoolyFlora</strong> Admin Panel.</p><p>Your SMTP settings are configured correctly.</p><hr/><p style="color:#999;font-size:12px;">PikoolyFlora - Not just a Gift, It's sharing of Love.</p></div>`,
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast({ title: "✓ Test email sent successfully!" });
+      setTestEmail("");
+    } catch (err: any) {
+      toast({ title: "Failed to send", description: err.message, variant: "destructive" });
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div className="border-t pt-4 mt-2">
+      <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Send Test Email</label>
+      <div className="flex gap-2 mt-1.5">
+        <Input
+          type="email"
+          placeholder="recipient@example.com"
+          value={testEmail}
+          onChange={(e) => setTestEmail(e.target.value)}
+          className="max-w-xs"
+        />
+        <Button type="button" variant="outline" size="sm" onClick={handleSendTest} disabled={sending}>
+          <Mail className="h-4 w-4 mr-2" />
+          {sending ? "Sending..." : "Send Test"}
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 const AdminSettings = () => {
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -814,17 +864,22 @@ const AdminSettings = () => {
                   ) : currentFields.length === 0 ? (
                     <p className="text-muted-foreground text-sm py-4 text-center">No settings available for this section yet.</p>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-                      {currentFields.map((field) => (
-                        <div key={field.key} className={cn("space-y-1.5", field.fullWidth && "md:col-span-2")}>
-                          <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{field.label}</label>
-                          <FieldRenderer
-                            field={field}
-                            value={formValues[field.key] || ""}
-                            onChange={(val) => setFormValues({ ...formValues, [field.key]: val })}
-                          />
-                        </div>
-                      ))}
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                        {currentFields.map((field) => (
+                          <div key={field.key} className={cn("space-y-1.5", field.fullWidth && "md:col-span-2")}>
+                            <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{field.label}</label>
+                            <FieldRenderer
+                              field={field}
+                              value={formValues[field.key] || ""}
+                              onChange={(val) => setFormValues({ ...formValues, [field.key]: val })}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      {activeSection === "mail" && (
+                        <SendTestEmailButton />
+                      )}
                     </div>
                   )}
                 </div>
