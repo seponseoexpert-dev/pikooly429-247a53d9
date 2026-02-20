@@ -63,7 +63,7 @@ const Header = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("subcategories")
-        .select("id, name, slug, category_id")
+        .select("id, name, slug, category_id, image_url")
         .eq("is_active", true)
         .order("display_order");
       if (error) throw error;
@@ -334,17 +334,28 @@ const Header = () => {
                     {subs.length > 0 && <ChevronDown size={12} className="ml-0.5 opacity-60" />}
                   </Link>
                   {subs.length > 0 && hoveredCat === cat.id && (
-                    <div className="absolute left-0 top-full z-[100] bg-card border border-border rounded-xl shadow-lg overflow-hidden min-w-[200px] py-1">
-                      {subs.map((sub) => (
-                        <Link
-                          key={sub.id}
-                          to={`/shop?cat=${cat.slug}&sub=${sub.slug}`}
-                          className="block px-4 py-2.5 text-sm text-foreground hover:bg-muted hover:text-primary transition-colors"
-                          onClick={() => setHoveredCat(null)}
-                        >
-                          {sub.name}
-                        </Link>
-                      ))}
+                    <div className="absolute left-1/2 -translate-x-1/2 top-full z-[100] bg-card border border-border rounded-xl shadow-xl overflow-hidden py-3 px-3">
+                      <div className="grid grid-cols-3 gap-2 min-w-[360px]" style={{ gridTemplateColumns: `repeat(${Math.min(subs.length, 4)}, minmax(0, 1fr))` }}>
+                        {subs.map((sub) => (
+                          <Link
+                            key={sub.id}
+                            to={`/shop?cat=${cat.slug}&sub=${sub.slug}`}
+                            className="flex flex-col items-center gap-1.5 p-2 rounded-lg hover:bg-muted transition-colors group text-center"
+                            onClick={() => setHoveredCat(null)}
+                          >
+                            <div className="w-16 h-16 rounded-xl overflow-hidden bg-secondary border border-border/30 group-hover:border-primary/40 transition-all">
+                              <img
+                                src={sub.image_url || "/placeholder.svg"}
+                                alt={sub.name}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <span className="text-xs font-medium text-foreground/80 group-hover:text-primary transition-colors leading-tight">
+                              {sub.name}
+                            </span>
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
