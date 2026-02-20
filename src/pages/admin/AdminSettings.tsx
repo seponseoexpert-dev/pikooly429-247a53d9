@@ -184,8 +184,13 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "whatsapp_number", label: "WhatsApp" },
   ],
   cookies: [
-    { key: "cookie_consent_enabled", label: "Enable Cookie Consent", type: "switch" },
-    { key: "cookie_consent_text", label: "Consent Text", type: "textarea", fullWidth: true },
+    { key: "cookies_details_page", label: "Cookies Details Page", type: "select", fullWidth: true, options: [
+      { value: "", label: "---" },
+      { value: "privacy", label: "Privacy Policy" },
+      { value: "terms", label: "Terms & Conditions" },
+      { value: "cookies", label: "Cookies Policy" },
+    ]},
+    { key: "cookies_summary", label: "Cookies Summary", type: "textarea", fullWidth: true },
   ],
   analytics: [
     { key: "google_analytics_id", label: "Google Analytics ID" },
@@ -193,10 +198,9 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "google_tag_manager_id", label: "Google Tag Manager ID" },
   ],
   theme: [
-    { key: "theme_primary_color", label: "Primary Color" },
-    { key: "theme_secondary_color", label: "Secondary Color" },
-    { key: "theme_font_family", label: "Font Family" },
-    { key: "dark_mode_enabled", label: "Dark Mode", type: "switch" },
+    { key: "company_logo", label: "Logo (128PX, 43PX)", type: "image_upload" },
+    { key: "company_favicon", label: "Fav Icon (120PX, 120PX)", type: "image_upload" },
+    { key: "footer_logo", label: "Footer Logo (144PX, 48PX)", type: "image_upload" },
   ],
   sliders: [
     { key: "slider_1_image", label: "Slider 1 Image", type: "image_upload" },
@@ -247,12 +251,7 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "default_language_code", label: "Default Language Code" },
     { key: "multi_language_enabled_setting", label: "Enable Multi Language", type: "switch" },
   ],
-  sms_gateway: [
-    { key: "sms_gateway_provider", label: "SMS Provider" },
-    { key: "sms_api_key", label: "SMS API Key" },
-    { key: "sms_sender_id", label: "SMS Sender ID" },
-    { key: "sms_enabled", label: "Enable SMS", type: "switch" },
-  ],
+  sms_gateway: [], // Handled by custom SmsGatewaySection component
   payment_gateway: [
     { key: "cod_setting", label: "Cash on Delivery", type: "switch" },
     { key: "bkash_enabled", label: "bKash Enabled", type: "switch" },
@@ -470,6 +469,92 @@ const NotificationAlertSection = ({
   );
 };
 
+// SMS Gateway providers config
+const smsGatewayProviders = [
+  {
+    key: "twilio",
+    label: "Twilio",
+    fields: [
+      { key: "twilio_account_sid", label: "Twilio Account SID" },
+      { key: "twilio_auth_token", label: "Twilio Auth Token" },
+      { key: "twilio_from", label: "Twilio From" },
+      { key: "twilio_status", label: "Twilio Status", type: "select" as const, options: [
+        { value: "enable", label: "Enable" },
+        { value: "disable", label: "Disable" },
+      ]},
+    ],
+  },
+  {
+    key: "clickatell",
+    label: "Clickatell",
+    fields: [
+      { key: "clickatell_apikey", label: "Clickatell APIKey" },
+      { key: "clickatell_status", label: "Clickatell Status", type: "select" as const, options: [
+        { value: "enable", label: "Enable" },
+        { value: "disable", label: "Disable" },
+      ]},
+    ],
+  },
+  {
+    key: "nexmo",
+    label: "Nexmo",
+    fields: [
+      { key: "nexmo_key", label: "Nexmo Key" },
+      { key: "nexmo_secret", label: "Nexmo Secret" },
+      { key: "nexmo_status", label: "Nexmo Status", type: "select" as const, options: [
+        { value: "enable", label: "Enable" },
+        { value: "disable", label: "Disable" },
+      ]},
+    ],
+  },
+];
+
+const SmsGatewaySection = ({
+  formValues,
+  setFormValues,
+}: {
+  formValues: Record<string, string>;
+  setFormValues: (v: Record<string, string>) => void;
+}) => {
+  return (
+    <Tabs defaultValue="twilio">
+      <TabsList className="w-full grid grid-cols-3 mb-4">
+        {smsGatewayProviders.map((p) => (
+          <TabsTrigger key={p.key} value={p.key}>{p.label}</TabsTrigger>
+        ))}
+      </TabsList>
+      {smsGatewayProviders.map((provider) => (
+        <TabsContent key={provider.key} value={provider.key} className="space-y-4">
+          <h4 className="font-medium text-base">{provider.label}</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+            {provider.fields.map((field) => (
+              <div key={field.key} className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{field.label}</label>
+                {field.type === "select" && field.options ? (
+                  <Select value={formValues[field.key] || "disable"} onValueChange={(v) => setFormValues({ ...formValues, [field.key]: v })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {field.options.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Input
+                    value={formValues[field.key] || ""}
+                    onChange={(e) => setFormValues({ ...formValues, [field.key]: e.target.value })}
+                    placeholder={field.label}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        </TabsContent>
+      ))}
+    </Tabs>
+  );
+};
+
 const AdminSettings = () => {
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -506,6 +591,9 @@ const AdminSettings = () => {
         keys.push(`alert_${ch}_admin_new_order_enabled`);
       });
       return keys;
+    }
+    if (activeSection === "sms_gateway") {
+      return smsGatewayProviders.flatMap((p) => p.fields.map((f) => f.key));
     }
     return (sectionFields[activeSection] || []).map((f) => f.key);
   };
@@ -600,6 +688,8 @@ const AdminSettings = () => {
                 <div className="p-4">
                   {activeSection === "notification_alert" ? (
                     <NotificationAlertSection formValues={formValues} setFormValues={setFormValues} />
+                  ) : activeSection === "sms_gateway" ? (
+                    <SmsGatewaySection formValues={formValues} setFormValues={setFormValues} />
                   ) : currentFields.length === 0 ? (
                     <p className="text-muted-foreground text-sm py-4 text-center">No settings available for this section yet.</p>
                   ) : (
