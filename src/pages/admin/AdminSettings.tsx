@@ -21,7 +21,7 @@ const settingSections = [
   { key: "site", label: "Site", icon: Globe },
   { key: "mail", label: "Mail", icon: Mail },
   { key: "location", label: "Location Setup", icon: MapPin },
-  { key: "shipping", label: "Shipping Setup", icon: Truck },
+  
   { key: "otp", label: "OTP", icon: KeyRound },
   { key: "notification", label: "Notification", icon: Bell },
   { key: "notification_alert", label: "Notification Alert", icon: BellRing },
@@ -30,8 +30,6 @@ const settingSections = [
   { key: "analytics", label: "Analytics", icon: BarChart3 },
   { key: "theme", label: "Theme", icon: Palette },
   { key: "sliders", label: "Sliders", icon: Image },
-  { key: "currencies", label: "Currencies", icon: DollarSign },
-  { key: "suppliers", label: "Suppliers", icon: Users },
   { key: "outlets", label: "Outlets", icon: Store },
   { key: "benefits", label: "Benefits", icon: Gift },
   { key: "units", label: "Units", icon: Ruler },
@@ -81,13 +79,6 @@ const sectionFields: Record<string, { key: string; label: string; type?: string 
     { key: "default_state", label: "Default State" },
     { key: "default_timezone", label: "Timezone" },
     { key: "default_language", label: "Default Language" },
-  ],
-  shipping: [
-    { key: "delivery_fee", label: "Delivery Fee (৳)" },
-    { key: "free_delivery_min", label: "Free Delivery Minimum (৳)" },
-    { key: "shipping_method", label: "Default Shipping Method" },
-    { key: "estimated_delivery_days", label: "Estimated Delivery Days" },
-    { key: "enable_free_shipping", label: "Enable Free Shipping", type: "switch" },
   ],
   otp: [
     { key: "otp_type", label: "OTP Type (SMS/Email)" },
@@ -140,18 +131,6 @@ const sectionFields: Record<string, { key: string; label: string; type?: string 
     { key: "slider_3_image", label: "Slider 3 Image", type: "image_upload" },
     { key: "slider_3_title", label: "Slider 3 Title" },
     { key: "slider_3_link", label: "Slider 3 Link" },
-  ],
-  currencies: [
-    { key: "default_currency", label: "Default Currency" },
-    { key: "currency_symbol", label: "Currency Symbol" },
-    { key: "currency_position", label: "Symbol Position (left/right)" },
-    { key: "decimal_separator", label: "Decimal Separator" },
-    { key: "thousand_separator", label: "Thousand Separator" },
-  ],
-  suppliers: [
-    { key: "supplier_management_enabled", label: "Enable Supplier Management", type: "switch" },
-    { key: "default_supplier_name", label: "Default Supplier Name" },
-    { key: "default_supplier_contact", label: "Default Supplier Contact" },
   ],
   outlets: [
     { key: "multi_outlet_enabled", label: "Enable Multi Outlet", type: "switch" },
