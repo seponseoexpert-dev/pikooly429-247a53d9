@@ -131,8 +131,8 @@ const Checkout = () => {
 
   if (items.length === 0) {
     return (
-      <main className="min-h-screen bg-background pt-24 pb-32">
-        <div className="container mx-auto px-4 text-center py-20">
+      <main className="section-container py-6 pb-24 md:pb-10">
+        <div className="text-center py-20">
           <ShoppingBag size={64} className="mx-auto mb-4 text-muted-foreground/30" />
           <h2 className="text-xl font-bold mb-2">Your cart is empty</h2>
           <p className="text-muted-foreground mb-6">Add products to checkout</p>
@@ -145,8 +145,8 @@ const Checkout = () => {
   }
 
   return (
-    <main className="min-h-screen bg-background pt-24 pb-32">
-      <div className="container mx-auto px-4">
+    <main className="section-container py-4 md:py-8 pb-24 md:pb-10">
+      <div>
         <h1 className="text-2xl md:text-3xl font-display font-bold mb-8 text-center">YOUR ORDER</h1>
 
         <form onSubmit={handleSubmit}>

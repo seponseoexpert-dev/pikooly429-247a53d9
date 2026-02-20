@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, ShoppingCart, X } from "lucide-react";
+import { Search, ShoppingCart, X, User } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -20,6 +21,7 @@ const Header = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const { totalItems, setIsOpen } = useCart();
   const { settings } = useSiteSettings();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const searchRef = useRef<HTMLDivElement>(null);
 
@@ -106,6 +108,11 @@ const Header = () => {
                   {currencySymbol}
                 </span>
               </button>
+              {user && (
+                <Link to="/account" className="hidden sm:flex p-2 text-foreground hover:text-primary transition-colors rounded-full hover:bg-muted" aria-label="Account">
+                  <User size={20} />
+                </Link>
+              )}
               <button onClick={() => setIsOpen(true)} className="relative p-2 text-foreground hover:text-primary transition-colors rounded-full hover:bg-muted" aria-label="Cart">
                 <ShoppingCart size={20} />
                 {totalItems > 0 && (
