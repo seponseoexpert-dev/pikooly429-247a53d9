@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Search, ShoppingCart, X, User, Truck, ChevronDown, MapPinCheck } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
@@ -49,7 +49,7 @@ const Header = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("categories")
-        .select("name, slug")
+        .select("id, name, slug")
         .eq("is_active", true)
         .eq("show_in_header", true)
         .order("display_order");
@@ -58,11 +58,32 @@ const Header = () => {
     },
   });
 
-  // Build nav links: static + dynamic categories
-  const navLinks = [
-    ...staticNavLinks,
-    ...categories.map((c) => ({ label: c.name, href: `/shop?cat=${c.slug}` })),
-  ];
+  const { data: subcategories = [] } = useQuery({
+    queryKey: ["header-subcategories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("subcategories")
+        .select("id, name, slug, category_id")
+        .eq("is_active", true)
+        .order("display_order");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const subsByCategory = useMemo(() => {
+    const map: Record<string, typeof subcategories> = {};
+    subcategories.forEach((s) => {
+      if (!map[s.category_id]) map[s.category_id] = [];
+      map[s.category_id].push(s);
+    });
+    return map;
+  }, [subcategories]);
+
+  const [hoveredCat, setHoveredCat] = useState<string | null>(null);
+
+  // Nav links are static only; categories rendered separately with dropdowns
+  const navLinks = staticNavLinks;
 
   const suggestions = searchQuery.trim().length > 0
     ? allProducts.filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 6)
@@ -293,6 +314,42 @@ const Header = () => {
                 {link.label}
               </Link>
             ))}
+            {categories.map((cat) => {
+              const subs = subsByCategory[cat.id] || [];
+              const isActive = location.pathname + location.search === `/shop?cat=${cat.slug}`;
+              return (
+                <div
+                  key={cat.id}
+                  className="relative"
+                  onMouseEnter={() => setHoveredCat(cat.id)}
+                  onMouseLeave={() => setHoveredCat(null)}
+                >
+                  <Link
+                    to={`/shop?cat=${cat.slug}`}
+                    className={`flex items-center gap-0.5 px-3 lg:px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors hover:text-primary ${
+                      isActive ? "text-primary border-b-2 border-primary" : "text-muted-foreground"
+                    }`}
+                  >
+                    {cat.name}
+                    {subs.length > 0 && <ChevronDown size={12} className="ml-0.5 opacity-60" />}
+                  </Link>
+                  {subs.length > 0 && hoveredCat === cat.id && (
+                    <div className="absolute left-0 top-full z-[100] bg-card border border-border rounded-xl shadow-lg overflow-hidden min-w-[200px] py-1">
+                      {subs.map((sub) => (
+                        <Link
+                          key={sub.id}
+                          to={`/shop?cat=${cat.slug}&sub=${sub.slug}`}
+                          className="block px-4 py-2.5 text-sm text-foreground hover:bg-muted hover:text-primary transition-colors"
+                          onClick={() => setHoveredCat(null)}
+                        >
+                          {sub.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </nav>
         </div>
       </header>
