@@ -177,7 +177,7 @@ const Header = () => {
               </Link>
               <Link to="/track-order" className="flex flex-col items-center justify-center px-2 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted" aria-label="Track Order">
                 <MapPinCheck size={20} />
-                <span className="text-[9px] font-medium mt-0.5 leading-none">Track</span>
+                <span className="hidden md:block text-[9px] font-medium mt-0.5 leading-none">Track</span>
               </Link>
               <div className="relative" ref={currencyRef}>
                 <button
