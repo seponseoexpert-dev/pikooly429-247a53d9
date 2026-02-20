@@ -188,6 +188,51 @@ const Checkout = () => {
         }
       }
 
+      // Send order confirmation email (fire & forget)
+      if (form.email.trim()) {
+        const itemsHtml = items.map((item) =>
+          `<tr><td style="padding:8px;border-bottom:1px solid #eee;">${item.product.name}</td><td style="padding:8px;border-bottom:1px solid #eee;text-align:center;">${item.quantity}</td><td style="padding:8px;border-bottom:1px solid #eee;text-align:right;">৳${(item.product.price * item.quantity).toFixed(2)}</td></tr>`
+        ).join("");
+
+        supabase.functions.invoke("send-email", {
+          body: {
+            to: form.email.trim(),
+            subject: `Order Confirmed - ${order.order_number} | PikoolyFlora`,
+            html: `
+              <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;">
+                <div style="text-align:center;padding:20px 0;border-bottom:2px solid #e85d5d;">
+                  <h1 style="margin:0;color:#333;"><span style="color:#333;">Pikooly</span><span style="color:#e85d5d;">Flora</span></h1>
+                </div>
+                <div style="padding:20px 0;">
+                  <h2 style="color:#e85d5d;">🎉 Order Confirmed!</h2>
+                  <p>Hi <strong>${form.fullName}</strong>,</p>
+                  <p>Thank you for your order. We've received your order and it's being processed.</p>
+                  <div style="background:#f9f9f9;border-radius:8px;padding:16px;margin:16px 0;">
+                    <p style="margin:0 0 4px;"><strong>Order Number:</strong> ${order.order_number}</p>
+                    <p style="margin:0 0 4px;"><strong>Recipient:</strong> ${form.recipientName || form.fullName}</p>
+                    <p style="margin:0 0 4px;"><strong>Delivery Address:</strong> ${activeDistrict?.name || ""} - ${form.address}</p>
+                    ${form.deliveryDate ? `<p style="margin:0 0 4px;"><strong>Delivery Date:</strong> ${form.deliveryDate}</p>` : ""}
+                    ${form.deliveryTime ? `<p style="margin:0 0 4px;"><strong>Delivery Time:</strong> ${form.deliveryTime}</p>` : ""}
+                  </div>
+                  <table style="width:100%;border-collapse:collapse;margin:16px 0;">
+                    <thead><tr style="background:#f0f0f0;"><th style="padding:8px;text-align:left;">Product</th><th style="padding:8px;text-align:center;">Qty</th><th style="padding:8px;text-align:right;">Total</th></tr></thead>
+                    <tbody>${itemsHtml}</tbody>
+                  </table>
+                  <div style="text-align:right;margin-top:12px;">
+                    <p style="margin:0;"><strong>Subtotal:</strong> ৳${totalPrice.toFixed(2)}</p>
+                    <p style="margin:0;"><strong>Delivery:</strong> ৳${deliveryFee.toFixed(2)}</p>
+                    <p style="margin:8px 0 0;font-size:18px;color:#e85d5d;"><strong>Total: ৳${grandTotal.toFixed(2)}</strong></p>
+                  </div>
+                </div>
+                <div style="border-top:1px solid #eee;padding-top:16px;text-align:center;color:#999;font-size:12px;">
+                  <p>PikoolyFlora - Not just a Gift, It's sharing of Love.</p>
+                </div>
+              </div>
+            `,
+          },
+        }).catch(console.error);
+      }
+
       clearCart();
       toast.success("Order placed successfully! 🎉");
       navigate(`/order-success/${order.order_number}`);
