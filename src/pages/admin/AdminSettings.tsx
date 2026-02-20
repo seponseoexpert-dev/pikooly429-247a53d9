@@ -593,25 +593,57 @@ const paymentGatewayProviders = [
     ],
   },
   {
-    key: "more",
-    label: "⊕ More Gateway",
+    key: "bkash",
+    label: "bKash",
     fields: [
-      { key: "bkash_enabled", label: "bKash Status", type: "select" as const, options: [
-        { value: "enable", label: "Enable" },
-        { value: "disable", label: "Disable" },
-      ]},
       { key: "bkash_app_key", label: "bKash App Key" },
       { key: "bkash_app_secret", label: "bKash App Secret" },
-      { key: "nagad_enabled", label: "Nagad Status", type: "select" as const, options: [
+      { key: "bkash_username", label: "bKash Username" },
+      { key: "bkash_password", label: "bKash Password" },
+      { key: "bkash_mode", label: "bKash Mode", type: "select" as const, options: [
+        { value: "sandbox", label: "Sandbox" },
+        { value: "live", label: "Live" },
+      ]},
+      { key: "bkash_status", label: "bKash Status", type: "select" as const, options: [
         { value: "enable", label: "Enable" },
         { value: "disable", label: "Disable" },
       ]},
-      { key: "ssl_commerz_enabled", label: "SSLCommerz Status", type: "select" as const, options: [
+    ],
+  },
+  {
+    key: "nagad",
+    label: "Nagad",
+    fields: [
+      { key: "nagad_merchant_id", label: "Nagad Merchant ID" },
+      { key: "nagad_merchant_number", label: "Nagad Merchant Number" },
+      { key: "nagad_public_key", label: "Nagad Public Key" },
+      { key: "nagad_private_key", label: "Nagad Private Key" },
+      { key: "nagad_mode", label: "Nagad Mode", type: "select" as const, options: [
+        { value: "sandbox", label: "Sandbox" },
+        { value: "live", label: "Live" },
+      ]},
+      { key: "nagad_status", label: "Nagad Status", type: "select" as const, options: [
         { value: "enable", label: "Enable" },
         { value: "disable", label: "Disable" },
       ]},
-      { key: "ssl_store_id", label: "SSLCommerz Store ID" },
-      { key: "ssl_store_password", label: "SSLCommerz Store Password" },
+    ],
+  },
+  {
+    key: "eps",
+    label: "EPS",
+    fields: [
+      { key: "eps_username", label: "EPS Username (Email)" },
+      { key: "eps_password", label: "EPS Password" },
+      { key: "eps_store_id", label: "EPS Store ID" },
+      { key: "eps_hash_key", label: "EPS Hash Key" },
+      { key: "eps_mode", label: "EPS Mode", type: "select" as const, options: [
+        { value: "sandbox", label: "Sandbox" },
+        { value: "live", label: "Live" },
+      ]},
+      { key: "eps_status", label: "EPS Status", type: "select" as const, options: [
+        { value: "enable", label: "Enable" },
+        { value: "disable", label: "Disable" },
+      ]},
     ],
   },
 ];
@@ -625,14 +657,14 @@ const PaymentGatewaySection = ({
 }) => {
   return (
     <Tabs defaultValue="paypal">
-      <TabsList className="w-full grid grid-cols-4 mb-4">
+      <TabsList className="w-full grid grid-cols-3 lg:grid-cols-6 mb-4">
         {paymentGatewayProviders.map((p) => (
           <TabsTrigger key={p.key} value={p.key}>{p.label}</TabsTrigger>
         ))}
       </TabsList>
       {paymentGatewayProviders.map((provider) => (
         <TabsContent key={provider.key} value={provider.key} className="space-y-4">
-          <h4 className="font-medium text-base">{provider.label.replace("⊕ ", "")}</h4>
+          <h4 className="font-medium text-base">{provider.label}</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
             {provider.fields.map((field) => (
               <div key={field.key} className="space-y-1.5">
