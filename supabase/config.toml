@@ -1,1 +1,4 @@
 project_id = "uizdqqyiqxkcjufkksrc"
+
+[functions.eps-payment]
+verify_jwt = false
