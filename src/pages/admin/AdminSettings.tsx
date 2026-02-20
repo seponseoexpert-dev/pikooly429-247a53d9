@@ -46,6 +46,7 @@ const settingSections = [
   { key: "sms_gateway", label: "SMS Gateway", icon: MessageSquare },
   { key: "payment_gateway", label: "Payment Gateway", icon: CreditCard },
   { key: "license", label: "License", icon: Award },
+  { key: "footer", label: "Footer", icon: FileText },
 ];
 
 type FieldDef = {
@@ -255,6 +256,26 @@ const sectionFields: Record<string, FieldDef[]> = {
   payment_gateway: [], // Handled by custom PaymentGatewaySection component
   license: [
     { key: "license_code", label: "License Code" },
+  ],
+  footer: [
+    { key: "site_footer_text", label: "Footer Tagline / Description", type: "textarea", fullWidth: true, placeholder: "e.g. Not just a Gift, It's sharing of Love." },
+    { key: "site_copyright", label: "Copyright Text", fullWidth: true, placeholder: `© ${new Date().getFullYear()} PikoolyFlora. All Rights Reserved.` },
+    { key: "footer_quick_link_1_label", label: "Quick Link 1 Label", placeholder: "About Us" },
+    { key: "footer_quick_link_1_url", label: "Quick Link 1 URL", placeholder: "/about" },
+    { key: "footer_quick_link_2_label", label: "Quick Link 2 Label", placeholder: "Contact Us" },
+    { key: "footer_quick_link_2_url", label: "Quick Link 2 URL", placeholder: "/contact" },
+    { key: "footer_quick_link_3_label", label: "Quick Link 3 Label", placeholder: "Privacy Policy" },
+    { key: "footer_quick_link_3_url", label: "Quick Link 3 URL", placeholder: "/privacy" },
+    { key: "footer_quick_link_4_label", label: "Quick Link 4 Label", placeholder: "Terms & Conditions" },
+    { key: "footer_quick_link_4_url", label: "Quick Link 4 URL", placeholder: "/terms" },
+    { key: "footer_category_1_label", label: "Category Link 1 Label", placeholder: "Flowers" },
+    { key: "footer_category_1_url", label: "Category Link 1 URL", placeholder: "/shop?cat=flowers" },
+    { key: "footer_category_2_label", label: "Category Link 2 Label", placeholder: "Cakes" },
+    { key: "footer_category_2_url", label: "Category Link 2 URL", placeholder: "/shop?cat=cakes" },
+    { key: "footer_category_3_label", label: "Category Link 3 Label", placeholder: "Plants" },
+    { key: "footer_category_3_url", label: "Category Link 3 URL", placeholder: "/shop?cat=plants" },
+    { key: "footer_category_4_label", label: "Category Link 4 Label", placeholder: "Gift Hampers" },
+    { key: "footer_category_4_url", label: "Category Link 4 URL", placeholder: "/shop?cat=gift-hampers" },
   ],
 };
 
