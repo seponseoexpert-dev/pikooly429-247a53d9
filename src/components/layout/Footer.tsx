@@ -18,6 +18,40 @@ const Footer = () => {
     { icon: Youtube, url: settings.youtube_url },
   ].filter((s) => s.url);
 
+  // Dynamic quick links from admin settings
+  const quickLinks = [1, 2, 3, 4]
+    .map((i) => ({
+      label: settings[`footer_quick_link_${i}_label`],
+      url: settings[`footer_quick_link_${i}_url`],
+    }))
+    .filter((l) => l.label);
+
+  const defaultQuickLinks = [
+    { label: "About Us", url: "#" },
+    { label: "Contact Us", url: "#" },
+    { label: "Privacy Policy", url: "#" },
+    { label: "Terms & Conditions", url: "#" },
+  ];
+
+  const finalQuickLinks = quickLinks.length > 0 ? quickLinks : defaultQuickLinks;
+
+  // Dynamic category links from admin settings
+  const categoryLinks = [1, 2, 3, 4]
+    .map((i) => ({
+      label: settings[`footer_category_${i}_label`],
+      url: settings[`footer_category_${i}_url`],
+    }))
+    .filter((l) => l.label);
+
+  const defaultCategoryLinks = [
+    { label: "Flowers", url: "/shop" },
+    { label: "Cakes", url: "/shop" },
+    { label: "Plants", url: "/shop" },
+    { label: "Gift Hampers", url: "/shop" },
+  ];
+
+  const finalCategoryLinks = categoryLinks.length > 0 ? categoryLinks : defaultCategoryLinks;
+
   return (
     <footer className="bg-secondary/50 border-t border-border pb-20 md:pb-0">
       <div className="section-container py-5 sm:py-8 md:py-10 lg:py-14">
@@ -28,10 +62,17 @@ const Footer = () => {
               <span className="text-foreground">Pikooly</span>
               <span className="text-primary">Flora</span>
             </h3>
-            <p className="text-xs sm:text-sm text-muted-foreground italic">
-              "Not just a Gift,<br />
-              It's sharing of Love."
-            </p>
+            {footerText && (
+              <p className="text-xs sm:text-sm text-muted-foreground italic">
+                {footerText}
+              </p>
+            )}
+            {!footerText && (
+              <p className="text-xs sm:text-sm text-muted-foreground italic">
+                "Not just a Gift,<br />
+                It's sharing of Love."
+              </p>
+            )}
             {socialLinks.length > 0 && (
               <div className="flex gap-2.5 mt-3">
                 {socialLinks.map(({ icon: Icon, url }, i) => (
@@ -68,9 +109,9 @@ const Footer = () => {
           <div>
             <h4 className="font-display font-semibold text-xs sm:text-base mb-2 sm:mb-3 text-foreground">Quick Links</h4>
             <ul className="space-y-1 sm:space-y-2 text-[11px] sm:text-sm text-muted-foreground">
-              {["About Us", "Contact Us", "Privacy Policy", "Terms & Conditions"].map((link) => (
-                <li key={link}>
-                  <Link to="#" className="hover:text-primary transition-colors">{link}</Link>
+              {finalQuickLinks.map((link, i) => (
+                <li key={i}>
+                  <Link to={link.url || "#"} className="hover:text-primary transition-colors">{link.label}</Link>
                 </li>
               ))}
             </ul>
@@ -80,9 +121,9 @@ const Footer = () => {
           <div>
             <h4 className="font-display font-semibold text-xs sm:text-base mb-2 sm:mb-3 text-foreground">Categories</h4>
             <ul className="space-y-1 sm:space-y-2 text-[11px] sm:text-sm text-muted-foreground">
-              {["Flowers", "Cakes", "Plants", "Gift Hampers"].map((link) => (
-                <li key={link}>
-                  <Link to="/shop" className="hover:text-primary transition-colors">{link}</Link>
+              {finalCategoryLinks.map((link, i) => (
+                <li key={i}>
+                  <Link to={link.url || "/shop"} className="hover:text-primary transition-colors">{link.label}</Link>
                 </li>
               ))}
             </ul>
@@ -101,9 +142,6 @@ const Footer = () => {
 
         {/* Copyright */}
         <div className="border-t border-border pt-3 sm:pt-5">
-          {footerText && (
-            <p className="text-[10px] sm:text-xs text-muted-foreground text-center mb-1">{footerText}</p>
-          )}
           <p className="text-[10px] sm:text-xs text-muted-foreground text-center">
             {copyright}
           </p>
