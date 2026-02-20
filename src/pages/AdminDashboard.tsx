@@ -9,6 +9,7 @@ import { format, subDays, startOfDay } from "date-fns";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line,
 } from "recharts";
+import { useCurrency } from "@/hooks/useCurrency";
 
 interface Stats {
   products: number;
@@ -30,6 +31,7 @@ const statusColors: Record<string, string> = {
 };
 
 const AdminDashboard = () => {
+  const { formatCurrency } = useCurrency();
   const [stats, setStats] = useState<Stats>({
     products: 0, categories: 0, orders: 0, blogs: 0,
     customers: 0, todayOrders: 0, totalRevenue: 0, todayRevenue: 0,
@@ -99,8 +101,8 @@ const AdminDashboard = () => {
   }, []);
 
   const summaryCards = [
-    { label: "Total Revenue", value: `৳${stats.totalRevenue.toLocaleString()}`, icon: DollarSign, color: "text-green-600" },
-    { label: "Today's Revenue", value: `৳${stats.todayRevenue.toLocaleString()}`, icon: TrendingUp, color: "text-primary" },
+    { label: "Total Revenue", value: formatCurrency(stats.totalRevenue), icon: DollarSign, color: "text-green-600" },
+    { label: "Today's Revenue", value: formatCurrency(stats.todayRevenue), icon: TrendingUp, color: "text-primary" },
     { label: "Total Orders", value: stats.orders, icon: ShoppingCart, color: "text-blue-600" },
     { label: "Today's Orders", value: stats.todayOrders, icon: Clock, color: "text-orange-600" },
     { label: "Products", value: stats.products, icon: Package, color: "text-purple-600" },
@@ -140,7 +142,7 @@ const AdminDashboard = () => {
                 <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                 <XAxis dataKey="date" className="text-xs" tick={{ fontSize: 12 }} />
                 <YAxis tick={{ fontSize: 12 }} />
-                <Tooltip formatter={(v: number) => `৳${v.toLocaleString()}`} />
+                <Tooltip formatter={(v: number) => formatCurrency(v)} />
                 <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -192,7 +194,7 @@ const AdminDashboard = () => {
                     <tr key={o.id} className="border-b last:border-0">
                       <td className="py-2.5 font-mono text-xs">{o.order_number}</td>
                       <td className="py-2.5">{o.customer_name}</td>
-                      <td className="py-2.5 font-semibold">৳{Number(o.total).toLocaleString()}</td>
+                      <td className="py-2.5 font-semibold">{formatCurrency(Number(o.total))}</td>
                       <td className="py-2.5">
                         <span className={`text-xs px-2 py-0.5 rounded-full ${statusColors[o.status] || "bg-muted text-muted-foreground"}`}>
                           {o.status}

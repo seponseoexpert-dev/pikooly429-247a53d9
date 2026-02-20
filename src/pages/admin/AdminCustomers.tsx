@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search, Users } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useCurrency } from "@/hooks/useCurrency";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Profile = Tables<"profiles">;
@@ -16,6 +17,7 @@ interface CustomerWithOrders extends Profile {
 }
 
 const AdminCustomers = () => {
+  const { formatCurrency } = useCurrency();
   const [customers, setCustomers] = useState<CustomerWithOrders[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -117,7 +119,7 @@ const AdminCustomers = () => {
                       <TableCell>
                         <Badge variant="secondary">{c.order_count}</Badge>
                       </TableCell>
-                      <TableCell className="font-medium">৳{c.total_spent.toFixed(2)}</TableCell>
+                      <TableCell className="font-medium">{formatCurrency(c.total_spent)}</TableCell>
                       <TableCell className="text-sm text-muted-foreground">
                         {new Date(c.created_at).toLocaleDateString("en-GB")}
                       </TableCell>

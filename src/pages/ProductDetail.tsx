@@ -8,12 +8,14 @@ import ReviewSection from "@/components/product/ReviewSection";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useCurrency } from "@/hooks/useCurrency";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addItem } = useCart();
   const { settings } = useSiteSettings();
+  const { formatCurrency } = useCurrency();
   const [qty, setQty] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [activeTab, setActiveTab] = useState<"specification" | "description" | "reviews">("specification");
@@ -62,7 +64,6 @@ const ProductDetail = () => {
     const seoTitle = (product as any).seo_title || `${product.name} - ${siteName}`;
     document.title = seoTitle;
 
-    // Meta description
     const seoDesc = (product as any).seo_description || product.description || "";
     let metaDesc = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
     if (!metaDesc) {
@@ -117,7 +118,7 @@ const ProductDetail = () => {
     navigate("/checkout");
   };
 
-  const whatsappUrl = `https://wa.me/8801XXXXXXXXX?text=${encodeURIComponent(`Hi! I want to order: ${product.name} (৳${product.price}) x ${qty}`)}`;
+  const whatsappUrl = `https://wa.me/8801XXXXXXXXX?text=${encodeURIComponent(`Hi! I want to order: ${product.name} (${formatCurrency(product.price)}) x ${qty}`)}`;
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
 
   return (
@@ -165,7 +166,7 @@ const ProductDetail = () => {
           </h1>
 
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xl sm:text-2xl font-bold text-foreground">৳{product.price.toLocaleString()}</span>
+            <span className="text-xl sm:text-2xl font-bold text-foreground">{formatCurrency(product.price)}</span>
             <button className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors" aria-label="Add to wishlist">
               <Heart size={18} />
             </button>
@@ -181,7 +182,7 @@ const ProductDetail = () => {
 
           {product.original_price && (
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-sm text-muted-foreground line-through">৳{product.original_price.toLocaleString()}</span>
+              <span className="text-sm text-muted-foreground line-through">{formatCurrency(product.original_price)}</span>
               <span className="text-sm text-primary font-medium">
                 {Math.round((1 - product.price / product.original_price) * 100)}% off
               </span>
@@ -208,37 +209,21 @@ const ProductDetail = () => {
 
           {/* Add to Cart & Buy Now */}
           <div className="flex gap-3 mb-3">
-            <Button
-              size="lg"
-              className="flex-1 h-12 text-sm font-semibold rounded-lg"
-              onClick={handleAddToCart}
-            >
+            <Button size="lg" className="flex-1 h-12 text-sm font-semibold rounded-lg" onClick={handleAddToCart}>
               <ShoppingBag size={18} /> ADD TO CART
             </Button>
-            <Button
-              size="lg"
-              className="flex-1 h-12 text-sm font-semibold rounded-lg bg-purple-600 hover:bg-purple-700 text-white"
-              onClick={handleBuyNow}
-            >
+            <Button size="lg" className="flex-1 h-12 text-sm font-semibold rounded-lg bg-purple-600 hover:bg-purple-700 text-white" onClick={handleBuyNow}>
               BUY NOW
             </Button>
           </div>
 
           {/* WhatsApp Order */}
-          <a
-            href={whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full h-12 rounded-lg bg-[hsl(142,70%,45%)] hover:bg-[hsl(142,70%,40%)] text-white font-semibold text-sm transition-colors mb-3"
-          >
+          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full h-12 rounded-lg bg-[hsl(142,70%,45%)] hover:bg-[hsl(142,70%,40%)] text-white font-semibold text-sm transition-colors mb-3">
             <MessageCircle size={18} /> Order On WhatsApp
           </a>
 
           {/* Call For Order */}
-          <a
-            href="tel:+8801XXXXXXXXX"
-            className="flex items-center justify-center gap-2 w-full h-12 rounded-lg bg-[hsl(240,60%,35%)] hover:bg-[hsl(240,60%,30%)] text-white font-semibold text-sm transition-colors mb-5"
-          >
+          <a href="tel:+8801XXXXXXXXX" className="flex items-center justify-center gap-2 w-full h-12 rounded-lg bg-[hsl(240,60%,35%)] hover:bg-[hsl(240,60%,30%)] text-white font-semibold text-sm transition-colors mb-5">
             <Phone size={18} /> Call For Order
           </a>
 
@@ -251,14 +236,7 @@ const ProductDetail = () => {
                 { label: "Twitter", href: `https://twitter.com/intent/tweet?url=${shareUrl}` },
                 { label: "WhatsApp", href: `https://wa.me/?text=${encodeURIComponent(shareUrl)}` },
               ].map((s) => (
-                <a
-                  key={s.label}
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors text-xs font-bold"
-                  aria-label={`Share on ${s.label}`}
-                >
+                <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors text-xs font-bold" aria-label={`Share on ${s.label}`}>
                   {s.label[0]}
                 </a>
               ))}

@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Save, Trash2, Truck } from "lucide-react";
+import { useCurrency } from "@/hooks/useCurrency";
 
 interface District {
   id: string;
@@ -17,6 +18,7 @@ interface District {
 }
 
 const AdminShipping = () => {
+  const { formatCurrency } = useCurrency();
   const { toast } = useToast();
   const qc = useQueryClient();
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -162,7 +164,7 @@ const AdminShipping = () => {
               districts.map((d) => (
                 <tr key={d.id} className="border-b last:border-0 hover:bg-muted/30">
                   <td className="p-3 font-medium">{d.name}</td>
-                  <td className="p-3">৳{d.delivery_fee}</td>
+                  <td className="p-3">{formatCurrency(d.delivery_fee)}</td>
                   <td className="p-3 text-muted-foreground">{d.delivery_label}</td>
                   <td className="p-3 text-center">
                     <Switch

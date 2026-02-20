@@ -12,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
+import { useCurrency } from "@/hooks/useCurrency";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Product = Tables<"products">;
@@ -26,6 +27,7 @@ interface Subcategory {
 }
 
 const AdminProducts = () => {
+  const { formatCurrency } = useCurrency();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
@@ -350,8 +352,8 @@ const AdminProducts = () => {
                         {p.is_featured && <span className="text-[10px] bg-accent/10 text-accent px-1.5 py-0.5 rounded">Featured</span>}
                       </TableCell>
                       <TableCell>
-                        <span className="font-medium">৳{p.price}</span>
-                        {p.original_price && <span className="text-xs text-muted-foreground line-through ml-1">৳{p.original_price}</span>}
+                        <span className="font-medium">{formatCurrency(p.price)}</span>
+                        {p.original_price && <span className="text-xs text-muted-foreground line-through ml-1">{formatCurrency(p.original_price)}</span>}
                       </TableCell>
                       <TableCell>{p.stock}</TableCell>
                       <TableCell className="text-sm">{getCategoryName(p.category_id)}</TableCell>
