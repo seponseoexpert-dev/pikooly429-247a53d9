@@ -1,14 +1,19 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { LogOut, User, Package, Mail, Phone } from "lucide-react";
+import { LogOut, User, Package, Mail, Phone, Pencil, Check, X } from "lucide-react";
 import { toast } from "sonner";
 
 const Account = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [editing, setEditing] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editPhone, setEditPhone] = useState("");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -45,6 +50,37 @@ const Account = () => {
     },
   });
 
+  const startEditing = () => {
+    setEditName(profile?.full_name || user?.user_metadata?.full_name || "");
+    setEditPhone(profile?.phone || "");
+    setEditing(true);
+  };
+
+  const handleSave = async () => {
+    if (!user) return;
+    const name = editName.trim().slice(0, 100);
+    const phone = editPhone.trim().slice(0, 20);
+    if (!name) {
+      toast.error("Name cannot be empty");
+      return;
+    }
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ full_name: name, phone: phone || null })
+        .eq("user_id", user.id);
+      if (error) throw error;
+      await queryClient.invalidateQueries({ queryKey: ["profile", user.id] });
+      toast.success("Profile updated!");
+      setEditing(false);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update profile");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleLogout = async () => {
     await signOut();
     toast.success("Logged out successfully");
@@ -65,24 +101,67 @@ const Account = () => {
     <main className="section-container py-6 pb-24 md:pb-10">
       {/* Profile Header */}
       <div className="bg-card border border-border rounded-2xl p-5 mb-5">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-            <User size={28} className="text-primary" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <h1 className="text-lg font-display font-bold text-foreground truncate">{displayName}</h1>
-            <p className="text-sm text-muted-foreground truncate flex items-center gap-1.5">
-              <Mail size={14} />
-              {user.email}
-            </p>
-            {profile?.phone && (
-              <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-0.5">
-                <Phone size={14} />
-                {profile.phone}
+        {!editing ? (
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+              <User size={28} className="text-primary" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg font-display font-bold text-foreground truncate">{displayName}</h1>
+              <p className="text-sm text-muted-foreground truncate flex items-center gap-1.5">
+                <Mail size={14} />
+                {user.email}
               </p>
-            )}
+              {profile?.phone && (
+                <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-0.5">
+                  <Phone size={14} />
+                  {profile.phone}
+                </p>
+              )}
+            </div>
+            <button onClick={startEditing} className="p-2 text-muted-foreground hover:text-primary transition-colors rounded-full hover:bg-muted shrink-0">
+              <Pencil size={18} />
+            </button>
           </div>
-        </div>
+        ) : (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-foreground">Edit Profile</h2>
+              <button onClick={() => setEditing(false)} className="p-1.5 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted">
+                <X size={18} />
+              </button>
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground mb-1 block">Full Name</label>
+              <input
+                type="text"
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                maxLength={100}
+                className="w-full px-3.5 py-2.5 rounded-xl bg-muted border border-border focus:border-primary outline-none text-sm"
+              />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground mb-1 block">Phone Number</label>
+              <input
+                type="tel"
+                value={editPhone}
+                onChange={(e) => setEditPhone(e.target.value)}
+                maxLength={20}
+                placeholder="01XXXXXXXXX"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-muted border border-border focus:border-primary outline-none text-sm"
+              />
+            </div>
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground py-2.5 rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-50"
+            >
+              <Check size={16} />
+              {saving ? "Saving..." : "Save Changes"}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Recent Orders */}
