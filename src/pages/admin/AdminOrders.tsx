@@ -58,11 +58,93 @@ const AdminOrders = () => {
     setDetailOpen(true);
   };
 
+  const statusEmailTemplates: Record<string, { subject: string; heading: string; message: string; emoji: string; color: string }> = {
+    confirmed: {
+      subject: "Order Confirmed",
+      heading: "Your Order is Confirmed! ✅",
+      message: "Great news! Your order has been confirmed and is now being prepared with care.",
+      emoji: "✅",
+      color: "#3b82f6",
+    },
+    processing: {
+      subject: "Order Being Processed",
+      heading: "Your Order is Being Prepared! 🔧",
+      message: "We're currently preparing your order with love and care.",
+      emoji: "🔧",
+      color: "#8b5cf6",
+    },
+    shipped: {
+      subject: "Order Shipped",
+      heading: "Your Order is On The Way! 🚚",
+      message: "Your order has been shipped and is on its way to the delivery address.",
+      emoji: "🚚",
+      color: "#06b6d4",
+    },
+    delivered: {
+      subject: "Order Delivered",
+      heading: "Order Successfully Delivered! 🎉",
+      message: "Your order has been successfully delivered. We hope you love it!",
+      emoji: "🎉",
+      color: "#22c55e",
+    },
+    cancelled: {
+      subject: "Order Cancelled",
+      heading: "Order Cancelled ❌",
+      message: "Your order has been cancelled. If you have any questions, please contact us.",
+      emoji: "❌",
+      color: "#ef4444",
+    },
+  };
+
+  const sendStatusEmail = async (order: Order, newStatus: string) => {
+    if (!order.customer_email) return;
+    const template = statusEmailTemplates[newStatus];
+    if (!template) return;
+
+    try {
+      await supabase.functions.invoke("send-email", {
+        body: {
+          to: order.customer_email,
+          subject: `${template.subject} - ${order.order_number} | PikoolyFlora`,
+          html: `
+            <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;">
+              <div style="text-align:center;padding:20px 0;border-bottom:2px solid #e85d5d;">
+                <h1 style="margin:0;"><span style="color:#333;">Pikooly</span><span style="color:#e85d5d;">Flora</span></h1>
+              </div>
+              <div style="padding:20px 0;">
+                <h2 style="color:${template.color};">${template.heading}</h2>
+                <p>Hi <strong>${order.customer_name}</strong>,</p>
+                <p>${template.message}</p>
+                <div style="background:#f9f9f9;border-radius:8px;padding:16px;margin:16px 0;">
+                  <p style="margin:0 0 4px;"><strong>Order Number:</strong> ${order.order_number}</p>
+                  <p style="margin:0 0 4px;"><strong>Status:</strong> <span style="color:${template.color};font-weight:bold;text-transform:capitalize;">${newStatus}</span></p>
+                  <p style="margin:0 0 4px;"><strong>Total:</strong> ৳${Number(order.total).toFixed(2)}</p>
+                  <p style="margin:0;"><strong>Delivery Address:</strong> ${order.delivery_address}</p>
+                </div>
+                <p style="text-align:center;margin-top:24px;">
+                  <a href="${window.location.origin}/track-order" style="background:${template.color};color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Track Your Order</a>
+                </p>
+              </div>
+              <div style="border-top:1px solid #eee;padding-top:16px;text-align:center;color:#999;font-size:12px;">
+                <p>PikoolyFlora - Not just a Gift, It's sharing of Love.</p>
+              </div>
+            </div>
+          `,
+        },
+      });
+    } catch (err) {
+      console.error("Failed to send status email:", err);
+    }
+  };
+
   const updateStatus = async (orderId: string, status: string) => {
+    const order = orders.find((o) => o.id === orderId);
     const { error } = await supabase.from("orders").update({ status }).eq("id", orderId);
     if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
     else {
       toast({ title: "Status updated" });
+      // Send email notification
+      if (order) sendStatusEmail(order, status);
       fetchOrders();
       if (selectedOrder?.id === orderId) setSelectedOrder({ ...selectedOrder, status });
     }
