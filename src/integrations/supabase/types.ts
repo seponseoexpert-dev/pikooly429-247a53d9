@@ -247,6 +247,7 @@ export type Database = {
       }
       orders: {
         Row: {
+          alt_phone: string | null
           created_at: string
           customer_email: string | null
           customer_name: string
@@ -256,11 +257,13 @@ export type Database = {
           delivery_fee: number
           delivery_time: string | null
           discount: number
+          gift_message: string | null
           id: string
           notes: string | null
           order_number: string
           payment_method: string
           payment_status: string
+          recipient_name: string | null
           status: string
           subtotal: number
           total: number
@@ -268,6 +271,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          alt_phone?: string | null
           created_at?: string
           customer_email?: string | null
           customer_name: string
@@ -277,11 +281,13 @@ export type Database = {
           delivery_fee?: number
           delivery_time?: string | null
           discount?: number
+          gift_message?: string | null
           id?: string
           notes?: string | null
           order_number: string
           payment_method?: string
           payment_status?: string
+          recipient_name?: string | null
           status?: string
           subtotal?: number
           total?: number
@@ -289,6 +295,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          alt_phone?: string | null
           created_at?: string
           customer_email?: string | null
           customer_name?: string
@@ -298,11 +305,13 @@ export type Database = {
           delivery_fee?: number
           delivery_time?: string | null
           discount?: number
+          gift_message?: string | null
           id?: string
           notes?: string | null
           order_number?: string
           payment_method?: string
           payment_status?: string
+          recipient_name?: string | null
           status?: string
           subtotal?: number
           total?: number
