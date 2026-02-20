@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Search, ShoppingCart, X, User, Truck, ChevronDown, PackageSearch } from "lucide-react";
+import { Search, ShoppingCart, X, User, Truck, ChevronDown, MapPinCheck } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
@@ -176,7 +176,7 @@ const Header = () => {
                 <span className="text-[9px] font-medium mt-0.5 leading-none">Same Day</span>
               </Link>
               <Link to="/track-order" className="flex flex-col items-center justify-center px-2 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted" aria-label="Track Order">
-                <PackageSearch size={20} />
+                <MapPinCheck size={20} />
                 <span className="text-[9px] font-medium mt-0.5 leading-none">Track</span>
               </Link>
               <div className="relative" ref={currencyRef}>
