@@ -1,16 +1,70 @@
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, Home, Phone, Mail, MapPin, PartyPopper, CircleCheckBig } from "lucide-react";
+import { ShoppingBag, Home, Phone, Mail, PartyPopper, CircleCheckBig, Package, Truck, CheckCircle, Clock, XCircle, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Separator } from "@/components/ui/separator";
+import { useMultiCurrency } from "@/contexts/CurrencyContext";
+
+const trackingSteps = [
+  { key: "pending", label: "Order Placed", icon: Clock },
+  { key: "confirmed", label: "Confirmed", icon: CheckCircle },
+  { key: "processing", label: "Processing", icon: Package },
+  { key: "shipped", label: "Shipped", icon: Truck },
+  { key: "delivered", label: "Delivered", icon: CheckCircle },
+];
+
+const getStepIndex = (status: string) => {
+  if (status === "cancelled" || status === "returned") return -1;
+  const idx = trackingSteps.findIndex((s) => s.key === status);
+  return idx >= 0 ? idx : 0;
+};
 
 const OrderSuccess = () => {
   const { orderNumber } = useParams();
   const { settings } = useSiteSettings();
+  const { formatPrice } = useMultiCurrency();
 
   const storePhone = settings?.store_phone || "";
   const storeEmail = settings?.store_email || "";
   const whatsapp = settings?.whatsapp_number || "";
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["track-order", orderNumber],
+    queryFn: async () => {
+      const { data, error } = await supabase.functions.invoke("track-order", {
+        body: { order_number: orderNumber },
+      });
+      if (error) throw error;
+      return data as {
+        order: {
+          order_number: string;
+          customer_name: string;
+          status: string;
+          payment_status: string;
+          payment_method: string;
+          subtotal: number;
+          delivery_fee: number;
+          discount: number;
+          total: number;
+          delivery_address: string;
+          delivery_date: string | null;
+          delivery_time: string | null;
+          recipient_name: string | null;
+          created_at: string;
+        };
+        items: { product_name: string; quantity: number; price: number; total: number }[];
+      };
+    },
+    enabled: !!orderNumber,
+  });
+
+  const order = data?.order;
+  const items = data?.items || [];
+  const currentStep = order ? getStepIndex(order.status) : 0;
+  const isCancelled = order?.status === "cancelled" || order?.status === "returned";
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-primary/5 via-background to-background pt-16 pb-32">
@@ -49,12 +103,8 @@ const OrderSuccess = () => {
           transition={{ delay: 0.3 }}
           className="text-center mb-8"
         >
-          <h1 className="text-2xl md:text-3xl font-display font-bold mb-2">
-            Thank You for Your Order!
-          </h1>
-          <p className="text-muted-foreground text-sm md:text-base">
-            Your order has been placed successfully and is being processed.
-          </p>
+          <h1 className="text-2xl md:text-3xl font-display font-bold mb-2">Thank You for Your Order!</h1>
+          <p className="text-muted-foreground text-sm md:text-base">Your order has been placed successfully.</p>
         </motion.div>
 
         {/* Order Number Card */}
@@ -65,75 +115,167 @@ const OrderSuccess = () => {
             transition={{ delay: 0.45 }}
             className="bg-card border border-border rounded-2xl p-5 mb-6 text-center shadow-sm"
           >
-            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1.5 font-medium">
-              Order Number
-            </p>
-            <p className="text-lg md:text-xl font-mono font-bold text-primary tracking-wide">
-              {orderNumber}
-            </p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1.5 font-medium">Order Number</p>
+            <p className="text-lg md:text-xl font-mono font-bold text-primary tracking-wide">{orderNumber}</p>
+            {order && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Placed on {new Date(order.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+              </p>
+            )}
           </motion.div>
         )}
 
-        {/* What's Next */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.55 }}
-          className="bg-card border border-border rounded-2xl p-5 mb-6 shadow-sm"
-        >
-          <h3 className="text-sm font-semibold mb-4">What happens next?</h3>
-          <div className="space-y-3">
-            {[
-              { step: "1", text: "We'll confirm your order via WhatsApp or phone call." },
-              { step: "2", text: "Your gift will be prepared with care and love." },
-              { step: "3", text: "We'll deliver it to the recipient on time!" },
-            ].map((item) => (
-              <div key={item.step} className="flex items-start gap-3">
-                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">
-                  {item.step}
-                </span>
-                <p className="text-sm text-muted-foreground leading-relaxed">{item.text}</p>
-              </div>
-            ))}
+        {/* Order Tracking */}
+        {isLoading ? (
+          <div className="flex justify-center py-8">
+            <Loader2 className="animate-spin text-muted-foreground" size={28} />
           </div>
-        </motion.div>
+        ) : order ? (
+          <>
+            {/* Status Tracker */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="bg-card border border-border rounded-2xl p-5 mb-6 shadow-sm"
+            >
+              <h3 className="text-sm font-semibold mb-5">Order Status</h3>
+
+              {isCancelled ? (
+                <div className="flex items-center gap-3 p-4 bg-destructive/10 rounded-xl">
+                  <XCircle size={24} className="text-destructive" />
+                  <div>
+                    <p className="font-semibold text-sm capitalize">{order.status}</p>
+                    <p className="text-xs text-muted-foreground">This order has been {order.status}.</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="relative">
+                  {/* Progress Line */}
+                  <div className="absolute left-[15px] top-[15px] bottom-[15px] w-0.5 bg-border" />
+                  <div
+                    className="absolute left-[15px] top-[15px] w-0.5 bg-primary transition-all duration-500"
+                    style={{ height: `${Math.max(0, currentStep) * 25}%` }}
+                  />
+
+                  <div className="space-y-5">
+                    {trackingSteps.map((step, idx) => {
+                      const isCompleted = idx <= currentStep;
+                      const isCurrent = idx === currentStep;
+                      const StepIcon = step.icon;
+
+                      return (
+                        <div key={step.key} className="flex items-center gap-3 relative">
+                          <div
+                            className={`z-10 w-[30px] h-[30px] rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
+                              isCompleted
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-muted text-muted-foreground"
+                            } ${isCurrent ? "ring-2 ring-primary/30 ring-offset-2 ring-offset-card" : ""}`}
+                          >
+                            <StepIcon size={14} />
+                          </div>
+                          <div>
+                            <p className={`text-sm font-medium ${isCompleted ? "text-foreground" : "text-muted-foreground"}`}>
+                              {step.label}
+                            </p>
+                            {isCurrent && (
+                              <p className="text-xs text-primary font-medium">Current status</p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </motion.div>
+
+            {/* Order Items */}
+            {items.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="bg-card border border-border rounded-2xl p-5 mb-6 shadow-sm"
+              >
+                <h3 className="text-sm font-semibold mb-3">Order Items</h3>
+                <div className="space-y-2.5">
+                  {items.map((item, i) => (
+                    <div key={i} className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">
+                        {item.product_name} × {item.quantity}
+                      </span>
+                      <span className="font-medium">{formatPrice(item.total)}</span>
+                    </div>
+                  ))}
+                </div>
+                <Separator className="my-3" />
+                <div className="space-y-1.5 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <span>{formatPrice(order.subtotal)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Delivery</span>
+                    <span>{formatPrice(order.delivery_fee)}</span>
+                  </div>
+                  {Number(order.discount) > 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Discount</span>
+                      <span className="text-destructive">-{formatPrice(order.discount)}</span>
+                    </div>
+                  )}
+                  <Separator className="my-1.5" />
+                  <div className="flex justify-between font-bold">
+                    <span>Total</span>
+                    <span className="text-primary">{formatPrice(order.total)}</span>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Delivery Details */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.65 }}
+              className="bg-card border border-border rounded-2xl p-5 mb-6 shadow-sm"
+            >
+              <h3 className="text-sm font-semibold mb-3">Delivery Details</h3>
+              <div className="text-sm space-y-1.5 text-muted-foreground">
+                {order.recipient_name && <p><span className="font-medium text-foreground">Recipient:</span> {order.recipient_name}</p>}
+                <p><span className="font-medium text-foreground">Address:</span> {order.delivery_address}</p>
+                {order.delivery_date && <p><span className="font-medium text-foreground">Date:</span> {order.delivery_date}</p>}
+                {order.delivery_time && <p><span className="font-medium text-foreground">Time:</span> {order.delivery_time}</p>}
+                <p><span className="font-medium text-foreground">Payment:</span> {order.payment_method.toUpperCase()} — <span className="capitalize">{order.payment_status}</span></p>
+              </div>
+            </motion.div>
+          </>
+        ) : null}
 
         {/* Contact Info */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.65 }}
+          transition={{ delay: 0.75 }}
           className="bg-muted/50 border border-border rounded-2xl p-5 mb-8"
         >
           <h3 className="text-sm font-semibold mb-3">Need Help?</h3>
           <div className="space-y-2">
             {whatsapp && (
-              <a
-                href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, "")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2.5 text-sm text-muted-foreground hover:text-primary transition-colors"
-              >
-                <Phone size={14} />
-                <span>WhatsApp: {whatsapp}</span>
+              <a href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 text-sm text-muted-foreground hover:text-primary transition-colors">
+                <Phone size={14} /><span>WhatsApp: {whatsapp}</span>
               </a>
             )}
             {storePhone && (
-              <a
-                href={`tel:${storePhone}`}
-                className="flex items-center gap-2.5 text-sm text-muted-foreground hover:text-primary transition-colors"
-              >
-                <Phone size={14} />
-                <span>Call: {storePhone}</span>
+              <a href={`tel:${storePhone}`} className="flex items-center gap-2.5 text-sm text-muted-foreground hover:text-primary transition-colors">
+                <Phone size={14} /><span>Call: {storePhone}</span>
               </a>
             )}
             {storeEmail && (
-              <a
-                href={`mailto:${storeEmail}`}
-                className="flex items-center gap-2.5 text-sm text-muted-foreground hover:text-primary transition-colors"
-              >
-                <Mail size={14} />
-                <span>{storeEmail}</span>
+              <a href={`mailto:${storeEmail}`} className="flex items-center gap-2.5 text-sm text-muted-foreground hover:text-primary transition-colors">
+                <Mail size={14} /><span>{storeEmail}</span>
               </a>
             )}
           </div>
@@ -143,7 +285,7 @@ const OrderSuccess = () => {
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.75 }}
+          transition={{ delay: 0.85 }}
           className="flex flex-col sm:flex-row gap-3 justify-center"
         >
           <Link to="/shop" className="flex-1 sm:flex-none">

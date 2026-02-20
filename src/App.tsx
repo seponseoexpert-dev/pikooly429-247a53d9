@@ -20,6 +20,7 @@ import Blog from "./pages/Blog";
 import AllGifts from "./pages/AllGifts";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
+import TrackOrder from "./pages/TrackOrder";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Account from "./pages/Account";
@@ -69,6 +70,7 @@ const App = () => (
               <Route path="/blog" element={<PublicLayout><Blog /></PublicLayout>} />
               <Route path="/checkout" element={<PublicLayout><Checkout /></PublicLayout>} />
               <Route path="/order-success/:orderNumber" element={<PublicLayout><OrderSuccess /></PublicLayout>} />
+              <Route path="/track-order" element={<PublicLayout><TrackOrder /></PublicLayout>} />
               <Route path="/auth" element={<PublicLayout><Auth /></PublicLayout>} />
               <Route path="/account" element={<PublicLayout><Account /></PublicLayout>} />
               <Route path="/reset-password" element={<PublicLayout><ResetPassword /></PublicLayout>} />
