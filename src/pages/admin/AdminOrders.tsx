@@ -177,14 +177,32 @@ const AdminOrders = () => {
             <div className="space-y-4">
               {/* Customer Info */}
               <div>
-                <h4 className="text-sm font-semibold mb-2">Customer</h4>
+                <h4 className="text-sm font-semibold mb-2">Billing Details</h4>
                 <div className="text-sm space-y-1">
                   <p><span className="text-muted-foreground">Name:</span> {selectedOrder.customer_name}</p>
-                  <p><span className="text-muted-foreground">Phone:</span> {selectedOrder.customer_phone}</p>
+                  <p><span className="text-muted-foreground">WhatsApp:</span> {selectedOrder.customer_phone}</p>
                   {selectedOrder.customer_email && <p><span className="text-muted-foreground">Email:</span> {selectedOrder.customer_email}</p>}
+                  {(selectedOrder as any).billing_country && <p><span className="text-muted-foreground">Country:</span> {(selectedOrder as any).billing_country}</p>}
+                </div>
+              </div>
+
+              <Separator />
+
+              <div>
+                <h4 className="text-sm font-semibold mb-2">Delivery Information</h4>
+                <div className="text-sm space-y-1">
+                  {selectedOrder.recipient_name && <p><span className="text-muted-foreground">Recipient:</span> {selectedOrder.recipient_name}</p>}
+                  {selectedOrder.alt_phone && <p><span className="text-muted-foreground">Recipient Phone:</span> {selectedOrder.alt_phone}</p>}
                   <p><span className="text-muted-foreground">Address:</span> {selectedOrder.delivery_address}</p>
                   {selectedOrder.delivery_date && <p><span className="text-muted-foreground">Delivery Date:</span> {selectedOrder.delivery_date}</p>}
-                  {selectedOrder.notes && <p><span className="text-muted-foreground">Notes:</span> {selectedOrder.notes}</p>}
+                  {selectedOrder.delivery_time && <p><span className="text-muted-foreground">Delivery Time:</span> {selectedOrder.delivery_time}</p>}
+                  {selectedOrder.gift_message && (
+                    <div className="mt-2 p-3 bg-muted/50 rounded-lg">
+                      <p className="text-xs font-medium text-muted-foreground mb-1">Gift Message:</p>
+                      <p className="text-sm italic">{selectedOrder.gift_message}</p>
+                    </div>
+                  )}
+                  {selectedOrder.notes && <p className="mt-1"><span className="text-muted-foreground">Notes:</span> {selectedOrder.notes}</p>}
                 </div>
               </div>
 
