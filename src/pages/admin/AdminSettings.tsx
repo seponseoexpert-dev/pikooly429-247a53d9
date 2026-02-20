@@ -252,20 +252,9 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "multi_language_enabled_setting", label: "Enable Multi Language", type: "switch" },
   ],
   sms_gateway: [], // Handled by custom SmsGatewaySection component
-  payment_gateway: [
-    { key: "cod_setting", label: "Cash on Delivery", type: "switch" },
-    { key: "bkash_enabled", label: "bKash Enabled", type: "switch" },
-    { key: "bkash_app_key", label: "bKash App Key" },
-    { key: "bkash_app_secret", label: "bKash App Secret" },
-    { key: "nagad_enabled", label: "Nagad Enabled", type: "switch" },
-    { key: "ssl_commerz_enabled", label: "SSLCommerz Enabled", type: "switch" },
-    { key: "ssl_store_id", label: "SSLCommerz Store ID" },
-    { key: "ssl_store_password", label: "SSLCommerz Store Password" },
-  ],
+  payment_gateway: [], // Handled by custom PaymentGatewaySection component
   license: [
-    { key: "license_key", label: "License Key" },
-    { key: "license_type", label: "License Type" },
-    { key: "license_expiry", label: "License Expiry Date" },
+    { key: "license_code", label: "License Code" },
   ],
 };
 
@@ -555,6 +544,124 @@ const SmsGatewaySection = ({
   );
 };
 
+// Payment Gateway providers config
+const paymentGatewayProviders = [
+  {
+    key: "paypal",
+    label: "Paypal",
+    fields: [
+      { key: "paypal_app_id", label: "Paypal App ID" },
+      { key: "paypal_client_id", label: "Paypal Client ID" },
+      { key: "paypal_client_secret", label: "Paypal Client Secret" },
+      { key: "paypal_mode", label: "Paypal Mode", type: "select" as const, options: [
+        { value: "sandbox", label: "Sandbox" },
+        { value: "live", label: "Live" },
+      ]},
+      { key: "paypal_status", label: "Paypal Status", type: "select" as const, options: [
+        { value: "enable", label: "Enable" },
+        { value: "disable", label: "Disable" },
+      ]},
+    ],
+  },
+  {
+    key: "stripe",
+    label: "Stripe",
+    fields: [
+      { key: "stripe_public_key", label: "Stripe Key" },
+      { key: "stripe_secret_key", label: "Stripe Secret" },
+      { key: "stripe_status", label: "Stripe Status", type: "select" as const, options: [
+        { value: "enable", label: "Enable" },
+        { value: "disable", label: "Disable" },
+      ]},
+    ],
+  },
+  {
+    key: "flutterwave",
+    label: "Flutterwave",
+    fields: [
+      { key: "flutterwave_public_key", label: "Flutterwave Public Key" },
+      { key: "flutterwave_secret_key", label: "Flutterwave Secret Key" },
+      { key: "flutterwave_encryption_key", label: "Flutterwave Encryption Key" },
+      { key: "flutterwave_environment", label: "Flutterwave Environment", type: "select" as const, options: [
+        { value: "sandbox", label: "Sandbox" },
+        { value: "live", label: "Live" },
+      ]},
+      { key: "flutterwave_status", label: "Flutterwave Status", type: "select" as const, options: [
+        { value: "enable", label: "Enable" },
+        { value: "disable", label: "Disable" },
+      ]},
+    ],
+  },
+  {
+    key: "more",
+    label: "⊕ More Gateway",
+    fields: [
+      { key: "bkash_enabled", label: "bKash Status", type: "select" as const, options: [
+        { value: "enable", label: "Enable" },
+        { value: "disable", label: "Disable" },
+      ]},
+      { key: "bkash_app_key", label: "bKash App Key" },
+      { key: "bkash_app_secret", label: "bKash App Secret" },
+      { key: "nagad_enabled", label: "Nagad Status", type: "select" as const, options: [
+        { value: "enable", label: "Enable" },
+        { value: "disable", label: "Disable" },
+      ]},
+      { key: "ssl_commerz_enabled", label: "SSLCommerz Status", type: "select" as const, options: [
+        { value: "enable", label: "Enable" },
+        { value: "disable", label: "Disable" },
+      ]},
+      { key: "ssl_store_id", label: "SSLCommerz Store ID" },
+      { key: "ssl_store_password", label: "SSLCommerz Store Password" },
+    ],
+  },
+];
+
+const PaymentGatewaySection = ({
+  formValues,
+  setFormValues,
+}: {
+  formValues: Record<string, string>;
+  setFormValues: (v: Record<string, string>) => void;
+}) => {
+  return (
+    <Tabs defaultValue="paypal">
+      <TabsList className="w-full grid grid-cols-4 mb-4">
+        {paymentGatewayProviders.map((p) => (
+          <TabsTrigger key={p.key} value={p.key}>{p.label}</TabsTrigger>
+        ))}
+      </TabsList>
+      {paymentGatewayProviders.map((provider) => (
+        <TabsContent key={provider.key} value={provider.key} className="space-y-4">
+          <h4 className="font-medium text-base">{provider.label.replace("⊕ ", "")}</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+            {provider.fields.map((field) => (
+              <div key={field.key} className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{field.label}</label>
+                {field.type === "select" && field.options ? (
+                  <Select value={formValues[field.key] || field.options[0]?.value} onValueChange={(v) => setFormValues({ ...formValues, [field.key]: v })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {field.options.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Input
+                    value={formValues[field.key] || ""}
+                    onChange={(e) => setFormValues({ ...formValues, [field.key]: e.target.value })}
+                    placeholder={field.label}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        </TabsContent>
+      ))}
+    </Tabs>
+  );
+};
+
 const AdminSettings = () => {
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -594,6 +701,9 @@ const AdminSettings = () => {
     }
     if (activeSection === "sms_gateway") {
       return smsGatewayProviders.flatMap((p) => p.fields.map((f) => f.key));
+    }
+    if (activeSection === "payment_gateway") {
+      return paymentGatewayProviders.flatMap((p) => p.fields.map((f) => f.key));
     }
     return (sectionFields[activeSection] || []).map((f) => f.key);
   };
@@ -690,6 +800,8 @@ const AdminSettings = () => {
                     <NotificationAlertSection formValues={formValues} setFormValues={setFormValues} />
                   ) : activeSection === "sms_gateway" ? (
                     <SmsGatewaySection formValues={formValues} setFormValues={setFormValues} />
+                  ) : activeSection === "payment_gateway" ? (
+                    <PaymentGatewaySection formValues={formValues} setFormValues={setFormValues} />
                   ) : currentFields.length === 0 ? (
                     <p className="text-muted-foreground text-sm py-4 text-center">No settings available for this section yet.</p>
                   ) : (
