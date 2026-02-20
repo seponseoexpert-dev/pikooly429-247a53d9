@@ -85,31 +85,37 @@ const Checkout = () => {
       const { data: session } = await supabase.auth.getSession();
       const userId = session?.session?.user?.id || null;
 
+      const orderData = {
+        customer_name: form.fullName.trim(),
+        customer_phone: form.phone.trim(),
+        customer_email: form.email.trim() || null,
+        billing_country: form.billingCountry.trim() || 'Bangladesh',
+        delivery_address: `${activeDistrict?.name || ""} - ${form.address.trim()}`,
+        notes: form.notes.trim() || null,
+        recipient_name: form.recipientName.trim() || null,
+        alt_phone: form.recipientPhone.trim() || null,
+        gift_message: form.giftMessage.trim() || null,
+        delivery_date: form.deliveryDate || null,
+        delivery_time: form.deliveryTime || null,
+        payment_method: form.paymentMethod,
+        subtotal: totalPrice,
+        delivery_fee: deliveryFee,
+        total: grandTotal,
+        user_id: userId,
+        order_number: "temp",
+      };
+
       const { data: order, error: orderError } = await supabase
         .from("orders")
-        .insert({
-          customer_name: form.fullName.trim(),
-          customer_phone: form.phone.trim(),
-          customer_email: form.email.trim() || null,
-          billing_country: form.billingCountry.trim() || 'Bangladesh',
-          delivery_address: `${activeDistrict?.name || ""} - ${form.address.trim()}`,
-          notes: form.notes.trim() || null,
-          recipient_name: form.recipientName.trim() || null,
-          alt_phone: form.recipientPhone.trim() || null,
-          gift_message: form.giftMessage.trim() || null,
-          delivery_date: form.deliveryDate || null,
-          delivery_time: form.deliveryTime || null,
-          payment_method: form.paymentMethod,
-          subtotal: totalPrice,
-          delivery_fee: deliveryFee,
-          total: grandTotal,
-          user_id: userId,
-          order_number: "temp",
-        })
-        .select()
-        .single();
+        .insert(orderData)
+        .select("id, order_number")
+        .maybeSingle();
 
-      if (orderError) throw orderError;
+      if (orderError) {
+        console.error("Order insert error:", orderError);
+        throw orderError;
+      }
+      if (!order) throw new Error("Order was not created");
 
       const orderItems = items.map((item) => ({
         order_id: order.id,
