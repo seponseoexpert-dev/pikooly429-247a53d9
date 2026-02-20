@@ -248,6 +248,7 @@ export type Database = {
       orders: {
         Row: {
           alt_phone: string | null
+          billing_country: string | null
           created_at: string
           customer_email: string | null
           customer_name: string
@@ -272,6 +273,7 @@ export type Database = {
         }
         Insert: {
           alt_phone?: string | null
+          billing_country?: string | null
           created_at?: string
           customer_email?: string | null
           customer_name: string
@@ -296,6 +298,7 @@ export type Database = {
         }
         Update: {
           alt_phone?: string | null
+          billing_country?: string | null
           created_at?: string
           customer_email?: string | null
           customer_name?: string

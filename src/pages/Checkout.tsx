@@ -30,10 +30,11 @@ const Checkout = () => {
 
   const [form, setForm] = useState({
     fullName: "",
+    billingCountry: "",
     phone: "",
     email: "",
-    altPhone: "",
     recipientName: "",
+    recipientPhone: "",
     giftMessage: "",
     address: "",
     notes: "",
@@ -66,7 +67,7 @@ const Checkout = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!form.fullName.trim() || !form.phone.trim() || !form.address.trim()) {
+    if (!form.fullName.trim() || !form.phone.trim() || !form.address.trim() || !form.recipientName.trim() || !form.recipientPhone.trim()) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -92,10 +93,11 @@ const Checkout = () => {
           customer_name: form.fullName.trim(),
           customer_phone: form.phone.trim(),
           customer_email: form.email.trim() || null,
+          billing_country: form.billingCountry.trim() || 'Bangladesh',
           delivery_address: `${activeDistrict?.name || ""} - ${form.address.trim()}`,
           notes: form.notes.trim() || null,
           recipient_name: form.recipientName.trim() || null,
-          alt_phone: form.altPhone.trim() || null,
+          alt_phone: form.recipientPhone.trim() || null,
           gift_message: form.giftMessage.trim() || null,
           delivery_date: form.deliveryDate || null,
           delivery_time: form.deliveryTime || null,
@@ -162,6 +164,7 @@ const Checkout = () => {
             {/* Left - Billing & Delivery */}
             <div className="lg:col-span-2 space-y-8">
               {/* Billing Details */}
+              {/* Billing Details */}
               <section className="bg-card rounded-2xl p-6 border border-border">
                 <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
                   <CreditCard size={20} className="text-primary" />
@@ -173,24 +176,38 @@ const Checkout = () => {
                     <Input id="fullName" placeholder="Enter your name" value={form.fullName} onChange={(e) => handleChange("fullName", e.target.value)} className="mt-1.5" required maxLength={100} />
                   </div>
                   <div>
-                    <Label>Country / Region <span className="text-destructive">*</span></Label>
-                    <div className="mt-1.5 px-3 py-2.5 bg-muted rounded-md text-sm font-medium">Bangladesh</div>
+                    <Label htmlFor="billingCountry">Country / Region <span className="text-destructive">*</span></Label>
+                    <Input id="billingCountry" placeholder="Enter your country" value={form.billingCountry} onChange={(e) => handleChange("billingCountry", e.target.value)} className="mt-1.5" maxLength={100} />
                   </div>
                   <div>
-                    <Label htmlFor="phone">Phone Number <span className="text-destructive">*</span></Label>
+                    <Label htmlFor="phone">WhatsApp Number <span className="text-destructive">*</span></Label>
                     <Input id="phone" type="tel" placeholder="01XXXXXXXXX" value={form.phone} onChange={(e) => handleChange("phone", e.target.value)} className="mt-1.5" required maxLength={15} />
                   </div>
                   <div>
-                    <Label htmlFor="email">Email (Optional)</Label>
+                    <Label htmlFor="email">Email Address (Optional)</Label>
                     <Input id="email" type="email" placeholder="example@email.com" value={form.email} onChange={(e) => handleChange("email", e.target.value)} className="mt-1.5" maxLength={255} />
                   </div>
+                </div>
+              </section>
+
+              {/* Delivery Information */}
+              <section className="bg-card rounded-2xl p-6 border border-border">
+                <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
+                  <Truck size={20} className="text-primary" />
+                  Delivery Information
+                </h2>
+                <div className="space-y-5">
                   <div>
-                    <Label htmlFor="altPhone">Alternative Phone (Optional)</Label>
-                    <Input id="altPhone" type="tel" placeholder="01XXXXXXXXX" value={form.altPhone} onChange={(e) => handleChange("altPhone", e.target.value)} className="mt-1.5" maxLength={15} />
+                    <Label htmlFor="recipientName">Recipient Name <span className="text-destructive">*</span></Label>
+                    <Input id="recipientName" placeholder="Name of the person receiving the gift" value={form.recipientName} onChange={(e) => handleChange("recipientName", e.target.value)} className="mt-1.5" required maxLength={100} />
                   </div>
                   <div>
-                    <Label htmlFor="recipientName">Recipient Name (Optional)</Label>
-                    <Input id="recipientName" placeholder="Name of the person receiving the gift" value={form.recipientName} onChange={(e) => handleChange("recipientName", e.target.value)} className="mt-1.5" maxLength={100} />
+                    <Label htmlFor="recipientPhone">Recipient Number <span className="text-destructive">*</span></Label>
+                    <Input id="recipientPhone" type="tel" placeholder="01XXXXXXXXX" value={form.recipientPhone} onChange={(e) => handleChange("recipientPhone", e.target.value)} className="mt-1.5" required maxLength={15} />
+                  </div>
+                  <div>
+                    <Label>Country / Region</Label>
+                    <div className="mt-1.5 px-3 py-2.5 bg-muted rounded-md text-sm font-medium">Bangladesh</div>
                   </div>
                   <div>
                     <Label htmlFor="giftMessage">Gift Message (Optional)</Label>
