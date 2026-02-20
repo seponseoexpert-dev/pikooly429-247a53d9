@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
 import { Search, Eye, Package } from "lucide-react";
+import { useCurrency } from "@/hooks/useCurrency";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Order = Tables<"orders">;
@@ -32,6 +33,7 @@ const statusColors: Record<string, string> = {
 };
 
 const AdminOrders = () => {
+  const { formatCurrency } = useCurrency();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -137,7 +139,7 @@ const AdminOrders = () => {
                         <div className="font-medium text-sm">{order.customer_name}</div>
                         <div className="text-xs text-muted-foreground">{order.customer_phone}</div>
                       </TableCell>
-                      <TableCell className="font-medium">৳{order.total}</TableCell>
+                      <TableCell className="font-medium">{formatCurrency(order.total)}</TableCell>
                       <TableCell>
                         <span className={`text-xs px-2 py-1 rounded-full capitalize ${statusColors[order.status] || "bg-muted"}`}>
                           {order.status}
@@ -198,7 +200,7 @@ const AdminOrders = () => {
                     {orderItems.map((item) => (
                       <div key={item.id} className="flex justify-between text-sm">
                         <span>{item.product_name} × {item.quantity}</span>
-                        <span className="font-medium">৳{item.total}</span>
+                        <span className="font-medium">{formatCurrency(item.total)}</span>
                       </div>
                     ))}
                   </div>
@@ -209,12 +211,12 @@ const AdminOrders = () => {
 
               {/* Totals */}
               <div className="space-y-1 text-sm">
-                <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>৳{selectedOrder.subtotal}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Delivery Fee</span><span>৳{selectedOrder.delivery_fee}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>{formatCurrency(selectedOrder.subtotal)}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Delivery Fee</span><span>{formatCurrency(selectedOrder.delivery_fee)}</span></div>
                 {Number(selectedOrder.discount) > 0 && (
-                  <div className="flex justify-between"><span className="text-muted-foreground">Discount</span><span className="text-destructive">-৳{selectedOrder.discount}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Discount</span><span className="text-destructive">-{formatCurrency(selectedOrder.discount)}</span></div>
                 )}
-                <div className="flex justify-between font-bold text-base pt-1 border-t"><span>Total</span><span>৳{selectedOrder.total}</span></div>
+                <div className="flex justify-between font-bold text-base pt-1 border-t"><span>Total</span><span>{formatCurrency(selectedOrder.total)}</span></div>
               </div>
 
               <Separator />

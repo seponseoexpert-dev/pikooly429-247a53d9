@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Search, ShoppingCart, X, User, Truck } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useCurrency } from "@/hooks/useCurrency";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,8 +24,8 @@ const Header = () => {
   const location = useLocation();
   const searchRef = useRef<HTMLDivElement>(null);
 
+  const { formatCurrency, symbol: currencySymbol } = useCurrency();
   const logoUrl = settings.company_logo || "";
-  const currencySymbol = settings.currency_symbol || "৳";
   const announcementText = settings.announcement_bar_text || "🌸 Same Day Delivery Available in 500+ Cities";
   const showAnnouncement = settings.announcement_bar_enabled !== "false";
 
@@ -151,9 +152,9 @@ const Header = () => {
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-foreground truncate">{p.name}</p>
                         <p className="text-xs text-primary font-semibold">
-                          ৳{p.price}
+                          {formatCurrency(p.price)}
                           {p.original_price && p.original_price > p.price && (
-                            <span className="text-muted-foreground line-through ml-1.5">৳{p.original_price}</span>
+                            <span className="text-muted-foreground line-through ml-1.5">{formatCurrency(p.original_price)}</span>
                           )}
                         </p>
                       </div>
@@ -230,9 +231,9 @@ const Header = () => {
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-foreground truncate">{p.name}</p>
                       <p className="text-xs text-primary font-semibold">
-                        ৳{p.price}
+                        {formatCurrency(p.price)}
                         {p.original_price && p.original_price > p.price && (
-                          <span className="text-muted-foreground line-through ml-1.5">৳{p.original_price}</span>
+                          <span className="text-muted-foreground line-through ml-1.5">{formatCurrency(p.original_price)}</span>
                         )}
                       </p>
                     </div>

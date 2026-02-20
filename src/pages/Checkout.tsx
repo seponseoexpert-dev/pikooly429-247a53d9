@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { Loader2, ShoppingBag, Truck, CreditCard, Minus, Plus, X } from "lucide-react";
+import { useCurrency } from "@/hooks/useCurrency";
 
 const deliveryTimeSlots = [
   "10:00 AM - 12:00 PM",
@@ -23,6 +24,7 @@ const deliveryTimeSlots = [
 const Checkout = () => {
   const { items, totalPrice, clearCart, updateQuantity, removeItem } = useCart();
   const navigate = useNavigate();
+  const { formatCurrency } = useCurrency();
   const [loading, setLoading] = useState(false);
   const [selectedDistrict, setSelectedDistrict] = useState("");
 
@@ -162,47 +164,19 @@ const Checkout = () => {
                 <div className="space-y-5">
                   <div>
                     <Label htmlFor="fullName">Full Name <span className="text-destructive">*</span></Label>
-                    <Input
-                      id="fullName"
-                      placeholder="Enter your name"
-                      value={form.fullName}
-                      onChange={(e) => handleChange("fullName", e.target.value)}
-                      className="mt-1.5"
-                      required
-                      maxLength={100}
-                    />
+                    <Input id="fullName" placeholder="Enter your name" value={form.fullName} onChange={(e) => handleChange("fullName", e.target.value)} className="mt-1.5" required maxLength={100} />
                   </div>
-
                   <div>
                     <Label>Country / Region <span className="text-destructive">*</span></Label>
                     <div className="mt-1.5 px-3 py-2.5 bg-muted rounded-md text-sm font-medium">Bangladesh</div>
                   </div>
-
                   <div>
                     <Label htmlFor="phone">Phone Number <span className="text-destructive">*</span></Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="01XXXXXXXXX"
-                      value={form.phone}
-                      onChange={(e) => handleChange("phone", e.target.value)}
-                      className="mt-1.5"
-                      required
-                      maxLength={15}
-                    />
+                    <Input id="phone" type="tel" placeholder="01XXXXXXXXX" value={form.phone} onChange={(e) => handleChange("phone", e.target.value)} className="mt-1.5" required maxLength={15} />
                   </div>
-
                   <div>
                     <Label htmlFor="email">Email (Optional)</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="example@email.com"
-                      value={form.email}
-                      onChange={(e) => handleChange("email", e.target.value)}
-                      className="mt-1.5"
-                      maxLength={255}
-                    />
+                    <Input id="email" type="email" placeholder="example@email.com" value={form.email} onChange={(e) => handleChange("email", e.target.value)} className="mt-1.5" maxLength={255} />
                   </div>
                 </div>
               </section>
@@ -216,47 +190,21 @@ const Checkout = () => {
                 <div className="space-y-5">
                   <div>
                     <Label htmlFor="address">Full Address <span className="text-destructive">*</span></Label>
-                    <Input
-                      id="address"
-                      placeholder="House no, Street, Area"
-                      value={form.address}
-                      onChange={(e) => handleChange("address", e.target.value)}
-                      className="mt-1.5"
-                      required
-                      maxLength={500}
-                    />
+                    <Input id="address" placeholder="House no, Street, Area" value={form.address} onChange={(e) => handleChange("address", e.target.value)} className="mt-1.5" required maxLength={500} />
                   </div>
-
                   <div>
                     <Label htmlFor="notes">Order Notes (Optional)</Label>
-                    <Textarea
-                      id="notes"
-                      placeholder="Special instructions for delivery..."
-                      value={form.notes}
-                      onChange={(e) => handleChange("notes", e.target.value)}
-                      className="mt-1.5 min-h-[100px]"
-                      maxLength={1000}
-                    />
+                    <Textarea id="notes" placeholder="Special instructions for delivery..." value={form.notes} onChange={(e) => handleChange("notes", e.target.value)} className="mt-1.5 min-h-[100px]" maxLength={1000} />
                   </div>
-
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="deliveryDate">Delivery Date (Optional)</Label>
-                      <Input
-                        id="deliveryDate"
-                        type="date"
-                        value={form.deliveryDate}
-                        onChange={(e) => handleChange("deliveryDate", e.target.value)}
-                        className="mt-1.5"
-                        min={new Date().toISOString().split("T")[0]}
-                      />
+                      <Input id="deliveryDate" type="date" value={form.deliveryDate} onChange={(e) => handleChange("deliveryDate", e.target.value)} className="mt-1.5" min={new Date().toISOString().split("T")[0]} />
                     </div>
                     <div>
                       <Label>Delivery Time (Optional)</Label>
                       <Select value={form.deliveryTime} onValueChange={(v) => handleChange("deliveryTime", v)}>
-                        <SelectTrigger className="mt-1.5">
-                          <SelectValue placeholder="Select time" />
-                        </SelectTrigger>
+                        <SelectTrigger className="mt-1.5"><SelectValue placeholder="Select time" /></SelectTrigger>
                         <SelectContent>
                           {deliveryTimeSlots.map((slot) => (
                             <SelectItem key={slot} value={slot}>{slot}</SelectItem>
@@ -285,14 +233,7 @@ const Checkout = () => {
                           : "border-border hover:border-primary/50"
                       }`}
                     >
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value={method.value}
-                        checked={form.paymentMethod === method.value}
-                        onChange={(e) => handleChange("paymentMethod", e.target.value)}
-                        className="accent-primary w-4 h-4"
-                      />
+                      <input type="radio" name="paymentMethod" value={method.value} checked={form.paymentMethod === method.value} onChange={(e) => handleChange("paymentMethod", e.target.value)} className="accent-primary w-4 h-4" />
                       <div>
                         <p className="font-semibold text-sm">{method.label}</p>
                         <p className="text-xs text-muted-foreground">{method.desc}</p>
@@ -311,40 +252,18 @@ const Checkout = () => {
                 <div className="space-y-4 max-h-[300px] overflow-y-auto">
                   {items.map((item) => (
                     <div key={item.product.id} className="flex gap-3 items-start">
-                      <img
-                        src={(item.product as any).image_url || item.product.image}
-                        alt={item.product.name}
-                        className="w-14 h-14 object-cover rounded-lg bg-muted"
-                      />
+                      <img src={(item.product as any).image_url || item.product.image} alt={item.product.name} className="w-14 h-14 object-cover rounded-lg bg-muted" />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium leading-tight">{item.product.name}</p>
                         <div className="flex items-center gap-2 mt-1.5">
-                          <button
-                            type="button"
-                            onClick={() => removeItem(item.product.id)}
-                            className="text-muted-foreground hover:text-destructive"
-                          >
-                            <X size={14} />
-                          </button>
+                          <button type="button" onClick={() => removeItem(item.product.id)} className="text-muted-foreground hover:text-destructive"><X size={14} /></button>
                           <div className="flex items-center border rounded-full">
-                            <button
-                              type="button"
-                              onClick={() => updateQuantity(item.product.id, Math.max(1, item.quantity - 1))}
-                              className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground"
-                            >
-                              <Minus size={12} />
-                            </button>
+                            <button type="button" onClick={() => updateQuantity(item.product.id, Math.max(1, item.quantity - 1))} className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground"><Minus size={12} /></button>
                             <span className="text-xs font-medium w-6 text-center">{item.quantity}</span>
-                            <button
-                              type="button"
-                              onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                              className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground"
-                            >
-                              <Plus size={12} />
-                            </button>
+                            <button type="button" onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground"><Plus size={12} /></button>
                           </div>
                         </div>
-                        <p className="text-sm text-muted-foreground mt-1">৳ {(item.product.price * item.quantity).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</p>
+                        <p className="text-sm text-muted-foreground mt-1">{formatCurrency(item.product.price * item.quantity, { decimals: 2 })}</p>
                       </div>
                     </div>
                   ))}
@@ -354,7 +273,7 @@ const Checkout = () => {
 
                 <div className="flex justify-between text-sm">
                   <span className="font-semibold">Subtotal</span>
-                  <span>৳ {totalPrice.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
+                  <span>{formatCurrency(totalPrice, { decimals: 2 })}</span>
                 </div>
 
                 <Separator className="my-4" />
@@ -365,9 +284,7 @@ const Checkout = () => {
                     Shipping District <span className="text-destructive">*</span>
                   </Label>
                   <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
-                    <SelectTrigger className="mt-1.5">
-                      <SelectValue placeholder="Select district" />
-                    </SelectTrigger>
+                    <SelectTrigger className="mt-1.5"><SelectValue placeholder="Select district" /></SelectTrigger>
                     <SelectContent>
                       {districts.map((d) => (
                         <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
@@ -378,7 +295,7 @@ const Checkout = () => {
                   {activeDistrict && (
                     <div className="mt-2 flex justify-between items-center bg-muted/50 rounded-lg px-3 py-2 text-sm">
                       <span className="text-muted-foreground">{activeDistrict.delivery_label}</span>
-                      <span className="font-medium">৳ {activeDistrict.delivery_fee.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
+                      <span className="font-medium">{formatCurrency(activeDistrict.delivery_fee, { decimals: 2 })}</span>
                     </div>
                   )}
                 </div>
@@ -387,18 +304,14 @@ const Checkout = () => {
 
                 <div className="flex justify-between text-lg font-bold">
                   <span>Total</span>
-                  <span className="text-primary">৳ {grandTotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
+                  <span className="text-primary">{formatCurrency(grandTotal, { decimals: 2 })}</span>
                 </div>
 
-                <Button
-                  type="submit"
-                  className="w-full mt-6 rounded-full h-12 text-base font-semibold"
-                  disabled={loading}
-                >
+                <Button type="submit" className="w-full mt-6 rounded-full h-12 text-base font-semibold" disabled={loading}>
                   {loading ? (
                     <><Loader2 className="animate-spin mr-2" size={18} /> Processing...</>
                   ) : (
-                    `Place Order — ৳${grandTotal.toLocaleString()}`
+                    `Place Order — ${formatCurrency(grandTotal)}`
                   )}
                 </Button>
               </div>
