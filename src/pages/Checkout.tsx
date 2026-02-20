@@ -38,7 +38,7 @@ const Checkout = () => {
     notes: "",
     deliveryDate: "",
     deliveryTime: "",
-    paymentMethod: "cod",
+    paymentMethod: "eps",
   });
 
   const { data: districts = [] } = useQuery({
@@ -270,7 +270,6 @@ const Checkout = () => {
                 <h2 className="text-lg font-bold mb-6">Payment Method</h2>
                 <div className="space-y-3">
                   {[
-                    { value: "cod", label: "Cash on Delivery", desc: "Pay when you receive your order" },
                     { value: "paypal", label: "PayPal", desc: "Pay securely via PayPal" },
                     { value: "stripe", label: "Stripe", desc: "Pay with credit/debit card via Stripe" },
                     { value: "eps", label: "EPS Payment", desc: "Pay securely via EPS Payment Gateway" },
