@@ -175,7 +175,7 @@ const Header = () => {
                 <Truck size={20} />
                 <span className="text-[9px] font-medium mt-0.5 leading-none">Same Day</span>
               </Link>
-              <Link to="/track-order" className="hidden md:flex flex-col items-center justify-center px-2 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted" aria-label="Track Order">
+              <Link to="/track-order" className="flex flex-col items-center justify-center px-2 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted" aria-label="Track Order">
                 <PackageSearch size={20} />
                 <span className="text-[9px] font-medium mt-0.5 leading-none">Track</span>
               </Link>
