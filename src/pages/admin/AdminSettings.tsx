@@ -581,6 +581,7 @@ const paymentGatewayProviders = [
     fields: [
       { key: "eps_username", label: "EPS Username (Email)" },
       { key: "eps_password", label: "EPS Password" },
+      { key: "eps_merchant_id", label: "EPS Merchant ID" },
       { key: "eps_store_id", label: "EPS Store ID" },
       { key: "eps_hash_key", label: "EPS Hash Key" },
       { key: "eps_mode", label: "EPS Mode", type: "select" as const, options: [
