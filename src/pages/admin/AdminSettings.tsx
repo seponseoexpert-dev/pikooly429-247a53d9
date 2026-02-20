@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -8,22 +7,29 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import {
-  Save, Building2, Globe, Mail, MapPin, Truck, KeyRound,
+  Save, Building2, Globe, Mail, MapPin, KeyRound,
   Bell, BellRing, Share2, Cookie, BarChart3, Palette, Image,
-  DollarSign, Users, Store, Gift, Ruler, Receipt, FileText,
-  Shield, Languages, MessageSquare, CreditCard, Award, Settings,
-  Upload, X,
+  Settings, Upload, X,
+  Store, Gift, Ruler, Receipt, FileText, Shield, Languages,
+  MessageSquare, CreditCard, Award,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const settingSections = [
   { key: "company", label: "Company", icon: Building2 },
   { key: "site", label: "Site", icon: Globe },
   { key: "mail", label: "Mail", icon: Mail },
-  { key: "location", label: "Location Setup", icon: MapPin },
-  
   { key: "otp", label: "OTP", icon: KeyRound },
-  { key: "notification", label: "Notification", icon: Bell },
   { key: "notification_alert", label: "Notification Alert", icon: BellRing },
   { key: "social_media", label: "Social Media", icon: Share2 },
   { key: "cookies", label: "Cookies", icon: Cookie },
@@ -37,78 +43,149 @@ const settingSections = [
   { key: "pages", label: "Pages", icon: FileText },
   { key: "role_permissions", label: "Role & Permissions", icon: Shield },
   { key: "languages", label: "Languages", icon: Languages },
-  { key: "sms_gateway", label: "Sms Gateway", icon: MessageSquare },
+  { key: "sms_gateway", label: "SMS Gateway", icon: MessageSquare },
   { key: "payment_gateway", label: "Payment Gateway", icon: CreditCard },
   { key: "license", label: "License", icon: Award },
 ];
 
-// Define fields per section
-const sectionFields: Record<string, { key: string; label: string; type?: string }[]> = {
+type FieldDef = {
+  key: string;
+  label: string;
+  type?: "textarea" | "switch" | "image_upload" | "select" | "radio";
+  options?: { value: string; label: string }[];
+  placeholder?: string;
+  fullWidth?: boolean;
+};
+
+const sectionFields: Record<string, FieldDef[]> = {
   company: [
-    { key: "store_name", label: "Company Name" },
-    { key: "store_phone", label: "Phone" },
+    { key: "store_name", label: "Name" },
+    { key: "company_latitude", label: "Latitude", placeholder: "23.7699072" },
+    { key: "company_longitude", label: "Longitude", placeholder: "90.3643136" },
     { key: "store_email", label: "Email" },
-    { key: "store_address", label: "Address" },
+    { key: "store_phone", label: "Phone" },
     { key: "company_website", label: "Website" },
+    { key: "company_city", label: "City" },
+    { key: "company_state", label: "State" },
+    { key: "company_country", label: "Country Code", type: "select", options: [
+      { value: "BD", label: "Bangladesh (BGD)" },
+      { value: "IN", label: "India (IND)" },
+      { value: "US", label: "United States (USA)" },
+      { value: "GB", label: "United Kingdom (GBR)" },
+      { value: "AE", label: "UAE (ARE)" },
+    ]},
+    { key: "company_zip", label: "Zip Code" },
+    { key: "store_address", label: "Address", type: "textarea", fullWidth: true },
     { key: "company_logo", label: "Logo", type: "image_upload" },
     { key: "company_favicon", label: "Favicon", type: "image_upload" },
   ],
   site: [
-    { key: "site_title", label: "Site Title" },
-    { key: "site_description", label: "Site Description", type: "textarea" },
-    { key: "site_footer_text", label: "Footer Text" },
-    { key: "site_copyright", label: "Copyright Text" },
-    { key: "announcement_bar_text", label: "Announcement Bar Text" },
-    { key: "announcement_bar_enabled", label: "Show Announcement Bar", type: "switch" },
-    { key: "header_delivery_text", label: "Header Delivery Text (e.g. Where to deliver?)" },
-    { key: "header_delivery_subtext", label: "Header Delivery Subtext (e.g. Location missing)" },
-    { key: "maintenance_mode", label: "Maintenance Mode", type: "switch" },
+    { key: "date_format", label: "Date Format", type: "select", options: [
+      { value: "d-m-Y", label: "d-m-Y (20-02-2026)" },
+      { value: "Y-m-d", label: "Y-m-d (2026-02-20)" },
+      { value: "m/d/Y", label: "m/d/Y (02/20/2026)" },
+      { value: "d/m/Y", label: "d/m/Y (20/02/2026)" },
+    ]},
+    { key: "time_format", label: "Time Format", type: "select", options: [
+      { value: "12h", label: "12 Hour (6:47 PM)" },
+      { value: "24h", label: "24 Hour (18:47)" },
+    ]},
+    { key: "default_timezone", label: "Default Timezone", type: "select", options: [
+      { value: "Asia/Dhaka", label: "Asia/Dhaka" },
+      { value: "Asia/Kolkata", label: "Asia/Kolkata" },
+      { value: "UTC", label: "UTC" },
+      { value: "America/New_York", label: "America/New_York" },
+      { value: "Europe/London", label: "Europe/London" },
+    ]},
+    { key: "default_language", label: "Default Language", type: "select", options: [
+      { value: "en", label: "English" },
+      { value: "bn", label: "Bangla" },
+      { value: "hi", label: "Hindi" },
+      { value: "ar", label: "Arabic" },
+    ]},
+    { key: "site_copyright", label: "Copyright" },
+    { key: "android_app_link", label: "Android App Link" },
+    { key: "ios_app_link", label: "iOS App Link" },
+    { key: "max_purchase_qty", label: "Non Purchase Product Maximum Quantity" },
+    { key: "decimal_point", label: "Digit After Decimal Point (EX: 0.00)" },
+    { key: "currency_position", label: "Currency Position", type: "radio", options: [
+      { value: "left", label: "(৳) Left" },
+      { value: "right", label: "Right (৳)" },
+    ]},
+    { key: "cod_enabled", label: "Cash On Delivery", type: "radio", options: [
+      { value: "true", label: "Enable" },
+      { value: "false", label: "Disable" },
+    ]},
+    { key: "is_return_credit", label: "Is Return Product Price Add To Credit", type: "radio", options: [
+      { value: "true", label: "Yes" },
+      { value: "false", label: "No" },
+    ]},
+    { key: "online_payment_enabled", label: "Online Payment Gateway", type: "radio", options: [
+      { value: "true", label: "Enable" },
+      { value: "false", label: "Disable" },
+    ]},
+    { key: "multi_language_enabled", label: "Language Switch", type: "radio", options: [
+      { value: "true", label: "Enable" },
+      { value: "false", label: "Disable" },
+    ]},
+    { key: "email_verification_enabled", label: "Email Verification", type: "radio", options: [
+      { value: "true", label: "Enable" },
+      { value: "false", label: "Disable" },
+    ]},
+    { key: "phone_verification_enabled", label: "Phone Verification", type: "radio", options: [
+      { value: "true", label: "Enable" },
+      { value: "false", label: "Disable" },
+    ]},
+    { key: "app_debug", label: "App Debug", type: "radio", options: [
+      { value: "true", label: "Enable" },
+      { value: "false", label: "Disable" },
+    ]},
+    { key: "maintenance_mode", label: "Maintenance Mode", type: "radio", options: [
+      { value: "true", label: "Enable" },
+      { value: "false", label: "Disable" },
+    ]},
   ],
   mail: [
     { key: "mail_host", label: "Mail Host" },
     { key: "mail_port", label: "Mail Port" },
     { key: "mail_username", label: "Mail Username" },
     { key: "mail_password", label: "Mail Password" },
-    { key: "mail_from_address", label: "From Address" },
-    { key: "mail_from_name", label: "From Name" },
-    { key: "mail_encryption", label: "Encryption (TLS/SSL)" },
-  ],
-  location: [
-    { key: "default_country", label: "Default Country" },
-    { key: "default_city", label: "Default City" },
-    { key: "default_state", label: "Default State" },
-    { key: "default_timezone", label: "Timezone" },
-    { key: "default_language", label: "Default Language" },
+    { key: "mail_from_name", label: "Mail From Name" },
+    { key: "mail_from_address", label: "Mail From Email" },
+    { key: "mail_encryption", label: "Mail Encryption", type: "radio", options: [
+      { value: "ssl", label: "SSL" },
+      { value: "tls", label: "TLS" },
+    ]},
   ],
   otp: [
-    { key: "otp_type", label: "OTP Type (SMS/Email)" },
-    { key: "otp_digit_limit", label: "OTP Digit Limit" },
-    { key: "otp_expire_time", label: "OTP Expire Time (min)" },
-    { key: "otp_enabled", label: "Enable OTP", type: "switch" },
-  ],
-  notification: [
-    { key: "push_notification_key", label: "Push Notification Key" },
-    { key: "push_notification_enabled", label: "Enable Push Notification", type: "switch" },
-    { key: "email_notification_enabled", label: "Enable Email Notification", type: "switch" },
-  ],
-  notification_alert: [
-    { key: "order_alert", label: "Order Alert", type: "switch" },
-    { key: "low_stock_alert", label: "Low Stock Alert", type: "switch" },
-    { key: "new_user_alert", label: "New User Alert", type: "switch" },
-    { key: "low_stock_threshold", label: "Low Stock Threshold" },
+    { key: "otp_type", label: "OTP Type", type: "select", options: [
+      { value: "both", label: "BOTH" },
+      { value: "sms", label: "SMS" },
+      { value: "email", label: "Email" },
+    ]},
+    { key: "otp_digit_limit", label: "OTP Digit Limit", type: "select", options: [
+      { value: "4", label: "4" },
+      { value: "6", label: "6" },
+    ]},
+    { key: "otp_expire_time", label: "OTP Expire Time", type: "select", options: [
+      { value: "5", label: "5 Minutes" },
+      { value: "10", label: "10 Minutes" },
+      { value: "15", label: "15 Minutes" },
+      { value: "30", label: "30 Minutes" },
+    ]},
   ],
   social_media: [
-    { key: "facebook_url", label: "Facebook URL" },
-    { key: "instagram_url", label: "Instagram URL" },
-    { key: "twitter_url", label: "Twitter / X URL" },
-    { key: "youtube_url", label: "YouTube URL" },
-    { key: "linkedin_url", label: "LinkedIn URL" },
-    { key: "tiktok_url", label: "TikTok URL" },
-    { key: "whatsapp_number", label: "WhatsApp Number" },
+    { key: "facebook_url", label: "Facebook" },
+    { key: "youtube_url", label: "YouTube" },
+    { key: "instagram_url", label: "Instagram" },
+    { key: "twitter_url", label: "Twitter" },
+    { key: "linkedin_url", label: "LinkedIn" },
+    { key: "tiktok_url", label: "TikTok" },
+    { key: "whatsapp_number", label: "WhatsApp" },
   ],
   cookies: [
     { key: "cookie_consent_enabled", label: "Enable Cookie Consent", type: "switch" },
-    { key: "cookie_consent_text", label: "Consent Text", type: "textarea" },
+    { key: "cookie_consent_text", label: "Consent Text", type: "textarea", fullWidth: true },
   ],
   analytics: [
     { key: "google_analytics_id", label: "Google Analytics ID" },
@@ -157,10 +234,10 @@ const sectionFields: Record<string, { key: string; label: string; type?: string 
     { key: "tax_label", label: "Tax Label (e.g. VAT)" },
   ],
   pages: [
-    { key: "about_page_content", label: "About Page Content", type: "textarea" },
-    { key: "terms_page_content", label: "Terms & Conditions", type: "textarea" },
-    { key: "privacy_page_content", label: "Privacy Policy", type: "textarea" },
-    { key: "refund_page_content", label: "Refund Policy", type: "textarea" },
+    { key: "about_page_content", label: "About Page Content", type: "textarea", fullWidth: true },
+    { key: "terms_page_content", label: "Terms & Conditions", type: "textarea", fullWidth: true },
+    { key: "privacy_page_content", label: "Privacy Policy", type: "textarea", fullWidth: true },
+    { key: "refund_page_content", label: "Refund Policy", type: "textarea", fullWidth: true },
   ],
   role_permissions: [
     { key: "admin_registration_enabled", label: "Admin Registration", type: "switch" },
@@ -168,7 +245,7 @@ const sectionFields: Record<string, { key: string; label: string; type?: string 
   ],
   languages: [
     { key: "default_language_code", label: "Default Language Code" },
-    { key: "multi_language_enabled", label: "Enable Multi Language", type: "switch" },
+    { key: "multi_language_enabled_setting", label: "Enable Multi Language", type: "switch" },
   ],
   sms_gateway: [
     { key: "sms_gateway_provider", label: "SMS Provider" },
@@ -177,7 +254,7 @@ const sectionFields: Record<string, { key: string; label: string; type?: string 
     { key: "sms_enabled", label: "Enable SMS", type: "switch" },
   ],
   payment_gateway: [
-    { key: "cod_enabled", label: "Cash on Delivery", type: "switch" },
+    { key: "cod_setting", label: "Cash on Delivery", type: "switch" },
     { key: "bkash_enabled", label: "bKash Enabled", type: "switch" },
     { key: "bkash_app_key", label: "bKash App Key" },
     { key: "bkash_app_secret", label: "bKash App Secret" },
@@ -192,6 +269,18 @@ const sectionFields: Record<string, { key: string; label: string; type?: string 
     { key: "license_expiry", label: "License Expiry Date" },
   ],
 };
+
+// Notification Alert fields per channel
+const notificationAlertStatuses = [
+  { key: "pending", label: "Order Pending Message", default: "Your order is successfully placed." },
+  { key: "confirmed", label: "Order Confirmation Message", default: "Your order is confirmed." },
+  { key: "on_the_way", label: "Order On The Way Message", default: "Your order is on the way." },
+  { key: "delivered", label: "Order Delivered Message", default: "Your order is successfully delivered." },
+  { key: "canceled", label: "Order Canceled Message", default: "Your order is canceled." },
+  { key: "rejected", label: "Order Rejected Message", default: "Your order is rejected." },
+];
+
+const notificationAlertChannels = ["mail", "sms", "push"];
 
 const ImageUploadField = ({
   fieldKey,
@@ -209,22 +298,17 @@ const ImageUploadField = ({
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     setUploading(true);
     try {
       const ext = file.name.split(".").pop();
       const filePath = `settings/${fieldKey}-${Date.now()}.${ext}`;
-
       const { error: uploadError } = await supabase.storage
         .from("images")
         .upload(filePath, file, { upsert: true });
-
       if (uploadError) throw uploadError;
-
       const { data: urlData } = supabase.storage
         .from("images")
         .getPublicUrl(filePath);
-
       onChange(urlData.publicUrl);
       toast({ title: "Image uploaded successfully ✓" });
     } catch (err: any) {
@@ -239,40 +323,150 @@ const ImageUploadField = ({
     <div className="space-y-2">
       {value && (
         <div className="relative inline-block">
-          <img
-            src={value}
-            alt={fieldKey}
-            className="w-24 h-24 object-contain rounded-lg border bg-muted"
-          />
-          <button
-            type="button"
-            onClick={() => onChange("")}
-            className="absolute -top-2 -right-2 w-5 h-5 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center"
-          >
+          <img src={value} alt={fieldKey} className="w-24 h-24 object-contain rounded-lg border bg-muted" />
+          <button type="button" onClick={() => onChange("")}
+            className="absolute -top-2 -right-2 w-5 h-5 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center">
             <X size={12} />
           </button>
         </div>
       )}
       <div className="flex gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => fileRef.current?.click()}
-          disabled={uploading}
-        >
+        <Button type="button" variant="outline" size="sm" onClick={() => fileRef.current?.click()} disabled={uploading}>
           <Upload className="h-4 w-4 mr-2" />
           {uploading ? "Uploading..." : "Upload Image"}
         </Button>
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleUpload}
-        />
+        <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} />
       </div>
     </div>
+  );
+};
+
+// Render a single field
+const FieldRenderer = ({
+  field,
+  value,
+  onChange,
+}: {
+  field: FieldDef;
+  value: string;
+  onChange: (val: string) => void;
+}) => {
+  if (field.type === "image_upload") {
+    return <ImageUploadField fieldKey={field.key} value={value} onChange={onChange} />;
+  }
+  if (field.type === "textarea") {
+    return (
+      <Textarea rows={4} value={value} onChange={(e) => onChange(e.target.value)} placeholder={field.placeholder || field.label} />
+    );
+  }
+  if (field.type === "switch") {
+    return (
+      <div className="flex items-center gap-3 pt-1">
+        <Switch checked={value === "true"} onCheckedChange={(c) => onChange(c ? "true" : "false")} />
+        <span className="text-sm text-muted-foreground">{value === "true" ? "Enabled" : "Disabled"}</span>
+      </div>
+    );
+  }
+  if (field.type === "select" && field.options) {
+    return (
+      <Select value={value || ""} onValueChange={onChange}>
+        <SelectTrigger><SelectValue placeholder={`Select ${field.label}`} /></SelectTrigger>
+        <SelectContent>
+          {field.options.map((opt) => (
+            <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    );
+  }
+  if (field.type === "radio" && field.options) {
+    return (
+      <RadioGroup value={value || field.options[0]?.value} onValueChange={onChange} className="flex items-center gap-4 pt-1">
+        {field.options.map((opt) => (
+          <div key={opt.value} className="flex items-center gap-1.5">
+            <RadioGroupItem value={opt.value} id={`${field.key}-${opt.value}`} />
+            <Label htmlFor={`${field.key}-${opt.value}`} className="text-sm cursor-pointer">{opt.label}</Label>
+          </div>
+        ))}
+      </RadioGroup>
+    );
+  }
+  return (
+    <Input value={value} onChange={(e) => onChange(e.target.value)} placeholder={field.placeholder || field.label} />
+  );
+};
+
+// Notification Alert Section Component
+const NotificationAlertSection = ({
+  formValues,
+  setFormValues,
+}: {
+  formValues: Record<string, string>;
+  setFormValues: (v: Record<string, string>) => void;
+}) => {
+  return (
+    <Tabs defaultValue="mail">
+      <TabsList className="w-full grid grid-cols-3 mb-4">
+        <TabsTrigger value="mail" className="flex items-center gap-2">
+          <Mail className="h-4 w-4" /> Mail
+        </TabsTrigger>
+        <TabsTrigger value="sms" className="flex items-center gap-2">
+          <MessageSquare className="h-4 w-4" /> SMS
+        </TabsTrigger>
+        <TabsTrigger value="push" className="flex items-center gap-2">
+          <Bell className="h-4 w-4" /> Push Notification
+        </TabsTrigger>
+      </TabsList>
+
+      {notificationAlertChannels.map((channel) => (
+        <TabsContent key={channel} value={channel} className="space-y-4">
+          <h4 className="font-medium text-base capitalize">{channel === "push" ? "Push Notification" : channel.charAt(0).toUpperCase() + channel.slice(1)} Notification Messages</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {notificationAlertStatuses.map((status) => {
+              const msgKey = `alert_${channel}_${status.key}_message`;
+              const enableKey = `alert_${channel}_${status.key}_enabled`;
+              return (
+                <div key={status.key} className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{status.label}</label>
+                    <div className="flex items-center gap-2">
+                      <Switch
+                        checked={formValues[enableKey] === "true"}
+                        onCheckedChange={(c) => setFormValues({ ...formValues, [enableKey]: c ? "true" : "false" })}
+                      />
+                      <span className="text-xs text-muted-foreground">{formValues[enableKey] === "true" ? "ON" : "OFF"}</span>
+                    </div>
+                  </div>
+                  <Input
+                    value={formValues[msgKey] || status.default}
+                    onChange={(e) => setFormValues({ ...formValues, [msgKey]: e.target.value })}
+                    placeholder={status.default}
+                  />
+                </div>
+              );
+            })}
+          </div>
+          {/* Admin new order message */}
+          <div className="space-y-1.5 max-w-md">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Admin And Manager New Order Message</label>
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={formValues[`alert_${channel}_admin_new_order_enabled`] === "true"}
+                  onCheckedChange={(c) => setFormValues({ ...formValues, [`alert_${channel}_admin_new_order_enabled`]: c ? "true" : "false" })}
+                />
+                <span className="text-xs text-muted-foreground">{formValues[`alert_${channel}_admin_new_order_enabled`] === "true" ? "ON" : "OFF"}</span>
+              </div>
+            </div>
+            <Input
+              value={formValues[`alert_${channel}_admin_new_order_message`] || "You have a new order."}
+              onChange={(e) => setFormValues({ ...formValues, [`alert_${channel}_admin_new_order_message`]: e.target.value })}
+              placeholder="You have a new order."
+            />
+          </div>
+        </TabsContent>
+      ))}
+    </Tabs>
   );
 };
 
@@ -299,11 +493,26 @@ const AdminSettings = () => {
     }
   }, [settings]);
 
+  // Collect all keys for the active section to save
+  const getActiveKeys = () => {
+    if (activeSection === "notification_alert") {
+      const keys: string[] = [];
+      notificationAlertChannels.forEach((ch) => {
+        notificationAlertStatuses.forEach((st) => {
+          keys.push(`alert_${ch}_${st.key}_message`);
+          keys.push(`alert_${ch}_${st.key}_enabled`);
+        });
+        keys.push(`alert_${ch}_admin_new_order_message`);
+        keys.push(`alert_${ch}_admin_new_order_enabled`);
+      });
+      return keys;
+    }
+    return (sectionFields[activeSection] || []).map((f) => f.key);
+  };
+
   const saveMutation = useMutation({
     mutationFn: async (vals: Record<string, string>) => {
-      const fields = sectionFields[activeSection] || [];
-      const keys = fields.map(f => f.key);
-
+      const keys = getActiveKeys();
       const promises = keys.map(async (key) => {
         const value = vals[key] || "";
         const existing = settings.find((s: any) => s.key === key);
@@ -313,7 +522,6 @@ const AdminSettings = () => {
           return supabase.from("site_settings").insert({ key, value });
         }
       });
-
       const results = await Promise.all(promises);
       const err = results.find((r) => r.error);
       if (err?.error) throw err.error;
@@ -332,126 +540,89 @@ const AdminSettings = () => {
   };
 
   const currentFields = sectionFields[activeSection] || [];
-  const currentSection = settingSections.find(s => s.key === activeSection);
+  const currentSection = settingSections.find((s) => s.key === activeSection);
   const SectionIcon = currentSection?.icon || Settings;
 
   return (
-    <>
-      <div className="space-y-4">
-        <div>
-          <h2 className="text-2xl font-display font-bold">Settings</h2>
-          <p className="text-muted-foreground text-sm">Manage store configuration</p>
+    <div className="space-y-4">
+      <div>
+        <h2 className="text-2xl font-display font-bold">Settings</h2>
+        <p className="text-muted-foreground text-sm">Manage store configuration</p>
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-4">
+        {/* Sidebar */}
+        <div className="lg:w-64 shrink-0">
+          <div className="bg-card border rounded-lg overflow-hidden">
+            <div className="p-3 border-b bg-muted/50">
+              <h3 className="font-semibold text-sm flex items-center gap-2">
+                <Settings className="h-4 w-4" /> Settings Menu
+              </h3>
+            </div>
+            <nav className="p-1.5 max-h-[70vh] overflow-y-auto space-y-0.5">
+              {settingSections.map(({ key, label, icon: Icon }) => (
+                <button
+                  key={key}
+                  onClick={() => setActiveSection(key)}
+                  className={cn(
+                    "w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-left transition-colors",
+                    activeSection === key
+                      ? "bg-primary text-primary-foreground font-medium"
+                      : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <Icon className="h-4 w-4 shrink-0" />
+                  {label}
+                </button>
+              ))}
+            </nav>
+          </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-4">
-          {/* Sidebar */}
-          <div className="lg:w-64 shrink-0">
-            <div className="bg-card border rounded-lg overflow-hidden">
-              <div className="p-3 border-b bg-muted/50">
-                <h3 className="font-semibold text-sm flex items-center gap-2">
-                  <Settings className="h-4 w-4" /> Settings Menu
-                </h3>
-              </div>
-              <nav className="p-1.5 max-h-[70vh] overflow-y-auto space-y-0.5">
-                {settingSections.map(({ key, label, icon: Icon }) => (
-                  <button
-                    key={key}
-                    onClick={() => setActiveSection(key)}
-                    className={cn(
-                      "w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm text-left transition-colors",
-                      activeSection === key
-                        ? "bg-primary text-primary-foreground font-medium"
-                        : "hover:bg-muted text-muted-foreground hover:text-foreground"
-                    )}
-                  >
-                    <Icon className="h-4 w-4 shrink-0" />
-                    {label}
-                  </button>
-                ))}
-              </nav>
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className="flex-1 min-w-0">
-            {isLoading ? (
-              <div className="bg-card border rounded-lg p-8 text-center text-muted-foreground">
-                Loading...
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit}>
-                <div className="bg-card border rounded-lg">
-                  <div className="p-4 border-b flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <SectionIcon className="h-5 w-5 text-primary" />
-                      <h3 className="font-semibold text-lg">{currentSection?.label}</h3>
-                    </div>
-                    <Button type="submit" size="sm" disabled={saveMutation.isPending}>
-                      <Save className="h-4 w-4 mr-2" />
-                      {saveMutation.isPending ? "Saving..." : "Save"}
-                    </Button>
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          {isLoading ? (
+            <div className="bg-card border rounded-lg p-8 text-center text-muted-foreground">Loading...</div>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <div className="bg-card border rounded-lg">
+                <div className="p-4 border-b flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <SectionIcon className="h-5 w-5 text-primary" />
+                    <h3 className="font-semibold text-lg">{currentSection?.label}</h3>
                   </div>
-                  <div className="p-4 space-y-4">
-                    {currentFields.length === 0 ? (
-                      <p className="text-muted-foreground text-sm py-4 text-center">
-                        No settings available for this section yet.
-                      </p>
-                    ) : (
-                      currentFields.map((field) => (
-                        <div key={field.key} className="space-y-1.5">
-                          <label className="text-sm font-medium">{field.label}</label>
-                          {field.type === "image_upload" ? (
-                            <ImageUploadField
-                              fieldKey={field.key}
-                              value={formValues[field.key] || ""}
-                              onChange={(url) =>
-                                setFormValues({ ...formValues, [field.key]: url })
-                              }
-                            />
-                          ) : field.type === "textarea" ? (
-                            <Textarea
-                              rows={4}
-                              value={formValues[field.key] || ""}
-                              onChange={(e) =>
-                                setFormValues({ ...formValues, [field.key]: e.target.value })
-                              }
-                              placeholder={field.label}
-                            />
-                          ) : field.type === "switch" ? (
-                            <div className="flex items-center gap-3">
-                              <Switch
-                                checked={formValues[field.key] === "true"}
-                                onCheckedChange={(checked) =>
-                                  setFormValues({
-                                    ...formValues,
-                                    [field.key]: checked ? "true" : "false",
-                                  })
-                                }
-                              />
-                              <span className="text-sm text-muted-foreground">
-                                {formValues[field.key] === "true" ? "Enabled" : "Disabled"}
-                              </span>
-                            </div>
-                          ) : (
-                            <Input
-                              value={formValues[field.key] || ""}
-                              onChange={(e) =>
-                                setFormValues({ ...formValues, [field.key]: e.target.value })
-                              }
-                              placeholder={field.label}
-                            />
-                          )}
-                        </div>
-                      ))
-                    )}
-                  </div>
+                  <Button type="submit" size="sm" disabled={saveMutation.isPending} className="bg-destructive hover:bg-destructive/90 text-destructive-foreground">
+                    <Save className="h-4 w-4 mr-2" />
+                    {saveMutation.isPending ? "Saving..." : "Save"}
+                  </Button>
                 </div>
-              </form>
-            )}
-          </div>
+
+                <div className="p-4">
+                  {activeSection === "notification_alert" ? (
+                    <NotificationAlertSection formValues={formValues} setFormValues={setFormValues} />
+                  ) : currentFields.length === 0 ? (
+                    <p className="text-muted-foreground text-sm py-4 text-center">No settings available for this section yet.</p>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                      {currentFields.map((field) => (
+                        <div key={field.key} className={cn("space-y-1.5", field.fullWidth && "md:col-span-2")}>
+                          <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{field.label}</label>
+                          <FieldRenderer
+                            field={field}
+                            value={formValues[field.key] || ""}
+                            onChange={(val) => setFormValues({ ...formValues, [field.key]: val })}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </form>
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
