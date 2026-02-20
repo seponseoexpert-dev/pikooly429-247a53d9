@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
 import { useState } from "react";
-import { useCurrency } from "@/hooks/useCurrency";
+import { useMultiCurrency } from "@/contexts/CurrencyContext";
 
 interface ProductCardProps {
   product: {
@@ -26,7 +26,7 @@ interface ProductCardProps {
 
 const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
   const { addItem } = useCart();
-  const { formatCurrency } = useCurrency();
+  const { formatPrice } = useMultiCurrency();
   const [isAdding, setIsAdding] = useState(false);
   const origPrice = product.original_price ?? product.originalPrice;
   const discount = origPrice
@@ -60,9 +60,9 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
         </Link>
 
         <div className="mt-1.5 sm:mt-2">
-          <span className="font-bold text-primary text-sm sm:text-base">{formatCurrency(product.price)}</span>
+          <span className="font-bold text-primary text-sm sm:text-base">{formatPrice(product.price)}</span>
           {origPrice && (
-            <span className="text-[10px] sm:text-xs text-muted-foreground line-through ml-1.5">{formatCurrency(origPrice)}</span>
+            <span className="text-[10px] sm:text-xs text-muted-foreground line-through ml-1.5">{formatPrice(origPrice)}</span>
           )}
         </div>
 

@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { Loader2, ShoppingBag, Truck, CreditCard, Minus, Plus, X } from "lucide-react";
-import { useCurrency } from "@/hooks/useCurrency";
+import { useMultiCurrency } from "@/contexts/CurrencyContext";
 
 const deliveryTimeSlots = [
   "10:00 AM - 12:00 PM",
@@ -24,7 +24,7 @@ const deliveryTimeSlots = [
 const Checkout = () => {
   const { items, totalPrice, clearCart, updateQuantity, removeItem } = useCart();
   const navigate = useNavigate();
-  const { formatCurrency } = useCurrency();
+  const { formatPrice } = useMultiCurrency();
   const [loading, setLoading] = useState(false);
   const [selectedDistrict, setSelectedDistrict] = useState("");
 
@@ -263,7 +263,7 @@ const Checkout = () => {
                             <button type="button" onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground"><Plus size={12} /></button>
                           </div>
                         </div>
-                        <p className="text-sm text-muted-foreground mt-1">{formatCurrency(item.product.price * item.quantity, { decimals: 2 })}</p>
+                        <p className="text-sm text-muted-foreground mt-1">{formatPrice(item.product.price * item.quantity)}</p>
                       </div>
                     </div>
                   ))}
@@ -273,7 +273,7 @@ const Checkout = () => {
 
                 <div className="flex justify-between text-sm">
                   <span className="font-semibold">Subtotal</span>
-                  <span>{formatCurrency(totalPrice, { decimals: 2 })}</span>
+                  <span>{formatPrice(totalPrice)}</span>
                 </div>
 
                 <Separator className="my-4" />
@@ -295,7 +295,7 @@ const Checkout = () => {
                   {activeDistrict && (
                     <div className="mt-2 flex justify-between items-center bg-muted/50 rounded-lg px-3 py-2 text-sm">
                       <span className="text-muted-foreground">{activeDistrict.delivery_label}</span>
-                      <span className="font-medium">{formatCurrency(activeDistrict.delivery_fee, { decimals: 2 })}</span>
+                      <span className="font-medium">{formatPrice(activeDistrict.delivery_fee)}</span>
                     </div>
                   )}
                 </div>
@@ -304,14 +304,14 @@ const Checkout = () => {
 
                 <div className="flex justify-between text-lg font-bold">
                   <span>Total</span>
-                  <span className="text-primary">{formatCurrency(grandTotal, { decimals: 2 })}</span>
+                  <span className="text-primary">{formatPrice(grandTotal)}</span>
                 </div>
 
                 <Button type="submit" className="w-full mt-6 rounded-full h-12 text-base font-semibold" disabled={loading}>
                   {loading ? (
                     <><Loader2 className="animate-spin mr-2" size={18} /> Processing...</>
                   ) : (
-                    `Place Order — ${formatCurrency(grandTotal)}`
+                    `Place Order — ${formatPrice(grandTotal)}`
                   )}
                 </Button>
               </div>

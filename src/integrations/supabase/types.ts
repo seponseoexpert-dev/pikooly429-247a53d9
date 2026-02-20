@@ -158,6 +158,45 @@ export type Database = {
         }
         Relationships: []
       }
+      currencies: {
+        Row: {
+          code: string
+          created_at: string
+          display_order: number
+          exchange_rate: number
+          id: string
+          is_active: boolean
+          is_default: boolean
+          name: string
+          symbol: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          display_order?: number
+          exchange_rate?: number
+          id?: string
+          is_active?: boolean
+          is_default?: boolean
+          name: string
+          symbol: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          display_order?: number
+          exchange_rate?: number
+          id?: string
+          is_active?: boolean
+          is_default?: boolean
+          name?: string
+          symbol?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string

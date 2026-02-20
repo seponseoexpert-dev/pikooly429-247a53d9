@@ -5,13 +5,13 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { LogOut, User, Package, Mail, Phone, Pencil, Check, X } from "lucide-react";
 import { toast } from "sonner";
-import { useCurrency } from "@/hooks/useCurrency";
+import { useMultiCurrency } from "@/contexts/CurrencyContext";
 
 const Account = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { formatCurrency } = useCurrency();
+  const { formatPrice } = useMultiCurrency();
   const [editing, setEditing] = useState(false);
   const [editName, setEditName] = useState("");
   const [editPhone, setEditPhone] = useState("");
@@ -185,7 +185,7 @@ const Account = () => {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold text-primary">{formatCurrency(order.total)}</p>
+                  <p className="text-sm font-bold text-primary">{formatPrice(order.total)}</p>
                   <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
                     order.status === "delivered" ? "bg-green-100 text-green-700" :
                     order.status === "pending" ? "bg-yellow-100 text-yellow-700" :

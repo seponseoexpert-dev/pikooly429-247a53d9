@@ -8,14 +8,14 @@ import ReviewSection from "@/components/product/ReviewSection";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
-import { useCurrency } from "@/hooks/useCurrency";
+import { useMultiCurrency } from "@/contexts/CurrencyContext";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addItem } = useCart();
   const { settings } = useSiteSettings();
-  const { formatCurrency } = useCurrency();
+  const { formatPrice } = useMultiCurrency();
   const [qty, setQty] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [activeTab, setActiveTab] = useState<"specification" | "description" | "reviews">("specification");
@@ -118,7 +118,7 @@ const ProductDetail = () => {
     navigate("/checkout");
   };
 
-  const whatsappUrl = `https://wa.me/8801XXXXXXXXX?text=${encodeURIComponent(`Hi! I want to order: ${product.name} (${formatCurrency(product.price)}) x ${qty}`)}`;
+  const whatsappUrl = `https://wa.me/8801XXXXXXXXX?text=${encodeURIComponent(`Hi! I want to order: ${product.name} (${formatPrice(product.price)}) x ${qty}`)}`;
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
 
   return (
@@ -166,7 +166,7 @@ const ProductDetail = () => {
           </h1>
 
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xl sm:text-2xl font-bold text-foreground">{formatCurrency(product.price)}</span>
+            <span className="text-xl sm:text-2xl font-bold text-foreground">{formatPrice(product.price)}</span>
             <button className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors" aria-label="Add to wishlist">
               <Heart size={18} />
             </button>
@@ -182,7 +182,7 @@ const ProductDetail = () => {
 
           {product.original_price && (
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-sm text-muted-foreground line-through">{formatCurrency(product.original_price)}</span>
+              <span className="text-sm text-muted-foreground line-through">{formatPrice(product.original_price)}</span>
               <span className="text-sm text-primary font-medium">
                 {Math.round((1 - product.price / product.original_price) * 100)}% off
               </span>

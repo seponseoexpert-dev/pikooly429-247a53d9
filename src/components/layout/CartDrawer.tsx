@@ -3,11 +3,11 @@ import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { useCurrency } from "@/hooks/useCurrency";
+import { useMultiCurrency } from "@/contexts/CurrencyContext";
 
 const CartDrawer = () => {
   const { items, removeItem, updateQuantity, totalPrice, totalItems, isOpen, setIsOpen } = useCart();
-  const { formatCurrency } = useCurrency();
+  const { formatPrice } = useMultiCurrency();
 
   return (
     <AnimatePresence>
@@ -56,7 +56,7 @@ const CartDrawer = () => {
                     />
                     <div className="flex-1 min-w-0">
                       <h4 className="font-medium text-xs sm:text-sm truncate">{item.product.name}</h4>
-                      <p className="text-primary font-bold text-xs sm:text-sm mt-1">{formatCurrency(item.product.price)}</p>
+                      <p className="text-primary font-bold text-xs sm:text-sm mt-1">{formatPrice(item.product.price)}</p>
                       <div className="flex items-center gap-2 mt-2">
                         <button
                           onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
@@ -89,11 +89,11 @@ const CartDrawer = () => {
               <div className="p-4 border-t border-border space-y-3">
                 <div className="flex justify-between text-base sm:text-lg font-bold">
                   <span>Total</span>
-                  <span className="text-primary">{formatCurrency(totalPrice)}</span>
+                  <span className="text-primary">{formatPrice(totalPrice)}</span>
                 </div>
                 <Link to="/checkout" onClick={() => setIsOpen(false)}>
                   <Button className="w-full rounded-full h-11 sm:h-12 text-sm sm:text-base font-semibold">
-                    Checkout — {formatCurrency(totalPrice)}
+                    Checkout — {formatPrice(totalPrice)}
                   </Button>
                 </Link>
               </div>
