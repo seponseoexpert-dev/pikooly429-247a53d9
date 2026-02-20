@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Truck, Gift, ShoppingCart, PackageSearch, User } from "lucide-react";
+import { Home, Truck, Gift, ShoppingCart, User } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 
 const BottomNav = () => {
@@ -11,7 +11,6 @@ const BottomNav = () => {
     { icon: Truck, label: "Same Day", href: "/shop?cat=same-day" },
     { icon: Gift, label: "All Gifts", href: "/all-gifts" },
     { icon: ShoppingCart, label: "Cart", href: "#cart", isCart: true },
-    { icon: PackageSearch, label: "Track", href: "/track-order" },
     { icon: User, label: "Account", href: "/account" },
   ];
 
