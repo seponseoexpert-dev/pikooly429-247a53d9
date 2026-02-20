@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Search, ShoppingCart, X, User, Truck } from "lucide-react";
+import { Search, ShoppingCart, X, User, Truck, ChevronDown } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
-import { useCurrency } from "@/hooks/useCurrency";
+import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,14 +17,16 @@ const staticNavLinks = [
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
   const { totalItems, setIsOpen } = useCart();
   const { settings } = useSiteSettings();
+  const { currencies, selectedCurrency, setSelectedCurrency, formatPrice } = useMultiCurrency();
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const searchRef = useRef<HTMLDivElement>(null);
+  const currencyRef = useRef<HTMLDivElement>(null);
 
-  const { formatCurrency, symbol: currencySymbol } = useCurrency();
   const logoUrl = settings.company_logo || "";
   const announcementText = settings.announcement_bar_text || "🌸 Same Day Delivery Available in 500+ Cities";
   const showAnnouncement = settings.announcement_bar_enabled !== "false";
@@ -69,6 +71,9 @@ const Header = () => {
     const handler = (e: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
         setShowSuggestions(false);
+      }
+      if (currencyRef.current && !currencyRef.current.contains(e.target as Node)) {
+        setShowCurrencyDropdown(false);
       }
     };
     document.addEventListener("mousedown", handler);
@@ -152,9 +157,9 @@ const Header = () => {
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-foreground truncate">{p.name}</p>
                         <p className="text-xs text-primary font-semibold">
-                          {formatCurrency(p.price)}
+                          {formatPrice(p.price)}
                           {p.original_price && p.original_price > p.price && (
-                            <span className="text-muted-foreground line-through ml-1.5">{formatCurrency(p.original_price)}</span>
+                            <span className="text-muted-foreground line-through ml-1.5">{formatPrice(p.original_price)}</span>
                           )}
                         </p>
                       </div>
@@ -170,12 +175,36 @@ const Header = () => {
                 <Truck size={20} />
                 <span className="text-[9px] font-medium mt-0.5 leading-none">Same Day</span>
               </Link>
-              <button className="flex flex-col items-center justify-center px-2 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted" aria-label="Currency">
-                <span className="font-semibold w-5 h-5 flex items-center justify-center border border-foreground/30 rounded-full text-[11px]">
-                  {currencySymbol}
-                </span>
-                <span className="hidden md:block text-[9px] font-medium mt-0.5 leading-none">BDT</span>
-              </button>
+              <div className="relative" ref={currencyRef}>
+                <button
+                  onClick={() => setShowCurrencyDropdown(!showCurrencyDropdown)}
+                  className="flex flex-col items-center justify-center px-2 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted"
+                  aria-label="Currency"
+                >
+                  <span className="font-semibold w-5 h-5 flex items-center justify-center border border-foreground/30 rounded-full text-[11px]">
+                    {selectedCurrency?.symbol || "$"}
+                  </span>
+                  <span className="hidden md:flex items-center text-[9px] font-medium mt-0.5 leading-none gap-0.5">
+                    {selectedCurrency?.code || "USD"} <ChevronDown size={8} />
+                  </span>
+                </button>
+                {showCurrencyDropdown && currencies.length > 1 && (
+                  <div className="absolute right-0 top-full mt-1 z-[100] bg-card border border-border rounded-xl shadow-lg overflow-hidden min-w-[160px]">
+                    {currencies.map((c) => (
+                      <button
+                        key={c.id}
+                        onClick={() => { setSelectedCurrency(c); setShowCurrencyDropdown(false); }}
+                        className={`flex items-center gap-2 w-full px-4 py-2.5 text-left text-sm hover:bg-muted transition-colors ${
+                          selectedCurrency?.code === c.code ? "bg-primary/10 text-primary font-semibold" : "text-foreground"
+                        }`}
+                      >
+                        <span className="w-5 text-center font-semibold">{c.symbol}</span>
+                        <span>{c.code} - {c.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
               <button onClick={() => setIsOpen(true)} className="relative flex flex-col items-center justify-center px-2 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted" aria-label="Cart">
                 <ShoppingCart size={20} />
                 {totalItems > 0 && (
@@ -231,9 +260,9 @@ const Header = () => {
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-foreground truncate">{p.name}</p>
                       <p className="text-xs text-primary font-semibold">
-                        {formatCurrency(p.price)}
+                        {formatPrice(p.price)}
                         {p.original_price && p.original_price > p.price && (
-                          <span className="text-muted-foreground line-through ml-1.5">{formatCurrency(p.original_price)}</span>
+                          <span className="text-muted-foreground line-through ml-1.5">{formatPrice(p.original_price)}</span>
                         )}
                       </p>
                     </div>
