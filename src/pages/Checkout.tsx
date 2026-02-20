@@ -41,6 +41,38 @@ const Checkout = () => {
     paymentMethod: "eps",
   });
 
+  const allPaymentMethods = [
+    { value: "paypal", label: "PayPal", desc: "Pay securely via PayPal", statusKey: "paypal_status" },
+    { value: "stripe", label: "Stripe", desc: "Pay with credit/debit card via Stripe", statusKey: "stripe_status" },
+    { value: "eps", label: "EPS Payment", desc: "Pay securely via EPS Payment Gateway", statusKey: "eps_status" },
+  ];
+
+  const { data: gatewaySettings = {} } = useQuery({
+    queryKey: ["payment-gateway-settings"],
+    queryFn: async () => {
+      const keys = ["paypal_status", "stripe_status", "eps_status"];
+      const { data, error } = await supabase
+        .from("site_settings")
+        .select("key, value")
+        .in("key", keys);
+      if (error) throw error;
+      const map: Record<string, string> = {};
+      data?.forEach((s) => { map[s.key] = s.value || ""; });
+      return map;
+    },
+    staleTime: 60 * 1000,
+  });
+
+  const enabledPaymentMethods = allPaymentMethods.filter(
+    (m) => gatewaySettings[m.statusKey] === "enable"
+  );
+
+  // Auto-select first enabled method if current selection is disabled
+  const selectedMethodEnabled = enabledPaymentMethods.some((m) => m.value === form.paymentMethod);
+  if (!selectedMethodEnabled && enabledPaymentMethods.length > 0 && form.paymentMethod !== enabledPaymentMethods[0].value) {
+    setForm((prev) => ({ ...prev, paymentMethod: enabledPaymentMethods[0].value }));
+  }
+
   const { data: districts = [] } = useQuery({
     queryKey: ["shipping-districts"],
     queryFn: async () => {
@@ -269,11 +301,9 @@ const Checkout = () => {
               <section className="bg-card rounded-2xl p-6 border border-border">
                 <h2 className="text-lg font-bold mb-6">Payment Method</h2>
                 <div className="space-y-3">
-                  {[
-                    { value: "paypal", label: "PayPal", desc: "Pay securely via PayPal" },
-                    { value: "stripe", label: "Stripe", desc: "Pay with credit/debit card via Stripe" },
-                    { value: "eps", label: "EPS Payment", desc: "Pay securely via EPS Payment Gateway" },
-                  ].map((method) => (
+                  {enabledPaymentMethods.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center py-4">No payment methods available. Please contact support.</p>
+                  ) : enabledPaymentMethods.map((method) => (
                     <label
                       key={method.value}
                       className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${
