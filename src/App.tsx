@@ -38,6 +38,7 @@ import AdminCoupons from "./pages/admin/AdminCoupons";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminShipping from "./pages/admin/AdminShipping";
 import AdminCurrencies from "./pages/admin/AdminCurrencies";
+import AdminSubscribers from "./pages/admin/AdminSubscribers";
 
 const queryClient = new QueryClient();
 
@@ -89,6 +90,7 @@ const App = () => (
               <Route path="/admin/settings" element={<ProtectedAdminRoute><AdminSettings /></ProtectedAdminRoute>} />
               <Route path="/admin/shipping" element={<ProtectedAdminRoute><AdminShipping /></ProtectedAdminRoute>} />
               <Route path="/admin/currencies" element={<ProtectedAdminRoute><AdminCurrencies /></ProtectedAdminRoute>} />
+              <Route path="/admin/subscribers" element={<ProtectedAdminRoute><AdminSubscribers /></ProtectedAdminRoute>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>
