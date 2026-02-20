@@ -51,6 +51,7 @@ const Header = () => {
         .from("categories")
         .select("name, slug")
         .eq("is_active", true)
+        .eq("show_in_homepage", false)
         .order("display_order");
       if (error) throw error;
       return data;
