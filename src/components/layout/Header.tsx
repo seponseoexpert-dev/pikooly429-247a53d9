@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, ShoppingBag, X } from "lucide-react";
+import { Search, ShoppingCart, X } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
@@ -92,7 +92,7 @@ const Header = () => {
                 className="relative p-2 text-foreground hover:text-primary transition-colors rounded-full hover:bg-muted"
                 aria-label="Cart"
               >
-                <ShoppingBag size={20} />
+                <ShoppingCart size={20} />
                 {totalItems > 0 && (
                   <span className="absolute top-0.5 right-0.5 bg-primary text-primary-foreground text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
                     {totalItems}
