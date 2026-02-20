@@ -12,6 +12,7 @@ const CategoryGrid = () => {
         .from("categories")
         .select("*")
         .eq("is_active", true)
+        .filter("show_in_homepage", "eq", true)
         .order("display_order");
       if (error) throw error;
       return data;

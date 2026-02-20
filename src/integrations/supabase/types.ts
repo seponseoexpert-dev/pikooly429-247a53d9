@@ -75,6 +75,7 @@ export type Database = {
           name: string
           seo_title: string | null
           short_description: string | null
+          show_in_homepage: boolean
           slug: string
           updated_at: string
         }
@@ -90,6 +91,7 @@ export type Database = {
           name: string
           seo_title?: string | null
           short_description?: string | null
+          show_in_homepage?: boolean
           slug: string
           updated_at?: string
         }
@@ -105,6 +107,7 @@ export type Database = {
           name?: string
           seo_title?: string | null
           short_description?: string | null
+          show_in_homepage?: boolean
           slug?: string
           updated_at?: string
         }
