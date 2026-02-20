@@ -576,59 +576,6 @@ const paymentGatewayProviders = [
     ],
   },
   {
-    key: "flutterwave",
-    label: "Flutterwave",
-    fields: [
-      { key: "flutterwave_public_key", label: "Flutterwave Public Key" },
-      { key: "flutterwave_secret_key", label: "Flutterwave Secret Key" },
-      { key: "flutterwave_encryption_key", label: "Flutterwave Encryption Key" },
-      { key: "flutterwave_environment", label: "Flutterwave Environment", type: "select" as const, options: [
-        { value: "sandbox", label: "Sandbox" },
-        { value: "live", label: "Live" },
-      ]},
-      { key: "flutterwave_status", label: "Flutterwave Status", type: "select" as const, options: [
-        { value: "enable", label: "Enable" },
-        { value: "disable", label: "Disable" },
-      ]},
-    ],
-  },
-  {
-    key: "bkash",
-    label: "bKash",
-    fields: [
-      { key: "bkash_app_key", label: "bKash App Key" },
-      { key: "bkash_app_secret", label: "bKash App Secret" },
-      { key: "bkash_username", label: "bKash Username" },
-      { key: "bkash_password", label: "bKash Password" },
-      { key: "bkash_mode", label: "bKash Mode", type: "select" as const, options: [
-        { value: "sandbox", label: "Sandbox" },
-        { value: "live", label: "Live" },
-      ]},
-      { key: "bkash_status", label: "bKash Status", type: "select" as const, options: [
-        { value: "enable", label: "Enable" },
-        { value: "disable", label: "Disable" },
-      ]},
-    ],
-  },
-  {
-    key: "nagad",
-    label: "Nagad",
-    fields: [
-      { key: "nagad_merchant_id", label: "Nagad Merchant ID" },
-      { key: "nagad_merchant_number", label: "Nagad Merchant Number" },
-      { key: "nagad_public_key", label: "Nagad Public Key" },
-      { key: "nagad_private_key", label: "Nagad Private Key" },
-      { key: "nagad_mode", label: "Nagad Mode", type: "select" as const, options: [
-        { value: "sandbox", label: "Sandbox" },
-        { value: "live", label: "Live" },
-      ]},
-      { key: "nagad_status", label: "Nagad Status", type: "select" as const, options: [
-        { value: "enable", label: "Enable" },
-        { value: "disable", label: "Disable" },
-      ]},
-    ],
-  },
-  {
     key: "eps",
     label: "EPS",
     fields: [
@@ -657,7 +604,7 @@ const PaymentGatewaySection = ({
 }) => {
   return (
     <Tabs defaultValue="paypal">
-      <TabsList className="w-full grid grid-cols-3 lg:grid-cols-6 mb-4">
+      <TabsList className="w-full grid grid-cols-3 mb-4">
         {paymentGatewayProviders.map((p) => (
           <TabsTrigger key={p.key} value={p.key}>{p.label}</TabsTrigger>
         ))}

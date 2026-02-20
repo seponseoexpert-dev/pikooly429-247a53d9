@@ -271,8 +271,8 @@ const Checkout = () => {
                 <div className="space-y-3">
                   {[
                     { value: "cod", label: "Cash on Delivery", desc: "Pay when you receive your order" },
-                    { value: "bkash", label: "bKash", desc: "bKash mobile payment" },
-                    { value: "nagad", label: "Nagad", desc: "Nagad mobile payment" },
+                    { value: "paypal", label: "PayPal", desc: "Pay securely via PayPal" },
+                    { value: "stripe", label: "Stripe", desc: "Pay with credit/debit card via Stripe" },
                     { value: "eps", label: "EPS Payment", desc: "Pay securely via EPS Payment Gateway" },
                   ].map((method) => (
                     <label
