@@ -276,6 +276,14 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "footer_category_3_url", label: "Category Link 3 URL", placeholder: "/shop?cat=plants" },
     { key: "footer_category_4_label", label: "Category Link 4 Label", placeholder: "Gift Hampers" },
     { key: "footer_category_4_url", label: "Category Link 4 URL", placeholder: "/shop?cat=gift-hampers" },
+    { key: "footer_payment_visa", label: "Show Visa", type: "switch" },
+    { key: "footer_payment_mastercard", label: "Show Mastercard", type: "switch" },
+    { key: "footer_payment_amex", label: "Show Amex", type: "switch" },
+    { key: "footer_payment_paypal", label: "Show PayPal", type: "switch" },
+    { key: "footer_payment_stripe", label: "Show Stripe", type: "switch" },
+    { key: "footer_payment_bkash", label: "Show bKash", type: "switch" },
+    { key: "footer_payment_nagad", label: "Show Nagad", type: "switch" },
+    { key: "footer_payment_cod", label: "Show Cash on Delivery", type: "switch" },
   ],
 };
 
