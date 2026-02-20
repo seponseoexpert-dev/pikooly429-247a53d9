@@ -32,6 +32,9 @@ const Checkout = () => {
     fullName: "",
     phone: "",
     email: "",
+    altPhone: "",
+    recipientName: "",
+    giftMessage: "",
     address: "",
     notes: "",
     deliveryDate: "",
@@ -91,6 +94,9 @@ const Checkout = () => {
           customer_email: form.email.trim() || null,
           delivery_address: `${activeDistrict?.name || ""} - ${form.address.trim()}`,
           notes: form.notes.trim() || null,
+          recipient_name: form.recipientName.trim() || null,
+          alt_phone: form.altPhone.trim() || null,
+          gift_message: form.giftMessage.trim() || null,
           delivery_date: form.deliveryDate || null,
           delivery_time: form.deliveryTime || null,
           payment_method: form.paymentMethod,
@@ -177,6 +183,18 @@ const Checkout = () => {
                   <div>
                     <Label htmlFor="email">Email (Optional)</Label>
                     <Input id="email" type="email" placeholder="example@email.com" value={form.email} onChange={(e) => handleChange("email", e.target.value)} className="mt-1.5" maxLength={255} />
+                  </div>
+                  <div>
+                    <Label htmlFor="altPhone">Alternative Phone (Optional)</Label>
+                    <Input id="altPhone" type="tel" placeholder="01XXXXXXXXX" value={form.altPhone} onChange={(e) => handleChange("altPhone", e.target.value)} className="mt-1.5" maxLength={15} />
+                  </div>
+                  <div>
+                    <Label htmlFor="recipientName">Recipient Name (Optional)</Label>
+                    <Input id="recipientName" placeholder="Name of the person receiving the gift" value={form.recipientName} onChange={(e) => handleChange("recipientName", e.target.value)} className="mt-1.5" maxLength={100} />
+                  </div>
+                  <div>
+                    <Label htmlFor="giftMessage">Gift Message (Optional)</Label>
+                    <Textarea id="giftMessage" placeholder="Write a special message for the recipient..." value={form.giftMessage} onChange={(e) => handleChange("giftMessage", e.target.value)} className="mt-1.5 min-h-[80px]" maxLength={500} />
                   </div>
                 </div>
               </section>
