@@ -269,16 +269,16 @@ const ProductDetail = () => {
 
       {/* Tabbed Section */}
       <div className="mt-10 sm:mt-14 border border-border rounded-xl bg-card overflow-hidden">
-        <div className="flex border-b border-border">
+        <div className="flex border-b border-border overflow-x-auto scrollbar-hide">
           {[
             { key: "specification" as const, label: "Specification" },
             { key: "description" as const, label: "Description" },
-            { key: "reviews" as const, label: `Customer Reviews (${product.review_count || 0})` },
+            { key: "reviews" as const, label: `Reviews (${product.review_count || 0})` },
           ].map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-4 sm:px-6 py-3 text-sm font-medium transition-colors ${
+              className={`px-4 sm:px-6 py-3 text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
                 activeTab === tab.key
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
