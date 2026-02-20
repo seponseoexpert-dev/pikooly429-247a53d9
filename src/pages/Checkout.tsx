@@ -211,16 +211,6 @@ const Checkout = () => {
                     <Label htmlFor="giftMessage">Gift Message (Optional)</Label>
                     <Textarea id="giftMessage" placeholder="Write a special message for the recipient..." value={form.giftMessage} onChange={(e) => handleChange("giftMessage", e.target.value)} className="mt-1.5 min-h-[80px]" maxLength={500} />
                   </div>
-                </div>
-              </section>
-
-              {/* Delivery Information */}
-              <section className="bg-card rounded-2xl p-6 border border-border">
-                <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
-                  <Truck size={20} className="text-primary" />
-                  Delivery Information
-                </h2>
-                <div className="space-y-5">
                   <div>
                     <Label htmlFor="address">Full Address <span className="text-destructive">*</span></Label>
                     <Input id="address" placeholder="House no, Street, Area" value={form.address} onChange={(e) => handleChange("address", e.target.value)} className="mt-1.5" required maxLength={500} />
