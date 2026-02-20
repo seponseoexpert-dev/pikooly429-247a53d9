@@ -10,6 +10,7 @@ const Shop = () => {
   const [searchParams] = useSearchParams();
   const catParam = searchParams.get("cat") || "";
   const subParam = searchParams.get("sub") || "";
+  const searchParam = searchParams.get("search") || "";
   const [selectedCat, setSelectedCat] = useState(catParam);
   const [selectedSub, setSelectedSub] = useState(subParam);
   const [shortDescExpanded, setShortDescExpanded] = useState(false);
@@ -138,6 +139,12 @@ const Shop = () => {
       ? products.filter((p: any) => p.categories?.slug === selectedCat)
       : products;
 
+    // Filter by search query
+    if (searchParam) {
+      const q = searchParam.toLowerCase();
+      list = list.filter((p: any) => p.name?.toLowerCase().includes(q));
+    }
+
     // Filter by subcategory if selected
     if (selectedSub) {
       const sub = subcategories.find((s: any) => s.slug === selectedSub);
@@ -152,7 +159,7 @@ const Shop = () => {
       case "rating": return [...list].sort((a: any, b: any) => (b.rating || 0) - (a.rating || 0));
       default: return list;
     }
-  }, [selectedCat, selectedSub, sortBy, products, subcategories]);
+  }, [selectedCat, selectedSub, searchParam, sortBy, products, subcategories]);
 
   return (
     <main className="section-container py-4 md:py-8 pb-24 md:pb-10">
