@@ -102,7 +102,7 @@ const Header = () => {
 
               {/* Currency */}
               <button
-                className="p-2 text-foreground hover:text-primary transition-colors rounded-full hover:bg-muted hidden sm:flex items-center justify-center"
+                className="p-2 text-foreground hover:text-primary transition-colors rounded-full hover:bg-muted flex items-center justify-center"
                 aria-label="Currency"
               >
                 <span className="text-base font-semibold w-5 h-5 flex items-center justify-center border border-foreground/30 rounded-full text-[11px]">
