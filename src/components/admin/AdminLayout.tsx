@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import {
-  LayoutDashboard, Package, ShoppingCart, FileText, Tag, LogOut, Menu, X, Users, Star, Ticket, Settings, Truck, Coins,
+  LayoutDashboard, Package, ShoppingCart, FileText, Tag, LogOut, Menu, X, Users, Star, Ticket, Settings, Truck, Coins, Mail,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -19,6 +19,7 @@ const navItems = [
   { label: "Coupons", icon: Ticket, path: "/admin/coupons" },
   { label: "Shipping", icon: Truck, path: "/admin/shipping" },
   { label: "Currencies", icon: Coins, path: "/admin/currencies" },
+  { label: "Subscribers", icon: Mail, path: "/admin/subscribers" },
   { label: "Settings", icon: Settings, path: "/admin/settings" },
 ];
 
