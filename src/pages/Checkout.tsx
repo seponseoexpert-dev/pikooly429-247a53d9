@@ -14,11 +14,9 @@ import { Loader2, ShoppingBag, Truck, CreditCard, Minus, Plus, X } from "lucide-
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 
 const deliveryTimeSlots = [
-  "10:00 AM - 12:00 PM",
-  "12:00 PM - 2:00 PM",
-  "2:00 PM - 4:00 PM",
-  "4:00 PM - 6:00 PM",
-  "6:00 PM - 8:00 PM",
+  "09:00 AM - 01:00 PM",
+  "01:00 PM - 05:00 PM",
+  "05:00 PM - 09:00 PM",
 ];
 
 const Checkout = () => {
