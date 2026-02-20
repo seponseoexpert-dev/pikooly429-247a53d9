@@ -1,16 +1,44 @@
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Twitter, Youtube, CreditCard, Banknote, Wallet } from "lucide-react";
+import { Facebook, Instagram, Twitter, Youtube, Send } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const Footer = () => {
   const { settings } = useSiteSettings();
 
+  const [email, setEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
   const phone = settings.store_phone || "+880 1XXX-XXXXXX";
-  const email = settings.store_email || "hello@pikoolyflora.com";
+  const storeEmail = settings.store_email || "hello@pikoolyflora.com";
   const address = settings.store_address || "";
   const copyright = settings.site_copyright || `© ${new Date().getFullYear()} PikoolyFlora. All Rights Reserved.`;
   const footerText = settings.site_footer_text || "";
 
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setSubmitting(true);
+    try {
+      const { error } = await supabase.from("newsletter_subscribers").insert({ email: email.trim().toLowerCase() });
+      if (error) {
+        if (error.code === "23505") {
+          toast.info("You're already subscribed!");
+        } else {
+          throw error;
+        }
+      } else {
+        toast.success("Successfully subscribed!");
+        setEmail("");
+      }
+    } catch {
+      toast.error("Failed to subscribe. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
   const socialLinks = [
     { icon: Facebook, url: settings.facebook_url },
     { icon: Instagram, url: settings.instagram_url },
@@ -162,11 +190,32 @@ const Footer = () => {
           {/* Contact */}
           <div className="col-span-2 sm:col-span-1">
             <h4 className="font-display font-semibold text-xs sm:text-base mb-2 sm:mb-3 text-foreground">Contact Us</h4>
-            <ul className="space-y-1 text-[11px] sm:text-sm text-muted-foreground">
+             <ul className="space-y-1 text-[11px] sm:text-sm text-muted-foreground">
               <li className="flex items-center gap-2">📞 {phone}</li>
-              <li className="flex items-center gap-2">📧 {email}</li>
+              <li className="flex items-center gap-2">📧 {storeEmail}</li>
               {address && <li className="flex items-center gap-2">📍 {address}</li>}
             </ul>
+            {/* Newsletter */}
+            <div className="mt-3">
+              <p className="text-[11px] sm:text-xs font-semibold text-foreground mb-1.5">Subscribe to Newsletter</p>
+              <form onSubmit={handleSubscribe} className="flex gap-1.5">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Your email"
+                  required
+                  className="flex-1 min-w-0 h-8 sm:h-9 rounded-md border border-input bg-background px-2.5 text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="h-8 sm:h-9 px-3 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center gap-1"
+                >
+                  <Send size={12} />
+                </button>
+              </form>
+            </div>
           </div>
         </div>
 
