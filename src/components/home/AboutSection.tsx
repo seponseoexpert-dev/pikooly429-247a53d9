@@ -25,7 +25,7 @@ const AboutSection = () => {
         <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-3 md:mb-4 text-center">
           {title}
         </h2>
-        <div className="text-xs sm:text-sm md:text-base text-muted-foreground leading-relaxed space-y-2 sm:space-y-3">
+        <div className="text-xs sm:text-sm md:text-base text-muted-foreground leading-relaxed rich-text-content">
           <div dangerouslySetInnerHTML={{ __html: shortText }} />
           {expanded && <div dangerouslySetInnerHTML={{ __html: fullText }} />}
         </div>
