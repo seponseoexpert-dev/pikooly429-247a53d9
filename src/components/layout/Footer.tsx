@@ -113,9 +113,9 @@ const Footer = memo(() => {
   return (
     <footer className="bg-secondary/50 border-t border-border pb-20 md:pb-0">
       <div className="section-container py-5 sm:py-8 md:py-10 lg:py-14">
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-10 mb-5 sm:mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 lg:gap-10 mb-5 sm:mb-8">
           {/* Brand */}
-          <div className="col-span-2 lg:col-span-1">
+          <div className="col-span-2 lg:col-span-2">
             {settings.footer_logo ? (
               <img src={settings.footer_logo} alt="Footer Logo" className="h-10 sm:h-12 w-auto mb-1 object-contain" />
             ) : (
