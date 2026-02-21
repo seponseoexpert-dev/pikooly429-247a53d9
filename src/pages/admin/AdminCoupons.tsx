@@ -194,7 +194,7 @@ const AdminCoupons = () => {
       </div>
 
       {isLoading ? (
-        <p className="text-muted-foreground">Loading...</p>
+        <div className="bg-card rounded-xl border border-border overflow-hidden"><div className="divide-y divide-border">{Array.from({ length: 4 }).map((_, i) => <div key={i} className="flex items-center gap-4 p-4"><div className="h-4 w-24 bg-muted rounded animate-pulse" /><div className="h-4 flex-1 bg-muted rounded animate-pulse" /><div className="h-5 w-16 bg-muted rounded-full animate-pulse" /><div className="h-4 w-20 bg-muted rounded animate-pulse" /></div>)}</div></div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
           <Ticket className="h-12 w-12 mx-auto mb-3 opacity-50" />

@@ -136,7 +136,9 @@ const Header = () => {
           <div className="flex items-center h-12 sm:h-14 md:h-16 gap-3 md:gap-4">
             {/* Logo */}
             <Link to="/" className="shrink-0 flex items-center">
-              {logoUrl ? (
+            {settingsLoading ? (
+                <div className="h-8 sm:h-9 md:h-10 w-24 sm:w-28 md:w-32 bg-muted rounded animate-pulse" />
+              ) : logoUrl ? (
                 <img src={logoUrl} alt={settings.store_name || "Store"} width={120} height={40} decoding="async" fetchPriority="high" className="h-8 sm:h-9 md:h-10 w-auto object-contain" />
               ) : (
                 <span className="text-lg sm:text-xl md:text-2xl font-display font-bold">

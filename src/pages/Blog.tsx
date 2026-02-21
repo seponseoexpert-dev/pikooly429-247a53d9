@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { BlogCardSkeleton } from "@/components/ui/skeletons";
 
 const Blog = () => {
   const { data: posts = [], isLoading } = useQuery({
@@ -23,7 +24,9 @@ const Blog = () => {
       <h1 className="text-3xl md:text-4xl font-display font-bold mb-8">Blog</h1>
 
       {isLoading ? (
-        <p className="text-muted-foreground text-center py-12">Loading...</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => <BlogCardSkeleton key={i} />)}
+        </div>
       ) : posts.length === 0 ? (
         <p className="text-muted-foreground text-center py-12">No blog posts yet.</p>
       ) : (

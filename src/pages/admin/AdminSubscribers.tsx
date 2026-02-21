@@ -67,7 +67,14 @@ const AdminSubscribers = () => {
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableRow><TableCell colSpan={4} className="text-center py-8 text-muted-foreground">Loading...</TableCell></TableRow>
+                Array.from({ length: 5 }).map((_, i) => (
+                  <TableRow key={i}>
+                    <TableCell><div className="h-4 w-40 bg-muted rounded animate-pulse" /></TableCell>
+                    <TableCell><div className="h-5 w-16 bg-muted rounded-full animate-pulse" /></TableCell>
+                    <TableCell><div className="h-4 w-32 bg-muted rounded animate-pulse" /></TableCell>
+                    <TableCell className="text-right"><div className="h-8 w-8 bg-muted rounded animate-pulse ml-auto" /></TableCell>
+                  </TableRow>
+                ))
               ) : subscribers.length === 0 ? (
                 <TableRow><TableCell colSpan={4} className="text-center py-8 text-muted-foreground">No subscribers yet</TableCell></TableRow>
               ) : (

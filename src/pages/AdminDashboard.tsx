@@ -10,6 +10,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line,
 } from "recharts";
 import { useCurrency } from "@/hooks/useCurrency";
+import { AdminDashboardSkeleton } from "@/components/ui/skeletons";
 
 interface Stats {
   products: number;
@@ -110,6 +111,8 @@ const AdminDashboard = () => {
     { label: "Customers", value: stats.customers, icon: Users, color: "text-teal-600" },
     { label: "Blog Posts", value: stats.blogs, icon: FileText, color: "text-rose-600" },
   ];
+
+  if (loading) return <AdminDashboardSkeleton />;
 
   return (
     <div className="space-y-6">
