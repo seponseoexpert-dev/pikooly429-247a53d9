@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   Save, Building2, Globe, Mail, MapPin, KeyRound,
   Bell, BellRing, Share2, Cookie, BarChart3, Palette, Image,
-  Settings, Upload, X,
+  Settings, Upload, X, Phone,
   Store, Gift, Ruler, Receipt, FileText, Shield, Languages,
   MessageSquare, CreditCard, Award,
 } from "lucide-react";
@@ -45,6 +45,7 @@ const settingSections = [
   { key: "payment_gateway", label: "Payment Gateway", icon: CreditCard },
   { key: "about", label: "About Section", icon: FileText },
   { key: "about_page", label: "About Us Page", icon: FileText },
+  { key: "contact_page", label: "Contact Us Page", icon: Phone },
   { key: "faq", label: "FAQ Section", icon: MessageSquare },
   { key: "license", label: "License", icon: Award },
   { key: "footer", label: "Footer", icon: FileText },
@@ -293,6 +294,19 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "aboutpage_contact_phone", label: "Contact Phone", placeholder: "+8801410244421" },
     { key: "aboutpage_contact_website", label: "Contact Website URL", placeholder: "https://pikooly.com.bd" },
     { key: "aboutpage_contact_website_label", label: "Contact Website Label", placeholder: "pikooly.com.bd" },
+  ],
+  contact_page: [
+    { key: "contactpage_hero_title", label: "Hero Title", fullWidth: true, placeholder: "Contact Us" },
+    { key: "contactpage_hero_subtitle", label: "Hero Subtitle", type: "textarea", fullWidth: true, placeholder: "Have a query? Need assistance? Simply reach out..." },
+    { key: "contactpage_whatsapp", label: "WhatsApp Number", placeholder: "+8801410244421" },
+    { key: "contactpage_whatsapp_text", label: "WhatsApp Heading", placeholder: "Fastest way to reach us." },
+    { key: "contactpage_email", label: "Email Address", placeholder: "hello.pikooly@gmail.com" },
+    { key: "contactpage_phone_1", label: "Phone Number 1", placeholder: "+8801410244421" },
+    { key: "contactpage_phone_2", label: "Phone Number 2 (optional)", placeholder: "" },
+    { key: "contactpage_phone_hours", label: "Phone Hours", placeholder: "9 AM to 10 PM throughout the week" },
+    { key: "contactpage_address", label: "Address", type: "textarea", fullWidth: true, placeholder: "House 95, Road 06, Sector 9, Uttara, Dhaka 1230" },
+    { key: "contactpage_website_url", label: "Website URL", placeholder: "https://pikooly.com.bd" },
+    { key: "contactpage_website_label", label: "Website Label", placeholder: "pikooly.com.bd" },
   ],
   faq: [
     { key: "faq_section_title", label: "Section Title", placeholder: "Frequently Asked Questions" },
