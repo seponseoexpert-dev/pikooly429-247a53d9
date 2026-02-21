@@ -44,6 +44,7 @@ const AboutUs = () => {
   const offerings = [
     "Fresh flower bouquets (Rose, Lily, Tulip, Mixed)",
     "Same-day flower delivery in Dhaka",
+    "Next-day flower delivery across Bangladesh",
     "Cakes and desserts from trusted bakeries",
     "Gift hampers and combo packages",
     "Occasion-based gifts for birthdays & anniversaries",
