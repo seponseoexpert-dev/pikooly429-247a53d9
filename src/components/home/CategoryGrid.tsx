@@ -17,6 +17,7 @@ const CategoryGrid = memo(() => {
       if (error) throw error;
       return data;
     },
+    staleTime: 5 * 60 * 1000,
   });
 
   if (isLoading) return <CategoryGridSkeleton />;
