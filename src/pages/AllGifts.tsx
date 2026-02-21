@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
 const AllGifts = () => {
+  const [activeTab, setActiveTab] = useState<"occasions" | "category">("occasions");
   const [expandedCat, setExpandedCat] = useState<string | null>(null);
 
   const { data: categories = [] } = useQuery({
@@ -33,6 +34,9 @@ const AllGifts = () => {
     },
   });
 
+  const occasions = categories.filter((c: any) => c.category_type === "occasion");
+  const categoryItems = categories.filter((c: any) => c.category_type !== "occasion");
+
   const getSubsForCat = (catId: string) =>
     subcategories.filter((s: any) => s.category_id === catId);
 
@@ -40,14 +44,40 @@ const AllGifts = () => {
     setExpandedCat(prev => (prev === catId ? null : catId));
   };
 
+  const currentList = activeTab === "occasions" ? occasions : categoryItems;
+
   return (
     <main className="section-container py-4 pb-24 md:pb-10">
-      <h1 className="text-xl font-display font-bold text-foreground mb-5">
+      <h1 className="text-xl font-display font-bold text-foreground mb-4">
         All Gifts
       </h1>
 
+      {/* Tabs */}
+      <div className="flex border-b border-border mb-5">
+        <button
+          onClick={() => { setActiveTab("occasions"); setExpandedCat(null); }}
+          className={`flex-1 pb-2.5 text-sm font-medium transition-colors ${
+            activeTab === "occasions"
+              ? "text-foreground border-b-2 border-primary"
+              : "text-muted-foreground"
+          }`}
+        >
+          Shop By Occasions
+        </button>
+        <button
+          onClick={() => { setActiveTab("category"); setExpandedCat(null); }}
+          className={`flex-1 pb-2.5 text-sm font-medium transition-colors ${
+            activeTab === "category"
+              ? "text-foreground border-b-2 border-primary"
+              : "text-muted-foreground"
+          }`}
+        >
+          Shop By Category
+        </button>
+      </div>
+
       <div className="space-y-3">
-        {categories.map((cat: any) => {
+        {currentList.map((cat: any) => {
           const subs = getSubsForCat(cat.id);
           const isExpanded = expandedCat === cat.id;
           const hasSubs = subs.length > 0;
@@ -63,15 +93,17 @@ const AllGifts = () => {
                   to={`/shop?cat=${cat.slug}`}
                   className="flex items-center gap-3 flex-1 p-3"
                 >
-                  {cat.image_url ? (
-                    <img
-                      src={cat.image_url}
-                      alt={cat.name}
-                      className="w-14 h-14 rounded-lg object-cover"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="w-14 h-14 rounded-lg bg-muted" />
+                  {activeTab === "category" && (
+                    cat.image_url ? (
+                      <img
+                        src={cat.image_url}
+                        alt={cat.name}
+                        className="w-14 h-14 rounded-lg object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-14 h-14 rounded-lg bg-muted" />
+                    )
                   )}
                   <span className="font-medium text-foreground text-sm">
                     {cat.name}
@@ -112,9 +144,9 @@ const AllGifts = () => {
         })}
       </div>
 
-      {categories.length === 0 && (
+      {currentList.length === 0 && (
         <p className="text-center text-muted-foreground py-10 text-sm">
-          No categories available.
+          No {activeTab === "occasions" ? "occasions" : "categories"} available.
         </p>
       )}
     </main>

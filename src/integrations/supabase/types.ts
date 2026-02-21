@@ -64,6 +64,7 @@ export type Database = {
       }
       categories: {
         Row: {
+          category_type: string
           created_at: string
           description: string | null
           display_order: number
@@ -81,6 +82,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          category_type?: string
           created_at?: string
           description?: string | null
           display_order?: number
@@ -98,6 +100,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          category_type?: string
           created_at?: string
           description?: string | null
           display_order?: number
