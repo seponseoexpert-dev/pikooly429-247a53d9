@@ -35,6 +35,7 @@ const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const EpsCallback = lazy(() => import("./pages/EpsCallback"));
+const AboutUs = lazy(() => import("./pages/AboutUs"));
 const AdminProducts = lazy(() => import("./pages/admin/AdminProducts"));
 const AdminCategories = lazy(() => import("./pages/admin/AdminCategories"));
 const AdminOrders = lazy(() => import("./pages/admin/AdminOrders"));
@@ -98,6 +99,7 @@ const App = () => (
               <Route path="/order-success/:orderNumber" element={<PublicLayout><OrderSuccess /></PublicLayout>} />
               <Route path="/track-order" element={<PublicLayout><TrackOrder /></PublicLayout>} />
               <Route path="/eps-callback" element={<PublicLayout><EpsCallback /></PublicLayout>} />
+              <Route path="/about-us" element={<PublicLayout><AboutUs /></PublicLayout>} />
               <Route path="/auth" element={<PublicLayout><Auth /></PublicLayout>} />
               <Route path="/account" element={<PublicLayout><Account /></PublicLayout>} />
               <Route path="/reset-password" element={<PublicLayout><ResetPassword /></PublicLayout>} />
