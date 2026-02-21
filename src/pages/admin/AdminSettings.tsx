@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -311,16 +311,6 @@ const sectionFields: Record<string, FieldDef[]> = {
   faq: [
     { key: "faq_section_title", label: "Section Title", placeholder: "Frequently Asked Questions" },
     { key: "faq_section_subtitle", label: "Section Subtitle", placeholder: "Everything you need to know about our services" },
-    { key: "faq_1_question", label: "FAQ 1 Question" },
-    { key: "faq_1_answer", label: "FAQ 1 Answer", type: "textarea", fullWidth: true },
-    { key: "faq_2_question", label: "FAQ 2 Question" },
-    { key: "faq_2_answer", label: "FAQ 2 Answer", type: "textarea", fullWidth: true },
-    { key: "faq_3_question", label: "FAQ 3 Question" },
-    { key: "faq_3_answer", label: "FAQ 3 Answer", type: "textarea", fullWidth: true },
-    { key: "faq_4_question", label: "FAQ 4 Question" },
-    { key: "faq_4_answer", label: "FAQ 4 Answer", type: "textarea", fullWidth: true },
-    { key: "faq_5_question", label: "FAQ 5 Question" },
-    { key: "faq_5_answer", label: "FAQ 5 Answer", type: "textarea", fullWidth: true },
   ],
   footer: [
     { key: "site_footer_text", label: "Footer Tagline / Description", type: "textarea", fullWidth: true, placeholder: "e.g. Not just a Gift, It's sharing of Love." },
@@ -1017,6 +1007,96 @@ const SlidersSection = () => {
   );
 };
 
+// Dynamic FAQ Section with unlimited add/remove
+const DynamicFAQSection = ({
+  formValues,
+  setFormValues,
+}: {
+  formValues: Record<string, string>;
+  setFormValues: (v: Record<string, string>) => void;
+}) => {
+  // Parse existing FAQ items from formValues
+  const faqIndices = useMemo(() => {
+    const indices = new Set<number>();
+    Object.keys(formValues).forEach((k) => {
+      const match = k.match(/^faq_(\d+)_question$/);
+      if (match) indices.add(parseInt(match[1]));
+    });
+    return Array.from(indices).sort((a, b) => a - b);
+  }, [formValues]);
+
+  const addFaq = () => {
+    const nextIndex = faqIndices.length > 0 ? Math.max(...faqIndices) + 1 : 1;
+    setFormValues({
+      ...formValues,
+      [`faq_${nextIndex}_question`]: "",
+      [`faq_${nextIndex}_answer`]: "",
+    });
+  };
+
+  const removeFaq = (index: number) => {
+    const updated = { ...formValues };
+    delete updated[`faq_${index}_question`];
+    delete updated[`faq_${index}_answer`];
+    setFormValues(updated);
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Section title & subtitle */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+        {(sectionFields["faq"] || []).map((field) => (
+          <div key={field.key} className="space-y-1.5">
+            <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{field.label}</label>
+            <Input
+              value={formValues[field.key] || ""}
+              onChange={(e) => setFormValues({ ...formValues, [field.key]: e.target.value })}
+              placeholder={field.placeholder || field.label}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* FAQ Items */}
+      <div className="space-y-4 mt-4">
+        {faqIndices.map((idx, pos) => (
+          <div key={idx} className="border border-border rounded-lg p-4 bg-muted/30 relative">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm font-semibold text-foreground">FAQ {pos + 1}</span>
+              <Button type="button" variant="ghost" size="sm" onClick={() => removeFaq(idx)} className="text-destructive hover:text-destructive h-7 px-2">
+                <X className="h-4 w-4 mr-1" /> Remove
+              </Button>
+            </div>
+            <div className="space-y-3">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Question</label>
+                <Input
+                  value={formValues[`faq_${idx}_question`] || ""}
+                  onChange={(e) => setFormValues({ ...formValues, [`faq_${idx}_question`]: e.target.value })}
+                  placeholder={`FAQ ${pos + 1} Question`}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Answer</label>
+                <Textarea
+                  rows={3}
+                  value={formValues[`faq_${idx}_answer`] || ""}
+                  onChange={(e) => setFormValues({ ...formValues, [`faq_${idx}_answer`]: e.target.value })}
+                  placeholder={`FAQ ${pos + 1} Answer`}
+                />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <Button type="button" variant="outline" onClick={addFaq} className="w-full border-dashed">
+        + Add FAQ
+      </Button>
+    </div>
+  );
+};
+
 const AdminSettings = () => {
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -1060,6 +1140,12 @@ const AdminSettings = () => {
     if (activeSection === "payment_gateway") {
       return paymentGatewayProviders.flatMap((p) => p.fields.map((f) => f.key));
     }
+    if (activeSection === "faq") {
+      const base = (sectionFields["faq"] || []).map((f) => f.key);
+      // Collect all dynamic faq keys from formValues
+      const dynamicKeys = Object.keys(formValues).filter((k) => /^faq_\d+_(question|answer)$/.test(k));
+      return [...new Set([...base, ...dynamicKeys])];
+    }
     return (sectionFields[activeSection] || []).map((f) => f.key);
   };
 
@@ -1075,8 +1161,22 @@ const AdminSettings = () => {
           return supabase.from("site_settings").insert({ key, value });
         }
       });
+
+      // For FAQ section, also delete removed FAQ keys from DB
+      if (activeSection === "faq") {
+        const dbFaqKeys = settings
+          .filter((s: any) => /^faq_\d+_(question|answer)$/.test(s.key))
+          .map((s: any) => s.key);
+        const removedKeys = dbFaqKeys.filter((k: string) => !(k in vals));
+        if (removedKeys.length > 0) {
+          promises.push(
+            supabase.from("site_settings").delete().in("key", removedKeys) as any
+          );
+        }
+      }
+
       const results = await Promise.all(promises);
-      const err = results.find((r) => r.error);
+      const err = results.find((r: any) => r.error);
       if (err?.error) throw err.error;
     },
     onSuccess: () => {
@@ -1159,6 +1259,8 @@ const AdminSettings = () => {
                     <SmsGatewaySection formValues={formValues} setFormValues={setFormValues} />
                   ) : activeSection === "payment_gateway" ? (
                     <PaymentGatewaySection formValues={formValues} setFormValues={setFormValues} />
+                  ) : activeSection === "faq" ? (
+                    <DynamicFAQSection formValues={formValues} setFormValues={setFormValues} />
                   ) : currentFields.length === 0 ? (
                     <p className="text-muted-foreground text-sm py-4 text-center">No settings available for this section yet.</p>
                   ) : (
