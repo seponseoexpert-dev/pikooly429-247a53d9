@@ -39,7 +39,7 @@ const Shop = () => {
   });
 
   const { data: categories = [] } = useQuery({
-    queryKey: ["public-categories"],
+    queryKey: ["shop-categories"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("categories")
@@ -52,7 +52,7 @@ const Shop = () => {
   });
 
   const { data: subcategories = [] } = useQuery({
-    queryKey: ["public-subcategories"],
+    queryKey: ["shop-subcategories"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("subcategories")
@@ -85,7 +85,6 @@ const Shop = () => {
   const activeCategoryName = activeCategory?.name || "All Products";
   const { settings } = useSiteSettings();
 
-  // Dynamic SEO meta tags + FAQ Schema
   useEffect(() => {
     const siteName = settings.site_title || "Pikooly";
     const catName = activeCategory?.name;
@@ -102,7 +101,6 @@ const Shop = () => {
     }
     metaTag.content = metaDesc || `Shop ${catName || "all products"} at ${siteName}`;
 
-    // FAQ Schema.org JSON-LD
     const existingSchema = document.getElementById("faq-schema-jsonld");
     if (existingSchema) existingSchema.remove();
 
@@ -114,10 +112,7 @@ const Shop = () => {
         mainEntity: faqs.map((faq: any) => ({
           "@type": "Question",
           name: faq.question,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: faq.answer,
-          },
+          acceptedAnswer: { "@type": "Answer", text: faq.answer },
         })),
       };
       const script = document.createElement("script");
@@ -139,13 +134,11 @@ const Shop = () => {
       ? products.filter((p: any) => p.categories?.slug === selectedCat)
       : products;
 
-    // Filter by search query
     if (searchParam) {
       const q = searchParam.toLowerCase();
       list = list.filter((p: any) => p.name?.toLowerCase().includes(q));
     }
 
-    // Filter by subcategory if selected
     if (selectedSub) {
       const sub = subcategories.find((s: any) => s.slug === selectedSub);
       if (sub) {
@@ -163,14 +156,12 @@ const Shop = () => {
 
   return (
     <main className="section-container py-4 md:py-8 pb-24 md:pb-10">
-      {/* Breadcrumb + Sort row */}
       <div className="flex items-center justify-between mb-5 md:mb-8">
         <nav className="flex items-center gap-1.5 text-sm text-muted-foreground">
           <Link to="/" className="hover:text-primary transition-colors">Home</Link>
           <span>/</span>
           <span className="font-semibold text-foreground">{activeCategoryName}</span>
         </nav>
-
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
@@ -183,7 +174,6 @@ const Shop = () => {
         </select>
       </div>
 
-      {/* Short Description */}
       {activeCategory && (activeCategory as any).short_description && (
         <div className="mb-6 max-w-none">
           <div
@@ -200,12 +190,11 @@ const Shop = () => {
         </div>
       )}
 
-      {/* Category pills - only show if no specific category is selected */}
       {!catParam && (
         <div className="flex gap-2 overflow-x-auto mb-5 md:mb-8 scrollbar-hide">
           <button
             onClick={() => setSelectedCat("")}
-            className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${!selectedCat ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
+            className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-colors ${!selectedCat ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
           >
             All
           </button>
@@ -213,7 +202,7 @@ const Shop = () => {
             <button
               key={cat.id}
               onClick={() => setSelectedCat(cat.slug)}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${selectedCat === cat.slug ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
+              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-colors ${selectedCat === cat.slug ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
             >
               {cat.name}
             </button>
@@ -221,12 +210,11 @@ const Shop = () => {
         </div>
       )}
 
-      {/* Subcategory pills - show when a category is selected and has subcategories */}
       {selectedCat && activeSubs.length > 0 && (
         <div className="flex gap-2 overflow-x-auto mb-5 md:mb-8 scrollbar-hide">
           <button
             onClick={() => setSelectedSub("")}
-            className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${!selectedSub ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
+            className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-colors ${!selectedSub ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
           >
             All {activeCategory?.name}
           </button>
@@ -234,7 +222,7 @@ const Shop = () => {
             <button
               key={sub.id}
               onClick={() => setSelectedSub(sub.slug)}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${selectedSub === sub.slug ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
+              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-colors ${selectedSub === sub.slug ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
             >
               {sub.name}
             </button>
@@ -242,10 +230,9 @@ const Shop = () => {
         </div>
       )}
 
-
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
-        {filtered.map((product: any, i: number) => (
-          <ProductCard key={product.id} product={product} index={i} />
+        {filtered.map((product: any) => (
+          <ProductCard key={product.id} product={product} />
         ))}
       </div>
 
@@ -255,12 +242,10 @@ const Shop = () => {
         </div>
       )}
 
-      {/* Long Description */}
       {activeCategory && (activeCategory as any).long_description && (
         <div className="mt-10 prose prose-sm max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: (activeCategory as any).long_description }} />
       )}
 
-      {/* FAQ Section */}
       {activeCategory && (() => {
         const faqs = (activeCategory as any).faq;
         if (!Array.isArray(faqs) || faqs.length === 0) return null;
