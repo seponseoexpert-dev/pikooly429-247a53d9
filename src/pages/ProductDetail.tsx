@@ -65,7 +65,13 @@ const ProductDetail = () => {
     const seoTitle = (product as any).seo_title || `${product.name} - ${siteName}`;
     document.title = seoTitle;
 
-    const seoDesc = (product as any).seo_description || product.description || "";
+    const stripHtml = (html: string) => {
+      const tmp = document.createElement("div");
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || "";
+    };
+    const rawDesc = (product as any).seo_description || product.description || "";
+    const seoDesc = stripHtml(rawDesc);
     let metaDesc = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
     if (!metaDesc) {
       metaDesc = document.createElement("meta");
@@ -186,8 +192,8 @@ const ProductDetail = () => {
             </div>
           )}
 
-          {product.description && (
-            <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{product.description}</p>
+          {(product.short_description || product.description) && (
+            <div className="text-sm text-muted-foreground mb-4 leading-relaxed prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: product.short_description || product.description || "" }} />
           )}
 
           {/* Quantity */}
