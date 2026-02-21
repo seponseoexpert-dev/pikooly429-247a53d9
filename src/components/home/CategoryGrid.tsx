@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { CategoryGridSkeleton } from "@/components/ui/skeletons";
 
 const CategoryGrid = () => {
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [], isLoading } = useQuery({
     queryKey: ["homepage-categories"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -16,6 +17,8 @@ const CategoryGrid = () => {
       return data;
     },
   });
+
+  if (isLoading) return <CategoryGridSkeleton />;
 
   if (categories.length === 0) return null;
 

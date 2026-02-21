@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import ProductCard from "@/components/product/ProductCard";
+import { ProductCardSkeleton } from "@/components/ui/skeletons";
 import { Link } from "react-router-dom";
 import { ChevronRight, TrendingUp, Gift } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -8,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 const ProductGrid = () => {
   const [activeTab, setActiveTab] = useState("All");
 
-  const { data: products = [] } = useQuery({
+  const { data: products = [], isLoading: productsLoading } = useQuery({
     queryKey: ["homepage-products"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -63,9 +64,11 @@ const ProductGrid = () => {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
-        {displayFeatured.map((product: any) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+        {productsLoading
+          ? Array.from({ length: 5 }).map((_, i) => <ProductCardSkeleton key={i} />)
+          : displayFeatured.map((product: any) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
       </div>
 
       <div className="my-4 sm:my-6 md:my-8 lg:my-10 bg-secondary rounded-2xl py-4 sm:py-5 md:py-6 px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 md:gap-12">
@@ -104,9 +107,11 @@ const ProductGrid = () => {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
-        {filtered.slice(0, 10).map((product: any) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+        {productsLoading
+          ? Array.from({ length: 10 }).map((_, i) => <ProductCardSkeleton key={i} />)
+          : filtered.slice(0, 10).map((product: any) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
       </div>
 
       {products.length > 0 && (
