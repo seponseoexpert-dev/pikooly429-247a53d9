@@ -19,6 +19,7 @@ const HeroSection = memo(() => {
       if (error) throw error;
       return data;
     },
+    staleTime: 5 * 60 * 1000,
   });
 
   const slides = dbSliders && dbSliders.length > 0
