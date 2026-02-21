@@ -3,13 +3,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import { useCurrency } from "@/hooks/useCurrency";
@@ -31,6 +32,7 @@ const AdminProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
+  const [productCategoryMap, setProductCategoryMap] = useState<Record<string, string[]>>({});
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
@@ -41,21 +43,32 @@ const AdminProducts = () => {
 
   const defaultForm = {
     name: "", slug: "", short_description: "", description: "", price: 0, original_price: 0,
-    image_url: "", category_id: "", subcategory_id: "", is_active: true, is_featured: false, stock: 0, tags: "",
+    image_url: "", category_id: "", category_ids: [] as string[], subcategory_id: "", is_active: true, is_featured: false, stock: 0, tags: "",
     specifications: [] as Array<{ item: string; value: string }>,
     seo_title: "", seo_description: "",
   };
   const [form, setForm] = useState(defaultForm);
 
   const fetchData = async () => {
-    const [prodRes, catRes, subRes] = await Promise.all([
+    const [prodRes, catRes, subRes, pcRes] = await Promise.all([
       supabase.from("products").select("*").order("created_at", { ascending: false }),
       supabase.from("categories").select("*").order("display_order"),
       supabase.from("subcategories").select("*").order("display_order"),
+      supabase.from("product_categories").select("*"),
     ]);
     if (prodRes.data) setProducts(prodRes.data);
     if (catRes.data) setCategories(catRes.data);
     if (subRes.data) setSubcategories(subRes.data as Subcategory[]);
+    
+    // Build product -> category_ids map
+    if (pcRes.data) {
+      const map: Record<string, string[]> = {};
+      pcRes.data.forEach((pc: any) => {
+        if (!map[pc.product_id]) map[pc.product_id] = [];
+        map[pc.product_id].push(pc.category_id);
+      });
+      setProductCategoryMap(map);
+    }
     setLoading(false);
   };
 
@@ -68,10 +81,12 @@ const AdminProducts = () => {
   const openEdit = (p: Product) => {
     setEditing(p);
     const specs = (p.specifications as Array<{ item: string; value: string }>) || [];
+    const catIds = productCategoryMap[p.id] || (p.category_id ? [p.category_id] : []);
     setForm({
       name: p.name, slug: p.slug, short_description: (p as any).short_description || "", description: p.description || "",
       price: p.price, original_price: p.original_price || 0,
       image_url: p.image_url || "", category_id: p.category_id || "",
+      category_ids: catIds,
       subcategory_id: (p as any).subcategory_id || "",
       is_active: p.is_active, is_featured: p.is_featured, stock: p.stock,
       tags: (p.tags || []).join(", "),
@@ -82,7 +97,7 @@ const AdminProducts = () => {
     setDialogOpen(true);
   };
 
-  const filteredSubs = subcategories.filter(s => s.category_id === form.category_id);
+  const filteredSubs = subcategories.filter(s => form.category_ids.includes(s.category_id));
 
   const uploadImage = async (file: File): Promise<string | null> => {
     const ext = file.name.split(".").pop();
@@ -107,24 +122,41 @@ const AdminProducts = () => {
     const slug = form.slug || generateSlug(form.name);
     const tags = form.tags ? form.tags.split(",").map((t) => t.trim()).filter(Boolean) : [];
     const specs = form.specifications.filter(s => s.item.trim() || s.value.trim());
+    
+    // Use first selected category as primary category_id for backward compat
+    const primaryCategoryId = form.category_ids.length > 0 ? form.category_ids[0] : null;
+    
     const payload = {
       name: form.name.trim(), slug, short_description: form.short_description || null, description: form.description || null,
       price: form.price, original_price: form.original_price || null,
-      image_url: imageUrl || null, category_id: form.category_id || null,
+      image_url: imageUrl || null, category_id: primaryCategoryId,
       subcategory_id: form.subcategory_id || null,
       is_active: form.is_active, is_featured: form.is_featured, stock: form.stock, tags,
       specifications: specs.length > 0 ? specs : null,
       seo_title: form.seo_title.trim() || null, seo_description: form.seo_description.trim() || null,
     };
 
+    let productId: string | null = null;
+
     if (editing) {
       const { error } = await supabase.from("products").update(payload).eq("id", editing.id);
-      if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-      else toast({ title: "Product updated" });
+      if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); setSaving(false); return; }
+      productId = editing.id;
+      toast({ title: "Product updated" });
     } else {
-      const { error } = await supabase.from("products").insert(payload);
-      if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-      else toast({ title: "Product created" });
+      const { data, error } = await supabase.from("products").insert(payload).select("id").single();
+      if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); setSaving(false); return; }
+      productId = data.id;
+      toast({ title: "Product created" });
+    }
+
+    // Sync product_categories junction table
+    if (productId) {
+      await supabase.from("product_categories").delete().eq("product_id", productId);
+      if (form.category_ids.length > 0) {
+        const rows = form.category_ids.map(cid => ({ product_id: productId!, category_id: cid }));
+        await supabase.from("product_categories").insert(rows);
+      }
     }
 
     setSaving(false);
@@ -142,11 +174,23 @@ const AdminProducts = () => {
 
   const filtered = products.filter((p) => {
     const matchSearch = p.name.toLowerCase().includes(search.toLowerCase());
-    const matchCat = filterCategory === "all" || p.category_id === filterCategory;
+    const matchCat = filterCategory === "all" || (productCategoryMap[p.id] || []).includes(filterCategory) || p.category_id === filterCategory;
     return matchSearch && matchCat;
   });
 
-  const getCategoryName = (id: string | null) => categories.find((c) => c.id === id)?.name || "—";
+  const getCategoryNames = (productId: string, primaryCatId: string | null) => {
+    const catIds = productCategoryMap[productId] || (primaryCatId ? [primaryCatId] : []);
+    return catIds.map(id => categories.find(c => c.id === id)?.name).filter(Boolean).join(", ") || "—";
+  };
+
+  const toggleCategory = (catId: string) => {
+    setForm(prev => {
+      const ids = prev.category_ids.includes(catId)
+        ? prev.category_ids.filter(id => id !== catId)
+        : [...prev.category_ids, catId];
+      return { ...prev, category_ids: ids, category_id: ids[0] || "" };
+    });
+  };
 
   return (
     <div>
@@ -182,28 +226,50 @@ const AdminProducts = () => {
                   <Label>Stock</Label>
                   <Input type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: parseInt(e.target.value) || 0 })} />
                 </div>
-                <div className="space-y-2">
-                  <Label>Category</Label>
-                  <Select value={form.category_id} onValueChange={(v) => setForm({ ...form, category_id: v, subcategory_id: "" })}>
-                    <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
-                    <SelectContent>
-                      {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
+              </div>
+
+              {/* Categories with Checkboxes */}
+              <div className="space-y-3">
+                <Label>Categories (select multiple)</Label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 border border-border rounded-lg p-3 max-h-48 overflow-y-auto">
+                  {categories.map((c) => (
+                    <label key={c.id} className="flex items-center gap-2 cursor-pointer hover:bg-muted/50 rounded px-2 py-1.5 transition-colors">
+                      <Checkbox
+                        checked={form.category_ids.includes(c.id)}
+                        onCheckedChange={() => toggleCategory(c.id)}
+                      />
+                      <span className="text-sm">{c.name}</span>
+                    </label>
+                  ))}
                 </div>
-                {filteredSubs.length > 0 && (
-                  <div className="space-y-2">
-                    <Label>Subcategory (optional)</Label>
-                    <Select value={form.subcategory_id} onValueChange={(v) => setForm({ ...form, subcategory_id: v })}>
-                      <SelectTrigger><SelectValue placeholder="Select subcategory" /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="">None</SelectItem>
-                        {filteredSubs.map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
+                {form.category_ids.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {form.category_ids.map(id => {
+                      const cat = categories.find(c => c.id === id);
+                      return cat ? (
+                        <span key={id} className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                          {cat.name} ✕
+                          <button type="button" className="ml-1" onClick={() => toggleCategory(id)} />
+                        </span>
+                      ) : null;
+                    })}
                   </div>
                 )}
               </div>
+
+              {filteredSubs.length > 0 && (
+                <div className="space-y-2">
+                  <Label>Subcategory (optional)</Label>
+                  <Select value={form.subcategory_id} onValueChange={(v) => setForm({ ...form, subcategory_id: v })}>
+                    <SelectTrigger><SelectValue placeholder="Select subcategory" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">None</SelectItem>
+                      {filteredSubs.map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
               <div className="space-y-2">
                 <Label>Short Description</Label>
                 <RichTextEditor value={form.short_description} onChange={(html) => setForm({ ...form, short_description: html })} />
@@ -252,7 +318,6 @@ const AdminProducts = () => {
               {/* SEO Section */}
               <div className="space-y-4 border-t pt-4 mt-2">
                 <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">🔍 SEO Settings</h3>
-                {/* Google Preview */}
                 <div className="bg-muted/50 rounded-lg p-4 space-y-1">
                   <p className="text-xs text-muted-foreground mb-2 font-medium">Google Search Preview</p>
                   <p className="text-[#1a0dab] text-lg leading-snug truncate font-medium">
@@ -340,7 +405,7 @@ const AdminProducts = () => {
                     <TableHead>Name</TableHead>
                     <TableHead>Price</TableHead>
                     <TableHead>Stock</TableHead>
-                    <TableHead>Category</TableHead>
+                    <TableHead>Categories</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -360,7 +425,7 @@ const AdminProducts = () => {
                         {p.original_price && <span className="text-xs text-muted-foreground line-through ml-1">{formatCurrency(p.original_price)}</span>}
                       </TableCell>
                       <TableCell>{p.stock}</TableCell>
-                      <TableCell className="text-sm">{getCategoryName(p.category_id)}</TableCell>
+                      <TableCell className="text-sm max-w-[150px] truncate">{getCategoryNames(p.id, p.category_id)}</TableCell>
                       <TableCell>
                         <span className={`text-xs px-2 py-1 rounded-full ${p.is_active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
                           {p.is_active ? "Active" : "Inactive"}
