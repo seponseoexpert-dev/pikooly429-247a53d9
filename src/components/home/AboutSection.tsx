@@ -26,26 +26,16 @@ const AboutSection = () => {
           {title}
         </h2>
         <div className="text-xs sm:text-sm md:text-base text-muted-foreground leading-relaxed rich-text-content">
-          <span dangerouslySetInnerHTML={{ __html: shortText }} />
-          {!expanded && (
-            <button
-              onClick={() => setExpanded(true)}
-              className="text-primary font-medium text-xs sm:text-sm hover:underline inline ml-1"
-            >
-              Read more
-            </button>
-          )}
-          {expanded && (
-            <>
-              <div dangerouslySetInnerHTML={{ __html: fullText }} />
-              <button
-                onClick={() => setExpanded(false)}
-                className="text-primary font-medium text-xs sm:text-sm mt-2 hover:underline block"
-              >
-                Show less
-              </button>
-            </>
-          )}
+          <div dangerouslySetInnerHTML={{ __html: shortText }} />
+          {expanded && <div dangerouslySetInnerHTML={{ __html: fullText }} />}
+        </div>
+        <div className="text-center mt-3">
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="text-primary font-medium text-xs sm:text-sm hover:underline"
+          >
+            {expanded ? "Show less" : "Read more"}
+          </button>
         </div>
 
         {/* Medals */}
