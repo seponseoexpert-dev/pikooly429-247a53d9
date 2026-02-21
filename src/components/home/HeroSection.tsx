@@ -69,7 +69,7 @@ const HeroSection = () => {
         {/* Slide card */}
         <div className="overflow-hidden rounded-2xl lg:rounded-3xl transition-colors duration-500" style={{ backgroundColor: slide.bgColor }}>
           <div className="flex items-center min-h-[220px] sm:min-h-[260px] md:min-h-[320px] lg:min-h-[400px] xl:min-h-[440px] px-8 sm:px-12 md:px-16 lg:px-20">
-            <div className="max-w-[55%] sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl space-y-4 md:space-y-6">
+            <div className="relative z-10 max-w-[55%] sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl space-y-4 md:space-y-6">
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display font-bold text-foreground leading-[1.15] tracking-tight whitespace-pre-line">
                 {slide.title}
               </h1>
