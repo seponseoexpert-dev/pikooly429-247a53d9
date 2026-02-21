@@ -20,7 +20,7 @@ const AboutSection = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={isVisible ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.6 }}
-        className="max-w-3xl mx-auto"
+        className="max-w-4xl mx-auto border border-border rounded-xl p-5 sm:p-6 md:p-8 lg:p-10 bg-card"
       >
         <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-3 md:mb-4">
           {title}
@@ -36,13 +36,13 @@ const AboutSection = () => {
         </div>
         <button
           onClick={() => setExpanded(!expanded)}
-          className="text-primary font-medium text-xs sm:text-sm mt-2 hover:underline"
+          className="text-primary font-medium text-xs sm:text-sm mt-3 hover:underline"
         >
           {expanded ? "Show less" : "Read more"}
         </button>
 
         {/* Medals */}
-        <div className="flex items-center justify-center gap-4 mt-3 sm:mt-4">
+        <div className="flex items-center justify-center gap-4 mt-4 sm:mt-5">
           <img src={medal1} alt="PikoolyFlora Badge" className="h-12 sm:h-14 md:h-16 w-auto" />
           <img src={medal2} alt="PikoolyFlora Badge" className="h-12 sm:h-14 md:h-16 w-auto" />
         </div>
