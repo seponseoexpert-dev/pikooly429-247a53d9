@@ -571,6 +571,45 @@ export type Database = {
         }
         Relationships: []
       }
+      sliders: {
+        Row: {
+          bg_color: string | null
+          created_at: string
+          cta_text: string | null
+          display_order: number
+          id: string
+          image_url: string | null
+          is_active: boolean
+          link: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          bg_color?: string | null
+          created_at?: string
+          cta_text?: string | null
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          link?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          bg_color?: string | null
+          created_at?: string
+          cta_text?: string | null
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          link?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       subcategories: {
         Row: {
           category_id: string

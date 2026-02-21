@@ -203,17 +203,7 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "company_favicon", label: "Fav Icon (120PX, 120PX)", type: "image_upload" },
     { key: "footer_logo", label: "Footer Logo (144PX, 48PX)", type: "image_upload" },
   ],
-  sliders: [
-    { key: "slider_1_image", label: "Slider 1 Image", type: "image_upload" },
-    { key: "slider_1_title", label: "Slider 1 Title" },
-    { key: "slider_1_link", label: "Slider 1 Link" },
-    { key: "slider_2_image", label: "Slider 2 Image", type: "image_upload" },
-    { key: "slider_2_title", label: "Slider 2 Title" },
-    { key: "slider_2_link", label: "Slider 2 Link" },
-    { key: "slider_3_image", label: "Slider 3 Image", type: "image_upload" },
-    { key: "slider_3_title", label: "Slider 3 Title" },
-    { key: "slider_3_link", label: "Slider 3 Link" },
-  ],
+  sliders: [], // Handled by custom SlidersSection component
   outlets: [
     { key: "multi_outlet_enabled", label: "Enable Multi Outlet", type: "switch" },
     { key: "default_outlet_name", label: "Default Outlet Name" },
@@ -721,6 +711,234 @@ const SendTestEmailButton = () => {
   );
 };
 
+// Sliders Section - uses dedicated sliders table
+const SlidersSection = () => {
+  const { toast } = useToast();
+  const qc = useQueryClient();
+  const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  const [uploading, setUploading] = useState<string | null>(null);
+
+  const { data: sliders = [], isLoading } = useQuery({
+    queryKey: ["admin-sliders"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("sliders")
+        .select("*")
+        .order("display_order");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const [localSliders, setLocalSliders] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (sliders.length > 0) setLocalSliders(sliders);
+  }, [sliders]);
+
+  const handleImageUpload = async (sliderId: string, file: File) => {
+    setUploading(sliderId);
+    try {
+      const ext = file.name.split(".").pop();
+      const filePath = `slider-${sliderId}-${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from("sliders")
+        .upload(filePath, file, { upsert: true });
+      if (uploadError) throw uploadError;
+      const { data: urlData } = supabase.storage.from("sliders").getPublicUrl(filePath);
+      setLocalSliders((prev) =>
+        prev.map((s) => (s.id === sliderId ? { ...s, image_url: urlData.publicUrl } : s))
+      );
+      toast({ title: "Image uploaded ✓" });
+    } catch (err: any) {
+      toast({ title: "Upload failed", description: err.message, variant: "destructive" });
+    } finally {
+      setUploading(null);
+    }
+  };
+
+  const updateField = (id: string, field: string, value: string) => {
+    setLocalSliders((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, [field]: value } : s))
+    );
+  };
+
+  const saveMutation = useMutation({
+    mutationFn: async () => {
+      const promises = localSliders.map((s) =>
+        supabase
+          .from("sliders")
+          .update({
+            title: s.title,
+            image_url: s.image_url,
+            link: s.link,
+            bg_color: s.bg_color,
+            cta_text: s.cta_text,
+            display_order: s.display_order,
+            is_active: s.is_active,
+          })
+          .eq("id", s.id)
+      );
+      const results = await Promise.all(promises);
+      const err = results.find((r) => r.error);
+      if (err?.error) throw err.error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-sliders"] });
+      qc.invalidateQueries({ queryKey: ["sliders"] });
+      toast({ title: "Sliders saved ✓" });
+    },
+    onError: (e: any) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
+
+  const addSlider = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.from("sliders").insert({
+        title: "New Slider",
+        display_order: localSliders.length,
+        bg_color: "#d4e8d0",
+        cta_text: "ORDER NOW",
+        link: "/shop",
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-sliders"] });
+      toast({ title: "Slider added ✓" });
+    },
+    onError: (e: any) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
+
+  const deleteSlider = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("sliders").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-sliders"] });
+      toast({ title: "Slider deleted" });
+    },
+    onError: (e: any) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
+
+  if (isLoading) return <p className="text-muted-foreground text-sm py-4 text-center">Loading sliders...</p>;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <p className="text-sm text-muted-foreground">Manage homepage hero sliders</p>
+        <div className="flex gap-2">
+          <Button type="button" variant="outline" size="sm" onClick={() => addSlider.mutate()} disabled={addSlider.isPending}>
+            + Add Slider
+          </Button>
+          <Button type="button" size="sm" onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}
+            className="bg-destructive hover:bg-destructive/90 text-destructive-foreground">
+            <Save className="h-4 w-4 mr-2" />
+            {saveMutation.isPending ? "Saving..." : "Save All"}
+          </Button>
+        </div>
+      </div>
+
+      {localSliders.length === 0 ? (
+        <p className="text-center text-muted-foreground py-8">No sliders yet. Click "Add Slider" to create one.</p>
+      ) : (
+        localSliders.map((slider, idx) => (
+          <div key={slider.id} className="border rounded-lg p-4 space-y-4 bg-muted/30">
+            <div className="flex items-center justify-between">
+              <h4 className="font-semibold text-sm">Slider {idx + 1}</h4>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={slider.is_active !== false}
+                    onCheckedChange={(c) => updateField(slider.id, "is_active", c ? "true" : "false")}
+                  />
+                  <span className="text-xs text-muted-foreground">{slider.is_active !== false ? "Active" : "Inactive"}</span>
+                </div>
+                <Button type="button" variant="ghost" size="sm"
+                  className="text-destructive hover:text-destructive"
+                  onClick={() => deleteSlider.mutate(slider.id)}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+              {/* Image */}
+              <div className="space-y-2">
+                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Image</label>
+                {slider.image_url && (
+                  <div className="relative inline-block">
+                    <img src={slider.image_url} alt="" className="w-24 h-24 object-cover rounded-lg border" />
+                    <button type="button" onClick={() => updateField(slider.id, "image_url", "")}
+                      className="absolute -top-2 -right-2 w-5 h-5 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center">
+                      <X size={12} />
+                    </button>
+                  </div>
+                )}
+                <div>
+                  <Button type="button" variant="outline" size="sm"
+                    onClick={() => fileRefs.current[slider.id]?.click()}
+                    disabled={uploading === slider.id}>
+                    <Upload className="h-4 w-4 mr-2" />
+                    {uploading === slider.id ? "Uploading..." : "Upload Image"}
+                  </Button>
+                  <input
+                    ref={(el) => { fileRefs.current[slider.id] = el; }}
+                    type="file" accept="image/*" className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleImageUpload(slider.id, file);
+                      e.target.value = "";
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Title */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Title</label>
+                <Input value={slider.title || ""} onChange={(e) => updateField(slider.id, "title", e.target.value)} placeholder="Slider Title" />
+              </div>
+
+              {/* Link */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Link</label>
+                <Input value={slider.link || ""} onChange={(e) => updateField(slider.id, "link", e.target.value)} placeholder="/shop" />
+              </div>
+
+              {/* CTA Text */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">CTA Text</label>
+                <Input value={slider.cta_text || ""} onChange={(e) => updateField(slider.id, "cta_text", e.target.value)} placeholder="ORDER NOW" />
+              </div>
+
+              {/* BG Color */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Background Color</label>
+                <div className="flex gap-2 items-center">
+                  <input type="color" value={slider.bg_color || "#d4e8d0"}
+                    onChange={(e) => updateField(slider.id, "bg_color", e.target.value)}
+                    className="w-10 h-10 rounded border cursor-pointer" />
+                  <Input value={slider.bg_color || ""} onChange={(e) => updateField(slider.id, "bg_color", e.target.value)}
+                    placeholder="#d4e8d0" className="max-w-[140px]" />
+                </div>
+              </div>
+
+              {/* Display Order */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Display Order</label>
+                <Input type="number" value={slider.display_order ?? idx}
+                  onChange={(e) => updateField(slider.id, "display_order", e.target.value)}
+                  placeholder="0" className="max-w-[100px]" />
+              </div>
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  );
+};
+
 const AdminSettings = () => {
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -855,7 +1073,9 @@ const AdminSettings = () => {
                 </div>
 
                 <div className="p-4">
-                  {activeSection === "notification_alert" ? (
+                  {activeSection === "sliders" ? (
+                    <SlidersSection />
+                  ) : activeSection === "notification_alert" ? (
                     <NotificationAlertSection formValues={formValues} setFormValues={setFormValues} />
                   ) : activeSection === "sms_gateway" ? (
                     <SmsGatewaySection formValues={formValues} setFormValues={setFormValues} />

@@ -1,20 +1,51 @@
 import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { heroSlides } from "@/data/mockData";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { heroSlides as fallbackSlides } from "@/data/mockData";
 
 const HeroSection = () => {
   const [current, setCurrent] = useState(0);
 
+  const { data: dbSliders } = useQuery({
+    queryKey: ["sliders"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("sliders")
+        .select("*")
+        .eq("is_active", true)
+        .order("display_order");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const slides = dbSliders && dbSliders.length > 0
+    ? dbSliders.map((s) => ({
+        title: s.title,
+        cta: s.cta_text || "ORDER NOW",
+        image: s.image_url || "",
+        bgColor: s.bg_color || "#d4e8d0",
+        link: s.link || "/shop",
+      }))
+    : fallbackSlides.map((s) => ({ ...s, link: "/shop" }));
+
   useEffect(() => {
-    const timer = setInterval(() => setCurrent((p) => (p + 1) % heroSlides.length), 5000);
+    if (slides.length <= 1) return;
+    const timer = setInterval(() => setCurrent((p) => (p + 1) % slides.length), 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [slides.length]);
 
-  const prev = useCallback(() => setCurrent((p) => (p - 1 + heroSlides.length) % heroSlides.length), []);
-  const next = useCallback(() => setCurrent((p) => (p + 1) % heroSlides.length), []);
+  useEffect(() => {
+    if (current >= slides.length) setCurrent(0);
+  }, [slides.length, current]);
 
-  const slide = heroSlides[current];
+  const prev = useCallback(() => setCurrent((p) => (p - 1 + slides.length) % slides.length), [slides.length]);
+  const next = useCallback(() => setCurrent((p) => (p + 1) % slides.length), [slides.length]);
+
+  if (slides.length === 0) return null;
+  const slide = slides[current];
 
   return (
     <section className="relative py-3 sm:py-4 md:py-6 lg:py-8 section-container" aria-label="Featured promotions">
@@ -39,11 +70,11 @@ const HeroSection = () => {
         <div className="overflow-hidden rounded-2xl lg:rounded-3xl transition-colors duration-500" style={{ backgroundColor: slide.bgColor }}>
           <div className="flex items-center min-h-[220px] sm:min-h-[260px] md:min-h-[320px] lg:min-h-[400px] xl:min-h-[440px] px-8 sm:px-12 md:px-16 lg:px-20">
             <div className="max-w-[55%] sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl space-y-4 md:space-y-6">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display font-bold text-foreground leading-[1.15] tracking-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display font-bold text-foreground leading-[1.15] tracking-tight whitespace-pre-line">
                 {slide.title}
               </h1>
               <Link
-                to="/shop"
+                to={slide.link}
                 className="inline-block px-6 sm:px-8 md:px-10 py-2.5 sm:py-3 md:py-3.5 bg-primary text-primary-foreground text-xs sm:text-sm md:text-base font-semibold uppercase tracking-[0.15em] rounded-md hover:bg-primary/90 transition-all duration-200 hover:shadow-md"
               >
                 {slide.cta}
@@ -51,12 +82,14 @@ const HeroSection = () => {
             </div>
 
             <div className="absolute right-6 sm:right-10 md:right-14 lg:right-20 top-1/2 -translate-y-1/2 w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 lg:w-56 lg:h-56 xl:w-64 xl:h-64">
-              <img
-                src={slide.image}
-                alt=""
-                className="w-full h-full object-cover rounded-2xl lg:rounded-3xl shadow-lg"
-                loading={current === 0 ? "eager" : "lazy"}
-              />
+              {slide.image && (
+                <img
+                  src={slide.image}
+                  alt=""
+                  className="w-full h-full object-cover rounded-2xl lg:rounded-3xl shadow-lg"
+                  loading={current === 0 ? "eager" : "lazy"}
+                />
+              )}
             </div>
           </div>
         </div>
@@ -64,9 +97,9 @@ const HeroSection = () => {
 
       <div className="flex items-center justify-center gap-2.5 mt-4">
         <span className="text-xs text-muted-foreground font-medium">
-          {current + 1}/{heroSlides.length}
+          {current + 1}/{slides.length}
         </span>
-        {heroSlides.map((_, i) => (
+        {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrent(i)}
