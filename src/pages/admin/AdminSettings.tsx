@@ -42,6 +42,8 @@ const settingSections = [
   { key: "languages", label: "Languages", icon: Languages },
   { key: "sms_gateway", label: "SMS Gateway", icon: MessageSquare },
   { key: "payment_gateway", label: "Payment Gateway", icon: CreditCard },
+  { key: "about", label: "About Section", icon: FileText },
+  { key: "faq", label: "FAQ Section", icon: MessageSquare },
   { key: "license", label: "License", icon: Award },
   { key: "footer", label: "Footer", icon: FileText },
 ];
@@ -248,6 +250,25 @@ const sectionFields: Record<string, FieldDef[]> = {
   payment_gateway: [], // Handled by custom PaymentGatewaySection component
   license: [
     { key: "license_code", label: "License Code" },
+  ],
+  about: [
+    { key: "about_title", label: "About Title", fullWidth: true, placeholder: "PikoolyFlora: Online Flower Shop in Bangladesh" },
+    { key: "about_short_text", label: "Short Text (before Read more)", type: "textarea", fullWidth: true, placeholder: "Welcome to PikoolyFlora-Online website..." },
+    { key: "about_full_text", label: "Full Text (after Read more)", type: "textarea", fullWidth: true, placeholder: "Extended description shown after clicking Read more..." },
+  ],
+  faq: [
+    { key: "faq_section_title", label: "Section Title", placeholder: "Frequently Asked Questions" },
+    { key: "faq_section_subtitle", label: "Section Subtitle", placeholder: "Everything you need to know about our services" },
+    { key: "faq_1_question", label: "FAQ 1 Question" },
+    { key: "faq_1_answer", label: "FAQ 1 Answer", type: "textarea", fullWidth: true },
+    { key: "faq_2_question", label: "FAQ 2 Question" },
+    { key: "faq_2_answer", label: "FAQ 2 Answer", type: "textarea", fullWidth: true },
+    { key: "faq_3_question", label: "FAQ 3 Question" },
+    { key: "faq_3_answer", label: "FAQ 3 Answer", type: "textarea", fullWidth: true },
+    { key: "faq_4_question", label: "FAQ 4 Question" },
+    { key: "faq_4_answer", label: "FAQ 4 Answer", type: "textarea", fullWidth: true },
+    { key: "faq_5_question", label: "FAQ 5 Question" },
+    { key: "faq_5_answer", label: "FAQ 5 Answer", type: "textarea", fullWidth: true },
   ],
   footer: [
     { key: "site_footer_text", label: "Footer Tagline / Description", type: "textarea", fullWidth: true, placeholder: "e.g. Not just a Gift, It's sharing of Love." },

@@ -1,5 +1,6 @@
-import { faqItems } from "@/data/mockData";
+import { faqItems as defaultFaqItems } from "@/data/mockData";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import {
   Accordion,
   AccordionContent,
@@ -9,16 +10,30 @@ import {
 
 const FAQSection = () => {
   const { ref, isVisible } = useScrollAnimation();
+  const { settings } = useSiteSettings();
+
+  const sectionTitle = settings.faq_section_title || "Frequently Asked Questions";
+  const sectionSubtitle = settings.faq_section_subtitle || "Everything you need to know about our services";
+
+  // Build FAQ items from settings, fallback to mock data
+  const dynamicFaqs = [1, 2, 3, 4, 5]
+    .map((i) => ({
+      question: settings[`faq_${i}_question`],
+      answer: settings[`faq_${i}_answer`],
+    }))
+    .filter((f) => f.question && f.answer);
+
+  const faqItems = dynamicFaqs.length > 0 ? dynamicFaqs : defaultFaqItems;
 
   return (
     <section ref={ref} className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Frequently Asked Questions">
       <div className="max-w-3xl mx-auto">
         <div className="mb-5 sm:mb-6 md:mb-8 text-center">
           <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-1 sm:mb-2">
-            Frequently Asked Questions
+            {sectionTitle}
           </h2>
           <p className="text-muted-foreground text-xs sm:text-sm">
-            Everything you need to know about our services
+            {sectionSubtitle}
           </p>
         </div>
 
