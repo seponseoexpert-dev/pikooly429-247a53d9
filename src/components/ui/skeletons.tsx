@@ -79,4 +79,96 @@ const ProductDetailSkeleton = () => (
   </main>
 );
 
-export { ProductCardSkeleton, CategoryGridSkeleton, BlogCardSkeleton, ProductDetailSkeleton };
+const AdminTableSkeleton = ({ rows = 5, cols = 4 }: { rows?: number; cols?: number }) => (
+  <div className="bg-card rounded-xl border border-border overflow-hidden">
+    <div className="p-4 border-b border-border">
+      <Skeleton className="h-5 w-32" />
+    </div>
+    <div className="divide-y divide-border">
+      {Array.from({ length: rows }).map((_, r) => (
+        <div key={r} className="flex items-center gap-4 p-4">
+          {Array.from({ length: cols }).map((_, c) => (
+            <Skeleton key={c} className={`h-4 ${c === 0 ? "w-1/4" : c === cols - 1 ? "w-16" : "flex-1"}`} />
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const AdminDashboardSkeleton = () => (
+  <div className="space-y-6">
+    <Skeleton className="h-8 w-40" />
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <div key={i} className="bg-card rounded-xl border border-border p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-4 w-4 rounded" />
+          </div>
+          <Skeleton className="h-7 w-24" />
+        </div>
+      ))}
+    </div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="bg-card rounded-xl border border-border p-4">
+        <Skeleton className="h-5 w-32 mb-4" />
+        <Skeleton className="h-48 w-full rounded-lg" />
+      </div>
+      <div className="bg-card rounded-xl border border-border p-4">
+        <Skeleton className="h-5 w-32 mb-4" />
+        <div className="space-y-3">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-4 flex-1" />
+              <Skeleton className="h-5 w-16 rounded-full" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const AccountSkeleton = () => (
+  <main className="section-container py-6 md:py-10 pb-24 md:pb-10">
+    <div className="max-w-2xl mx-auto space-y-6">
+      <div className="bg-card rounded-2xl border border-border p-6 space-y-4">
+        <div className="flex items-center gap-4">
+          <Skeleton className="w-16 h-16 rounded-full" />
+          <div className="space-y-2 flex-1">
+            <Skeleton className="h-6 w-40" />
+            <Skeleton className="h-4 w-56" />
+          </div>
+        </div>
+        <Skeleton className="h-px w-full" />
+        <div className="space-y-3">
+          <Skeleton className="h-4 w-32" />
+          <Skeleton className="h-4 w-48" />
+        </div>
+      </div>
+      <Skeleton className="h-6 w-32" />
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div key={i} className="bg-card rounded-xl border border-border p-4 space-y-2">
+          <div className="flex justify-between">
+            <Skeleton className="h-4 w-28" />
+            <Skeleton className="h-5 w-16 rounded-full" />
+          </div>
+          <Skeleton className="h-4 w-40" />
+          <Skeleton className="h-4 w-24" />
+        </div>
+      ))}
+    </div>
+  </main>
+);
+
+export {
+  ProductCardSkeleton,
+  CategoryGridSkeleton,
+  BlogCardSkeleton,
+  ProductDetailSkeleton,
+  AdminTableSkeleton,
+  AdminDashboardSkeleton,
+  AccountSkeleton,
+};

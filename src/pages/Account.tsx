@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { LogOut, User, Package, Mail, Phone, Pencil, Check, X } from "lucide-react";
 import { toast } from "sonner";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
+import { AccountSkeleton } from "@/components/ui/skeletons";
 
 const Account = () => {
   const { user, loading, signOut } = useAuth();
@@ -90,11 +91,7 @@ const Account = () => {
   };
 
   if (loading || !user) {
-    return (
-      <main className="section-container py-20 text-center text-muted-foreground">
-        Loading...
-      </main>
-    );
+    return <AccountSkeleton />;
   }
 
   const displayName = profile?.full_name || user.user_metadata?.full_name || user.email?.split("@")[0] || "User";

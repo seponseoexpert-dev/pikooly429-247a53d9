@@ -368,7 +368,7 @@ const AdminCategories = () => {
       <Card>
         <CardContent className="p-0">
           {loading ? (
-            <p className="p-6 text-muted-foreground">Loading...</p>
+            <div className="divide-y divide-border">{Array.from({ length: 5 }).map((_, i) => <div key={i} className="flex items-center gap-4 p-4"><div className="h-10 w-10 bg-muted rounded-lg animate-pulse" /><div className="h-4 flex-1 bg-muted rounded animate-pulse" /><div className="h-5 w-16 bg-muted rounded-full animate-pulse" /><div className="h-8 w-8 bg-muted rounded animate-pulse" /></div>)}</div>
           ) : categories.length === 0 ? (
             <p className="p-6 text-muted-foreground text-center">No categories yet. Add your first category!</p>
           ) : (

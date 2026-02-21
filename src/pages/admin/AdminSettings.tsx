@@ -1084,7 +1084,7 @@ const AdminSettings = () => {
         {/* Content */}
         <div className="flex-1 min-w-0">
           {isLoading ? (
-            <div className="bg-card border rounded-lg p-8 text-center text-muted-foreground">Loading...</div>
+            <div className="bg-card border rounded-lg p-6 space-y-4">{Array.from({ length: 6 }).map((_, i) => <div key={i} className="space-y-2"><div className="h-4 w-32 bg-muted rounded animate-pulse" /><div className="h-10 w-full bg-muted rounded-lg animate-pulse" /></div>)}</div>
           ) : (
             <form onSubmit={handleSubmit}>
               <div className="bg-card border rounded-lg">

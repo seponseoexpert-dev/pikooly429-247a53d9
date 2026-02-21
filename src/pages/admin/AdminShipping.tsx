@@ -157,7 +157,7 @@ const AdminShipping = () => {
           </thead>
           <tbody>
             {isLoading ? (
-              <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">Loading...</td></tr>
+              Array.from({ length: 4 }).map((_, i) => <tr key={i}><td className="p-4"><div className="h-4 w-32 bg-muted rounded animate-pulse" /></td><td className="p-4"><div className="h-4 w-20 bg-muted rounded animate-pulse" /></td><td className="p-4"><div className="h-4 w-24 bg-muted rounded animate-pulse" /></td><td className="p-4"><div className="h-5 w-14 bg-muted rounded-full animate-pulse" /></td><td className="p-4"><div className="h-8 w-16 bg-muted rounded animate-pulse" /></td></tr>)
             ) : districts.length === 0 ? (
               <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">No districts added yet</td></tr>
             ) : (

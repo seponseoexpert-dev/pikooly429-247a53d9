@@ -148,7 +148,7 @@ const AdminCurrencies = () => {
             <span></span>
           </div>
           {isLoading ? (
-            <div className="p-8 text-center text-muted-foreground">Loading...</div>
+            <div className="space-y-3 p-4">{Array.from({ length: 4 }).map((_, i) => <div key={i} className="flex items-center gap-4 p-3 bg-muted/30 rounded-lg"><div className="h-5 w-12 bg-muted rounded animate-pulse" /><div className="h-4 flex-1 bg-muted rounded animate-pulse" /><div className="h-4 w-20 bg-muted rounded animate-pulse" /><div className="h-5 w-14 bg-muted rounded-full animate-pulse" /></div>)}</div>
           ) : (
             currencies.map((c) => (
               <div key={c.id} className="grid grid-cols-2 sm:grid-cols-[1fr_1.5fr_0.5fr_1fr_0.8fr_0.5fr_0.5fr] gap-3 p-3 border-t border-border items-center">
