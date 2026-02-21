@@ -13,44 +13,70 @@ import CartDrawer from "@/components/layout/CartDrawer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import ProtectedAdminRoute from "@/components/admin/ProtectedAdminRoute";
 import DynamicHead from "@/components/layout/DynamicHead";
-import Index from "./pages/Index";
-import Shop from "./pages/Shop";
-import ProductDetail from "./pages/ProductDetail";
-import Blog from "./pages/Blog";
-import AllGifts from "./pages/AllGifts";
-import Checkout from "./pages/Checkout";
-import OrderSuccess from "./pages/OrderSuccess";
-import TrackOrder from "./pages/TrackOrder";
-import NotFound from "./pages/NotFound";
-import Auth from "./pages/Auth";
-import Account from "./pages/Account";
-import ResetPassword from "./pages/ResetPassword";
-import AdminLogin from "./pages/AdminLogin";
-import AdminDashboard from "./pages/AdminDashboard";
-import EpsCallback from "./pages/EpsCallback";
-import AdminProducts from "./pages/admin/AdminProducts";
-import AdminCategories from "./pages/admin/AdminCategories";
-import AdminOrders from "./pages/admin/AdminOrders";
-import AdminCustomers from "./pages/admin/AdminCustomers";
-import AdminBlog from "./pages/admin/AdminBlog";
-import AdminReviews from "./pages/admin/AdminReviews";
-import AdminCoupons from "./pages/admin/AdminCoupons";
-import AdminSettings from "./pages/admin/AdminSettings";
-import AdminShipping from "./pages/admin/AdminShipping";
-import AdminCurrencies from "./pages/admin/AdminCurrencies";
-import AdminSubscribers from "./pages/admin/AdminSubscribers";
+import { lazy, Suspense } from "react";
 
-const queryClient = new QueryClient();
+// Eager-load homepage
+import Index from "./pages/Index";
+
+// Lazy-load all other pages
+const Shop = lazy(() => import("./pages/Shop"));
+const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const Blog = lazy(() => import("./pages/Blog"));
+const AllGifts = lazy(() => import("./pages/AllGifts"));
+const Checkout = lazy(() => import("./pages/Checkout"));
+const OrderSuccess = lazy(() => import("./pages/OrderSuccess"));
+const TrackOrder = lazy(() => import("./pages/TrackOrder"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const Auth = lazy(() => import("./pages/Auth"));
+const Account = lazy(() => import("./pages/Account"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const AdminLogin = lazy(() => import("./pages/AdminLogin"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const EpsCallback = lazy(() => import("./pages/EpsCallback"));
+const AdminProducts = lazy(() => import("./pages/admin/AdminProducts"));
+const AdminCategories = lazy(() => import("./pages/admin/AdminCategories"));
+const AdminOrders = lazy(() => import("./pages/admin/AdminOrders"));
+const AdminCustomers = lazy(() => import("./pages/admin/AdminCustomers"));
+const AdminBlog = lazy(() => import("./pages/admin/AdminBlog"));
+const AdminReviews = lazy(() => import("./pages/admin/AdminReviews"));
+const AdminCoupons = lazy(() => import("./pages/admin/AdminCoupons"));
+const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
+const AdminShipping = lazy(() => import("./pages/admin/AdminShipping"));
+const AdminCurrencies = lazy(() => import("./pages/admin/AdminCurrencies"));
+const AdminSubscribers = lazy(() => import("./pages/admin/AdminSubscribers"));
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
+
+const PageLoader = () => (
+  <div className="min-h-[60vh] flex items-center justify-center">
+    <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />
+  </div>
+);
 
 const PublicLayout = ({ children }: { children: React.ReactNode }) => (
   <>
     <Header />
     <CartDrawer />
-    {children}
+    <Suspense fallback={<PageLoader />}>{children}</Suspense>
     <Footer />
     <BottomNav />
     <WhatsAppButton />
   </>
+);
+
+const AdminRoute = ({ children }: { children: React.ReactNode }) => (
+  <ProtectedAdminRoute>
+    <Suspense fallback={<PageLoader />}>{children}</Suspense>
+  </ProtectedAdminRoute>
 );
 
 const App = () => (
@@ -78,19 +104,19 @@ const App = () => (
               <Route path="/account" element={<PublicLayout><Account /></PublicLayout>} />
               <Route path="/reset-password" element={<PublicLayout><ResetPassword /></PublicLayout>} />
               {/* Admin routes */}
-              <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/admin" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>} />
-              <Route path="/admin/products" element={<ProtectedAdminRoute><AdminProducts /></ProtectedAdminRoute>} />
-              <Route path="/admin/categories" element={<ProtectedAdminRoute><AdminCategories /></ProtectedAdminRoute>} />
-              <Route path="/admin/orders" element={<ProtectedAdminRoute><AdminOrders /></ProtectedAdminRoute>} />
-              <Route path="/admin/customers" element={<ProtectedAdminRoute><AdminCustomers /></ProtectedAdminRoute>} />
-              <Route path="/admin/blog" element={<ProtectedAdminRoute><AdminBlog /></ProtectedAdminRoute>} />
-              <Route path="/admin/reviews" element={<ProtectedAdminRoute><AdminReviews /></ProtectedAdminRoute>} />
-              <Route path="/admin/coupons" element={<ProtectedAdminRoute><AdminCoupons /></ProtectedAdminRoute>} />
-              <Route path="/admin/settings" element={<ProtectedAdminRoute><AdminSettings /></ProtectedAdminRoute>} />
-              <Route path="/admin/shipping" element={<ProtectedAdminRoute><AdminShipping /></ProtectedAdminRoute>} />
-              <Route path="/admin/currencies" element={<ProtectedAdminRoute><AdminCurrencies /></ProtectedAdminRoute>} />
-              <Route path="/admin/subscribers" element={<ProtectedAdminRoute><AdminSubscribers /></ProtectedAdminRoute>} />
+              <Route path="/admin/login" element={<Suspense fallback={<PageLoader />}><AdminLogin /></Suspense>} />
+              <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+              <Route path="/admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
+              <Route path="/admin/categories" element={<AdminRoute><AdminCategories /></AdminRoute>} />
+              <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
+              <Route path="/admin/customers" element={<AdminRoute><AdminCustomers /></AdminRoute>} />
+              <Route path="/admin/blog" element={<AdminRoute><AdminBlog /></AdminRoute>} />
+              <Route path="/admin/reviews" element={<AdminRoute><AdminReviews /></AdminRoute>} />
+              <Route path="/admin/coupons" element={<AdminRoute><AdminCoupons /></AdminRoute>} />
+              <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
+              <Route path="/admin/shipping" element={<AdminRoute><AdminShipping /></AdminRoute>} />
+              <Route path="/admin/currencies" element={<AdminRoute><AdminCurrencies /></AdminRoute>} />
+              <Route path="/admin/subscribers" element={<AdminRoute><AdminSubscribers /></AdminRoute>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>

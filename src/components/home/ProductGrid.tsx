@@ -1,24 +1,15 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import ProductCard from "@/components/product/ProductCard";
-import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { Link } from "react-router-dom";
-import { ChevronRight, TrendingUp, Gift, Heart, Cake } from "lucide-react";
+import { ChevronRight, TrendingUp, Gift } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-const tabs = [
-  { label: "All", icon: TrendingUp },
-  { label: "Birthday", icon: Gift },
-  { label: "Anniversary", icon: Heart },
-  { label: "Cakes", icon: Cake },
-];
-
 const ProductGrid = () => {
   const [activeTab, setActiveTab] = useState("All");
-  const { ref, isVisible } = useScrollAnimation();
 
   const { data: products = [] } = useQuery({
-    queryKey: ["public-products"],
+    queryKey: ["homepage-products"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
@@ -31,27 +22,27 @@ const ProductGrid = () => {
   });
 
   const { data: categories = [] } = useQuery({
-    queryKey: ["public-categories"],
+    queryKey: ["homepage-categories"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("categories")
-        .select("*")
+        .select("id, name, slug, image_url")
         .eq("is_active", true)
+        .eq("show_in_homepage", true)
         .order("display_order");
       if (error) throw error;
       return data;
     },
   });
 
-  // Build dynamic tabs from categories
-  const dynamicTabs = [
+  const dynamicTabs = useMemo(() => [
     { label: "All", icon: TrendingUp },
     ...categories.slice(0, 3).map((c) => ({
       label: c.name,
       slug: c.slug,
       icon: Gift,
     })),
-  ];
+  ], [categories]);
 
   const featured = products.filter((p: any) => p.is_featured);
   const displayFeatured = featured.length > 0 ? featured.slice(0, 5) : products.slice(0, 5);
@@ -61,7 +52,7 @@ const ProductGrid = () => {
     : products.filter((p: any) => p.categories?.name === activeTab || p.categories?.slug === activeTab);
 
   return (
-    <section ref={ref} className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Products">
+    <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Products">
       <div className="flex items-center justify-between mb-4 md:mb-6">
         <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground">
           Trending Gifts
@@ -72,8 +63,8 @@ const ProductGrid = () => {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
-        {displayFeatured.map((product: any, i: number) => (
-          <ProductCard key={product.id} product={product} index={i} />
+        {displayFeatured.map((product: any) => (
+          <ProductCard key={product.id} product={product} />
         ))}
       </div>
 
@@ -100,7 +91,7 @@ const ProductGrid = () => {
           <button
             key={label}
             onClick={() => setActiveTab(label)}
-            className={`flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+            className={`flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-colors duration-150 ${
               activeTab === label
                 ? "bg-primary text-primary-foreground"
                 : "bg-card border border-border text-muted-foreground hover:border-primary/30"
@@ -113,8 +104,8 @@ const ProductGrid = () => {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
-        {filtered.slice(0, 10).map((product: any, i: number) => (
-          <ProductCard key={product.id} product={product} index={i} />
+        {filtered.slice(0, 10).map((product: any) => (
+          <ProductCard key={product.id} product={product} />
         ))}
       </div>
 
@@ -122,7 +113,7 @@ const ProductGrid = () => {
         <div className="text-center mt-6 md:mt-8">
           <Link
             to="/shop"
-            className="inline-block px-8 sm:px-10 py-3 sm:py-3.5 border-2 border-primary text-primary rounded-full text-sm sm:text-base font-semibold hover:bg-primary hover:text-primary-foreground transition-all"
+            className="inline-block px-8 sm:px-10 py-3 sm:py-3.5 border-2 border-primary text-primary rounded-full text-sm sm:text-base font-semibold hover:bg-primary hover:text-primary-foreground transition-colors"
           >
             View All Trending Gifts →
           </Link>

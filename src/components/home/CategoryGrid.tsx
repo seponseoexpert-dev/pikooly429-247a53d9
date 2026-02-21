@@ -1,18 +1,16 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 const CategoryGrid = () => {
-
   const { data: categories = [] } = useQuery({
-    queryKey: ["public-categories"],
+    queryKey: ["homepage-categories"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("categories")
-        .select("*")
+        .select("id, name, slug, image_url")
         .eq("is_active", true)
-        .filter("show_in_homepage", "eq", true)
+        .eq("show_in_homepage", true)
         .order("display_order");
       if (error) throw error;
       return data;
@@ -27,20 +25,13 @@ const CategoryGrid = () => {
         Shop by Category
       </h2>
       <div className="flex gap-3 sm:gap-4 md:gap-5 lg:gap-6 overflow-x-auto pb-2 scrollbar-hide">
-        {categories.map((cat, i) => (
-          <motion.div
-            key={cat.id}
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.05, duration: 0.3 }}
-            className="flex-shrink-0"
-          >
+        {categories.map((cat) => (
+          <div key={cat.id} className="flex-shrink-0">
             <Link
               to={`/shop?cat=${cat.slug}`}
               className="flex flex-col items-center gap-2 group"
             >
-              <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 aspect-square rounded-2xl overflow-hidden bg-secondary border border-border/30 group-hover:border-primary/40 group-hover:shadow-lg transition-all duration-300">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 aspect-square rounded-2xl overflow-hidden bg-secondary border border-border/30 group-hover:border-primary/40 group-hover:shadow-lg transition-all duration-200">
                 <img
                   src={cat.image_url || "/placeholder.svg"}
                   alt={cat.name}
@@ -52,7 +43,7 @@ const CategoryGrid = () => {
                 {cat.name}
               </span>
             </Link>
-          </motion.div>
+          </div>
         ))}
       </div>
     </section>
