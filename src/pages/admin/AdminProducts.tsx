@@ -40,7 +40,7 @@ const AdminProducts = () => {
   const [filterCategory, setFilterCategory] = useState<string>("all");
 
   const defaultForm = {
-    name: "", slug: "", description: "", price: 0, original_price: 0,
+    name: "", slug: "", short_description: "", description: "", price: 0, original_price: 0,
     image_url: "", category_id: "", subcategory_id: "", is_active: true, is_featured: false, stock: 0, tags: "",
     specifications: [] as Array<{ item: string; value: string }>,
     seo_title: "", seo_description: "",
@@ -69,7 +69,7 @@ const AdminProducts = () => {
     setEditing(p);
     const specs = (p.specifications as Array<{ item: string; value: string }>) || [];
     setForm({
-      name: p.name, slug: p.slug, description: p.description || "",
+      name: p.name, slug: p.slug, short_description: (p as any).short_description || "", description: p.description || "",
       price: p.price, original_price: p.original_price || 0,
       image_url: p.image_url || "", category_id: p.category_id || "",
       subcategory_id: (p as any).subcategory_id || "",
@@ -108,7 +108,7 @@ const AdminProducts = () => {
     const tags = form.tags ? form.tags.split(",").map((t) => t.trim()).filter(Boolean) : [];
     const specs = form.specifications.filter(s => s.item.trim() || s.value.trim());
     const payload = {
-      name: form.name.trim(), slug, description: form.description || null,
+      name: form.name.trim(), slug, short_description: form.short_description || null, description: form.description || null,
       price: form.price, original_price: form.original_price || null,
       image_url: imageUrl || null, category_id: form.category_id || null,
       subcategory_id: form.subcategory_id || null,
@@ -205,7 +205,11 @@ const AdminProducts = () => {
                 )}
               </div>
               <div className="space-y-2">
-                <Label>Description</Label>
+                <Label>Short Description</Label>
+                <RichTextEditor value={form.short_description} onChange={(html) => setForm({ ...form, short_description: html })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Long Description</Label>
                 <RichTextEditor value={form.description} onChange={(html) => setForm({ ...form, description: html })} />
               </div>
               <div className="space-y-2">
