@@ -1,6 +1,6 @@
-import { memo, useState, useCallback, useEffect } from "react";
+import { memo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Twitter, Youtube, Send, ArrowUp } from "lucide-react";
+import { Facebook, Instagram, Twitter, Youtube, Send } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -9,17 +9,6 @@ const Footer = memo(() => {
   const { settings } = useSiteSettings();
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [showScrollTop, setShowScrollTop] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setShowScrollTop(window.scrollY > 400);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const scrollToTop = useCallback(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
 
   const phone = settings.store_phone || "+880 1XXX-XXXXXX";
   const storeEmail = settings.store_email || "hello@pikoolyflora.com";
@@ -121,7 +110,6 @@ const Footer = memo(() => {
   const activePaymentMethods = paymentMethods.filter((m) => settings[m.key] === "true");
 
   return (
-    <>
     <footer className="bg-secondary/50 border-t border-border pb-20 md:pb-0">
       <div className="section-container py-6 sm:py-8 md:py-10 lg:py-12">
         <div className="grid grid-cols-2 gap-6 sm:gap-8 md:grid-cols-4 lg:gap-10 mb-6 sm:mb-8">
@@ -226,16 +214,6 @@ const Footer = memo(() => {
         </div>
       </div>
     </footer>
-    {showScrollTop && (
-      <button
-        onClick={scrollToTop}
-        className="fixed bottom-24 md:bottom-6 right-4 z-50 w-10 h-10 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center hover:bg-primary/90 transition-all duration-300 animate-fade-in"
-        aria-label="Scroll to top"
-      >
-        <ArrowUp size={18} />
-      </button>
-    )}
-    </>
   );
 });
 
