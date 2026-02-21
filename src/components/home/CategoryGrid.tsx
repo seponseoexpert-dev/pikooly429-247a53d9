@@ -33,19 +33,19 @@ const CategoryGrid = memo(() => {
       <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-4 md:mb-6 text-center">
         Shop by Category
       </h2>
-      <div className="grid grid-cols-4 gap-3 sm:gap-4 md:flex md:justify-center md:gap-5 lg:gap-6">
+      <div className="grid grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6 md:max-w-3xl lg:max-w-4xl mx-auto">
         {categories.map((cat) => (
-          <div key={cat.id} className="flex-shrink-0 md:w-24 lg:w-28">
+          <div key={cat.id}>
             <Link
               to={`/shop?cat=${cat.slug}`}
               className="flex flex-col items-center gap-2 group"
             >
-              <div className="w-full aspect-square rounded-2xl overflow-hidden bg-secondary border border-border/30 group-hover:border-primary/40 group-hover:shadow-lg transition-all duration-200">
+              <div className="w-full aspect-square md:w-32 md:h-32 lg:w-36 lg:h-36 rounded-2xl overflow-hidden bg-secondary border border-border/30 group-hover:border-primary/40 group-hover:shadow-lg transition-all duration-200 group-hover:scale-105">
                 <img
                   src={cat.image_url || "/placeholder.svg"}
                   alt={cat.name}
-                  width={112}
-                  height={112}
+                  width={144}
+                  height={144}
                   decoding="async"
                   className="w-full h-full object-cover object-center"
                   loading="lazy"
