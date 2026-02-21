@@ -24,7 +24,7 @@ const CategoryGrid = () => {
       <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-4 md:mb-6">
         Shop by Category
       </h2>
-      <div className="flex gap-3 sm:gap-4 md:gap-5 lg:gap-6 overflow-x-auto pb-2 scrollbar-hide">
+      <div className="flex justify-center gap-3 sm:gap-4 md:gap-5 lg:gap-6 overflow-x-auto pb-2 scrollbar-hide">
         {categories.map((cat) => (
           <div key={cat.id} className="flex-shrink-0">
             <Link
