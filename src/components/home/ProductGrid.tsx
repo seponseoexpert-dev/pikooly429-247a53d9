@@ -14,7 +14,7 @@ const ProductGrid = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("*, categories(name, slug)")
+        .select("*, categories(name, slug), product_categories(category_id, categories(name, slug))")
         .eq("is_active", true)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -50,7 +50,11 @@ const ProductGrid = () => {
 
   const filtered = activeTab === "All"
     ? products
-    : products.filter((p: any) => p.categories?.name === activeTab || p.categories?.slug === activeTab);
+    : products.filter((p: any) => {
+        if (p.categories?.name === activeTab || p.categories?.slug === activeTab) return true;
+        if (p.product_categories?.some((pc: any) => pc.categories?.name === activeTab || pc.categories?.slug === activeTab)) return true;
+        return false;
+      });
 
   return (
     <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Products">
