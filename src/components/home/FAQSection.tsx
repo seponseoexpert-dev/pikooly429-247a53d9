@@ -15,13 +15,13 @@ const FAQSection = () => {
   const sectionTitle = settings.faq_section_title || "Frequently Asked Questions";
   const sectionSubtitle = settings.faq_section_subtitle || "Everything you need to know about our services";
 
-  // Build FAQ items from settings, fallback to mock data
-  const dynamicFaqs = [1, 2, 3, 4, 5]
-    .map((i) => ({
-      question: settings[`faq_${i}_question`],
-      answer: settings[`faq_${i}_answer`],
-    }))
-    .filter((f) => f.question && f.answer);
+  // Build FAQ items from settings dynamically (unlimited)
+  const dynamicFaqs: { question: string; answer: string }[] = [];
+  for (let i = 1; i <= 100; i++) {
+    const q = settings[`faq_${i}_question`];
+    const a = settings[`faq_${i}_answer`];
+    if (q && a) dynamicFaqs.push({ question: q, answer: a });
+  }
 
   const faqItems = dynamicFaqs.length > 0 ? dynamicFaqs : defaultFaqItems;
 
