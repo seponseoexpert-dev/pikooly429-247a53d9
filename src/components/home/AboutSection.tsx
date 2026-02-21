@@ -26,7 +26,7 @@ const AboutSection = () => {
           {title}
         </h2>
         <div className="text-xs sm:text-sm md:text-base text-muted-foreground leading-relaxed rich-text-content">
-          <div dangerouslySetInnerHTML={{ __html: shortText }} />
+          <span dangerouslySetInnerHTML={{ __html: shortText }} />
           {!expanded && (
             <button
               onClick={() => setExpanded(true)}
