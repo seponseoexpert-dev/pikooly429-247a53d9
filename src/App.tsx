@@ -13,6 +13,8 @@ import CartDrawer from "@/components/layout/CartDrawer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import ProtectedAdminRoute from "@/components/admin/ProtectedAdminRoute";
 import DynamicHead from "@/components/layout/DynamicHead";
+import ScrollToTop from "@/components/layout/ScrollToTop";
+import PageLoader from "@/components/layout/PageLoader";
 import { lazy, Suspense } from "react";
 
 // Eager-load homepage
@@ -56,11 +58,6 @@ const queryClient = new QueryClient({
   },
 });
 
-const PageLoader = () => (
-  <div className="min-h-[60vh] flex items-center justify-center">
-    <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />
-  </div>
-);
 
 const PublicLayout = ({ children }: { children: React.ReactNode }) => (
   <>
@@ -89,6 +86,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ScrollToTop />
             <Routes>
               {/* Public routes */}
               <Route path="/" element={<PublicLayout><Index /></PublicLayout>} />
