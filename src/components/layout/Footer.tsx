@@ -116,10 +116,14 @@ const Footer = () => {
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-10 mb-5 sm:mb-8">
           {/* Brand */}
           <div className="col-span-2 lg:col-span-1">
-            <h3 className="text-xl sm:text-2xl font-display font-bold mb-1">
-              <span className="text-foreground">Pikooly</span>
-              <span className="text-primary">Flora</span>
-            </h3>
+            {settings.footer_logo ? (
+              <img src={settings.footer_logo} alt="Footer Logo" className="h-10 sm:h-12 w-auto mb-1 object-contain" />
+            ) : (
+              <h3 className="text-xl sm:text-2xl font-display font-bold mb-1">
+                <span className="text-foreground">Pikooly</span>
+                <span className="text-primary">Flora</span>
+              </h3>
+            )}
             {footerText && (
               <p className="text-xs sm:text-sm text-muted-foreground italic">
                 {footerText}
