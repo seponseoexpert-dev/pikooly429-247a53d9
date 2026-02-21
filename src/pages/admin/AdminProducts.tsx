@@ -327,7 +327,7 @@ const AdminProducts = () => {
                     yoursite.com/product/{form.slug || "product-slug"}
                   </p>
                   <p className="text-sm text-muted-foreground line-clamp-2">
-                    {form.seo_description || form.description || "Product description will appear here..."}
+                    {(() => { const raw = form.seo_description || form.description || "Product description will appear here..."; const tmp = document.createElement("div"); tmp.innerHTML = raw; return tmp.textContent || tmp.innerText || ""; })()}
                   </p>
                 </div>
                 <div className="space-y-2">
@@ -351,8 +351,8 @@ const AdminProducts = () => {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label>Meta Description</Label>
-                    <span className={`text-xs ${(form.seo_description || form.description).length > 160 ? "text-destructive" : "text-muted-foreground"}`}>
-                      {(form.seo_description || form.description).length}/160
+                    <span className={`text-xs ${(() => { const raw = form.seo_description || form.description; const tmp = document.createElement("div"); tmp.innerHTML = raw; return (tmp.textContent || "").length; })() > 160 ? "text-destructive" : "text-muted-foreground"}`}>
+                      {(() => { const raw = form.seo_description || form.description; const tmp = document.createElement("div"); tmp.innerHTML = raw; return (tmp.textContent || "").length; })()}/160
                     </span>
                   </div>
                   <Textarea value={form.seo_description} onChange={(e) => setForm({ ...form, seo_description: e.target.value })} placeholder={form.description || "Custom meta description..."} rows={2} />
