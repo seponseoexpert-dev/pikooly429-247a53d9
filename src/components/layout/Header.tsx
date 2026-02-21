@@ -322,7 +322,7 @@ const Header = () => {
               return (
                 <div
                   key={cat.id}
-                  className="relative static"
+                  className="relative"
                   onMouseEnter={() => setHoveredCat(cat.id)}
                   onMouseLeave={() => setHoveredCat(null)}
                 >
@@ -335,58 +335,25 @@ const Header = () => {
                     {cat.name}
                     {subs.length > 0 && <ChevronDown size={12} className="ml-0.5 opacity-60" />}
                   </Link>
-                </div>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* Mega Menu Dropdown - full width, outside section-container */}
-        {hoveredCat && (() => {
-          const cat = categories.find(c => c.id === hoveredCat);
-          if (!cat) return null;
-          const subs = subsByCategory[cat.id] || [];
-          if (subs.length === 0) return null;
-          return (
-            <div
-              className="absolute left-0 right-0 top-full z-[100] bg-card border-t border-border shadow-xl"
-              onMouseEnter={() => setHoveredCat(hoveredCat)}
-              onMouseLeave={() => setHoveredCat(null)}
-            >
-              <div className="section-container py-5">
-                <div className="flex gap-8">
-                  <div className="flex-1">
-                    <p className="pb-3 text-sm font-bold text-foreground">{cat.name}</p>
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-1">
+                  {hoveredCat === cat.id && subs.length > 0 && (
+                    <div className="absolute left-0 top-full z-[100] bg-card border border-border rounded-lg shadow-lg min-w-[200px] py-1.5">
                       {subs.map((sub) => (
                         <Link
                           key={sub.id}
                           to={`/shop?cat=${cat.slug}&sub=${sub.slug}`}
-                          className="block py-1.5 text-sm text-muted-foreground hover:text-primary transition-colors"
+                          className="block px-4 py-2 text-sm text-muted-foreground hover:text-primary hover:bg-muted transition-colors"
                           onClick={() => setHoveredCat(null)}
                         >
                           {sub.name}
                         </Link>
                       ))}
                     </div>
-                    <Link
-                      to={`/shop?cat=${cat.slug}`}
-                      className="inline-block mt-3 text-sm font-medium text-primary hover:underline"
-                      onClick={() => setHoveredCat(null)}
-                    >
-                      View All {cat.name} →
-                    </Link>
-                  </div>
-                  {cat.image_url && (
-                    <div className="w-[220px] h-[180px] shrink-0 rounded-xl overflow-hidden">
-                      <img src={cat.image_url} alt={cat.name} className="w-full h-full object-cover" />
-                    </div>
                   )}
                 </div>
-              </div>
-            </div>
-          );
-        })()}
+              );
+            })}
+          </nav>
+        </div>
       </header>
     </>
   );
