@@ -22,7 +22,7 @@ const AboutSection = () => {
         transition={{ duration: 0.6 }}
         className="max-w-4xl mx-auto border border-border rounded-xl p-5 sm:p-6 md:p-8 lg:p-10 bg-card"
       >
-        <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-3 md:mb-4">
+        <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-3 md:mb-4 text-center">
           {title}
         </h2>
         <div className="text-xs sm:text-sm md:text-base text-muted-foreground leading-relaxed space-y-2 sm:space-y-3">
