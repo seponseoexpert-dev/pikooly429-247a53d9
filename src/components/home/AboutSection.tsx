@@ -27,14 +27,26 @@ const AboutSection = () => {
         </h2>
         <div className="text-xs sm:text-sm md:text-base text-muted-foreground leading-relaxed rich-text-content">
           <div dangerouslySetInnerHTML={{ __html: shortText }} />
-          {expanded && <div dangerouslySetInnerHTML={{ __html: fullText }} />}
+          {!expanded && (
+            <button
+              onClick={() => setExpanded(true)}
+              className="text-primary font-medium text-xs sm:text-sm hover:underline inline ml-1"
+            >
+              Read more
+            </button>
+          )}
+          {expanded && (
+            <>
+              <div dangerouslySetInnerHTML={{ __html: fullText }} />
+              <button
+                onClick={() => setExpanded(false)}
+                className="text-primary font-medium text-xs sm:text-sm mt-2 hover:underline block"
+              >
+                Show less
+              </button>
+            </>
+          )}
         </div>
-        <button
-          onClick={() => setExpanded(!expanded)}
-          className="text-primary font-medium text-xs sm:text-sm mt-3 hover:underline"
-        >
-          {expanded ? "Show less" : "Read more"}
-        </button>
 
         {/* Medals */}
         <div className="flex items-center justify-center gap-4 mt-4 sm:mt-5">
