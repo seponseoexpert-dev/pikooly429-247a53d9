@@ -1,11 +1,11 @@
+import { memo, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Twitter, Youtube, Send } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
 import { toast } from "sonner";
 
-const Footer = () => {
+const Footer = memo(() => {
   const { settings } = useSiteSettings();
 
   const [email, setEmail] = useState("");
@@ -241,6 +241,8 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
+});
+
+Footer.displayName = "Footer";
 
 export default Footer;

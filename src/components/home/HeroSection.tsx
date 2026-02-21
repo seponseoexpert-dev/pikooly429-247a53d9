@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, memo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { heroSlides as fallbackSlides } from "@/data/mockData";
 
-const HeroSection = () => {
+const HeroSection = memo(() => {
   const [current, setCurrent] = useState(0);
 
   const { data: dbSliders, isLoading } = useQuery({
@@ -95,9 +95,13 @@ const HeroSection = () => {
               {slide.image && (
                 <img
                   src={slide.image}
-                  alt=""
+                  alt={slide.title || "Promotion"}
+                  width={256}
+                  height={256}
+                  decoding="async"
                   className="w-full h-full object-cover rounded-2xl lg:rounded-3xl shadow-lg"
                   loading={current === 0 ? "eager" : "lazy"}
+                  fetchPriority={current === 0 ? "high" : "auto"}
                 />
               )}
             </div>
@@ -120,6 +124,8 @@ const HeroSection = () => {
       </div>
     </section>
   );
-};
+});
+
+HeroSection.displayName = "HeroSection";
 
 export default HeroSection;
