@@ -19,7 +19,7 @@ const Header = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
   const { totalItems, setIsOpen } = useCart();
-  const { settings } = useSiteSettings();
+  const { settings, isLoading: settingsLoading } = useSiteSettings();
   const { currencies, selectedCurrency, setSelectedCurrency, formatPrice } = useMultiCurrency();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ const Header = () => {
 
   const logoUrl = settings.company_logo || "";
   const announcementText = settings.announcement_bar_text || "🌸 Same Day Delivery Available in 500+ Cities";
-  const showAnnouncement = settings.announcement_bar_enabled !== "false";
+  const showAnnouncement = !settingsLoading && settings.announcement_bar_enabled !== "false";
 
   const { data: allProducts = [] } = useQuery({
     queryKey: ["header-search-products"],
