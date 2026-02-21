@@ -191,10 +191,10 @@ const Footer = memo(() => {
             </ul>
           </div>
 
-          {/* Contact */}
+          {/* Contact + Newsletter */}
           <div className="col-span-2 sm:col-span-1">
             <h4 className="font-display font-semibold text-xs sm:text-base mb-2 sm:mb-3 text-foreground">Contact Us</h4>
-             <ul className="space-y-1 text-[11px] sm:text-sm text-muted-foreground">
+            <ul className="space-y-1 text-[11px] sm:text-sm text-muted-foreground">
               <li className="flex items-center gap-2">📞 {phone}</li>
               <li className="flex items-center gap-2">📧 {storeEmail}</li>
               {address && <li className="flex items-center gap-2">📍 {address}</li>}
