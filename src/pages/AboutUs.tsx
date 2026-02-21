@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { Phone, Globe, Heart, Truck, ShieldCheck, Leaf, Star, Users, Target, Gift } from "lucide-react";
-import founderImg from "@/assets/founder-ripon.jpg";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import founderImgDefault from "@/assets/founder-ripon.jpg";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -33,22 +34,48 @@ const SectionBlock = ({
   );
 };
 
+const valueIcons = [Leaf, ShieldCheck, Truck, Heart];
+
 const AboutUs = () => {
+  const { settings } = useSiteSettings();
+
+  const s = (key: string, fallback: string) => settings[key] || fallback;
+
+  const heroTitle = s("aboutpage_hero_title", "Your Trusted Online Flower Shop in Bangladesh");
+  const heroSubtitle = s("aboutpage_hero_subtitle", "Fresh flowers, beautiful bouquets, and reliable same-day delivery across Dhaka and Bangladesh.");
+  const welcomeText = s("aboutpage_welcome_text", "Pikooly is an online flower, cake, and gift delivery platform serving customers across the country. We help people share love, care, and emotions through fresh flowers and thoughtful gifts. Our service focuses on quality, freshness, clear pricing, and reliable delivery to make every moment simple and meaningful.");
+  const tagline = s("aboutpage_tagline", "Pikooly – Bringing Blooms, Spreading Smiles.");
+  const founderName = s("aboutpage_founder_name", "Md Ripon");
+  const founderTitle = s("aboutpage_founder_title", "Founder & CEO");
+  const founderDesc = s("aboutpage_founder_desc", "Pikooly was founded by Md Ripon, an entrepreneur from Bangladesh with a strong interest in digital business and customer-focused service. The idea behind Pikooly was simple: create a trusted online platform where people can send flowers and gifts without confusion or stress.");
+  const founderImg = settings.aboutpage_founder_image || founderImgDefault;
+  const whoWeAre1 = s("aboutpage_whoweare_1", "Pikooly is built in Bangladesh and serves customers across Dhaka and other major cities. We work with local flower suppliers and trusted partners to ensure that every bouquet and gift is prepared with care.");
+  const whoWeAre2 = s("aboutpage_whoweare_2", "We believe that flowers are not just products. They are messages. A lily bouquet can express respect. A rose can show love. A simple gift can brighten someone's day. That belief guides everything we do.");
+
   const values = [
-    { icon: Leaf, title: "Freshness First", desc: "Every flower is hand-picked and arranged fresh for your order." },
-    { icon: ShieldCheck, title: "Price Transparency", desc: "Clear, honest pricing with no hidden charges ever." },
-    { icon: Truck, title: "Reliable Delivery", desc: "Same-day delivery across Dhaka with careful handling." },
-    { icon: Heart, title: "Customer Trust", desc: "We value long-term relationships over short-term sales." },
+    { icon: valueIcons[0], title: s("aboutpage_value_1_title", "Freshness First"), desc: s("aboutpage_value_1_desc", "Every flower is hand-picked and arranged fresh for your order.") },
+    { icon: valueIcons[1], title: s("aboutpage_value_2_title", "Price Transparency"), desc: s("aboutpage_value_2_desc", "Clear, honest pricing with no hidden charges ever.") },
+    { icon: valueIcons[2], title: s("aboutpage_value_3_title", "Reliable Delivery"), desc: s("aboutpage_value_3_desc", "Same-day delivery across Dhaka with careful handling.") },
+    { icon: valueIcons[3], title: s("aboutpage_value_4_title", "Customer Trust"), desc: s("aboutpage_value_4_desc", "We value long-term relationships over short-term sales.") },
   ];
 
+  const missionIntro = s("aboutpage_mission_intro", "Our mission is to help people in Bangladesh express feelings in a simple and dependable way. We aim to:");
+  const missionItems = [
+    s("aboutpage_mission_item_1", "Deliver fresh flowers on time"),
+    s("aboutpage_mission_item_2", "Offer clear and fair pricing"),
+    s("aboutpage_mission_item_3", "Keep the ordering process easy"),
+    s("aboutpage_mission_item_4", "Maintain trust with every customer"),
+  ].filter(Boolean);
+  const missionClosing = s("aboutpage_mission_closing", "Whether it is a birthday, anniversary, apology, or a quiet personal moment, Pikooly is here to help you send the right message.");
+
   const offerings = [
-    "Fresh flower bouquets (Rose, Lily, Tulip, Mixed)",
-    "Same-day flower delivery in Dhaka",
-    "Next-day flower delivery across Bangladesh",
-    "Cakes and desserts from trusted bakeries",
-    "Gift hampers and combo packages",
-    "Occasion-based gifts for birthdays & anniversaries",
-  ];
+    s("aboutpage_offering_1", "Fresh flower bouquets (Rose, Lily, Tulip, Mixed)"),
+    s("aboutpage_offering_2", "Same-day flower delivery in Dhaka"),
+    s("aboutpage_offering_3", "Next-day flower delivery across Bangladesh"),
+    s("aboutpage_offering_4", "Cakes and desserts from trusted bakeries"),
+    s("aboutpage_offering_5", "Gift hampers and combo packages"),
+    s("aboutpage_offering_6", "Occasion-based gifts for birthdays & anniversaries"),
+  ].filter(Boolean);
 
   const processSteps = [
     { icon: Leaf, label: "Flowers selected fresh" },
@@ -56,6 +83,11 @@ const AboutUs = () => {
     { icon: Gift, label: "Orders packed safely" },
     { icon: Truck, label: "Delivered with care" },
   ];
+
+  const servingText = s("aboutpage_serving_text", "Pikooly primarily serves Dhaka and selected cities across Bangladesh. We continue to improve our delivery coverage and service standards to reach more customers reliably.");
+  const contactPhone = s("aboutpage_contact_phone", "+8801410244421");
+  const contactWebsite = s("aboutpage_contact_website", "https://pikooly.com.bd");
+  const contactWebsiteLabel = s("aboutpage_contact_website_label", "pikooly.com.bd");
 
   return (
     <main className="min-h-screen">
@@ -72,14 +104,13 @@ const AboutUs = () => {
               About Pikooly
             </span>
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold text-foreground leading-tight mb-4">
-              Your Trusted Online Flower Shop in Bangladesh
+              {heroTitle}
             </h1>
             <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-              Fresh flowers, beautiful bouquets, and reliable same-day delivery across Dhaka and Bangladesh.
+              {heroSubtitle}
             </p>
           </motion.div>
         </div>
-        {/* Decorative circles */}
         <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-primary/5 blur-3xl pointer-events-none" />
         <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-primary/5 blur-3xl pointer-events-none" />
       </section>
@@ -91,11 +122,9 @@ const AboutUs = () => {
             <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground">
               Welcome to Pikooly
             </h2>
-            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-              Pikooly is an online flower, cake, and gift delivery platform serving customers across the country. We help people share love, care, and emotions through fresh flowers and thoughtful gifts. Our service focuses on quality, freshness, clear pricing, and reliable delivery to make every moment simple and meaningful.
-            </p>
+            <div className="text-sm sm:text-base text-muted-foreground leading-relaxed" dangerouslySetInnerHTML={{ __html: welcomeText }} />
             <p className="text-sm sm:text-base font-medium text-primary italic">
-              Pikooly – Bringing Blooms, Spreading Smiles.
+              {tagline}
             </p>
           </div>
         </SectionBlock>
@@ -111,7 +140,7 @@ const AboutUs = () => {
                   <div className="w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 rounded-2xl overflow-hidden border-4 border-primary/20 shadow-lg">
                     <img
                       src={founderImg}
-                      alt="Md Ripon – Founder & CEO of Pikooly"
+                      alt={`${founderName} – ${founderTitle} of Pikooly`}
                       className="w-full h-full object-cover"
                       loading="lazy"
                     />
@@ -119,13 +148,13 @@ const AboutUs = () => {
                 </div>
                 <div className="text-center md:text-left space-y-3">
                   <span className="inline-block text-xs font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">
-                    Founder & CEO
+                    {founderTitle}
                   </span>
                   <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground">
-                    Md Ripon
+                    {founderName}
                   </h2>
                   <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                    Pikooly was founded by Md Ripon, an entrepreneur from Bangladesh with a strong interest in digital business and customer-focused service. The idea behind Pikooly was simple: create a trusted online platform where people can send flowers and gifts without confusion or stress.
+                    {founderDesc}
                   </p>
                 </div>
               </div>
@@ -143,12 +172,8 @@ const AboutUs = () => {
               Who We Are
             </h2>
           </div>
-          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-            Pikooly is built in Bangladesh and serves customers across Dhaka and other major cities. We work with local flower suppliers and trusted partners to ensure that every bouquet and gift is prepared with care.
-          </p>
-          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-            We believe that flowers are not just products. They are messages. A lily bouquet can express respect. A rose can show love. A simple gift can brighten someone's day. That belief guides everything we do.
-          </p>
+          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">{whoWeAre1}</p>
+          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">{whoWeAre2}</p>
         </SectionBlock>
       </section>
 
@@ -191,25 +216,16 @@ const AboutUs = () => {
               Our Mission
             </h2>
           </div>
-          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-4">
-            Our mission is to help people in Bangladesh express feelings in a simple and dependable way. We aim to:
-          </p>
+          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-4">{missionIntro}</p>
           <ul className="space-y-2.5">
-            {[
-              "Deliver fresh flowers on time",
-              "Offer clear and fair pricing",
-              "Keep the ordering process easy",
-              "Maintain trust with every customer",
-            ].map((item) => (
+            {missionItems.map((item) => (
               <li key={item} className="flex items-start gap-2.5 text-sm sm:text-base text-muted-foreground">
                 <span className="mt-1.5 w-2 h-2 rounded-full bg-primary shrink-0" />
                 {item}
               </li>
             ))}
           </ul>
-          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mt-4">
-            Whether it is a birthday, anniversary, apology, or a quiet personal moment, Pikooly is here to help you send the right message.
-          </p>
+          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mt-4">{missionClosing}</p>
         </SectionBlock>
       </section>
 
@@ -228,10 +244,7 @@ const AboutUs = () => {
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {offerings.map((item) => (
-                <div
-                  key={item}
-                  className="flex items-center gap-3 bg-card border border-border rounded-lg px-4 py-3"
-                >
+                <div key={item} className="flex items-center gap-3 bg-card border border-border rounded-lg px-4 py-3">
                   <Star className="w-4 h-4 text-primary shrink-0" />
                   <span className="text-sm sm:text-base text-foreground">{item}</span>
                 </div>
@@ -281,9 +294,7 @@ const AboutUs = () => {
             <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground">
               Serving Bangladesh
             </h2>
-            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-              Pikooly primarily serves Dhaka and selected cities across Bangladesh. We continue to improve our delivery coverage and service standards to reach more customers reliably.
-            </p>
+            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-2xl mx-auto">{servingText}</p>
           </SectionBlock>
         </div>
       </section>
@@ -300,20 +311,20 @@ const AboutUs = () => {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
               <a
-                href="tel:+8801410244421"
+                href={`tel:${contactPhone}`}
                 className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-lg font-medium text-sm hover:bg-primary/90 transition-colors"
               >
                 <Phone className="w-4 h-4" />
-                +8801410244421
+                {contactPhone}
               </a>
               <a
-                href="https://pikooly.com.bd"
+                href={contactWebsite}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-card border border-border text-foreground px-5 py-2.5 rounded-lg font-medium text-sm hover:bg-muted transition-colors"
               >
                 <Globe className="w-4 h-4" />
-                pikooly.com.bd
+                {contactWebsiteLabel}
               </a>
             </div>
             <p className="text-xs text-muted-foreground">
