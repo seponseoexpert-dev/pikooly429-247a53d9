@@ -301,21 +301,7 @@ const Header = () => {
           </div>
 
           {/* === ROW 2: Category Nav Bar (Desktop only) === */}
-          <nav className="hidden md:flex items-center gap-1 border-t border-border/40">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                to={link.href}
-                className={`px-3 lg:px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors hover:text-primary ${
-                  (link.href === "/" && location.pathname === "/") ||
-                  (link.href !== "/" && location.pathname + location.search === link.href)
-                    ? "text-primary border-b-2 border-primary"
-                    : "text-muted-foreground"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
+          <nav className="hidden md:flex items-center justify-center gap-1 border-t border-border/40">
             {categories.map((cat) => {
               const subs = subsByCategory[cat.id] || [];
               const isActive = location.pathname + location.search === `/shop?cat=${cat.slug}`;
