@@ -8,7 +8,7 @@ import { heroSlides as fallbackSlides } from "@/data/mockData";
 const HeroSection = () => {
   const [current, setCurrent] = useState(0);
 
-  const { data: dbSliders } = useQuery({
+  const { data: dbSliders, isLoading } = useQuery({
     queryKey: ["sliders"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -29,7 +29,9 @@ const HeroSection = () => {
         bgColor: s.bg_color || "#d4e8d0",
         link: s.link || "/shop",
       }))
-    : fallbackSlides.map((s) => ({ ...s, link: "/shop" }));
+    : !isLoading
+      ? fallbackSlides.map((s) => ({ ...s, link: "/shop" }))
+      : [];
 
   useEffect(() => {
     if (slides.length <= 1) return;
@@ -38,11 +40,19 @@ const HeroSection = () => {
   }, [slides.length]);
 
   useEffect(() => {
-    if (current >= slides.length) setCurrent(0);
+    if (current >= slides.length && slides.length > 0) setCurrent(0);
   }, [slides.length, current]);
 
   const prev = useCallback(() => setCurrent((p) => (p - 1 + slides.length) % slides.length), [slides.length]);
   const next = useCallback(() => setCurrent((p) => (p + 1) % slides.length), [slides.length]);
+
+  if (isLoading) {
+    return (
+      <section className="relative py-3 sm:py-4 md:py-6 lg:py-8 section-container">
+        <div className="overflow-hidden rounded-2xl lg:rounded-3xl bg-muted animate-pulse min-h-[220px] sm:min-h-[260px] md:min-h-[320px] lg:min-h-[400px] xl:min-h-[440px]" />
+      </section>
+    );
+  }
 
   if (slides.length === 0) return null;
   const slide = slides[current];
