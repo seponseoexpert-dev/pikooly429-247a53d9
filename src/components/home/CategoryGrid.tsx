@@ -33,7 +33,7 @@ const CategoryGrid = memo(() => {
       <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-4 md:mb-6 text-center">
         Shop by Category
       </h2>
-      <div className="grid grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6 md:max-w-3xl lg:max-w-4xl mx-auto">
+      <div className="grid grid-cols-4 gap-3 sm:gap-4 md:flex md:flex-nowrap md:justify-center md:gap-5 lg:gap-6">
         {categories.map((cat) => (
           <div key={cat.id}>
             <Link
