@@ -1,4 +1,3 @@
-import AdminLayout from "@/components/admin/AdminLayout";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -48,8 +47,7 @@ const AdminSubscribers = () => {
   });
 
   return (
-    <AdminLayout>
-      <div className="space-y-4">
+    <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-display font-bold">Newsletter Subscribers</h2>
@@ -102,8 +100,7 @@ const AdminSubscribers = () => {
             </TableBody>
           </Table>
         </div>
-      </div>
-    </AdminLayout>
+    </div>
   );
 };
 

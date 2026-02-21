@@ -1,4 +1,3 @@
-import AdminLayout from "@/components/admin/AdminLayout";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -90,8 +89,7 @@ const AdminCurrencies = () => {
   };
 
   return (
-    <AdminLayout>
-      <div className="max-w-4xl">
+    <div className="max-w-4xl">
         <div className="flex items-center gap-3 mb-6">
           <Coins className="h-6 w-6 text-primary" />
           <h2 className="text-2xl font-display font-bold">Currencies</h2>
@@ -196,8 +194,7 @@ const AdminCurrencies = () => {
             ))
           )}
         </div>
-      </div>
-    </AdminLayout>
+    </div>
   );
 };
 
