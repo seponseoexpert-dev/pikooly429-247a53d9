@@ -1,9 +1,10 @@
+import { memo } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { CategoryGridSkeleton } from "@/components/ui/skeletons";
 
-const CategoryGrid = () => {
+const CategoryGrid = memo(() => {
   const { data: categories = [], isLoading } = useQuery({
     queryKey: ["homepage-categories"],
     queryFn: async () => {
@@ -38,6 +39,9 @@ const CategoryGrid = () => {
                 <img
                   src={cat.image_url || "/placeholder.svg"}
                   alt={cat.name}
+                  width={96}
+                  height={96}
+                  decoding="async"
                   className="w-full h-full object-cover object-center"
                   loading="lazy"
                 />
@@ -51,6 +55,8 @@ const CategoryGrid = () => {
       </div>
     </section>
   );
-};
+});
+
+CategoryGrid.displayName = "CategoryGrid";
 
 export default CategoryGrid;

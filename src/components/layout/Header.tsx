@@ -137,7 +137,7 @@ const Header = () => {
             {/* Logo */}
             <Link to="/" className="shrink-0 flex items-center">
               {logoUrl ? (
-                <img src={logoUrl} alt={settings.store_name || "Store"} className="h-8 sm:h-9 md:h-10 w-auto object-contain" />
+                <img src={logoUrl} alt={settings.store_name || "Store"} width={120} height={40} decoding="async" fetchPriority="high" className="h-8 sm:h-9 md:h-10 w-auto object-contain" />
               ) : (
                 <span className="text-lg sm:text-xl md:text-2xl font-display font-bold">
                   <span className="text-foreground">Pikooly</span>

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, memo } from "react";
 import ProductCard from "@/components/product/ProductCard";
 import { ProductCardSkeleton } from "@/components/ui/skeletons";
 import { Link } from "react-router-dom";
@@ -6,7 +6,7 @@ import { ChevronRight, TrendingUp, Gift } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-const ProductGrid = () => {
+const ProductGrid = memo(() => {
   const [activeTab, setActiveTab] = useState("All");
 
   const { data: products = [], isLoading: productsLoading } = useQuery({
@@ -130,6 +130,8 @@ const ProductGrid = () => {
       )}
     </section>
   );
-};
+});
+
+ProductGrid.displayName = "ProductGrid";
 
 export default ProductGrid;
