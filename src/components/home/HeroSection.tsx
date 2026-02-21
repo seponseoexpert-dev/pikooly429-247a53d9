@@ -50,7 +50,9 @@ const HeroSection = memo(() => {
   if (isLoading) {
     return (
       <section className="relative py-3 sm:py-4 md:py-6 lg:py-8 section-container">
-        <div className="overflow-hidden rounded-2xl lg:rounded-3xl bg-muted animate-pulse min-h-[220px] sm:min-h-[260px] md:min-h-[320px] lg:min-h-[400px] xl:min-h-[440px]" />
+        <div className="overflow-hidden rounded-2xl lg:rounded-3xl bg-muted/40 min-h-[220px] sm:min-h-[260px] md:min-h-[320px] lg:min-h-[400px] xl:min-h-[440px] flex items-center justify-center">
+          <div className="w-8 h-8 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
+        </div>
       </section>
     );
   }
@@ -59,7 +61,7 @@ const HeroSection = memo(() => {
   const slide = slides[current];
 
   return (
-    <section className="relative py-3 sm:py-4 md:py-6 lg:py-8 section-container" aria-label="Featured promotions">
+    <section className="relative py-3 sm:py-4 md:py-6 lg:py-8 section-container animate-fade-in" aria-label="Featured promotions">
       <div className="relative">
         {/* Navigation arrows outside the card */}
         <button

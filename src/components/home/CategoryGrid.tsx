@@ -2,7 +2,7 @@ import { memo } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { CategoryGridSkeleton } from "@/components/ui/skeletons";
+
 
 const CategoryGrid = memo(() => {
   const { data: categories = [], isLoading } = useQuery({
@@ -20,12 +20,16 @@ const CategoryGrid = memo(() => {
     staleTime: 5 * 60 * 1000,
   });
 
-  if (isLoading) return <CategoryGridSkeleton />;
+  if (isLoading) return (
+    <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container flex items-center justify-center min-h-[120px]">
+      <div className="w-7 h-7 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
+    </section>
+  );
 
   if (categories.length === 0) return null;
 
   return (
-    <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Shop by Category">
+    <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container animate-fade-in" aria-label="Shop by Category">
       <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-4 md:mb-6 text-center">
         Shop by Category
       </h2>
