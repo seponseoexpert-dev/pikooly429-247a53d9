@@ -50,7 +50,7 @@ const HeroSection = memo(() => {
   if (isLoading) {
     return (
       <section className="relative py-3 sm:py-4 md:py-6 lg:py-8 section-container">
-        <div className="overflow-hidden rounded-2xl lg:rounded-3xl bg-muted/40 aspect-square sm:aspect-[2/1] md:aspect-[5/2] lg:aspect-[3/1] flex items-center justify-center">
+        <div className="overflow-hidden rounded-2xl lg:rounded-3xl bg-muted/40 h-[220px] sm:aspect-[2/1] sm:h-auto md:aspect-[5/2] lg:aspect-[3/1] flex items-center justify-center">
           <div className="w-8 h-8 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
         </div>
       </section>
@@ -81,7 +81,7 @@ const HeroSection = memo(() => {
 
         {/* Slide card */}
         <div className="overflow-hidden rounded-2xl lg:rounded-3xl transition-colors duration-500" style={{ backgroundColor: slide.bgColor }}>
-          <div className="flex items-center aspect-square sm:aspect-[2/1] md:aspect-[5/2] lg:aspect-[3/1] px-8 sm:px-12 md:px-16 lg:px-20">
+          <div className="flex items-center h-[220px] sm:h-auto sm:aspect-[2/1] md:aspect-[5/2] lg:aspect-[3/1] px-8 sm:px-12 md:px-16 lg:px-20">
             <div className="relative z-10 max-w-[55%] sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl space-y-4 md:space-y-6">
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display font-bold text-foreground leading-[1.15] tracking-tight whitespace-pre-line">
                 {slide.title}
