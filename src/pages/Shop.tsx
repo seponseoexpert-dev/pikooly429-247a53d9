@@ -31,7 +31,7 @@ const Shop = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("*, categories(name, slug)")
+        .select("*, categories(name, slug), product_categories(category_id, categories(name, slug))")
         .eq("is_active", true)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -132,7 +132,13 @@ const Shop = () => {
 
   const filtered = useMemo(() => {
     let list = selectedCat
-      ? products.filter((p: any) => p.categories?.slug === selectedCat)
+      ? products.filter((p: any) => {
+          // Check primary category
+          if (p.categories?.slug === selectedCat) return true;
+          // Check junction table categories
+          if (p.product_categories?.some((pc: any) => pc.categories?.slug === selectedCat)) return true;
+          return false;
+        })
       : products;
 
     if (searchParam) {
