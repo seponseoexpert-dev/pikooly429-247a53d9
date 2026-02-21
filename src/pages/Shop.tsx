@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import ProductCard from "@/components/product/ProductCard";
+import ProductCardSkeleton from "@/components/product/ProductCardSkeleton";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -25,7 +26,7 @@ const Shop = () => {
 
   const [sortBy, setSortBy] = useState("newest");
 
-  const { data: products = [] } = useQuery({
+  const { data: products = [], isLoading: productsLoading } = useQuery({
     queryKey: ["shop-products"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -231,12 +232,14 @@ const Shop = () => {
       )}
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
-        {filtered.map((product: any) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+        {productsLoading
+          ? Array.from({ length: 10 }).map((_, i) => <ProductCardSkeleton key={i} />)
+          : filtered.map((product: any) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
       </div>
 
-      {filtered.length === 0 && (
+      {!productsLoading && filtered.length === 0 && (
         <div className="text-center py-20 text-muted-foreground">
           <p className="text-sm sm:text-base md:text-lg">No products found in this category.</p>
         </div>
