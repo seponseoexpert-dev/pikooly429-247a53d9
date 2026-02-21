@@ -21,7 +21,7 @@ const CategoryGrid = () => {
 
   return (
     <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Shop by Category">
-      <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-4 md:mb-6">
+      <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-4 md:mb-6 text-center">
         Shop by Category
       </h2>
       <div className="flex justify-center gap-3 sm:gap-4 md:gap-5 lg:gap-6 overflow-x-auto pb-2 scrollbar-hide">
