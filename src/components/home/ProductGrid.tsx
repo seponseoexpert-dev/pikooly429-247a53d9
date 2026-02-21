@@ -1,6 +1,6 @@
 import { useState, useMemo, memo } from "react";
 import ProductCard from "@/components/product/ProductCard";
-import { ProductCardSkeleton } from "@/components/ui/skeletons";
+
 import { Link } from "react-router-dom";
 import { ChevronRight, TrendingUp, Gift } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -58,7 +58,7 @@ const ProductGrid = memo(() => {
       });
 
   return (
-    <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Products">
+    <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container animate-fade-in" aria-label="Products">
       <div className="flex items-center justify-between mb-4 md:mb-6">
         <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground">
           Trending Gifts
@@ -70,7 +70,7 @@ const ProductGrid = memo(() => {
 
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
         {productsLoading
-          ? Array.from({ length: 5 }).map((_, i) => <ProductCardSkeleton key={i} />)
+          ? <div className="col-span-full flex items-center justify-center py-10"><div className="w-7 h-7 border-3 border-primary/30 border-t-primary rounded-full animate-spin" /></div>
           : displayFeatured.map((product: any) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -113,7 +113,7 @@ const ProductGrid = memo(() => {
 
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
         {productsLoading
-          ? Array.from({ length: 10 }).map((_, i) => <ProductCardSkeleton key={i} />)
+          ? <div className="col-span-full flex items-center justify-center py-10"><div className="w-7 h-7 border-3 border-primary/30 border-t-primary rounded-full animate-spin" /></div>
           : filtered.slice(0, 10).map((product: any) => (
               <ProductCard key={product.id} product={product} />
             ))}
