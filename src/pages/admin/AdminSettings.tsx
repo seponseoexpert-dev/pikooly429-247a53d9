@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import RichTextEditor from "@/components/admin/RichTextEditor";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -51,7 +52,7 @@ const settingSections = [
 type FieldDef = {
   key: string;
   label: string;
-  type?: "textarea" | "switch" | "image_upload" | "select" | "radio";
+  type?: "textarea" | "switch" | "image_upload" | "select" | "radio" | "richtext";
   options?: { value: string; label: string }[];
   placeholder?: string;
   fullWidth?: boolean;
@@ -253,8 +254,8 @@ const sectionFields: Record<string, FieldDef[]> = {
   ],
   about: [
     { key: "about_title", label: "About Title", fullWidth: true, placeholder: "PikoolyFlora: Online Flower Shop in Bangladesh" },
-    { key: "about_short_text", label: "Short Text (before Read more)", type: "textarea", fullWidth: true, placeholder: "Welcome to PikoolyFlora-Online website..." },
-    { key: "about_full_text", label: "Full Text (after Read more)", type: "textarea", fullWidth: true, placeholder: "Extended description shown after clicking Read more..." },
+    { key: "about_short_text", label: "Short Text (before Read more)", type: "richtext", fullWidth: true, placeholder: "Welcome to PikoolyFlora-Online website..." },
+    { key: "about_full_text", label: "Full Text (after Read more)", type: "richtext", fullWidth: true, placeholder: "Extended description shown after clicking Read more..." },
   ],
   faq: [
     { key: "faq_section_title", label: "Section Title", placeholder: "Frequently Asked Questions" },
@@ -383,6 +384,9 @@ const FieldRenderer = ({
 }) => {
   if (field.type === "image_upload") {
     return <ImageUploadField fieldKey={field.key} value={value} onChange={onChange} />;
+  }
+  if (field.type === "richtext") {
+    return <RichTextEditor value={value} onChange={onChange} />;
   }
   if (field.type === "textarea") {
     return (

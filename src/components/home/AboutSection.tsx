@@ -26,13 +26,8 @@ const AboutSection = () => {
           {title}
         </h2>
         <div className="text-xs sm:text-sm md:text-base text-muted-foreground leading-relaxed space-y-2 sm:space-y-3">
-          <p>
-            {shortText}
-            {!expanded && "..."}
-          </p>
-          {expanded && fullText.split("\n\n").map((para, i) => (
-            <p key={i}>{para}</p>
-          ))}
+          <div dangerouslySetInnerHTML={{ __html: shortText }} />
+          {expanded && <div dangerouslySetInnerHTML={{ __html: fullText }} />}
         </div>
         <button
           onClick={() => setExpanded(!expanded)}
