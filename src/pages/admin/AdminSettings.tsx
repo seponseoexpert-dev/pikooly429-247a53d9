@@ -81,6 +81,11 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "company_favicon", label: "Favicon", type: "image_upload" },
   ],
   site: [
+    { key: "announcement_bar_enabled", label: "Announcement Bar", type: "radio", options: [
+      { value: "true", label: "Enable" },
+      { value: "false", label: "Disable" },
+    ]},
+    { key: "announcement_bar_text", label: "Announcement Bar Text", placeholder: "🌸 Same Day Delivery Available in 500+ Cities" },
     { key: "date_format", label: "Date Format", type: "select", options: [
       { value: "d-m-Y", label: "d-m-Y (20-02-2026)" },
       { value: "Y-m-d", label: "Y-m-d (2026-02-20)" },
