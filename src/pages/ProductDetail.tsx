@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingBag, Heart, Minus, Plus, Star, Phone, MessageCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import ProductCard from "@/components/product/ProductCard";
+import { ProductDetailSkeleton } from "@/components/ui/skeletons";
 import ReviewSection from "@/components/product/ReviewSection";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -79,11 +80,7 @@ const ProductDetail = () => {
   }, [product, settings]);
 
   if (isLoading) {
-    return (
-      <main className="section-container py-20 text-center">
-        <p className="text-muted-foreground">Loading...</p>
-      </main>
-    );
+    return <ProductDetailSkeleton />;
   }
 
   if (!product) {
