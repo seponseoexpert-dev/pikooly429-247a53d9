@@ -122,7 +122,7 @@ const AboutUs = () => {
             <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground">
               Welcome to Pikooly
             </h2>
-            <div className="text-sm sm:text-base text-muted-foreground leading-relaxed" dangerouslySetInnerHTML={{ __html: welcomeText }} />
+            <div className="text-sm sm:text-base text-muted-foreground leading-relaxed rich-text-content" dangerouslySetInnerHTML={{ __html: welcomeText }} />
             <p className="text-sm sm:text-base font-medium text-primary italic">
               {tagline}
             </p>
