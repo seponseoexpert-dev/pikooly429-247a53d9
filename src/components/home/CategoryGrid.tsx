@@ -40,7 +40,7 @@ const CategoryGrid = memo(() => {
               to={`/shop?cat=${cat.slug}`}
               className="flex flex-col items-center gap-2 group"
             >
-              <div className="w-full aspect-square md:w-24 md:h-24 lg:w-24 lg:h-24 rounded-2xl overflow-hidden bg-secondary border border-border/30 group-hover:border-primary/40 group-hover:shadow-lg transition-all duration-200">
+              <div className="w-full aspect-square md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-2xl overflow-hidden bg-secondary border border-border/30 group-hover:border-primary/40 group-hover:shadow-lg transition-all duration-200 flex-shrink-0">
                 <img
                   src={cat.image_url || "/placeholder.svg"}
                   alt={cat.name}
