@@ -261,6 +261,8 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "license_code", label: "License Code" },
   ],
   about: [
+    { key: "homepage_seo_title", label: "Homepage SEO Title (Google Title)", fullWidth: true, placeholder: "PikoolyFlora – Online Flower, Cake & Gift Delivery in Bangladesh" },
+    { key: "homepage_meta_description", label: "Homepage Meta Description (Google Snippet)", type: "textarea", fullWidth: true, placeholder: "Order fresh flowers, cakes & gifts online in Bangladesh. Same-day delivery in Dhaka. Best prices guaranteed. 🌸" },
     { key: "about_title", label: "About Title", fullWidth: true, placeholder: "PikoolyFlora: Online Flower Shop in Bangladesh" },
     { key: "about_short_text", label: "Short Text (before Read more)", type: "richtext", fullWidth: true, placeholder: "Welcome to PikoolyFlora-Online website..." },
     { key: "about_full_text", label: "Full Text (after Read more)", type: "richtext", fullWidth: true, placeholder: "Extended description shown after clicking Read more..." },
