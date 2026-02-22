@@ -12,7 +12,7 @@ import {
   Bell, BellRing, Share2, Cookie, BarChart3, Palette, Image,
   Settings, Upload, X, Phone,
   Store, Gift, Ruler, Receipt, FileText, Shield, Languages,
-  MessageSquare, CreditCard, Award, Star,
+  MessageSquare, CreditCard, Award, Star, RefreshCw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -253,8 +253,9 @@ const sectionFields: Record<string, FieldDef[]> = {
   sms_gateway: [], // Handled by custom SmsGatewaySection component
   payment_gateway: [], // Handled by custom PaymentGatewaySection component
   google_reviews: [
-    { key: "google_rating", label: "Google Rating (e.g. 4.8)", placeholder: "4.8" },
-    { key: "google_review_count", label: "Happy Customers Count", placeholder: "462543" },
+    { key: "google_place_id", label: "Google Place ID", placeholder: "ChIJ...", fullWidth: true },
+    { key: "google_rating", label: "Google Rating (auto-synced)", placeholder: "4.8" },
+    { key: "google_review_count", label: "Review Count (auto-synced)", placeholder: "0" },
     { key: "google_review_link", label: "Google Review Link", fullWidth: true, placeholder: "https://g.page/r/your-business/review" },
   ],
   license: [
@@ -732,6 +733,40 @@ const PaymentGatewaySection = ({
         </TabsContent>
       ))}
     </Tabs>
+  );
+};
+
+const SyncGoogleReviewsButton = () => {
+  const [syncing, setSyncing] = useState(false);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const handleSync = async () => {
+    setSyncing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("sync-google-reviews");
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast({ title: "Synced!", description: `Rating: ${data.rating}, Reviews: ${data.reviewCount}` });
+      queryClient.invalidateQueries({ queryKey: ["admin-settings"] });
+      queryClient.invalidateQueries({ queryKey: ["site-settings"] });
+    } catch (err: any) {
+      toast({ title: "Sync failed", description: err.message, variant: "destructive" });
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  return (
+    <div className="pt-4 border-t mt-4">
+      <Button type="button" variant="outline" onClick={handleSync} disabled={syncing}>
+        <RefreshCw className={cn("h-4 w-4 mr-2", syncing && "animate-spin")} />
+        {syncing ? "Syncing..." : "Sync from Google"}
+      </Button>
+      <p className="text-xs text-muted-foreground mt-2">
+        Google Place ID সেট করে Save করুন, তারপর Sync বাটনে ক্লিক করুন। Rating ও Review Count অটো আপডেট হবে।
+      </p>
+    </div>
   );
 };
 
@@ -1285,6 +1320,9 @@ const AdminSettings = () => {
                       </div>
                       {activeSection === "mail" && (
                         <SendTestEmailButton />
+                      )}
+                      {activeSection === "google_reviews" && (
+                        <SyncGoogleReviewsButton />
                       )}
                     </div>
                   )}
