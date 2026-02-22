@@ -12,7 +12,7 @@ import {
   Bell, BellRing, Share2, Cookie, BarChart3, Palette, Image,
   Settings, Upload, X, Phone,
   Store, Gift, Ruler, Receipt, FileText, Shield, Languages,
-  MessageSquare, CreditCard, Award,
+  MessageSquare, CreditCard, Award, Star,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -47,6 +47,7 @@ const settingSections = [
   { key: "about_page", label: "About Us Page", icon: FileText },
   { key: "contact_page", label: "Contact Us Page", icon: Phone },
   { key: "faq", label: "FAQ Section", icon: MessageSquare },
+  { key: "google_reviews", label: "Google Reviews", icon: Star },
   { key: "license", label: "License", icon: Award },
   { key: "footer", label: "Footer", icon: FileText },
 ];
@@ -251,6 +252,11 @@ const sectionFields: Record<string, FieldDef[]> = {
   ],
   sms_gateway: [], // Handled by custom SmsGatewaySection component
   payment_gateway: [], // Handled by custom PaymentGatewaySection component
+  google_reviews: [
+    { key: "google_rating", label: "Google Rating (e.g. 4.8)", placeholder: "4.8" },
+    { key: "google_review_count", label: "Happy Customers Count", placeholder: "462543" },
+    { key: "google_review_link", label: "Google Review Link", fullWidth: true, placeholder: "https://g.page/r/your-business/review" },
+  ],
   license: [
     { key: "license_code", label: "License Code" },
   ],
