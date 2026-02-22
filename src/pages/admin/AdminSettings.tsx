@@ -202,9 +202,9 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "cookies_summary", label: "Cookies Summary", type: "textarea", fullWidth: true },
   ],
   analytics: [
-    { key: "google_analytics_id", label: "Google Analytics ID" },
-    { key: "facebook_pixel_id", label: "Facebook Pixel ID" },
-    { key: "google_tag_manager_id", label: "Google Tag Manager ID" },
+    { key: "google_analytics_id", label: "Google Analytics ID", placeholder: "G-XXXXXXXXXX" },
+    { key: "facebook_pixel_id", label: "Facebook Pixel ID", placeholder: "123456789012345" },
+    { key: "google_tag_manager_id", label: "Google Tag Manager ID", placeholder: "GTM-XXXXXXX" },
   ],
   theme: [
     { key: "company_logo", label: "Logo (128PX, 43PX)", type: "image_upload" },
