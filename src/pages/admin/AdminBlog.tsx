@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Eye, EyeOff } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Blog = Tables<"blogs">;
@@ -24,7 +25,9 @@ const AdminBlog = () => {
   const [saving, setSaving] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
-  const defaultForm = { title: "", slug: "", content: "", excerpt: "", image_url: "", is_published: false, seo_title: "", seo_description: "" };
+  const blogCategories = ["General", "Flowers", "Gifts", "Tips & Tricks", "Occasions", "Delivery", "News"];
+
+  const defaultForm = { title: "", slug: "", content: "", excerpt: "", image_url: "", is_published: false, seo_title: "", seo_description: "", category: "General" };
   const [form, setForm] = useState(defaultForm);
 
   const fetchBlogs = async () => {
@@ -46,6 +49,7 @@ const AdminBlog = () => {
       title: blog.title, slug: blog.slug, content: blog.content || "",
       excerpt: blog.excerpt || "", image_url: blog.image_url || "", is_published: blog.is_published,
       seo_title: (blog as any).seo_title || "", seo_description: (blog as any).seo_description || "",
+      category: (blog as any).category || "General",
     });
     setImageFile(null);
     setDialogOpen(true);
@@ -80,6 +84,7 @@ const AdminBlog = () => {
       author_id: user?.id || null,
       seo_title: form.seo_title.trim() || null,
       seo_description: form.seo_description.trim() || null,
+      category: form.category || "General",
     };
 
     if (editing) {
@@ -132,9 +137,22 @@ const AdminBlog = () => {
                 <Label>Title *</Label>
                 <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value, slug: generateSlug(e.target.value) })} required />
               </div>
-              <div className="space-y-2">
-                <Label>Slug</Label>
-                <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Slug</Label>
+                  <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Category</Label>
+                  <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
+                    <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                    <SelectContent>
+                      {blogCategories.map((cat) => (
+                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label>Excerpt</Label>
@@ -217,6 +235,7 @@ const AdminBlog = () => {
                     <TableHead className="hidden sm:table-cell">Image</TableHead>
                     <TableHead>Title</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead className="hidden sm:table-cell">Category</TableHead>
                     <TableHead className="hidden md:table-cell">Date</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -235,6 +254,9 @@ const AdminBlog = () => {
                         <span className={`text-xs px-2 py-1 rounded-full ${blog.is_published ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-800"}`}>
                           {blog.is_published ? "Published" : "Draft"}
                         </span>
+                      </TableCell>
+                      <TableCell className="hidden sm:table-cell">
+                        <span className="text-xs bg-muted px-2 py-1 rounded-full">{(blog as any).category || "General"}</span>
                       </TableCell>
                       <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
                         {new Date(blog.created_at).toLocaleDateString("en-GB")}
