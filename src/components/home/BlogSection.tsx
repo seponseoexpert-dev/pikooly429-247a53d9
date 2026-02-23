@@ -1,10 +1,15 @@
-import { Calendar, ArrowRight } from "lucide-react";
+import { Calendar, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { BlogCardSkeleton } from "@/components/ui/skeletons";
 
 const BlogSection = () => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
   const { data: posts = [], isLoading } = useQuery({
     queryKey: ["home-blogs"],
     queryFn: async () => {
@@ -13,38 +18,116 @@ const BlogSection = () => {
         .select("*")
         .eq("is_published", true)
         .order("published_at", { ascending: false })
-        .limit(3);
+        .limit(6);
       if (error) throw error;
       return data;
     },
   });
 
+  const updateScrollButtons = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 4);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
+  };
+
+  const scroll = (dir: "left" | "right") => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cardWidth = el.querySelector("a")?.offsetWidth || 280;
+    el.scrollBy({ left: dir === "left" ? -cardWidth - 16 : cardWidth + 16, behavior: "smooth" });
+  };
+
   if (!isLoading && posts.length === 0) return null;
 
   return (
     <section className="py-8 md:py-12 section-container">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-5">
         <h2 className="text-xl md:text-2xl font-display font-semibold">Latest from Blog</h2>
-        <Link to="/blog" className="text-sm text-primary font-medium hover:underline">View All</Link>
+        <Link to="/blog" className="text-sm text-primary font-medium hover:underline inline-flex items-center gap-1">
+          View All <ArrowRight size={14} />
+        </Link>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {isLoading
-          ? Array.from({ length: 3 }).map((_, i) => <BlogCardSkeleton key={i} />)
-          : posts.map((post: any) => (
-              <Link key={post.id} to={`/blog/${post.slug}`} className="group bg-card rounded-2xl overflow-hidden border border-border/50 hover:shadow-lg transition-all">
-                <div className="aspect-[16/10] overflow-hidden">
-                  <img src={post.image_url || "/placeholder.svg"} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" />
+
+      <div className="relative group/blog">
+        {/* Scroll arrows – visible on tablet+ */}
+        {canScrollLeft && (
+          <button
+            onClick={() => scroll("left")}
+            className="hidden md:flex absolute -left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 items-center justify-center rounded-full bg-card border border-border shadow-md text-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
+            aria-label="Scroll left"
+          >
+            <ChevronLeft size={18} />
+          </button>
+        )}
+        {canScrollRight && (
+          <button
+            onClick={() => scroll("right")}
+            className="hidden md:flex absolute -right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 items-center justify-center rounded-full bg-card border border-border shadow-md text-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
+            aria-label="Scroll right"
+          >
+            <ChevronRight size={18} />
+          </button>
+        )}
+
+        <div
+          ref={scrollRef}
+          onScroll={updateScrollButtons}
+          className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2 -mx-4 px-4 md:mx-0 md:px-0"
+        >
+          {isLoading
+            ? Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="min-w-[75vw] sm:min-w-[55vw] md:min-w-[calc(33.333%-11px)] md:max-w-[calc(33.333%-11px)] snap-start flex-shrink-0">
+                  <BlogCardSkeleton />
                 </div>
-                <div className="p-4">
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
-                    <Calendar size={12} />
-                    <time>{new Date(post.published_at || post.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</time>
+              ))
+            : posts.map((post: any) => (
+                <Link
+                  key={post.id}
+                  to={`/blog/${post.slug}`}
+                  className="min-w-[75vw] sm:min-w-[55vw] md:min-w-[calc(33.333%-11px)] md:max-w-[calc(33.333%-11px)] snap-start flex-shrink-0 group bg-card rounded-2xl overflow-hidden border border-border/50 hover:shadow-lg transition-all"
+                >
+                  <div className="aspect-[16/10] overflow-hidden">
+                    <img
+                      src={post.image_url || "/placeholder.svg"}
+                      alt={post.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      loading="lazy"
+                    />
                   </div>
-                  <h3 className="font-display font-semibold group-hover:text-primary transition-colors mb-1">{post.title}</h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2">{post.excerpt}</p>
-                </div>
-              </Link>
+                  <div className="p-4">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+                      {post.category && (
+                        <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium text-[11px]">
+                          {post.category}
+                        </span>
+                      )}
+                      <Calendar size={12} />
+                      <time>
+                        {new Date(post.published_at || post.created_at).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </time>
+                    </div>
+                    <h3 className="font-display font-semibold group-hover:text-primary transition-colors mb-1 line-clamp-2">
+                      {post.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground line-clamp-2">{post.excerpt}</p>
+                  </div>
+                </Link>
+              ))}
+        </div>
+
+        {/* Dot indicators on mobile */}
+        {!isLoading && posts.length > 1 && (
+          <div className="flex justify-center gap-1.5 mt-3 md:hidden">
+            {posts.slice(0, 6).map((_, i) => (
+              <div key={i} className="w-1.5 h-1.5 rounded-full bg-border" />
             ))}
+          </div>
+        )}
       </div>
     </section>
   );
