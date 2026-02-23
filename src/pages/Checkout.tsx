@@ -262,16 +262,15 @@ const Checkout = () => {
   return (
     <main className="section-container py-4 md:py-8 pb-24 md:pb-10">
       <div>
-        <h1 className="text-2xl md:text-3xl font-display font-bold mb-8 text-center">YOUR ORDER</h1>
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-bold mb-5 sm:mb-8 text-center">YOUR ORDER</h1>
 
         <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-8">
             {/* Left - Billing & Delivery */}
-            <div className="lg:col-span-2 space-y-8">
+            <div className="lg:col-span-2 space-y-5 sm:space-y-8">
               {/* Billing Details */}
-              {/* Billing Details */}
-              <section className="bg-card rounded-2xl p-6 border border-border">
-                <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
+              <section className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-border">
+                <h2 className="text-base sm:text-lg font-bold mb-4 sm:mb-6 flex items-center gap-2">
                   <CreditCard size={20} className="text-primary" />
                   Billing Details
                 </h2>
@@ -296,8 +295,8 @@ const Checkout = () => {
               </section>
 
               {/* Delivery Information */}
-              <section className="bg-card rounded-2xl p-6 border border-border">
-                <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
+              <section className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-border">
+                <h2 className="text-base sm:text-lg font-bold mb-4 sm:mb-6 flex items-center gap-2">
                   <Truck size={20} className="text-primary" />
                   Delivery Information
                 </h2>
@@ -343,9 +342,9 @@ const Checkout = () => {
               </section>
 
               {/* Payment Method */}
-              <section className="bg-card rounded-2xl p-6 border border-border">
-                <h2 className="text-lg font-bold mb-6">Payment Method</h2>
-                <div className="space-y-3">
+              <section className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-border">
+                <h2 className="text-base sm:text-lg font-bold mb-4 sm:mb-6">Payment Method</h2>
+                <div className="space-y-2.5 sm:space-y-3">
                   {enabledPaymentMethods.length === 0 ? (
                     <p className="text-sm text-muted-foreground text-center py-4">No payment methods available. Please contact support.</p>
                   ) : enabledPaymentMethods.map((method) => (
@@ -370,8 +369,8 @@ const Checkout = () => {
 
             {/* Right - Order Summary */}
             <div className="lg:col-span-1">
-              <div className="bg-card rounded-2xl p-6 border border-border sticky top-28">
-                <h2 className="text-sm font-bold mb-4 uppercase tracking-wide">Product</h2>
+              <div className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-border sticky top-28">
+                <h2 className="text-sm font-bold mb-3 sm:mb-4 uppercase tracking-wide">Product</h2>
                 
                 <div className="space-y-4 max-h-[300px] overflow-y-auto">
                   {items.map((item) => (

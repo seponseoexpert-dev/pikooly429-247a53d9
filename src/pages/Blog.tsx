@@ -34,8 +34,8 @@ const Blog = () => {
   }, [posts, selectedCategory]);
 
   return (
-    <main className="section-container py-6 md:py-10 pb-24 md:pb-10">
-      <h1 className="text-3xl md:text-4xl font-display font-bold mb-6">Blog</h1>
+    <main className="section-container py-4 sm:py-6 md:py-10 pb-24 md:pb-10">
+      <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold mb-4 sm:mb-6">Blog</h1>
 
       {/* Category Filter Pills */}
       {categories.length > 0 && (
@@ -59,13 +59,13 @@ const Blog = () => {
       )}
 
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
           {Array.from({ length: 6 }).map((_, i) => <BlogCardSkeleton key={i} />)}
         </div>
       ) : filtered.length === 0 ? (
         <p className="text-muted-foreground text-center py-12">No blog posts yet.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
           {filtered.map((post: any, i: number) => (
             <motion.article
               key={post.id}
