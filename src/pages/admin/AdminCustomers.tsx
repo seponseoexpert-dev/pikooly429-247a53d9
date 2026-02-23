@@ -94,10 +94,10 @@ const AdminCustomers = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Name</TableHead>
-                    <TableHead>Phone</TableHead>
+                    <TableHead className="hidden sm:table-cell">Phone</TableHead>
                     <TableHead>Orders</TableHead>
-                    <TableHead>Total Spent</TableHead>
-                    <TableHead>Joined</TableHead>
+                    <TableHead className="hidden sm:table-cell">Total Spent</TableHead>
+                    <TableHead className="hidden md:table-cell">Joined</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -115,12 +115,12 @@ const AdminCustomers = () => {
                           <span className="font-medium">{c.full_name || "—"}</span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-sm">{c.phone || "—"}</TableCell>
+                      <TableCell className="hidden sm:table-cell text-sm">{c.phone || "—"}</TableCell>
                       <TableCell>
                         <Badge variant="secondary">{c.order_count}</Badge>
                       </TableCell>
-                      <TableCell className="font-medium">{formatCurrency(c.total_spent)}</TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
+                      <TableCell className="hidden sm:table-cell font-medium">{formatCurrency(c.total_spent)}</TableCell>
+                      <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
                         {new Date(c.created_at).toLocaleDateString("en-GB")}
                       </TableCell>
                     </TableRow>

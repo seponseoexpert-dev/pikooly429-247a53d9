@@ -55,13 +55,13 @@ const AdminSubscribers = () => {
           </div>
         </div>
 
-        <div className="bg-card rounded-xl border border-border overflow-hidden">
+        <div className="bg-card rounded-xl border border-border overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Email</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Subscribed At</TableHead>
+                <TableHead className="hidden sm:table-cell">Subscribed At</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -80,8 +80,8 @@ const AdminSubscribers = () => {
               ) : (
                 subscribers.map((sub) => (
                   <TableRow key={sub.id}>
-                    <TableCell className="font-medium flex items-center gap-2">
-                      <Mail className="h-4 w-4 text-muted-foreground" />
+                    <TableCell className="font-medium text-sm flex items-center gap-2">
+                      <Mail className="h-4 w-4 text-muted-foreground hidden sm:inline-block" />
                       {sub.email}
                     </TableCell>
                     <TableCell>
@@ -93,7 +93,7 @@ const AdminSubscribers = () => {
                         {sub.is_active ? "Active" : "Inactive"}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-muted-foreground text-sm">
+                    <TableCell className="hidden sm:table-cell text-muted-foreground text-sm">
                       {format(new Date(sub.created_at), "dd MMM yyyy, hh:mm a")}
                     </TableCell>
                     <TableCell className="text-right">

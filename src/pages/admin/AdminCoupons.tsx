@@ -129,7 +129,7 @@ const AdminCoupons = () => {
           <DialogTrigger asChild>
             <Button><Plus className="h-4 w-4 mr-2" />New Coupon</Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md">
+          <DialogContent className="w-[95vw] max-w-md p-4 sm:p-6">
             <DialogHeader>
               <DialogTitle>{editId ? "Edit Coupon" : "New Coupon"}</DialogTitle>
             </DialogHeader>
@@ -207,28 +207,28 @@ const AdminCoupons = () => {
               <TableRow>
                 <TableHead>Code</TableHead>
                 <TableHead>Discount</TableHead>
-                <TableHead>Minimum</TableHead>
-                <TableHead>Usage</TableHead>
+                <TableHead className="hidden sm:table-cell">Minimum</TableHead>
+                <TableHead className="hidden md:table-cell">Usage</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Expires</TableHead>
+                <TableHead className="hidden sm:table-cell">Expires</TableHead>
                 <TableHead className="w-20">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filtered.map((c: any) => (
                 <TableRow key={c.id} className="cursor-pointer" onClick={() => openEdit(c)}>
-                  <TableCell className="font-mono font-bold">{c.code}</TableCell>
-                  <TableCell>
+                  <TableCell className="font-mono font-bold text-sm">{c.code}</TableCell>
+                  <TableCell className="text-sm">
                     {c.discount_type === "percentage" ? `${c.discount_value}%` : `৳${c.discount_value}`}
                   </TableCell>
-                  <TableCell>৳{c.min_order_amount}</TableCell>
-                  <TableCell>{c.used_count}{c.max_uses ? `/${c.max_uses}` : ""}</TableCell>
+                  <TableCell className="hidden sm:table-cell">৳{c.min_order_amount}</TableCell>
+                  <TableCell className="hidden md:table-cell">{c.used_count}{c.max_uses ? `/${c.max_uses}` : ""}</TableCell>
                   <TableCell>
                     <Badge variant={c.is_active ? "default" : "secondary"}>
                       {c.is_active ? "Active" : "Inactive"}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-xs">
+                  <TableCell className="hidden sm:table-cell text-xs">
                     {c.expires_at ? format(new Date(c.expires_at), "dd MMM yyyy") : "Unlimited"}
                   </TableCell>
                   <TableCell>
