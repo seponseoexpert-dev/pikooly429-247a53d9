@@ -260,10 +260,10 @@ const AdminProducts = () => {
               {filteredSubs.length > 0 && (
                 <div className="space-y-2">
                   <Label>Subcategory (optional)</Label>
-                  <Select value={form.subcategory_id} onValueChange={(v) => setForm({ ...form, subcategory_id: v })}>
+                  <Select value={form.subcategory_id || "none"} onValueChange={(v) => setForm({ ...form, subcategory_id: v === "none" ? "" : v })}>
                     <SelectTrigger><SelectValue placeholder="Select subcategory" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">None</SelectItem>
+                      <SelectItem value="none">None</SelectItem>
                       {filteredSubs.map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
                     </SelectContent>
                   </Select>
