@@ -110,7 +110,7 @@ const AdminProducts = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name.trim() || form.price <= 0) return;
+    if (!form.name.trim()) return;
     setSaving(true);
 
     let imageUrl = form.image_url;
@@ -215,8 +215,8 @@ const AdminProducts = () => {
                   <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
                 </div>
                 <div className="space-y-2">
-                  <Label>Price (৳) *</Label>
-                  <Input type="number" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: parseFloat(e.target.value) || 0 })} required />
+                  <Label>Price (৳)</Label>
+                  <Input type="number" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: parseFloat(e.target.value) || 0 })} />
                 </div>
                 <div className="space-y-2">
                   <Label>Original Price (৳)</Label>
