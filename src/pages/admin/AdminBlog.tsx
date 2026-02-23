@@ -123,7 +123,7 @@ const AdminBlog = () => {
           <DialogTrigger asChild>
             <Button onClick={() => { resetForm(); setDialogOpen(true); }}><Plus className="h-4 w-4 mr-2" />New Post</Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
             <DialogHeader>
               <DialogTitle>{editing ? "Edit Post" : "New Post"}</DialogTitle>
             </DialogHeader>
@@ -214,21 +214,21 @@ const AdminBlog = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Image</TableHead>
+                    <TableHead className="hidden sm:table-cell">Image</TableHead>
                     <TableHead>Title</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Date</TableHead>
+                    <TableHead className="hidden md:table-cell">Date</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {blogs.map((blog) => (
                     <TableRow key={blog.id}>
-                      <TableCell>
+                      <TableCell className="hidden sm:table-cell">
                         {blog.image_url ? <img src={blog.image_url} alt="" className="h-10 w-16 object-cover rounded" /> : <div className="h-10 w-16 bg-muted rounded" />}
                       </TableCell>
                       <TableCell>
-                        <div className="font-medium">{blog.title}</div>
+                        <div className="font-medium text-sm">{blog.title}</div>
                         {blog.excerpt && <div className="text-xs text-muted-foreground line-clamp-1">{blog.excerpt}</div>}
                       </TableCell>
                       <TableCell>
@@ -236,7 +236,7 @@ const AdminBlog = () => {
                           {blog.is_published ? "Published" : "Draft"}
                         </span>
                       </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
+                      <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
                         {new Date(blog.created_at).toLocaleDateString("en-GB")}
                       </TableCell>
                       <TableCell className="text-right space-x-1">

@@ -118,11 +118,11 @@ const AdminReviews = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Customer</TableHead>
-                    <TableHead>Product</TableHead>
+                    <TableHead className="hidden sm:table-cell">Product</TableHead>
                     <TableHead>Rating</TableHead>
-                    <TableHead>Comment</TableHead>
+                    <TableHead className="hidden md:table-cell">Comment</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Date</TableHead>
+                    <TableHead className="hidden md:table-cell">Date</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -130,15 +130,15 @@ const AdminReviews = () => {
                   {filtered.map((review) => (
                     <TableRow key={review.id}>
                       <TableCell className="font-medium text-sm">{review.customer_name}</TableCell>
-                      <TableCell className="text-sm">{review.product_name}</TableCell>
+                      <TableCell className="hidden sm:table-cell text-sm">{review.product_name}</TableCell>
                       <TableCell>{renderStars(review.rating)}</TableCell>
-                      <TableCell className="text-sm text-muted-foreground max-w-[200px] truncate">{review.comment || "—"}</TableCell>
+                      <TableCell className="hidden md:table-cell text-sm text-muted-foreground max-w-[200px] truncate">{review.comment || "—"}</TableCell>
                       <TableCell>
                         <span className={`text-xs px-2 py-1 rounded-full ${review.is_approved ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-800"}`}>
                           {review.is_approved ? "Approved" : "Pending"}
                         </span>
                       </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
+                      <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
                         {new Date(review.created_at).toLocaleDateString("en-GB")}
                       </TableCell>
                       <TableCell className="text-right space-x-1">

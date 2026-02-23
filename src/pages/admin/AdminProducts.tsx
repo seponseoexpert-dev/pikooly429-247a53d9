@@ -200,12 +200,12 @@ const AdminProducts = () => {
           <DialogTrigger asChild>
             <Button onClick={() => { resetForm(); setDialogOpen(true); }}><Plus className="h-4 w-4 mr-2" />Add Product</Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
             <DialogHeader>
               <DialogTitle>{editing ? "Edit Product" : "New Product"}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2 col-span-2">
                   <Label>Name *</Label>
                   <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value, slug: generateSlug(e.target.value) })} required />
@@ -401,11 +401,11 @@ const AdminProducts = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Image</TableHead>
+                    <TableHead className="hidden sm:table-cell">Image</TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead>Price</TableHead>
-                    <TableHead>Stock</TableHead>
-                    <TableHead>Categories</TableHead>
+                    <TableHead className="hidden md:table-cell">Stock</TableHead>
+                    <TableHead className="hidden lg:table-cell">Categories</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -413,27 +413,30 @@ const AdminProducts = () => {
                 <TableBody>
                   {filtered.map((p) => (
                     <TableRow key={p.id}>
-                      <TableCell>
+                      <TableCell className="hidden sm:table-cell">
                         {p.image_url ? <img src={p.image_url} alt="" className="h-10 w-10 object-cover rounded" /> : <div className="h-10 w-10 bg-muted rounded" />}
                       </TableCell>
                       <TableCell>
-                        <div className="font-medium">{p.name}</div>
+                        <div className="font-medium text-sm">{p.name}</div>
                         {p.is_featured && <span className="text-[10px] bg-accent/10 text-accent px-1.5 py-0.5 rounded">Featured</span>}
+                        <span className="block text-xs text-muted-foreground sm:hidden">Stock: {p.stock}</span>
                       </TableCell>
                       <TableCell>
-                        <span className="font-medium">{formatCurrency(p.price)}</span>
-                        {p.original_price && <span className="text-xs text-muted-foreground line-through ml-1">{formatCurrency(p.original_price)}</span>}
+                        <span className="font-medium text-sm">{formatCurrency(p.price)}</span>
+                        {p.original_price && <span className="text-xs text-muted-foreground line-through block sm:inline sm:ml-1">{formatCurrency(p.original_price)}</span>}
                       </TableCell>
-                      <TableCell>{p.stock}</TableCell>
-                      <TableCell className="text-sm max-w-[150px] truncate">{getCategoryNames(p.id, p.category_id)}</TableCell>
+                      <TableCell className="hidden md:table-cell">{p.stock}</TableCell>
+                      <TableCell className="hidden lg:table-cell text-sm max-w-[150px] truncate">{getCategoryNames(p.id, p.category_id)}</TableCell>
                       <TableCell>
                         <span className={`text-xs px-2 py-1 rounded-full ${p.is_active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
                           {p.is_active ? "Active" : "Inactive"}
                         </span>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="icon" onClick={() => openEdit(p)}><Pencil className="h-4 w-4" /></Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleDelete(p.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                        <div className="flex items-center justify-end gap-0">
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(p)}><Pencil className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(p.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}

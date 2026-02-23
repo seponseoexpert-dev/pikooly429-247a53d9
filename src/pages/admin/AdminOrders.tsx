@@ -208,35 +208,35 @@ const AdminOrders = () => {
                     <TableHead>Customer</TableHead>
                     <TableHead>Total</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Payment</TableHead>
-                    <TableHead>Date</TableHead>
+                    <TableHead className="hidden sm:table-cell">Payment</TableHead>
+                    <TableHead className="hidden md:table-cell">Date</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filtered.map((order) => (
                     <TableRow key={order.id}>
-                      <TableCell className="font-mono text-sm">{order.order_number}</TableCell>
+                      <TableCell className="font-mono text-xs sm:text-sm">{order.order_number}</TableCell>
                       <TableCell>
                         <div className="font-medium text-sm">{order.customer_name}</div>
                         <div className="text-xs text-muted-foreground">{order.customer_phone}</div>
                       </TableCell>
-                      <TableCell className="font-medium">{formatCurrency(order.total)}</TableCell>
+                      <TableCell className="font-medium text-sm">{formatCurrency(order.total)}</TableCell>
                       <TableCell>
                         <span className={`text-xs px-2 py-1 rounded-full capitalize ${statusColors[order.status] || "bg-muted"}`}>
                           {order.status}
                         </span>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="hidden sm:table-cell">
                         <span className={`text-xs px-2 py-1 rounded-full capitalize ${statusColors[order.payment_status] || "bg-muted"}`}>
                           {order.payment_status}
                         </span>
                       </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
+                      <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
                         {new Date(order.created_at).toLocaleDateString("en-GB")}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="icon" onClick={() => viewOrder(order)}>
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => viewOrder(order)}>
                           <Eye className="h-4 w-4" />
                         </Button>
                       </TableCell>
@@ -251,7 +251,7 @@ const AdminOrders = () => {
 
       {/* Order Detail Dialog */}
       <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle>Order {selectedOrder?.order_number}</DialogTitle>
           </DialogHeader>
@@ -322,7 +322,7 @@ const AdminOrders = () => {
               <Separator />
 
               {/* Status Controls */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Order Status</label>
                   <Select value={selectedOrder.status} onValueChange={(v) => updateStatus(selectedOrder.id, v)}>

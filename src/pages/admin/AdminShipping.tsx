@@ -144,14 +144,14 @@ const AdminShipping = () => {
       </div>
 
       {/* List */}
-      <div className="bg-card border rounded-lg overflow-hidden">
+      <div className="bg-card border rounded-lg overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-muted/50 border-b">
             <tr>
               <th className="text-left p-3 font-medium">District</th>
-              <th className="text-left p-3 font-medium">Delivery Fee</th>
-              <th className="text-left p-3 font-medium">Label</th>
-              <th className="text-center p-3 font-medium">Active</th>
+              <th className="text-left p-3 font-medium">Fee</th>
+              <th className="text-left p-3 font-medium hidden sm:table-cell">Label</th>
+              <th className="text-center p-3 font-medium hidden sm:table-cell">Active</th>
               <th className="text-right p-3 font-medium">Actions</th>
             </tr>
           </thead>
@@ -163,10 +163,10 @@ const AdminShipping = () => {
             ) : (
               districts.map((d) => (
                 <tr key={d.id} className="border-b last:border-0 hover:bg-muted/30">
-                  <td className="p-3 font-medium">{d.name}</td>
-                  <td className="p-3">{formatCurrency(d.delivery_fee)}</td>
-                  <td className="p-3 text-muted-foreground">{d.delivery_label}</td>
-                  <td className="p-3 text-center">
+                  <td className="p-3 font-medium text-sm">{d.name}</td>
+                  <td className="p-3 text-sm">{formatCurrency(d.delivery_fee)}</td>
+                  <td className="p-3 text-muted-foreground hidden sm:table-cell">{d.delivery_label}</td>
+                  <td className="p-3 text-center hidden sm:table-cell">
                     <Switch
                       checked={d.is_active}
                       onCheckedChange={(checked) => toggleMutation.mutate({ id: d.id, is_active: checked })}
