@@ -22,6 +22,10 @@ interface Subcategory {
   slug: string;
   image_url: string | null;
   description: string | null;
+  seo_title: string | null;
+  short_description: string | null;
+  long_description: string | null;
+  faq: any[] | null;
   display_order: number;
   is_active: boolean;
   created_at: string;
@@ -41,7 +45,7 @@ const AdminCategories = () => {
   // Subcategory state
   const [subDialogOpen, setSubDialogOpen] = useState(false);
   const [editingSub, setEditingSub] = useState<Subcategory | null>(null);
-  const [subForm, setSubForm] = useState({ name: "", slug: "", description: "", image_url: "", is_active: true, display_order: 0, category_id: "" });
+  const [subForm, setSubForm] = useState({ name: "", slug: "", description: "", image_url: "", is_active: true, display_order: 0, category_id: "", seo_title: "", short_description: "", long_description: "", faq: "[]" });
   const [subImageFile, setSubImageFile] = useState<File | null>(null);
   const [savingSub, setSavingSub] = useState(false);
   const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set());
@@ -133,7 +137,7 @@ const AdminCategories = () => {
   };
 
   // Subcategory handlers
-  const resetSubForm = () => { setSubForm({ name: "", slug: "", description: "", image_url: "", is_active: true, display_order: 0, category_id: "" }); setEditingSub(null); setSubImageFile(null); };
+  const resetSubForm = () => { setSubForm({ name: "", slug: "", description: "", image_url: "", is_active: true, display_order: 0, category_id: "", seo_title: "", short_description: "", long_description: "", faq: "[]" }); setEditingSub(null); setSubImageFile(null); };
 
   const openCreateSub = (categoryId: string) => {
     resetSubForm();
@@ -143,7 +147,7 @@ const AdminCategories = () => {
 
   const openEditSub = (sub: Subcategory) => {
     setEditingSub(sub);
-    setSubForm({ name: sub.name, slug: sub.slug, description: sub.description || "", image_url: sub.image_url || "", is_active: sub.is_active, display_order: sub.display_order, category_id: sub.category_id });
+    setSubForm({ name: sub.name, slug: sub.slug, description: sub.description || "", image_url: sub.image_url || "", is_active: sub.is_active, display_order: sub.display_order, category_id: sub.category_id, seo_title: sub.seo_title || "", short_description: sub.short_description || "", long_description: sub.long_description || "", faq: JSON.stringify(sub.faq || []) });
     setSubImageFile(null);
     setSubDialogOpen(true);
   };
@@ -160,7 +164,9 @@ const AdminCategories = () => {
     }
 
     const slug = subForm.slug || generateSlug(subForm.name);
-    const payload = { name: subForm.name.trim(), slug, description: subForm.description || null, image_url: imageUrl || null, is_active: subForm.is_active, display_order: subForm.display_order, category_id: subForm.category_id };
+    let parsedSubFaq: any[] = [];
+    try { parsedSubFaq = JSON.parse(subForm.faq); } catch { parsedSubFaq = []; }
+    const payload = { name: subForm.name.trim(), slug, description: subForm.description || null, image_url: imageUrl || null, is_active: subForm.is_active, display_order: subForm.display_order, category_id: subForm.category_id, seo_title: subForm.seo_title || null, short_description: subForm.short_description || null, long_description: subForm.long_description || null, faq: parsedSubFaq } as any;
 
     if (editingSub) {
       const { error } = await supabase.from("subcategories").update(payload).eq("id", editingSub.id);
@@ -330,7 +336,7 @@ const AdminCategories = () => {
 
       {/* Subcategory Dialog */}
       <Dialog open={subDialogOpen} onOpenChange={(open) => { setSubDialogOpen(open); if (!open) resetSubForm(); }}>
-        <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingSub ? "Edit Subcategory" : "New Subcategory"}</DialogTitle>
           </DialogHeader>
@@ -344,8 +350,43 @@ const AdminCategories = () => {
               <Input value={subForm.slug} onChange={(e) => setSubForm({ ...subForm, slug: e.target.value })} />
             </div>
             <div className="space-y-2">
-              <Label>Description</Label>
-              <Textarea value={subForm.description} onChange={(e) => setSubForm({ ...subForm, description: e.target.value })} rows={2} />
+              <Label>Short Description</Label>
+              <RichTextEditor value={subForm.short_description} onChange={(html) => setSubForm({ ...subForm, short_description: html })} />
+            </div>
+            <div className="space-y-2">
+              <Label>Long Description</Label>
+              <RichTextEditor value={subForm.long_description} onChange={(html) => setSubForm({ ...subForm, long_description: html })} />
+            </div>
+            {/* SEO Section */}
+            <div className="space-y-4 border-t pt-4">
+              <Label className="text-base font-semibold">SEO Preview</Label>
+              <div className="p-4 border rounded-lg bg-background space-y-1">
+                <p className="text-xs text-muted-foreground mb-1">Preview</p>
+                <p className="text-sm text-muted-foreground truncate">https://pikooly.com.bd/product-category/.../{subForm.slug || "..."}/</p>
+                <p className="text-lg text-blue-700 font-medium leading-tight truncate">{subForm.seo_title || subForm.name || "Page Title"}</p>
+                <p className="text-sm text-muted-foreground line-clamp-2">{subForm.description || "Meta description will appear here..."}</p>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label>SEO Title</Label>
+                  <span className={`text-xs ${(subForm.seo_title || "").length > 60 ? "text-destructive" : "text-muted-foreground"}`}>{(subForm.seo_title || "").length} / 60</span>
+                </div>
+                <Input value={subForm.seo_title} onChange={(e) => setSubForm({ ...subForm, seo_title: e.target.value })} placeholder="SEO title for search results" />
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label>Permalink</Label>
+                  <span className={`text-xs ${(subForm.slug || "").length > 75 ? "text-destructive" : "text-muted-foreground"}`}>{(subForm.slug || "").length} / 75</span>
+                </div>
+                <Input value={subForm.slug} onChange={(e) => setSubForm({ ...subForm, slug: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label>Meta Description</Label>
+                  <span className={`text-xs ${(subForm.description || "").length > 160 ? "text-destructive" : "text-muted-foreground"}`}>{(subForm.description || "").length} / 160</span>
+                </div>
+                <Textarea value={subForm.description} onChange={(e) => setSubForm({ ...subForm, description: e.target.value })} rows={3} placeholder="Meta description for SEO" />
+              </div>
             </div>
             <div className="space-y-2">
               <Label>Image</Label>
@@ -359,6 +400,41 @@ const AdminCategories = () => {
             <div className="flex items-center gap-2">
               <Switch checked={subForm.is_active} onCheckedChange={(c) => setSubForm({ ...subForm, is_active: c })} />
               <Label>Active</Label>
+            </div>
+            {/* FAQ Section */}
+            <div className="space-y-3 border-t pt-4">
+              <div className="flex items-center justify-between">
+                <Label className="text-base font-semibold">FAQ</Label>
+                <Button type="button" variant="outline" size="sm" onClick={() => {
+                  const faqs = JSON.parse(subForm.faq || "[]");
+                  faqs.push({ question: "", answer: "" });
+                  setSubForm({ ...subForm, faq: JSON.stringify(faqs) });
+                }}>
+                  <PlusCircle className="h-4 w-4 mr-1" /> Add FAQ
+                </Button>
+              </div>
+              {(() => {
+                let faqs: { question: string; answer: string }[] = [];
+                try { faqs = JSON.parse(subForm.faq || "[]"); } catch { faqs = []; }
+                return faqs.map((faq, idx) => (
+                  <div key={idx} className="space-y-2 p-3 border rounded-lg bg-muted/30 relative">
+                    <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 h-6 w-6" onClick={() => {
+                      const updated = [...faqs]; updated.splice(idx, 1);
+                      setSubForm({ ...subForm, faq: JSON.stringify(updated) });
+                    }}>
+                      <MinusCircle className="h-4 w-4 text-destructive" />
+                    </Button>
+                    <Input placeholder="Question" value={faq.question} onChange={(e) => {
+                      const updated = [...faqs]; updated[idx] = { ...updated[idx], question: e.target.value };
+                      setSubForm({ ...subForm, faq: JSON.stringify(updated) });
+                    }} />
+                    <Textarea placeholder="Answer" rows={2} value={faq.answer} onChange={(e) => {
+                      const updated = [...faqs]; updated[idx] = { ...updated[idx], answer: e.target.value };
+                      setSubForm({ ...subForm, faq: JSON.stringify(updated) });
+                    }} />
+                  </div>
+                ));
+              })()}
             </div>
             <Button type="submit" className="w-full" disabled={savingSub}>{savingSub ? "Saving..." : editingSub ? "Update" : "Create"}</Button>
           </form>
