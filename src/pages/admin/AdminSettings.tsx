@@ -194,7 +194,7 @@ const sectionFields: Record<string, FieldDef[]> = {
   ],
   cookies: [
     { key: "cookies_details_page", label: "Cookies Details Page", type: "select", fullWidth: true, options: [
-      { value: "", label: "---" },
+      { value: "none", label: "---" },
       { value: "privacy", label: "Privacy Policy" },
       { value: "terms", label: "Terms & Conditions" },
       { value: "cookies", label: "Cookies Policy" },
