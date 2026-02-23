@@ -215,7 +215,7 @@ const ProductDetail = () => {
             <Button size="lg" className="flex-1 h-12 text-sm font-semibold rounded-lg" onClick={handleAddToCart}>
               <ShoppingBag size={18} /> ADD TO CART
             </Button>
-            <Button size="lg" className="flex-1 h-12 text-sm font-semibold rounded-lg bg-purple-600 hover:bg-purple-700 text-white" onClick={handleBuyNow}>
+            <Button size="lg" className="flex-1 h-12 text-sm font-semibold rounded-lg bg-accent hover:bg-accent/90 text-accent-foreground" onClick={handleBuyNow}>
               BUY NOW
             </Button>
           </div>

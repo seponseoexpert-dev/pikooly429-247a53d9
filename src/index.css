@@ -134,6 +134,26 @@
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent;
   }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Ensure minimum touch targets on mobile */
+  @media (pointer: coarse) {
+    .touch-target {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
 }
 
 /* Rich text content from admin editor */
