@@ -209,7 +209,7 @@ const AdminCategories = () => {
           <DialogTrigger asChild>
             <Button onClick={openCreate}><Plus className="h-4 w-4 mr-2" />Add Category</Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
             <DialogHeader>
               <DialogTitle>{editing ? "Edit Category" : "New Category"}</DialogTitle>
             </DialogHeader>
@@ -309,7 +309,7 @@ const AdminCategories = () => {
                   let faqs: { question: string; answer: string }[] = [];
                   try { faqs = JSON.parse(form.faq || "[]"); } catch { faqs = []; }
                   return faqs.map((faq, idx) => (
-                    <div key={idx} className="space-y-2 p-3 border rounded-lg bg-muted/30 relative">
+                    <div key={idx} className="space-y-2 p-3 border rounded-lg bg-muted/30 relative pr-10">
                       <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 h-6 w-6" onClick={() => {
                         const updated = [...faqs]; updated.splice(idx, 1);
                         setForm({ ...form, faq: JSON.stringify(updated) });
@@ -336,7 +336,7 @@ const AdminCategories = () => {
 
       {/* Subcategory Dialog */}
       <Dialog open={subDialogOpen} onOpenChange={(open) => { setSubDialogOpen(open); if (!open) resetSubForm(); }}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+        <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle>{editingSub ? "Edit Subcategory" : "New Subcategory"}</DialogTitle>
           </DialogHeader>
@@ -417,7 +417,7 @@ const AdminCategories = () => {
                 let faqs: { question: string; answer: string }[] = [];
                 try { faqs = JSON.parse(subForm.faq || "[]"); } catch { faqs = []; }
                 return faqs.map((faq, idx) => (
-                  <div key={idx} className="space-y-2 p-3 border rounded-lg bg-muted/30 relative">
+                  <div key={idx} className="space-y-2 p-3 border rounded-lg bg-muted/30 relative pr-10">
                     <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2 h-6 w-6" onClick={() => {
                       const updated = [...faqs]; updated.splice(idx, 1);
                       setSubForm({ ...subForm, faq: JSON.stringify(updated) });
@@ -448,16 +448,17 @@ const AdminCategories = () => {
           ) : categories.length === 0 ? (
             <p className="p-6 text-muted-foreground text-center">No categories yet. Add your first category!</p>
           ) : (
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-12">#</TableHead>
-                  <TableHead>Image</TableHead>
+                  <TableHead className="w-12 hidden sm:table-cell">#</TableHead>
+                  <TableHead className="hidden sm:table-cell">Image</TableHead>
                   <TableHead>Name</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Slug</TableHead>
-                  <TableHead>Subcategories</TableHead>
-                  <TableHead>Homepage</TableHead>
+                  <TableHead className="hidden md:table-cell">Type</TableHead>
+                  <TableHead className="hidden lg:table-cell">Slug</TableHead>
+                  <TableHead className="hidden sm:table-cell">Subs</TableHead>
+                  <TableHead className="hidden md:table-cell">Homepage</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -469,8 +470,8 @@ const AdminCategories = () => {
                   return (
                     <>
                       <TableRow key={cat.id}>
-                        <TableCell><GripVertical className="h-4 w-4 text-muted-foreground" /></TableCell>
-                        <TableCell>
+                        <TableCell className="hidden sm:table-cell"><GripVertical className="h-4 w-4 text-muted-foreground" /></TableCell>
+                        <TableCell className="hidden sm:table-cell">
                           {cat.image_url ? <img src={cat.image_url} alt="" className="h-10 w-10 object-cover rounded" /> : <div className="h-10 w-10 bg-muted rounded" />}
                         </TableCell>
                         <TableCell>
@@ -480,17 +481,20 @@ const AdminCategories = () => {
                                 {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                               </button>
                             )}
-                            <span className="font-medium">{cat.name}</span>
+                            <div>
+                              <span className="font-medium text-sm">{cat.name}</span>
+                              <span className="block text-xs text-muted-foreground sm:hidden">{subs.length > 0 ? `${subs.length} subs` : ""}</span>
+                            </div>
                           </div>
                         </TableCell>
-                        <TableCell className="text-muted-foreground text-sm capitalize">{(cat as any).category_type || "category"}</TableCell>
-                        <TableCell className="text-muted-foreground text-sm">{cat.slug}</TableCell>
-                        <TableCell>
+                        <TableCell className="hidden md:table-cell text-muted-foreground text-sm capitalize">{(cat as any).category_type || "category"}</TableCell>
+                        <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">{cat.slug}</TableCell>
+                        <TableCell className="hidden sm:table-cell">
                           <Button variant="ghost" size="sm" className="text-xs" onClick={() => openCreateSub(cat.id)}>
                             <PlusCircle className="h-3 w-3 mr-1" />{subs.length > 0 ? `${subs.length} subs` : "Add sub"}
                           </Button>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="hidden md:table-cell">
                           <span className={`text-xs px-2 py-1 rounded-full ${(cat as any).show_in_homepage !== false ? "bg-green-100 text-green-700" : "bg-muted text-muted-foreground"}`}>
                             {(cat as any).show_in_homepage !== false ? "Yes" : "No"}
                           </span>
@@ -501,28 +505,33 @@ const AdminCategories = () => {
                           </span>
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button variant="ghost" size="icon" onClick={() => openEdit(cat)}><Pencil className="h-4 w-4" /></Button>
-                          <Button variant="ghost" size="icon" onClick={() => handleDelete(cat.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                          <div className="flex items-center justify-end gap-0">
+                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(cat)}><Pencil className="h-4 w-4" /></Button>
+                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(cat.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                       {isExpanded && subs.map((sub) => (
                         <TableRow key={sub.id} className="bg-muted/20">
-                          <TableCell></TableCell>
-                          <TableCell>
+                          <TableCell className="hidden sm:table-cell"></TableCell>
+                          <TableCell className="hidden sm:table-cell">
                             {sub.image_url ? <img src={sub.image_url} alt="" className="h-8 w-8 object-cover rounded" /> : <div className="h-8 w-8 bg-muted rounded" />}
                           </TableCell>
-                          <TableCell className="pl-12 text-sm">↳ {sub.name}</TableCell>
-                          <TableCell className="text-muted-foreground text-xs">{sub.slug}</TableCell>
-                          <TableCell></TableCell>
-                          <TableCell></TableCell>
+                          <TableCell className="text-sm"><span className="pl-2 sm:pl-8">↳ {sub.name}</span></TableCell>
+                          <TableCell className="hidden md:table-cell text-muted-foreground text-xs">{sub.slug}</TableCell>
+                          <TableCell className="hidden lg:table-cell"></TableCell>
+                          <TableCell className="hidden sm:table-cell"></TableCell>
+                          <TableCell className="hidden md:table-cell"></TableCell>
                           <TableCell>
                             <span className={`text-xs px-2 py-1 rounded-full ${sub.is_active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
                               {sub.is_active ? "Active" : "Inactive"}
                             </span>
                           </TableCell>
                           <TableCell className="text-right">
-                            <Button variant="ghost" size="icon" onClick={() => openEditSub(sub)}><Pencil className="h-4 w-4" /></Button>
-                            <Button variant="ghost" size="icon" onClick={() => handleDeleteSub(sub.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                            <div className="flex items-center justify-end gap-0">
+                              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEditSub(sub)}><Pencil className="h-4 w-4" /></Button>
+                              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDeleteSub(sub.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -531,6 +540,7 @@ const AdminCategories = () => {
                 })}
               </TableBody>
             </Table>
+            </div>
           )}
         </CardContent>
       </Card>
