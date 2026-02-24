@@ -76,16 +76,6 @@ const ProductGrid = memo(() => {
             ))}
       </div>
 
-      <div className="my-4 sm:my-6 md:my-8 lg:my-10 bg-secondary rounded-2xl py-4 sm:py-5 md:py-6 px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 md:gap-12">
-        <div className="flex items-center gap-2 text-foreground">
-          <span className="text-lg sm:text-xl">⭐</span>
-          <span className="font-semibold text-sm sm:text-base">Rated 4.8/5</span>
-        </div>
-        <div className="flex items-center gap-2 text-foreground">
-          <span className="text-lg sm:text-xl">👥</span>
-          <span className="font-semibold text-sm sm:text-base">4,62,543+ Happy Customers</span>
-        </div>
-      </div>
 
       <div className="mb-4 md:mb-6 text-center">
         <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-1 md:mb-2">
