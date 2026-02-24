@@ -5,38 +5,30 @@ import { useRef, useState, useEffect } from "react";
 
 const ReviewCard = ({ review }: { review: { id: string; customer_name: string; rating: number; comment: string | null; created_at: string } }) => {
   const [expanded, setExpanded] = useState(false);
-  const [clamped, setClamped] = useState(false);
-  const textRef = useRef<HTMLParagraphElement>(null);
-
-  useEffect(() => {
-    const el = textRef.current;
-    if (!el) return;
-    // Wait for layout
-    requestAnimationFrame(() => {
-      setClamped(el.scrollHeight > el.clientHeight + 2);
-    });
-  }, [review.comment]);
+  const comment = review.comment?.trim() ?? "";
+  const hasLongComment = comment.length > 140;
 
   return (
-    <div className="min-w-[280px] sm:min-w-[300px] md:min-w-0 snap-start flex-shrink-0 md:flex-shrink bg-card border border-border/50 rounded-xl p-4 sm:p-5 flex flex-col gap-3 relative hover:shadow-md transition-shadow duration-200">
+    <div className="w-[280px] sm:w-[300px] md:w-auto md:min-w-0 min-w-0 snap-start flex-shrink-0 md:flex-shrink bg-card border border-border/50 rounded-xl p-4 sm:p-5 flex flex-col gap-3 relative hover:shadow-md transition-shadow duration-200">
       <Quote size={20} className="text-primary/20 absolute top-3 right-3" />
       <div className="flex items-center gap-0.5">
         {Array.from({ length: 5 }).map((_, i) => (
           <Star key={i} size={14} className={i < review.rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"} />
         ))}
       </div>
-      {review.comment && (
-        <div>
+
+      {comment && (
+        <div className="min-w-0">
           <p
-            ref={textRef}
-            style={!expanded ? { display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" } : undefined}
-            className="text-xs sm:text-sm text-muted-foreground leading-relaxed italic"
+            className="text-xs sm:text-sm text-muted-foreground leading-[1.6] italic text-left whitespace-normal break-words"
+            style={!expanded && hasLongComment ? { maxHeight: "4.8em", overflow: "hidden" } : undefined}
           >
-            "{review.comment}"
+            "{comment}"
           </p>
-          {clamped && (
+
+          {hasLongComment && (
             <button
-              onClick={() => setExpanded(!expanded)}
+              onClick={() => setExpanded((prev) => !prev)}
               className="text-[11px] sm:text-xs text-primary font-medium mt-1.5 flex items-center gap-0.5 hover:underline"
             >
               {expanded ? "Show less" : "Read more"}
@@ -45,6 +37,7 @@ const ReviewCard = ({ review }: { review: { id: string; customer_name: string; r
           )}
         </div>
       )}
+
       <div className="mt-auto pt-2 border-t border-border/30">
         <span className="text-xs sm:text-sm font-semibold text-foreground">{review.customer_name}</span>
         <p className="text-[10px] text-muted-foreground mt-0.5">
