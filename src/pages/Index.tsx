@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import HeroSection from "@/components/home/HeroSection";
 import FeaturesBar from "@/components/home/FeaturesBar";
-import SocialProofSection from "@/components/home/SocialProofSection";
 import BlogSection from "@/components/home/BlogSection";
 import CustomerReviewSection from "@/components/home/CustomerReviewSection";
 import CategoryGrid from "@/components/home/CategoryGrid";
@@ -41,7 +40,6 @@ const Index = () => {
     <main>
       <HeroSection />
       <FeaturesBar />
-      <SocialProofSection />
       <CategoryGrid />
       <ProductGrid />
       <BlogSection />
