@@ -1,7 +1,54 @@
-import { Star, Quote } from "lucide-react";
+import { Star, Quote, ChevronDown, ChevronUp } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useRef, useState, useEffect } from "react";
+
+const ReviewCard = ({ review }: { review: { id: string; customer_name: string; rating: number; comment: string | null; created_at: string } }) => {
+  const [expanded, setExpanded] = useState(false);
+  const [clamped, setClamped] = useState(false);
+  const textRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    const el = textRef.current;
+    if (el) setClamped(el.scrollHeight > el.clientHeight + 1);
+  }, [review.comment]);
+
+  return (
+    <div className="min-w-[280px] sm:min-w-[300px] md:min-w-0 snap-start flex-shrink-0 md:flex-shrink bg-card border border-border/50 rounded-xl p-4 sm:p-5 flex flex-col gap-3 relative hover:shadow-md transition-shadow duration-200">
+      <Quote size={20} className="text-primary/20 absolute top-3 right-3" />
+      <div className="flex items-center gap-0.5">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Star key={i} size={14} className={i < review.rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"} />
+        ))}
+      </div>
+      {review.comment && (
+        <div>
+          <p
+            ref={textRef}
+            className={`text-xs sm:text-sm text-muted-foreground leading-relaxed italic ${expanded ? "" : "line-clamp-3"}`}
+          >
+            "{review.comment}"
+          </p>
+          {clamped && (
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="text-[11px] sm:text-xs text-primary font-medium mt-1 flex items-center gap-0.5 hover:underline"
+            >
+              {expanded ? "Show less" : "Read more"}
+              {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+            </button>
+          )}
+        </div>
+      )}
+      <div className="mt-auto pt-2 border-t border-border/30">
+        <span className="text-xs sm:text-sm font-semibold text-foreground">{review.customer_name}</span>
+        <p className="text-[10px] text-muted-foreground mt-0.5">
+          {new Date(review.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+        </p>
+      </div>
+    </div>
+  );
+};
 
 const CustomerReviewSection = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -81,32 +128,7 @@ const CustomerReviewSection = () => {
             className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-3 -mx-4 px-4 md:mx-0 md:px-0 md:grid md:grid-cols-3 md:overflow-visible"
           >
             {reviews.map((review) => (
-              <div
-                key={review.id}
-                className="min-w-[280px] sm:min-w-[300px] md:min-w-0 snap-start flex-shrink-0 md:flex-shrink bg-card border border-border/50 rounded-xl p-4 sm:p-5 flex flex-col gap-3 relative hover:shadow-md transition-shadow duration-200"
-              >
-                <Quote size={20} className="text-primary/20 absolute top-3 right-3" />
-                <div className="flex items-center gap-0.5">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      size={14}
-                      className={i < review.rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}
-                    />
-                  ))}
-                </div>
-                {review.comment && (
-                  <p className="text-xs sm:text-sm text-muted-foreground line-clamp-4 leading-relaxed italic">
-                    "{review.comment}"
-                  </p>
-                )}
-                <div className="mt-auto pt-2 border-t border-border/30">
-                  <span className="text-xs sm:text-sm font-semibold text-foreground">{review.customer_name}</span>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                    {new Date(review.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
-                  </p>
-                </div>
-              </div>
+              <ReviewCard key={review.id} review={review} />
             ))}
           </div>
 
