@@ -75,7 +75,7 @@ const BlogSection = () => {
         >
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="min-w-[calc(50%-6px)] sm:min-w-[calc(50%-8px)] md:min-w-[calc(33.333%-11px)] md:max-w-[calc(33.333%-11px)] snap-start flex-shrink-0">
+                <div key={i} className="w-[45vw] max-w-[200px] sm:w-[42vw] md:w-[calc(33.333%-11px)] md:max-w-[calc(33.333%-11px)] snap-start flex-shrink-0">
                   <BlogCardSkeleton />
                 </div>
               ))
@@ -83,7 +83,7 @@ const BlogSection = () => {
                 <Link
                   key={post.id}
                   to={`/blog/${post.slug}`}
-                  className="min-w-[calc(50%-6px)] sm:min-w-[calc(50%-8px)] md:min-w-[calc(33.333%-11px)] md:max-w-[calc(33.333%-11px)] snap-start flex-shrink-0 group bg-card rounded-2xl overflow-hidden border border-border/50 hover:shadow-lg transition-all"
+                  className="w-[45vw] max-w-[200px] sm:w-[42vw] sm:max-w-[260px] md:w-[calc(33.333%-11px)] md:max-w-[calc(33.333%-11px)] snap-start flex-shrink-0 group bg-card rounded-2xl overflow-hidden border border-border/50 hover:shadow-lg transition-all"
                 >
                   <div className="aspect-[16/10] overflow-hidden">
                     <img
