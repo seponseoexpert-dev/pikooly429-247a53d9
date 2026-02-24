@@ -10,8 +10,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Eye, EyeOff } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, EyeOff, X } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import RichTextEditor from "@/components/admin/RichTextEditor";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Blog = Tables<"blogs">;
@@ -25,7 +26,9 @@ const AdminBlog = () => {
   const [saving, setSaving] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
-  const blogCategories = ["General", "Flowers", "Gifts", "Tips & Tricks", "Occasions", "Delivery", "News"];
+  const defaultCategories = ["General", "Flowers", "Gifts", "Tips & Tricks", "Occasions", "Delivery", "News"];
+  const [blogCategories, setBlogCategories] = useState<string[]>(defaultCategories);
+  const [newCategory, setNewCategory] = useState("");
 
   const defaultForm = { title: "", slug: "", content: "", excerpt: "", image_url: "", is_published: false, seo_title: "", seo_description: "", category: "General" };
   const [form, setForm] = useState(defaultForm);
@@ -148,10 +151,54 @@ const AdminBlog = () => {
                     <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
                     <SelectContent>
                       {blogCategories.map((cat) => (
-                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                        <SelectItem key={cat} value={cat}>
+                          <span className="flex items-center justify-between w-full gap-2">
+                            {cat}
+                          </span>
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
+                  {/* Category management */}
+                  <div className="flex flex-wrap gap-1.5 mt-1">
+                    {blogCategories.map((cat) => (
+                      <span key={cat} className="inline-flex items-center gap-1 text-xs bg-muted px-2 py-1 rounded-full">
+                        {cat}
+                        {cat !== "General" && (
+                          <button type="button" onClick={() => setBlogCategories(prev => prev.filter(c => c !== cat))} className="hover:text-destructive">
+                            <X className="h-3 w-3" />
+                          </button>
+                        )}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex gap-2">
+                    <Input
+                      value={newCategory}
+                      onChange={(e) => setNewCategory(e.target.value)}
+                      placeholder="New category..."
+                      className="h-8 text-xs"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          const trimmed = newCategory.trim();
+                          if (trimmed && !blogCategories.includes(trimmed)) {
+                            setBlogCategories(prev => [...prev, trimmed]);
+                            setNewCategory("");
+                          }
+                        }
+                      }}
+                    />
+                    <Button type="button" size="sm" variant="outline" className="h-8 text-xs" onClick={() => {
+                      const trimmed = newCategory.trim();
+                      if (trimmed && !blogCategories.includes(trimmed)) {
+                        setBlogCategories(prev => [...prev, trimmed]);
+                        setNewCategory("");
+                      }
+                    }}>
+                      <Plus className="h-3 w-3 mr-1" />Add
+                    </Button>
+                  </div>
                 </div>
               </div>
               <div className="space-y-2">
@@ -160,7 +207,7 @@ const AdminBlog = () => {
               </div>
               <div className="space-y-2">
                 <Label>Content</Label>
-                <Textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={8} placeholder="Write your blog post..." />
+                <RichTextEditor value={form.content} onChange={(html) => setForm({ ...form, content: html })} />
               </div>
               <div className="space-y-2">
                 <Label>Cover Image</Label>
