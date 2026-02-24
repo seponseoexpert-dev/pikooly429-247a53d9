@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
 import { CartItem, Product } from "@/types";
-import { toast } from "sonner";
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (product: Product) => void;
+  addItem: (product: Product, customImages?: File[]) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
+  updateCustomImages: (productId: string, images: File[]) => void;
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
@@ -20,15 +20,21 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
-  const addItem = useCallback((product: Product) => {
+  const addItem = useCallback((product: Product, customImages?: File[]) => {
     setItems((prev) => {
       const existing = prev.find((i) => i.product.id === product.id);
       if (existing) {
         return prev.map((i) =>
-          i.product.id === product.id ? { ...i, quantity: i.quantity + 1 } : i
+          i.product.id === product.id
+            ? {
+                ...i,
+                quantity: i.quantity + 1,
+                customImages: customImages?.length ? customImages : i.customImages,
+              }
+            : i
         );
       }
-      return [...prev, { product, quantity: 1 }];
+      return [...prev, { product, quantity: 1, customImages }];
     });
     setIsOpen(true);
   }, []);
@@ -47,6 +53,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
   }, []);
 
+  const updateCustomImages = useCallback((productId: string, images: File[]) => {
+    setItems((prev) =>
+      prev.map((i) => (i.product.id === productId ? { ...i, customImages: images } : i))
+    );
+  }, []);
+
   const clearCart = useCallback(() => setItems([]), []);
 
   const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
@@ -54,7 +66,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return (
     <CartContext.Provider
-      value={{ items, addItem, removeItem, updateQuantity, clearCart, totalItems, totalPrice, isOpen, setIsOpen }}
+      value={{ items, addItem, removeItem, updateQuantity, updateCustomImages, clearCart, totalItems, totalPrice, isOpen, setIsOpen }}
     >
       {children}
     </CartContext.Provider>

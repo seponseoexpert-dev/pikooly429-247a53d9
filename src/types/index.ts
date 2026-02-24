@@ -22,6 +22,7 @@ export interface Category {
 export interface CartItem {
   product: Product;
   quantity: number;
+  customImages?: File[];
 }
 
 export interface BlogPost {

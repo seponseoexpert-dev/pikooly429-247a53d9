@@ -306,9 +306,20 @@ const AdminOrders = () => {
                 ) : (
                   <div className="space-y-2">
                     {orderItems.map((item) => (
-                      <div key={item.id} className="flex justify-between text-sm">
-                        <span>{item.product_name} × {item.quantity}</span>
-                        <span className="font-medium">{formatCurrency(item.total)}</span>
+                      <div key={item.id} className="space-y-1">
+                        <div className="flex justify-between text-sm">
+                          <span>{item.product_name} × {item.quantity}</span>
+                          <span className="font-medium">{formatCurrency(item.total)}</span>
+                        </div>
+                        {(item as any).custom_images?.length > 0 && (
+                          <div className="flex gap-1.5 flex-wrap">
+                            {(item as any).custom_images.map((url: string, i: number) => (
+                              <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+                                <img src={url} alt={`Custom ${i + 1}`} className="w-12 h-12 rounded object-cover border border-border hover:ring-2 ring-primary" />
+                              </a>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>

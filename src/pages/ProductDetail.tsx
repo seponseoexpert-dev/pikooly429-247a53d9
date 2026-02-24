@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import ProductCard from "@/components/product/ProductCard";
 import { ProductDetailSkeleton } from "@/components/ui/skeletons";
 import ReviewSection from "@/components/product/ReviewSection";
+import CustomImageUpload from "@/components/product/CustomImageUpload";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -20,19 +21,20 @@ const ProductDetail = () => {
   const [qty, setQty] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [activeTab, setActiveTab] = useState<"specification" | "description" | "reviews">("specification");
+  const [customImages, setCustomImages] = useState<File[]>([]);
 
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", id],
     queryFn: async () => {
       let { data, error } = await supabase
         .from("products")
-        .select("*, categories(name, slug)")
+        .select("*, categories(name, slug, allow_custom_image)")
         .eq("slug", id!)
         .maybeSingle();
       if (!data) {
         ({ data, error } = await supabase
           .from("products")
-          .select("*, categories(name, slug)")
+          .select("*, categories(name, slug, allow_custom_image)")
           .eq("id", id!)
           .maybeSingle());
       }
@@ -57,6 +59,9 @@ const ProductDetail = () => {
     },
     enabled: !!product?.category_id,
   });
+
+  // Check if this product's category allows custom image uploads
+  const allowCustomImage = !!(product?.categories as any)?.allow_custom_image;
 
   // Dynamic SEO meta tags
   useEffect(() => {
@@ -113,11 +118,11 @@ const ProductDetail = () => {
   };
 
   const handleAddToCart = () => {
-    for (let i = 0; i < qty; i++) addItem(cartProduct);
+    for (let i = 0; i < qty; i++) addItem(cartProduct, customImages.length ? customImages : undefined);
   };
 
   const handleBuyNow = () => {
-    for (let i = 0; i < qty; i++) addItem(cartProduct);
+    for (let i = 0; i < qty; i++) addItem(cartProduct, customImages.length ? customImages : undefined);
     navigate("/checkout");
   };
 
@@ -194,6 +199,13 @@ const ProductDetail = () => {
 
           {(product.short_description || product.description) && (
             <div className="text-sm text-muted-foreground mb-4 leading-relaxed prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: product.short_description || product.description || "" }} />
+          )}
+
+          {/* Custom Image Upload */}
+          {allowCustomImage && (
+            <div className="mb-5 p-4 rounded-xl border border-border bg-card">
+              <CustomImageUpload images={customImages} onChange={setCustomImages} maxImages={5} />
+            </div>
           )}
 
           {/* Quantity */}
