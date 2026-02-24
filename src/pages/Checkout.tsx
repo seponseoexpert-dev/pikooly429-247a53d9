@@ -42,6 +42,7 @@ const Checkout = () => {
   });
 
   const allPaymentMethods = [
+    { value: "cod", label: "Cash on Delivery", desc: "Pay when you receive your order", statusKey: "cod_status" },
     { value: "paypal", label: "PayPal", desc: "Pay securely via PayPal", statusKey: "paypal_status" },
     { value: "stripe", label: "Stripe", desc: "Pay with credit/debit card via Stripe", statusKey: "stripe_status" },
     { value: "eps", label: "EPS Payment", desc: "Pay securely via EPS Payment Gateway", statusKey: "eps_status" },
@@ -50,7 +51,7 @@ const Checkout = () => {
   const { data: gatewaySettings = {} } = useQuery({
     queryKey: ["payment-gateway-settings"],
     queryFn: async () => {
-      const keys = ["paypal_status", "stripe_status", "eps_status"];
+      const keys = ["cod_status", "paypal_status", "stripe_status", "eps_status"];
       const { data, error } = await supabase
         .from("site_settings")
         .select("key, value")
@@ -187,6 +188,8 @@ const Checkout = () => {
           return;
         }
       }
+
+      // COD orders go straight to success
 
       // Send order confirmation email (fire & forget)
       if (form.email.trim()) {
