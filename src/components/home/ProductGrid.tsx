@@ -77,7 +77,7 @@ const ProductGrid = memo(() => {
       </div>
 
 
-      <div className="mb-4 md:mb-6 text-center">
+      <div className="mt-8 sm:mt-10 md:mt-12 mb-4 md:mb-6 text-center">
         <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-1 md:mb-2">
           Tailored For Your Occasions
         </h2>
