@@ -25,6 +25,7 @@ import Index from "./pages/Index";
 const Shop = lazy(() => import("./pages/Shop"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const Blog = lazy(() => import("./pages/Blog"));
+const BlogDetail = lazy(() => import("./pages/BlogDetail"));
 const AllGifts = lazy(() => import("./pages/AllGifts"));
 const Checkout = lazy(() => import("./pages/Checkout"));
 const OrderSuccess = lazy(() => import("./pages/OrderSuccess"));
@@ -98,6 +99,7 @@ const App = () => (
               <Route path="/all-gifts" element={<PublicLayout><AllGifts /></PublicLayout>} />
               <Route path="/product/:id" element={<PublicLayout><ProductDetail /></PublicLayout>} />
               <Route path="/blog" element={<PublicLayout><Blog /></PublicLayout>} />
+              <Route path="/blog/:slug" element={<PublicLayout><BlogDetail /></PublicLayout>} />
               <Route path="/checkout" element={<PublicLayout><Checkout /></PublicLayout>} />
               <Route path="/order-success/:orderNumber" element={<PublicLayout><OrderSuccess /></PublicLayout>} />
               <Route path="/track-order" element={<PublicLayout><TrackOrder /></PublicLayout>} />
