@@ -284,7 +284,15 @@ const AdminOrders = () => {
                       <p className="text-sm italic">{selectedOrder.gift_message}</p>
                     </div>
                   )}
-                  {selectedOrder.notes && <p className="mt-1"><span className="text-muted-foreground">Notes:</span> {selectedOrder.notes}</p>}
+                  {selectedOrder.notes && (() => {
+                    let displayNotes = selectedOrder.notes;
+                    try {
+                      const parsed = JSON.parse(selectedOrder.notes);
+                      if (parsed.original_notes) displayNotes = parsed.original_notes;
+                      else if (parsed.eps_merchant_transaction_id) displayNotes = null;
+                    } catch {}
+                    return displayNotes ? <p className="mt-1"><span className="text-muted-foreground">Notes:</span> {displayNotes}</p> : null;
+                  })()}
                 </div>
               </div>
 
