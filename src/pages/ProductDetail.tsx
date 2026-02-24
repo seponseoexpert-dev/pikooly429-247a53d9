@@ -193,7 +193,7 @@ const ProductDetail = () => {
           )}
 
           {(product.short_description || product.description) && (
-            <div className="text-sm text-muted-foreground mb-4 leading-relaxed prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: product.short_description || product.description || "" }} />
+            <div className="text-sm text-muted-foreground mb-4 leading-relaxed prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: product.short_description || product.description || "" }} />
           )}
 
           {/* Quantity */}
@@ -307,7 +307,7 @@ const ProductDetail = () => {
               <h3 className="text-lg font-bold text-foreground mb-1">Description</h3>
               <div className="w-12 h-0.5 bg-primary mb-4" />
               {product.description ? (
-                <div className="prose prose-sm max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: product.description }} />
+                <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: product.description }} />
               ) : (
                 <p className="text-sm text-muted-foreground">No description available.</p>
               )}
