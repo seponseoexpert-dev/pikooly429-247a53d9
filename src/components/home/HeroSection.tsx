@@ -83,7 +83,7 @@ const HeroSection = memo(() => {
         <div className="overflow-hidden rounded-2xl lg:rounded-3xl transition-colors duration-500" style={{ backgroundColor: slide.bgColor }}>
           <div className="flex items-center h-[220px] sm:h-auto sm:aspect-[2/1] md:aspect-[5/2] lg:aspect-[3/1] px-8 sm:px-12 md:px-16 lg:px-20">
             <div className="relative z-10 max-w-[55%] sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl space-y-4 md:space-y-6">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display font-bold text-foreground leading-[1.15] tracking-tight whitespace-pre-line">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display font-bold text-gray-900 leading-[1.15] tracking-tight whitespace-pre-line">
                 {slide.title}
               </h1>
               <Link
@@ -120,7 +120,7 @@ const HeroSection = memo(() => {
           <button
             key={i}
             onClick={() => setCurrent(i)}
-            className={`h-2 rounded-full transition-all duration-300 ${i === current ? "w-7 bg-foreground" : "w-2 bg-border hover:bg-muted-foreground/40"}`}
+            className={`h-2 rounded-full transition-all duration-300 ${i === current ? "w-7 bg-foreground" : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"}`}
             aria-label={`Go to slide ${i + 1}`}
           />
         ))}
