@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import HeroSection from "@/components/home/HeroSection";
-import CategoryGrid from "@/components/home/CategoryGrid";
 import FeaturesBar from "@/components/home/FeaturesBar";
-import ProductGrid from "@/components/home/ProductGrid";
 import SocialProofSection from "@/components/home/SocialProofSection";
 import BlogSection from "@/components/home/BlogSection";
+import CustomerReviewSection from "@/components/home/CustomerReviewSection";
+import CategoryGrid from "@/components/home/CategoryGrid";
+import ProductGrid from "@/components/home/ProductGrid";
 import AboutSection from "@/components/home/AboutSection";
 import FAQSection from "@/components/home/FAQSection";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -41,10 +42,11 @@ const Index = () => {
       <HeroSection />
       <FeaturesBar />
       <SocialProofSection />
+      <BlogSection />
+      <CustomerReviewSection />
       <CategoryGrid />
       <ProductGrid />
       <AboutSection />
-      <BlogSection />
       <FAQSection />
     </main>
   );
