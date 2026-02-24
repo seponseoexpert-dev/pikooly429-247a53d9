@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Search, ShoppingCart, X, User, Truck, ChevronDown, MapPinCheck } from "lucide-react";
+import { Search, ShoppingCart, X, User, Truck, ChevronDown, MapPinCheck, Moon, Sun } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
+import { useTheme } from "next-themes";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -22,6 +23,7 @@ const Header = () => {
   const { settings, isLoading: settingsLoading } = useSiteSettings();
   const { currencies, selectedCurrency, setSelectedCurrency, formatPrice } = useMultiCurrency();
   const { user } = useAuth();
+  const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const searchRef = useRef<HTMLDivElement>(null);
@@ -195,6 +197,16 @@ const Header = () => {
 
             {/* Right Icons */}
             <div className="flex items-center gap-0.5 sm:gap-1 ml-auto">
+              <button
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="flex flex-col items-center justify-center px-2 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted"
+                aria-label="Toggle dark mode"
+              >
+                {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+                <span className="hidden md:block text-[9px] font-medium mt-0.5 leading-none">
+                  {theme === "dark" ? "Light" : "Dark"}
+                </span>
+              </button>
               <Link to="/shop?cat=same-day" className="hidden md:flex flex-col items-center justify-center px-2 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted" aria-label="Same Day Delivery">
                 <Truck size={20} />
                 <span className="text-[9px] font-medium mt-0.5 leading-none">Same Day</span>
