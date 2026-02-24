@@ -1,6 +1,6 @@
 import { useCart } from "@/contexts/CartContext";
 import { Link } from "react-router-dom";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Star } from "lucide-react";
 import { useState, memo } from "react";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 
@@ -51,6 +51,18 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
             {product.name}
           </h3>
         </Link>
+
+        {(product.rating ?? 0) > 0 && (
+          <div className="flex items-center gap-0.5 mt-1">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star
+                key={i}
+                size={12}
+                className={i < Math.round(product.rating!) ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}
+              />
+            ))}
+          </div>
+        )}
 
         <div className="mt-1.5 sm:mt-2">
           <span className="font-bold text-primary text-sm sm:text-base">{formatPrice(product.price)}</span>
