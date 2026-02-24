@@ -41,17 +41,20 @@ const Checkout = () => {
     paymentMethod: "eps",
   });
 
+  const isGatewayEnabled = (value?: string | null) =>
+    ["enable", "enabled", "true", "1", "yes", "on"].includes((value ?? "").toLowerCase());
+
   const allPaymentMethods = [
-    { value: "cod", label: "Cash on Delivery", desc: "Pay when you receive your order", statusKey: "cod_status" },
-    { value: "paypal", label: "PayPal", desc: "Pay securely via PayPal", statusKey: "paypal_status" },
-    { value: "stripe", label: "Stripe", desc: "Pay with credit/debit card via Stripe", statusKey: "stripe_status" },
-    { value: "eps", label: "EPS Payment", desc: "Pay securely via EPS Payment Gateway", statusKey: "eps_status" },
+    { value: "cod", label: "Cash on Delivery", desc: "Pay when you receive your order", statusKeys: ["cod_enabled", "cod_status"] },
+    { value: "paypal", label: "PayPal", desc: "Pay securely via PayPal", statusKeys: ["paypal_status"] },
+    { value: "stripe", label: "Stripe", desc: "Pay with credit/debit card via Stripe", statusKeys: ["stripe_status"] },
+    { value: "eps", label: "EPS Payment", desc: "Pay securely via EPS Payment Gateway", statusKeys: ["eps_status"] },
   ];
 
   const { data: gatewaySettings = {} } = useQuery({
     queryKey: ["payment-gateway-settings"],
     queryFn: async () => {
-      const keys = ["cod_status", "paypal_status", "stripe_status", "eps_status"];
+      const keys = ["cod_enabled", "cod_status", "paypal_status", "stripe_status", "eps_status"];
       const { data, error } = await supabase
         .from("site_settings")
         .select("key, value")
@@ -64,8 +67,8 @@ const Checkout = () => {
     staleTime: 60 * 1000,
   });
 
-  const enabledPaymentMethods = allPaymentMethods.filter(
-    (m) => gatewaySettings[m.statusKey] === "enable"
+  const enabledPaymentMethods = allPaymentMethods.filter((method) =>
+    method.statusKeys.some((key) => isGatewayEnabled(gatewaySettings[key]))
   );
 
   // Auto-select first enabled method if current selection is disabled
