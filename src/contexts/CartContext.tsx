@@ -30,7 +30,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       return [...prev, { product, quantity: 1 }];
     });
-    toast.success(`${product.name} added to cart!`);
+    // Silent add - no toast popup
   }, []);
 
   const removeItem = useCallback((productId: string) => {
