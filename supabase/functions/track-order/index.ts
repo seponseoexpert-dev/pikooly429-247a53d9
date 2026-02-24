@@ -40,15 +40,23 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Fetch order items
+    // Fetch order items with product images
+    const { data: orderRow } = await supabaseAdmin.from("orders").select("id").eq("order_number", order_number.trim()).single();
     const { data: items } = await supabaseAdmin
       .from("order_items")
-      .select("product_name, quantity, price, total")
-      .eq("order_id", (
-        await supabaseAdmin.from("orders").select("id").eq("order_number", order_number.trim()).single()
-      ).data!.id);
+      .select("product_name, quantity, price, total, product_id")
+      .eq("order_id", orderRow!.id);
 
-    return new Response(JSON.stringify({ order, items: items || [] }), {
+    // Attach product images
+    const enrichedItems = await Promise.all((items || []).map(async (item: any) => {
+      if (item.product_id) {
+        const { data: prod } = await supabaseAdmin.from("products").select("image_url").eq("id", item.product_id).maybeSingle();
+        return { ...item, image_url: prod?.image_url || null };
+      }
+      return { ...item, image_url: null };
+    }));
+
+    return new Response(JSON.stringify({ order, items: enrichedItems }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {

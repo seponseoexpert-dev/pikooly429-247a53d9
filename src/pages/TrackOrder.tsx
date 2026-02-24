@@ -213,9 +213,13 @@ const TrackOrder = () => {
                     {items.map((item: any, i: number) => (
                       <div key={i} className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2 min-w-0">
-                          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <Package size={14} className="text-primary" />
-                          </div>
+                          {item.image_url ? (
+                            <img src={item.image_url} alt={item.product_name} className="w-10 h-10 rounded-lg object-cover flex-shrink-0 border border-border/40" />
+                          ) : (
+                            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                              <Package size={14} className="text-primary" />
+                            </div>
+                          )}
                           <div className="min-w-0">
                             <p className="text-sm font-medium text-foreground truncate">{item.product_name}</p>
                             <p className="text-xs text-muted-foreground">Qty: {item.quantity}</p>
