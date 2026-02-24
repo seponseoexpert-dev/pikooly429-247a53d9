@@ -33,6 +33,29 @@ const AdminBlog = () => {
   const defaultForm = { title: "", slug: "", content: "", excerpt: "", image_url: "", is_published: false, seo_title: "", seo_description: "", category: "General" };
   const [form, setForm] = useState(defaultForm);
 
+  // Load categories from DB
+  const fetchCategories = async () => {
+    const { data } = await supabase.from("site_settings").select("value").eq("key", "blog_categories").single();
+    if (data?.value) {
+      try {
+        const parsed = JSON.parse(data.value);
+        if (Array.isArray(parsed) && parsed.length > 0) setBlogCategories(parsed);
+      } catch {}
+    }
+  };
+
+  // Save categories to DB
+  const saveCategories = async (cats: string[]) => {
+    setBlogCategories(cats);
+    const value = JSON.stringify(cats);
+    const { data: existing } = await supabase.from("site_settings").select("id").eq("key", "blog_categories").single();
+    if (existing) {
+      await supabase.from("site_settings").update({ value }).eq("key", "blog_categories");
+    } else {
+      await supabase.from("site_settings").insert({ key: "blog_categories", value });
+    }
+  };
+
   const fetchBlogs = async () => {
     const { data, error } = await supabase.from("blogs").select("*").order("created_at", { ascending: false });
     if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
@@ -40,7 +63,7 @@ const AdminBlog = () => {
     setLoading(false);
   };
 
-  useEffect(() => { fetchBlogs(); }, []);
+  useEffect(() => { fetchBlogs(); fetchCategories(); }, []);
 
   const generateSlug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
@@ -165,7 +188,7 @@ const AdminBlog = () => {
                       <span key={cat} className="inline-flex items-center gap-1 text-xs bg-muted px-2 py-1 rounded-full">
                         {cat}
                         {cat !== "General" && (
-                          <button type="button" onClick={() => setBlogCategories(prev => prev.filter(c => c !== cat))} className="hover:text-destructive">
+                          <button type="button" onClick={() => saveCategories(blogCategories.filter(c => c !== cat))} className="hover:text-destructive">
                             <X className="h-3 w-3" />
                           </button>
                         )}
@@ -183,7 +206,7 @@ const AdminBlog = () => {
                           e.preventDefault();
                           const trimmed = newCategory.trim();
                           if (trimmed && !blogCategories.includes(trimmed)) {
-                            setBlogCategories(prev => [...prev, trimmed]);
+                            saveCategories([...blogCategories, trimmed]);
                             setNewCategory("");
                           }
                         }
@@ -192,7 +215,7 @@ const AdminBlog = () => {
                     <Button type="button" size="sm" variant="outline" className="h-8 text-xs" onClick={() => {
                       const trimmed = newCategory.trim();
                       if (trimmed && !blogCategories.includes(trimmed)) {
-                        setBlogCategories(prev => [...prev, trimmed]);
+                        saveCategories([...blogCategories, trimmed]);
                         setNewCategory("");
                       }
                     }}>
