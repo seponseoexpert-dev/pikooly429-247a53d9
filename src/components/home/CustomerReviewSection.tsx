@@ -10,7 +10,11 @@ const ReviewCard = ({ review }: { review: { id: string; customer_name: string; r
 
   useEffect(() => {
     const el = textRef.current;
-    if (el) setClamped(el.scrollHeight > el.clientHeight + 1);
+    if (!el) return;
+    // Wait for layout
+    requestAnimationFrame(() => {
+      setClamped(el.scrollHeight > el.clientHeight + 2);
+    });
   }, [review.comment]);
 
   return (
@@ -25,14 +29,15 @@ const ReviewCard = ({ review }: { review: { id: string; customer_name: string; r
         <div>
           <p
             ref={textRef}
-            className={`text-xs sm:text-sm text-muted-foreground leading-relaxed italic ${expanded ? "" : "line-clamp-3"}`}
+            style={!expanded ? { display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" } : undefined}
+            className="text-xs sm:text-sm text-muted-foreground leading-relaxed italic"
           >
             "{review.comment}"
           </p>
           {clamped && (
             <button
               onClick={() => setExpanded(!expanded)}
-              className="text-[11px] sm:text-xs text-primary font-medium mt-1 flex items-center gap-0.5 hover:underline"
+              className="text-[11px] sm:text-xs text-primary font-medium mt-1.5 flex items-center gap-0.5 hover:underline"
             >
               {expanded ? "Show less" : "Read more"}
               {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
