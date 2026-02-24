@@ -83,20 +83,20 @@ const BlogSection = () => {
                 <Link
                   key={post.id}
                   to={`/blog/${post.slug}`}
-                  className="w-[45vw] max-w-[200px] sm:w-[42vw] sm:max-w-[260px] md:w-[calc(33.333%-11px)] md:max-w-[calc(33.333%-11px)] snap-start flex-shrink-0 group bg-card rounded-2xl overflow-hidden border border-border/50 hover:shadow-lg transition-all"
+                  className="w-[44vw] max-w-[200px] sm:w-[42vw] sm:max-w-[260px] md:w-[calc(33.333%-11px)] md:max-w-[calc(33.333%-11px)] snap-start flex-shrink-0 group bg-card rounded-xl overflow-hidden border border-border/50 hover:shadow-lg transition-all"
                 >
-                  <div className="aspect-[16/10] overflow-hidden">
+                  <div className="aspect-[4/3] overflow-hidden">
                     <img
                       src={post.image_url || "/placeholder.svg"}
                       alt={post.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
                   </div>
-                  <div className="p-3 md:p-4">
-                    <div className="flex items-center gap-1.5 text-[10px] md:text-xs text-muted-foreground mb-1.5 md:mb-2">
+                  <div className="p-2.5 md:p-4">
+                    <div className="flex items-center gap-1.5 text-[10px] md:text-xs text-muted-foreground mb-1 md:mb-2">
                       {post.category && (
-                        <span className="bg-primary/10 text-primary px-1.5 py-0.5 rounded-full font-medium text-[10px] md:text-[11px]">
+                        <span className="bg-primary/10 text-primary px-1.5 py-0.5 rounded font-medium text-[10px] md:text-[11px]">
                           {post.category}
                         </span>
                       )}
@@ -108,10 +108,10 @@ const BlogSection = () => {
                         })}
                       </time>
                     </div>
-                    <h3 className="font-display text-sm md:text-base font-semibold group-hover:text-primary transition-colors mb-1 line-clamp-2">
+                    <h3 className="font-display text-xs md:text-base font-semibold group-hover:text-primary transition-colors line-clamp-2 leading-snug">
                       {post.title}
                     </h3>
-                    <p className="text-xs md:text-sm text-muted-foreground line-clamp-2 hidden sm:block">{post.excerpt}</p>
+                    <p className="text-[11px] md:text-sm text-muted-foreground line-clamp-2 mt-1 hidden md:block">{post.excerpt}</p>
                   </div>
                 </Link>
               ))}
