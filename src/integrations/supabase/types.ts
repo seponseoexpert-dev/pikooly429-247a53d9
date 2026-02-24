@@ -67,6 +67,7 @@ export type Database = {
       }
       categories: {
         Row: {
+          allow_custom_image: boolean
           category_type: string
           created_at: string
           description: string | null
@@ -85,6 +86,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          allow_custom_image?: boolean
           category_type?: string
           created_at?: string
           description?: string | null
@@ -103,6 +105,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          allow_custom_image?: boolean
           category_type?: string
           created_at?: string
           description?: string | null
@@ -233,6 +236,7 @@ export type Database = {
       order_items: {
         Row: {
           created_at: string
+          custom_images: string[] | null
           id: string
           order_id: string
           price: number
@@ -243,6 +247,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          custom_images?: string[] | null
           id?: string
           order_id: string
           price?: number
@@ -253,6 +258,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          custom_images?: string[] | null
           id?: string
           order_id?: string
           price?: number

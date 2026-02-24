@@ -1,4 +1,4 @@
-import { X, Plus, Minus, ShoppingBag, Trash2 } from "lucide-react";
+import { X, Plus, Minus, ShoppingBag, Trash2, ImagePlus } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -76,6 +76,11 @@ const CartDrawer = () => {
                           </h4>
                         </Link>
                         <p className="text-primary font-bold text-sm sm:text-base mt-1">{formatPrice(item.product.price)}</p>
+                        {item.customImages && item.customImages.length > 0 && (
+                          <p className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1">
+                            <ImagePlus size={12} className="text-primary" /> {item.customImages.length} custom photo(s)
+                          </p>
+                        )}
                       </div>
                       <div className="flex items-center justify-between mt-2">
                         <div className="flex items-center gap-1.5 bg-card rounded-full border border-border px-1 py-0.5">

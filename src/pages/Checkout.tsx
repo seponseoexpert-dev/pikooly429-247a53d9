@@ -153,14 +153,33 @@ const Checkout = () => {
       }
       if (!order) throw new Error("Order was not created");
 
-      const orderItems = items.map((item) => ({
-        order_id: order.id,
-        product_id: item.product.id,
-        product_name: item.product.name,
-        quantity: item.quantity,
-        price: item.product.price,
-        total: item.product.price * item.quantity,
-      }));
+      // Upload custom images to storage and build order items
+      const orderItems = [];
+      for (const item of items) {
+        let customImageUrls: string[] = [];
+        if (item.customImages?.length) {
+          for (const file of item.customImages) {
+            const ext = file.name.split(".").pop() || "jpg";
+            const path = `${order.id}/${item.product.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+            const { error: uploadErr } = await supabase.storage
+              .from("custom-images")
+              .upload(path, file, { contentType: file.type });
+            if (!uploadErr) {
+              const { data: urlData } = supabase.storage.from("custom-images").getPublicUrl(path);
+              customImageUrls.push(urlData.publicUrl);
+            }
+          }
+        }
+        orderItems.push({
+          order_id: order.id,
+          product_id: item.product.id,
+          product_name: item.product.name,
+          quantity: item.quantity,
+          price: item.product.price,
+          total: item.product.price * item.quantity,
+          custom_images: customImageUrls.length > 0 ? customImageUrls : undefined,
+        });
+      }
 
       const { error: itemsError } = await supabase
         .from("order_items")
@@ -392,6 +411,13 @@ const Checkout = () => {
                             <button type="button" onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground"><Plus size={12} /></button>
                           </div>
                         </div>
+                        {item.customImages && item.customImages.length > 0 && (
+                          <div className="flex gap-1 mt-1.5 flex-wrap">
+                            {item.customImages.map((file, fi) => (
+                              <img key={fi} src={URL.createObjectURL(file)} alt={`Custom ${fi + 1}`} className="w-8 h-8 rounded object-cover border border-border" />
+                            ))}
+                          </div>
+                        )}
                         <p className="text-sm text-muted-foreground mt-1">{formatPrice(item.product.price * item.quantity)}</p>
                       </div>
                     </div>
