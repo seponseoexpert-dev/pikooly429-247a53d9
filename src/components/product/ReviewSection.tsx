@@ -38,7 +38,7 @@ const ReviewSection = ({ productId }: ReviewSectionProps) => {
     mutationFn: async () => {
       const { error } = await supabase.from("reviews").insert({
         product_id: productId,
-        user_id: user!.id,
+        user_id: user?.id || null,
         customer_name: customerName.trim(),
         rating,
         comment: comment.trim() || null,
@@ -59,10 +59,6 @@ const ReviewSection = ({ productId }: ReviewSectionProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) {
-      toast.error("Please login to submit a review.");
-      return;
-    }
     if (rating === 0) {
       toast.error("Please give a rating.");
       return;
@@ -96,8 +92,7 @@ const ReviewSection = ({ productId }: ReviewSectionProps) => {
       </div>
 
       {/* Review Form */}
-      {user ? (
-        <form onSubmit={handleSubmit} className="border border-border rounded-xl p-4 sm:p-6 mb-8 bg-card">
+      <form onSubmit={handleSubmit} className="border border-border rounded-xl p-4 sm:p-6 mb-8 bg-card">
           <h3 className="text-sm font-semibold mb-3">Write a Review</h3>
           <div className="flex items-center gap-1 mb-3">
             {[1, 2, 3, 4, 5].map((s) => (
@@ -139,11 +134,6 @@ const ReviewSection = ({ productId }: ReviewSectionProps) => {
             {submitReview.isPending ? "Submitting..." : "Submit Review"}
           </Button>
         </form>
-      ) : (
-        <div className="border border-border rounded-xl p-4 sm:p-6 mb-8 bg-card text-center">
-          <p className="text-sm text-muted-foreground">Please <a href="/admin-login" className="text-primary underline">login</a> to write a review.</p>
-        </div>
-      )}
 
       {/* Reviews List */}
       {isLoading ? (
