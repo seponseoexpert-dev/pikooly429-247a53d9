@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Save, Trash2, Truck } from "lucide-react";
+import { Plus, Save, Trash2, Truck, ChevronDown, ChevronUp, Tag } from "lucide-react";
 import { useCurrency } from "@/hooks/useCurrency";
 
 interface District {
@@ -17,12 +17,22 @@ interface District {
   display_order: number;
 }
 
+interface CategoryFee {
+  id: string;
+  district_id: string;
+  category_id: string;
+  delivery_fee: number;
+  delivery_label: string;
+}
+
 const AdminShipping = () => {
   const { formatCurrency } = useCurrency();
   const { toast } = useToast();
   const qc = useQueryClient();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ name: "", delivery_fee: "", delivery_label: "Standard Delivery" });
+  const [expandedDistrict, setExpandedDistrict] = useState<string | null>(null);
+  const [catFeeForm, setCatFeeForm] = useState({ category_id: "", delivery_fee: "", delivery_label: "Standard Delivery" });
 
   const { data: districts = [], isLoading } = useQuery({
     queryKey: ["admin-shipping-districts"],
@@ -33,6 +43,29 @@ const AdminShipping = () => {
         .order("display_order");
       if (error) throw error;
       return data as District[];
+    },
+  });
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ["admin-categories-list"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("id, name")
+        .order("name");
+      if (error) throw error;
+      return data as { id: string; name: string }[];
+    },
+  });
+
+  const { data: categoryFees = [] } = useQuery({
+    queryKey: ["admin-shipping-category-fees"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("shipping_category_fees")
+        .select("*");
+      if (error) throw error;
+      return data as CategoryFee[];
     },
   });
 
@@ -80,6 +113,43 @@ const AdminShipping = () => {
     onError: (e: any) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
 
+  // Category fee mutations
+  const saveCatFeeMutation = useMutation({
+    mutationFn: async (values: { district_id: string; category_id: string; delivery_fee: string; delivery_label: string; id?: string }) => {
+      const payload = {
+        district_id: values.district_id,
+        category_id: values.category_id,
+        delivery_fee: parseFloat(values.delivery_fee) || 0,
+        delivery_label: values.delivery_label.trim() || "Standard Delivery",
+      };
+      if (values.id) {
+        const { error } = await supabase.from("shipping_category_fees").update(payload).eq("id", values.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("shipping_category_fees").insert(payload);
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-shipping-category-fees"] });
+      toast({ title: "Category fee saved ✓" });
+      setCatFeeForm({ category_id: "", delivery_fee: "", delivery_label: "Standard Delivery" });
+    },
+    onError: (e: any) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
+
+  const deleteCatFeeMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("shipping_category_fees").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-shipping-category-fees"] });
+      toast({ title: "Category fee deleted" });
+    },
+    onError: (e: any) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
+
   const handleEdit = (d: District) => {
     setEditingId(d.id);
     setForm({ name: d.name, delivery_fee: String(d.delivery_fee), delivery_label: d.delivery_label });
@@ -90,12 +160,28 @@ const AdminShipping = () => {
     saveMutation.mutate(editingId ? { ...form, id: editingId } : form);
   };
 
+  const handleSaveCatFee = (districtId: string) => {
+    if (!catFeeForm.category_id) return toast({ title: "Select a category", variant: "destructive" });
+    saveCatFeeMutation.mutate({ ...catFeeForm, district_id: districtId });
+  };
+
+  const getDistrictCategoryFees = (districtId: string) =>
+    categoryFees.filter((cf) => cf.district_id === districtId);
+
+  const getCategoryName = (categoryId: string) =>
+    categories.find((c) => c.id === categoryId)?.name || "Unknown";
+
+  const getAvailableCategories = (districtId: string) => {
+    const usedCatIds = getDistrictCategoryFees(districtId).map((cf) => cf.category_id);
+    return categories.filter((c) => !usedCatIds.includes(c.id));
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-display font-bold">Shipping Districts</h2>
-          <p className="text-muted-foreground text-sm">Manage delivery areas and fees</p>
+          <p className="text-muted-foreground text-sm">Manage delivery areas, fees & category-specific pricing</p>
         </div>
       </div>
 
@@ -106,22 +192,9 @@ const AdminShipping = () => {
           {editingId ? "Edit District" : "Add New District"}
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <Input
-            placeholder="District Name"
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-          />
-          <Input
-            placeholder="Delivery Fee (৳)"
-            type="number"
-            value={form.delivery_fee}
-            onChange={(e) => setForm({ ...form, delivery_fee: e.target.value })}
-          />
-          <Input
-            placeholder="Delivery Label"
-            value={form.delivery_label}
-            onChange={(e) => setForm({ ...form, delivery_label: e.target.value })}
-          />
+          <Input placeholder="District Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          <Input placeholder="Default Delivery Fee (৳)" type="number" value={form.delivery_fee} onChange={(e) => setForm({ ...form, delivery_fee: e.target.value })} />
+          <Input placeholder="Delivery Label" value={form.delivery_label} onChange={(e) => setForm({ ...form, delivery_label: e.target.value })} />
         </div>
         <div className="flex gap-2 mt-3">
           <Button size="sm" onClick={handleSave} disabled={saveMutation.isPending}>
@@ -129,14 +202,7 @@ const AdminShipping = () => {
             {editingId ? "Update" : "Add"}
           </Button>
           {editingId && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => {
-                setEditingId(null);
-                setForm({ name: "", delivery_fee: "", delivery_label: "Standard Delivery" });
-              }}
-            >
+            <Button size="sm" variant="outline" onClick={() => { setEditingId(null); setForm({ name: "", delivery_fee: "", delivery_label: "Standard Delivery" }); }}>
               Cancel
             </Button>
           )}
@@ -144,52 +210,114 @@ const AdminShipping = () => {
       </div>
 
       {/* List */}
-      <div className="bg-card border rounded-lg overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-muted/50 border-b">
-            <tr>
-              <th className="text-left p-3 font-medium">District</th>
-              <th className="text-left p-3 font-medium">Fee</th>
-              <th className="text-left p-3 font-medium hidden sm:table-cell">Label</th>
-              <th className="text-center p-3 font-medium hidden sm:table-cell">Active</th>
-              <th className="text-right p-3 font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              Array.from({ length: 4 }).map((_, i) => <tr key={i}><td className="p-4"><div className="h-4 w-32 bg-muted rounded animate-pulse" /></td><td className="p-4"><div className="h-4 w-20 bg-muted rounded animate-pulse" /></td><td className="p-4"><div className="h-4 w-24 bg-muted rounded animate-pulse" /></td><td className="p-4"><div className="h-5 w-14 bg-muted rounded-full animate-pulse" /></td><td className="p-4"><div className="h-8 w-16 bg-muted rounded animate-pulse" /></td></tr>)
-            ) : districts.length === 0 ? (
-              <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">No districts added yet</td></tr>
-            ) : (
-              districts.map((d) => (
-                <tr key={d.id} className="border-b last:border-0 hover:bg-muted/30">
-                  <td className="p-3 font-medium text-sm">{d.name}</td>
-                  <td className="p-3 text-sm">{formatCurrency(d.delivery_fee)}</td>
-                  <td className="p-3 text-muted-foreground hidden sm:table-cell">{d.delivery_label}</td>
-                  <td className="p-3 text-center hidden sm:table-cell">
-                    <Switch
-                      checked={d.is_active}
-                      onCheckedChange={(checked) => toggleMutation.mutate({ id: d.id, is_active: checked })}
-                    />
-                  </td>
-                  <td className="p-3 text-right">
-                    <div className="flex gap-1 justify-end">
-                      <Button size="sm" variant="outline" onClick={() => handleEdit(d)}>Edit</Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="text-destructive"
-                        onClick={() => deleteMutation.mutate(d.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+      <div className="space-y-2">
+        {isLoading ? (
+          <div className="bg-card border rounded-lg p-4">
+            {Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-12 bg-muted rounded animate-pulse mb-2" />)}
+          </div>
+        ) : districts.length === 0 ? (
+          <div className="bg-card border rounded-lg p-8 text-center text-muted-foreground">No districts added yet</div>
+        ) : (
+          districts.map((d) => {
+            const districtCatFees = getDistrictCategoryFees(d.id);
+            const isExpanded = expandedDistrict === d.id;
+            const availableCats = getAvailableCategories(d.id);
+
+            return (
+              <div key={d.id} className="bg-card border rounded-lg overflow-hidden">
+                {/* District row */}
+                <div className="flex items-center gap-3 p-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-sm">{d.name}</div>
+                    <div className="text-xs text-muted-foreground">
+                      Default: {formatCurrency(d.delivery_fee)} · {d.delivery_label}
+                      {districtCatFees.length > 0 && (
+                        <span className="ml-2 text-primary">({districtCatFees.length} category override{districtCatFees.length > 1 ? "s" : ""})</span>
+                      )}
                     </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+                  </div>
+                  <Switch
+                    checked={d.is_active}
+                    onCheckedChange={(checked) => toggleMutation.mutate({ id: d.id, is_active: checked })}
+                    className="hidden sm:block"
+                  />
+                  <Button size="sm" variant="outline" onClick={() => setExpandedDistrict(isExpanded ? null : d.id)}>
+                    <Tag className="h-3.5 w-3.5 mr-1" />
+                    Fees
+                    {isExpanded ? <ChevronUp className="h-3.5 w-3.5 ml-1" /> : <ChevronDown className="h-3.5 w-3.5 ml-1" />}
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => handleEdit(d)}>Edit</Button>
+                  <Button size="sm" variant="ghost" className="text-destructive" onClick={() => deleteMutation.mutate(d.id)}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                {/* Expanded: Category-specific fees */}
+                {isExpanded && (
+                  <div className="border-t bg-muted/30 p-3 space-y-3">
+                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Category-Specific Delivery Fees</h4>
+                    <p className="text-xs text-muted-foreground">
+                      যদি কোনো ক্যাটেগরির জন্য আলাদা ডেলিভারি ফি সেট করেন, সেটা ডিফল্ট ফি এর বদলে ব্যবহার হবে।
+                    </p>
+
+                    {/* Existing category fees */}
+                    {districtCatFees.length > 0 && (
+                      <div className="space-y-1.5">
+                        {districtCatFees.map((cf) => (
+                          <div key={cf.id} className="flex items-center gap-2 bg-background rounded-md px-3 py-2 text-sm">
+                            <Tag className="h-3.5 w-3.5 text-primary shrink-0" />
+                            <span className="font-medium flex-1 truncate">{getCategoryName(cf.category_id)}</span>
+                            <span className="text-muted-foreground">{formatCurrency(cf.delivery_fee)}</span>
+                            <span className="text-xs text-muted-foreground hidden sm:block">{cf.delivery_label}</span>
+                            <Button size="sm" variant="ghost" className="text-destructive h-7 w-7 p-0" onClick={() => deleteCatFeeMutation.mutate(cf.id)}>
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Add new category fee */}
+                    {availableCats.length > 0 && (
+                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-end">
+                        <select
+                          className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+                          value={catFeeForm.category_id}
+                          onChange={(e) => setCatFeeForm({ ...catFeeForm, category_id: e.target.value })}
+                        >
+                          <option value="">Select Category</option>
+                          {availableCats.map((c) => (
+                            <option key={c.id} value={c.id}>{c.name}</option>
+                          ))}
+                        </select>
+                        <Input
+                          placeholder="Fee (৳)"
+                          type="number"
+                          className="h-9"
+                          value={catFeeForm.delivery_fee}
+                          onChange={(e) => setCatFeeForm({ ...catFeeForm, delivery_fee: e.target.value })}
+                        />
+                        <Input
+                          placeholder="Label"
+                          className="h-9"
+                          value={catFeeForm.delivery_label}
+                          onChange={(e) => setCatFeeForm({ ...catFeeForm, delivery_label: e.target.value })}
+                        />
+                        <Button size="sm" className="h-9" onClick={() => handleSaveCatFee(d.id)} disabled={saveCatFeeMutation.isPending}>
+                          <Plus className="h-3.5 w-3.5 mr-1" /> Add
+                        </Button>
+                      </div>
+                    )}
+
+                    {availableCats.length === 0 && districtCatFees.length > 0 && (
+                      <p className="text-xs text-muted-foreground">All categories have custom fees set.</p>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );
