@@ -562,6 +562,51 @@ export type Database = {
           },
         ]
       }
+      shipping_category_fees: {
+        Row: {
+          category_id: string
+          created_at: string
+          delivery_fee: number
+          delivery_label: string | null
+          district_id: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          delivery_fee?: number
+          delivery_label?: string | null
+          district_id: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          delivery_fee?: number
+          delivery_label?: string | null
+          district_id?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shipping_category_fees_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipping_category_fees_district_id_fkey"
+            columns: ["district_id"]
+            isOneToOne: false
+            referencedRelation: "shipping_districts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shipping_districts: {
         Row: {
           created_at: string

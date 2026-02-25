@@ -116,8 +116,67 @@ const Checkout = () => {
     },
   });
 
+  // Fetch category-specific shipping fees
+  const { data: categoryFees = [] } = useQuery({
+    queryKey: ["shipping-category-fees"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("shipping_category_fees")
+        .select("*");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Get cart items' category_ids for fee calculation
+  const cartCategoryIds = useMemo(() => {
+    const ids = new Set<string>();
+    items.forEach((item) => {
+      // product.category is the category name, we need to look up products for category_id
+      if ((item.product as any).category_id) {
+        ids.add((item.product as any).category_id);
+      }
+    });
+    return Array.from(ids);
+  }, [items]);
+
+  // Fetch product category_ids if not already on cart items
+  const { data: productCategories = [] } = useQuery({
+    queryKey: ["checkout-product-categories", items.map((i) => i.product.id).join(",")],
+    queryFn: async () => {
+      if (items.length === 0) return [];
+      const productIds = items.map((i) => i.product.id);
+      const { data, error } = await supabase
+        .from("products")
+        .select("id, category_id")
+        .in("id", productIds);
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: items.length > 0,
+  });
+
   const activeDistrict = districts.find((d) => d.id === selectedDistrict);
-  const deliveryFee = activeDistrict?.delivery_fee ?? 0;
+
+  // Calculate delivery fee: use highest category-specific fee, fallback to default
+  const deliveryFee = useMemo(() => {
+    if (!activeDistrict) return 0;
+    const defaultFee = activeDistrict.delivery_fee ?? 0;
+
+    if (!selectedDistrict || productCategories.length === 0) return defaultFee;
+
+    const districtCatFees = categoryFees.filter((cf) => cf.district_id === selectedDistrict);
+    if (districtCatFees.length === 0) return defaultFee;
+
+    // Find the highest applicable category fee
+    const catIds = productCategories.map((p) => p.category_id).filter(Boolean);
+    const applicableFees = districtCatFees.filter((cf) => catIds.includes(cf.category_id));
+
+    if (applicableFees.length === 0) return defaultFee;
+
+    // Use the highest fee among matching categories
+    return Math.max(...applicableFees.map((cf) => cf.delivery_fee));
+  }, [activeDistrict, selectedDistrict, categoryFees, productCategories]);
 
   // Coupon discount calculation
   const couponDiscount = appliedCoupon
