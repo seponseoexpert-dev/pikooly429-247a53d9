@@ -128,54 +128,54 @@ const Checkout = () => {
     },
   });
 
-  // Get cart items' category_ids for fee calculation
-  const cartCategoryIds = useMemo(() => {
-    const ids = new Set<string>();
-    items.forEach((item) => {
-      // product.category is the category name, we need to look up products for category_id
-      if ((item.product as any).category_id) {
-        ids.add((item.product as any).category_id);
-      }
-    });
-    return Array.from(ids);
-  }, [items]);
-
-  // Fetch product category_ids if not already on cart items
+  // Fetch all category_ids for cart products (via product_categories many-to-many)
   const { data: productCategories = [] } = useQuery({
     queryKey: ["checkout-product-categories", items.map((i) => i.product.id).join(",")],
     queryFn: async () => {
       if (items.length === 0) return [];
       const productIds = items.map((i) => i.product.id);
-      const { data, error } = await supabase
+      // Get from product_categories junction table
+      const { data: pcData, error: pcError } = await supabase
+        .from("product_categories")
+        .select("product_id, category_id")
+        .in("product_id", productIds);
+      if (pcError) throw pcError;
+      // Also get direct category_id from products table as fallback
+      const { data: pData, error: pError } = await supabase
         .from("products")
         .select("id, category_id")
         .in("id", productIds);
-      if (error) throw error;
-      return data || [];
+      if (pError) throw pError;
+      // Combine both sources into unique category_ids
+      const catIds = new Set<string>();
+      (pcData || []).forEach((pc) => catIds.add(pc.category_id));
+      (pData || []).forEach((p) => { if (p.category_id) catIds.add(p.category_id); });
+      return Array.from(catIds).map((cid) => ({ category_id: cid }));
     },
     enabled: items.length > 0,
   });
 
   const activeDistrict = districts.find((d) => d.id === selectedDistrict);
 
-  // Calculate delivery fee: use highest category-specific fee, fallback to default
-  const deliveryFee = useMemo(() => {
-    if (!activeDistrict) return 0;
+  // Calculate delivery fee & label: use highest category-specific fee, fallback to default
+  const { deliveryFee, deliveryLabel } = useMemo(() => {
+    if (!activeDistrict) return { deliveryFee: 0, deliveryLabel: "" };
     const defaultFee = activeDistrict.delivery_fee ?? 0;
+    const defaultLabel = activeDistrict.delivery_label || "Standard Delivery";
 
-    if (!selectedDistrict || productCategories.length === 0) return defaultFee;
+    if (!selectedDistrict || productCategories.length === 0) return { deliveryFee: defaultFee, deliveryLabel: defaultLabel };
 
-    const districtCatFees = categoryFees.filter((cf) => cf.district_id === selectedDistrict);
-    if (districtCatFees.length === 0) return defaultFee;
+    const districtCatFees = categoryFees.filter((cf: any) => cf.district_id === selectedDistrict);
+    if (districtCatFees.length === 0) return { deliveryFee: defaultFee, deliveryLabel: defaultLabel };
 
-    // Find the highest applicable category fee
-    const catIds = productCategories.map((p) => p.category_id).filter(Boolean);
-    const applicableFees = districtCatFees.filter((cf) => catIds.includes(cf.category_id));
+    const catIds = productCategories.map((p: any) => p.category_id).filter(Boolean);
+    const applicableFees = districtCatFees.filter((cf: any) => catIds.includes(cf.category_id));
 
-    if (applicableFees.length === 0) return defaultFee;
+    if (applicableFees.length === 0) return { deliveryFee: defaultFee, deliveryLabel: defaultLabel };
 
     // Use the highest fee among matching categories
-    return Math.max(...applicableFees.map((cf) => cf.delivery_fee));
+    const highest = applicableFees.reduce((max: any, cf: any) => cf.delivery_fee > max.delivery_fee ? cf : max, applicableFees[0]);
+    return { deliveryFee: highest.delivery_fee, deliveryLabel: highest.delivery_label || defaultLabel };
   }, [activeDistrict, selectedDistrict, categoryFees, productCategories]);
 
   // Coupon discount calculation
@@ -663,8 +663,8 @@ const Checkout = () => {
 
                   {activeDistrict && (
                     <div className="mt-2 flex justify-between items-center bg-muted/50 rounded-lg px-3 py-2 text-sm">
-                      <span className="text-muted-foreground">{activeDistrict.delivery_label}</span>
-                      <span className="font-medium">{formatPrice(activeDistrict.delivery_fee)}</span>
+                      <span className="text-muted-foreground">{deliveryLabel}</span>
+                      <span className="font-medium">{formatPrice(deliveryFee)}</span>
                     </div>
                   )}
                 </div>
