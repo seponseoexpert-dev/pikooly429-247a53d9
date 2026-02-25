@@ -48,6 +48,7 @@ const Checkout = () => {
   const [loading, setLoading] = useState(false);
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [countryOpen, setCountryOpen] = useState(false);
+  const [districtOpen, setDistrictOpen] = useState(false);
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
   const [couponLoading, setCouponLoading] = useState(false);
@@ -564,14 +565,42 @@ const Checkout = () => {
                   <Label className="text-sm font-semibold">
                     Shipping District <span className="text-destructive">*</span>
                   </Label>
-                  <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
-                    <SelectTrigger className="mt-1.5"><SelectValue placeholder="Select district" /></SelectTrigger>
-                    <SelectContent>
-                      {districts.map((d) => (
-                        <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Popover open={districtOpen} onOpenChange={setDistrictOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={districtOpen}
+                        className="w-full mt-1.5 justify-between font-normal h-10"
+                      >
+                        {activeDistrict ? activeDistrict.name : "Select district"}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[--radix-popover-trigger-width] p-0 z-[60] bg-popover" align="start">
+                      <Command>
+                        <CommandInput placeholder="Search district..." />
+                        <CommandList className="max-h-[200px]">
+                          <CommandEmpty>No district found.</CommandEmpty>
+                          <CommandGroup>
+                            {districts.map((d) => (
+                              <CommandItem
+                                key={d.id}
+                                value={d.name}
+                                onSelect={() => {
+                                  setSelectedDistrict(d.id);
+                                  setDistrictOpen(false);
+                                }}
+                              >
+                                <Check className={cn("mr-2 h-4 w-4", selectedDistrict === d.id ? "opacity-100" : "opacity-0")} />
+                                {d.name}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
 
                   {activeDistrict && (
                     <div className="mt-2 flex justify-between items-center bg-muted/50 rounded-lg px-3 py-2 text-sm">
