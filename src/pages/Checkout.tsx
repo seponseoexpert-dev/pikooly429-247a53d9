@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { Loader2, ShoppingBag, Truck, CreditCard, Minus, Plus, X } from "lucide-react";
+import { Loader2, ShoppingBag, Truck, CreditCard, Minus, Plus, X, Ticket, Check } from "lucide-react";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 
 const deliveryTimeSlots = [
@@ -25,7 +25,9 @@ const Checkout = () => {
   const { formatPrice } = useMultiCurrency();
   const [loading, setLoading] = useState(false);
   const [selectedDistrict, setSelectedDistrict] = useState("");
-
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
   const [form, setForm] = useState({
     fullName: "",
     billingCountry: "",
@@ -92,7 +94,69 @@ const Checkout = () => {
 
   const activeDistrict = districts.find((d) => d.id === selectedDistrict);
   const deliveryFee = activeDistrict?.delivery_fee ?? 0;
-  const grandTotal = totalPrice + deliveryFee;
+
+  // Coupon discount calculation
+  const couponDiscount = appliedCoupon
+    ? appliedCoupon.discount_type === "percentage"
+      ? Math.round((totalPrice * appliedCoupon.discount_value) / 100)
+      : Math.min(appliedCoupon.discount_value, totalPrice)
+    : 0;
+
+  const grandTotal = totalPrice + deliveryFee - couponDiscount;
+
+  const handleApplyCoupon = async () => {
+    const code = couponCode.trim().toUpperCase();
+    if (!code) return;
+    setCouponLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("coupons")
+        .select("*")
+        .eq("code", code)
+        .eq("is_active", true)
+        .maybeSingle();
+
+      if (error) throw error;
+      if (!data) {
+        toast.error("Invalid coupon code");
+        setCouponLoading(false);
+        return;
+      }
+
+      // Check expiry
+      if (data.expires_at && new Date(data.expires_at) < new Date()) {
+        toast.error("This coupon has expired");
+        setCouponLoading(false);
+        return;
+      }
+
+      // Check min order
+      if (data.min_order_amount && totalPrice < data.min_order_amount) {
+        toast.error(`Minimum order ৳${data.min_order_amount} required for this coupon`);
+        setCouponLoading(false);
+        return;
+      }
+
+      // Check max uses
+      if (data.max_uses && data.used_count >= data.max_uses) {
+        toast.error("This coupon has reached its usage limit");
+        setCouponLoading(false);
+        return;
+      }
+
+      setAppliedCoupon(data);
+      toast.success(`Coupon "${data.code}" applied!`);
+    } catch (err: any) {
+      toast.error("Failed to apply coupon");
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode("");
+  };
 
   const handleChange = (field: string, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -136,6 +200,7 @@ const Checkout = () => {
         payment_method: form.paymentMethod,
         subtotal: totalPrice,
         delivery_fee: deliveryFee,
+        discount: couponDiscount,
         total: grandTotal,
         user_id: userId,
         order_number: "temp",
@@ -186,6 +251,14 @@ const Checkout = () => {
         .insert(orderItems);
 
       if (itemsError) throw itemsError;
+
+      // Increment coupon used_count
+      if (appliedCoupon) {
+        await supabase
+          .from("coupons")
+          .update({ used_count: (appliedCoupon.used_count || 0) + 1 })
+          .eq("id", appliedCoupon.id);
+      }
 
       // If EPS payment, redirect to EPS gateway
       if (form.paymentMethod === "eps") {
@@ -424,14 +497,9 @@ const Checkout = () => {
                   ))}
                 </div>
 
-                <Separator className="my-4" />
-
-                <div className="flex justify-between text-sm">
-                  <span className="font-semibold">Subtotal</span>
-                  <span>{formatPrice(totalPrice)}</span>
-                </div>
 
                 <Separator className="my-4" />
+
 
                 {/* Shipping District */}
                 <div>
@@ -456,6 +524,65 @@ const Checkout = () => {
                 </div>
 
                 <Separator className="my-4" />
+
+                {/* Coupon Code */}
+                <div>
+                  <Label className="text-sm font-semibold flex items-center gap-1.5">
+                    <Ticket size={14} className="text-primary" />
+                    Coupon Code
+                  </Label>
+                  {appliedCoupon ? (
+                    <div className="mt-1.5 flex items-center justify-between bg-primary/10 rounded-lg px-3 py-2.5 border border-primary/20">
+                      <div className="flex items-center gap-2">
+                        <Check size={16} className="text-primary" />
+                        <span className="text-sm font-semibold text-primary">{appliedCoupon.code}</span>
+                        <span className="text-xs text-muted-foreground">
+                          (-{appliedCoupon.discount_type === "percentage" ? `${appliedCoupon.discount_value}%` : `৳${appliedCoupon.discount_value}`})
+                        </span>
+                      </div>
+                      <button type="button" onClick={handleRemoveCoupon} className="text-muted-foreground hover:text-destructive">
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="mt-1.5 flex gap-2">
+                      <Input
+                        placeholder="Enter code"
+                        value={couponCode}
+                        onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                        className="uppercase text-sm"
+                        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleApplyCoupon(); } }}
+                      />
+                      <Button type="button" variant="outline" size="sm" onClick={handleApplyCoupon} disabled={couponLoading || !couponCode.trim()} className="shrink-0 px-4">
+                        {couponLoading ? <Loader2 size={14} className="animate-spin" /> : "Apply"}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
+                <Separator className="my-4" />
+
+                {/* Summary */}
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <span>{formatPrice(totalPrice)}</span>
+                  </div>
+                  {activeDistrict && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Delivery</span>
+                      <span>{formatPrice(deliveryFee)}</span>
+                    </div>
+                  )}
+                  {couponDiscount > 0 && (
+                    <div className="flex justify-between text-primary">
+                      <span>Discount</span>
+                      <span>-{formatPrice(couponDiscount)}</span>
+                    </div>
+                  )}
+                </div>
+
+                <Separator className="my-3" />
 
                 <div className="flex justify-between text-lg font-bold">
                   <span>Total</span>
