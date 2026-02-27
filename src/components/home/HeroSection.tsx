@@ -120,7 +120,7 @@ const HeroSection = memo(() => {
                   initial={{ opacity: 0, scale: 0.85, rotate: -3 }}
                   animate={{ opacity: 1, scale: 1, rotate: 0 }}
                   transition={{ duration: 0.55, delay: 0.1, ease: [0.34, 1.56, 0.64, 1] }}
-                  className="absolute right-3 sm:right-10 md:right-14 lg:right-20 bottom-2 sm:top-1/2 sm:-translate-y-1/2 w-32 h-32 sm:w-36 sm:h-36 md:w-48 md:h-48 lg:w-56 lg:h-56 xl:w-64 xl:h-64"
+                  className="absolute right-4 sm:right-10 md:right-14 lg:right-20 top-1/2 -translate-y-1/2 w-[120px] h-[120px] sm:w-36 sm:h-36 md:w-48 md:h-48 lg:w-56 lg:h-56 xl:w-64 xl:h-64"
                 >
                   {slide.image && (
                     <img
