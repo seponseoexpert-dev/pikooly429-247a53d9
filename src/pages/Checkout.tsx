@@ -540,7 +540,19 @@ const Checkout = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="deliveryDate">Delivery Date (Optional)</Label>
-                      <Input id="deliveryDate" type="date" value={form.deliveryDate} onChange={(e) => handleChange("deliveryDate", e.target.value)} className="mt-1.5" min={new Date().toISOString().split("T")[0]} />
+                      <div className="relative mt-1.5">
+                        <Input
+                          id="deliveryDate"
+                          type="date"
+                          value={form.deliveryDate}
+                          onChange={(e) => handleChange("deliveryDate", e.target.value)}
+                          min={new Date().toISOString().split("T")[0]}
+                          className={cn(
+                            "w-full",
+                            !form.deliveryDate && "text-muted-foreground"
+                          )}
+                        />
+                      </div>
                     </div>
                     <div>
                       <Label>Delivery Time (Optional)</Label>
