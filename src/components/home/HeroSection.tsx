@@ -82,7 +82,7 @@ const HeroSection = memo(() => {
 
         {/* Slide card */}
         <div className="overflow-hidden rounded-2xl lg:rounded-3xl relative h-[220px] sm:h-auto sm:aspect-[2/1] md:aspect-[5/2] lg:aspect-[3/1]">
-          <AnimatePresence mode="popLayout" initial={false}>
+          <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={current}
               initial={{ opacity: 0, scale: 1.04 }}
