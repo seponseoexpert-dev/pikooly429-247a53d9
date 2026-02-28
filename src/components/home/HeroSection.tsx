@@ -81,7 +81,7 @@ const HeroSection = memo(() => {
         </button>
 
         {/* Slide card */}
-        <div className="overflow-hidden rounded-2xl lg:rounded-3xl relative h-[280px] sm:h-[280px] md:h-auto md:aspect-[5/2] lg:aspect-[3/1]">
+        <div className="overflow-hidden rounded-2xl lg:rounded-3xl relative h-[220px] sm:h-[250px] md:h-auto md:aspect-[5/2] lg:aspect-[3/1]">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={current}
@@ -120,7 +120,7 @@ const HeroSection = memo(() => {
                   initial={{ opacity: 0, scale: 0.85, rotate: -3 }}
                   animate={{ opacity: 1, scale: 1, rotate: 0 }}
                   transition={{ duration: 0.55, delay: 0.1, ease: [0.34, 1.56, 0.64, 1] }}
-                  className="absolute right-3 sm:right-8 md:right-12 lg:right-16 top-[45%] -translate-y-1/2 w-[140px] h-[140px] sm:w-[160px] sm:h-[160px] md:w-[200px] md:h-[200px] lg:w-[240px] lg:h-[240px] xl:w-[280px] xl:h-[280px]"
+                  className="absolute right-3 sm:right-8 md:right-12 lg:right-16 top-1/2 -translate-y-1/2 w-[130px] h-[130px] sm:w-[150px] sm:h-[150px] md:w-[200px] md:h-[200px] lg:w-[240px] lg:h-[240px] xl:w-[280px] xl:h-[280px]"
                 >
                   {slide.image && (
                     <img
