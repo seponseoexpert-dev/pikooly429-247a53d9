@@ -64,24 +64,24 @@ const HeroSection = memo(() => {
   return (
     <section className="relative py-3 sm:py-4 md:py-6 lg:py-8 section-container animate-fade-in" aria-label="Featured promotions">
       <div className="relative">
-        {/* Navigation arrows outside the card */}
+        {/* Navigation arrows - hidden on mobile, visible on tablet+ */}
         <button
           onClick={prev}
-          className="absolute -left-1 sm:-left-3 md:-left-5 top-1/2 -translate-y-1/2 z-10 w-9 h-9 md:w-11 md:h-11 rounded-full bg-card border border-border shadow-sm flex items-center justify-center text-foreground hover:bg-muted transition-colors"
+          className="hidden sm:flex absolute -left-3 md:-left-5 top-1/2 -translate-y-1/2 z-10 w-9 h-9 md:w-11 md:h-11 rounded-full bg-card border border-border shadow-sm items-center justify-center text-foreground hover:bg-muted transition-colors"
           aria-label="Previous slide"
         >
           <ChevronLeft size={18} />
         </button>
         <button
           onClick={next}
-          className="absolute -right-1 sm:-right-3 md:-right-5 top-1/2 -translate-y-1/2 z-10 w-9 h-9 md:w-11 md:h-11 rounded-full bg-card border border-border shadow-sm flex items-center justify-center text-foreground hover:bg-muted transition-colors"
+          className="hidden sm:flex absolute -right-3 md:-right-5 top-1/2 -translate-y-1/2 z-10 w-9 h-9 md:w-11 md:h-11 rounded-full bg-card border border-border shadow-sm items-center justify-center text-foreground hover:bg-muted transition-colors"
           aria-label="Next slide"
         >
           <ChevronRight size={18} />
         </button>
 
         {/* Slide card */}
-        <div className="overflow-hidden rounded-2xl lg:rounded-3xl relative h-[260px] sm:h-auto sm:aspect-[2/1] md:aspect-[5/2] lg:aspect-[3/1]">
+        <div className="overflow-hidden rounded-2xl lg:rounded-3xl relative h-[200px] sm:h-[240px] md:h-auto md:aspect-[5/2] lg:aspect-[3/1]">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={current}
@@ -92,14 +92,14 @@ const HeroSection = memo(() => {
               className="absolute inset-0"
               style={{ backgroundColor: slide.bgColor }}
             >
-              <div className="flex items-center h-full px-6 sm:px-12 md:px-16 lg:px-20">
+              <div className="flex items-center h-full px-5 sm:px-10 md:px-16 lg:px-20">
                 <motion.div
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.15, ease: "easeOut" }}
-                  className="relative z-10 max-w-[50%] sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl space-y-3 sm:space-y-4 md:space-y-6"
+                  className="relative z-10 max-w-[55%] sm:max-w-[50%] md:max-w-md lg:max-w-lg xl:max-w-xl space-y-2.5 sm:space-y-3 md:space-y-5"
                 >
-                  <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display font-bold text-foreground leading-[1.15] tracking-tight whitespace-pre-line">
+                  <h1 className="text-base sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-display font-bold text-foreground leading-[1.2] tracking-tight whitespace-pre-line line-clamp-3">
                     {slide.title}
                   </h1>
                   <motion.div
@@ -109,7 +109,7 @@ const HeroSection = memo(() => {
                   >
                     <Link
                       to={slide.link}
-                      className="inline-block px-5 sm:px-8 md:px-10 py-2.5 sm:py-3 md:py-3.5 bg-primary text-primary-foreground text-xs sm:text-sm md:text-base font-semibold uppercase tracking-[0.15em] rounded-md hover:bg-primary/90 transition-all duration-200 hover:shadow-md"
+                      className="inline-block px-4 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 bg-primary text-primary-foreground text-[10px] sm:text-xs md:text-sm font-semibold uppercase tracking-[0.12em] rounded-md hover:bg-primary/90 transition-all duration-200 hover:shadow-md"
                     >
                       {slide.cta}
                     </Link>
@@ -120,14 +120,14 @@ const HeroSection = memo(() => {
                   initial={{ opacity: 0, scale: 0.85, rotate: -3 }}
                   animate={{ opacity: 1, scale: 1, rotate: 0 }}
                   transition={{ duration: 0.55, delay: 0.1, ease: [0.34, 1.56, 0.64, 1] }}
-                  className="absolute right-4 sm:right-10 md:right-14 lg:right-20 top-1/2 -translate-y-1/2 w-[150px] h-[150px] sm:w-40 sm:h-40 md:w-52 md:h-52 lg:w-60 lg:h-60 xl:w-72 xl:h-72"
+                  className="absolute right-3 sm:right-8 md:right-12 lg:right-16 top-1/2 -translate-y-1/2 w-[110px] h-[110px] sm:w-[140px] sm:h-[140px] md:w-[200px] md:h-[200px] lg:w-[240px] lg:h-[240px] xl:w-[280px] xl:h-[280px]"
                 >
                   {slide.image && (
                     <img
                       src={slide.image}
                       alt={slide.title || "Promotion"}
-                      width={288}
-                      height={288}
+                      width={280}
+                      height={280}
                       decoding="async"
                       className="w-full h-full object-cover rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-lg"
                       loading={current === 0 ? "eager" : "lazy"}
@@ -141,15 +141,16 @@ const HeroSection = memo(() => {
         </div>
       </div>
 
-      <div className="flex items-center justify-center gap-2.5 mt-4">
-        <span className="text-xs text-muted-foreground font-medium">
+      {/* Dots & counter */}
+      <div className="flex items-center justify-center gap-2 mt-3 sm:mt-4">
+        <span className="text-[10px] sm:text-xs text-muted-foreground font-medium tabular-nums">
           {current + 1}/{slides.length}
         </span>
         {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrent(i)}
-            className={`h-2 rounded-full transition-all duration-300 ${i === current ? "w-7 bg-foreground" : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"}`}
+            className={`h-1.5 sm:h-2 rounded-full transition-all duration-300 ${i === current ? "w-5 sm:w-7 bg-foreground" : "w-1.5 sm:w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"}`}
             aria-label={`Go to slide ${i + 1}`}
           />
         ))}
