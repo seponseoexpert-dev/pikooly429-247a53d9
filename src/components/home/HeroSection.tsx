@@ -81,7 +81,7 @@ const HeroSection = memo(() => {
         </button>
 
         {/* Slide card */}
-        <div className="overflow-hidden rounded-2xl lg:rounded-3xl relative h-[200px] sm:h-[240px] md:h-auto md:aspect-[5/2] lg:aspect-[3/1]">
+        <div className="overflow-hidden rounded-2xl lg:rounded-3xl relative h-[280px] sm:h-[280px] md:h-auto md:aspect-[5/2] lg:aspect-[3/1]">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={current}
@@ -97,9 +97,9 @@ const HeroSection = memo(() => {
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.15, ease: "easeOut" }}
-                  className="relative z-10 max-w-[55%] sm:max-w-[50%] md:max-w-md lg:max-w-lg xl:max-w-xl space-y-2.5 sm:space-y-3 md:space-y-5"
+                  className="relative z-10 max-w-[50%] sm:max-w-[50%] md:max-w-md lg:max-w-lg xl:max-w-xl space-y-3 sm:space-y-3 md:space-y-5"
                 >
-                  <h1 className="text-base sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-display font-bold text-foreground leading-[1.2] tracking-tight whitespace-pre-line line-clamp-3">
+                  <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-display font-bold text-foreground leading-[1.15] tracking-tight whitespace-pre-line">
                     {slide.title}
                   </h1>
                   <motion.div
@@ -109,7 +109,7 @@ const HeroSection = memo(() => {
                   >
                     <Link
                       to={slide.link}
-                      className="inline-block px-4 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 bg-primary text-primary-foreground text-[10px] sm:text-xs md:text-sm font-semibold uppercase tracking-[0.12em] rounded-md hover:bg-primary/90 transition-all duration-200 hover:shadow-md"
+                      className="inline-block px-5 sm:px-6 md:px-8 py-2.5 sm:py-2.5 md:py-3 bg-primary text-primary-foreground text-xs sm:text-xs md:text-sm font-semibold uppercase tracking-[0.12em] rounded-md hover:bg-primary/90 transition-all duration-200 hover:shadow-md"
                     >
                       {slide.cta}
                     </Link>
@@ -120,7 +120,7 @@ const HeroSection = memo(() => {
                   initial={{ opacity: 0, scale: 0.85, rotate: -3 }}
                   animate={{ opacity: 1, scale: 1, rotate: 0 }}
                   transition={{ duration: 0.55, delay: 0.1, ease: [0.34, 1.56, 0.64, 1] }}
-                  className="absolute right-3 sm:right-8 md:right-12 lg:right-16 top-1/2 -translate-y-1/2 w-[110px] h-[110px] sm:w-[140px] sm:h-[140px] md:w-[200px] md:h-[200px] lg:w-[240px] lg:h-[240px] xl:w-[280px] xl:h-[280px]"
+                  className="absolute right-3 sm:right-8 md:right-12 lg:right-16 top-[45%] -translate-y-1/2 w-[140px] h-[140px] sm:w-[160px] sm:h-[160px] md:w-[200px] md:h-[200px] lg:w-[240px] lg:h-[240px] xl:w-[280px] xl:h-[280px]"
                 >
                   {slide.image && (
                     <img
