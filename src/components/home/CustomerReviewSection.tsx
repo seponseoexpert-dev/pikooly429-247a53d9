@@ -92,7 +92,7 @@ const CustomerReviewSection = () => {
     if (totalDesktopPages <= 1) return;
     const interval = setInterval(() => {
       setDesktopPage((prev) => (prev + 1) % totalDesktopPages);
-    }, 5000);
+    }, 30000);
     return () => clearInterval(interval);
   }, [totalDesktopPages]);
 
