@@ -10,6 +10,7 @@ const Footer = memo(() => {
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  const storeName = settings.store_name || "Pikooly";
   const phone = settings.store_phone || "+880 1XXX-XXXXXX";
   const storeEmail = settings.store_email || "hello@pikoolyflora.com";
   const address = settings.store_address || "";
@@ -119,7 +120,7 @@ const Footer = memo(() => {
               <img src={settings.footer_logo} alt="Footer Logo" className="h-10 sm:h-12 w-auto mb-2 object-contain" />
             ) : (
               <h3 className="text-xl sm:text-2xl font-display font-bold mb-2">
-                <span className="text-foreground">Pikooly</span>
+                <span className="text-foreground">{storeName}</span>
               </h3>
             )}
             {footerText ? (

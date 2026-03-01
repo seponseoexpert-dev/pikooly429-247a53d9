@@ -32,13 +32,13 @@ const ContactUs = () => {
   const heroSubtitle = s("contactpage_hero_subtitle", "Have a query? Need assistance? Simply reach out for answers. We love staying in touch with you!");
   const whatsappNumber = s("contactpage_whatsapp", "+8801410244421");
   const whatsappText = s("contactpage_whatsapp_text", "Fastest way to reach us.");
-  const email = s("contactpage_email", "hello.pikooly@gmail.com");
-  const phone1 = s("contactpage_phone_1", "+8801410244421");
+  const email = settings.contactpage_email || settings.store_email || "hello.pikooly@gmail.com";
+  const phone1 = settings.contactpage_phone_1 || settings.store_phone || "+8801410244421";
   const phone2 = s("contactpage_phone_2", "");
   const phoneHours = s("contactpage_phone_hours", "9 AM to 10 PM throughout the week");
-  const address = s("contactpage_address", "House 95, Road 06, Sector 9, Uttara, Dhaka 1230");
-  const websiteUrl = s("contactpage_website_url", "https://pikooly.com.bd");
-  const websiteLabel = s("contactpage_website_label", "pikooly.com.bd");
+  const address = settings.contactpage_address || settings.store_address || "House 95, Road 06, Sector 9, Uttara, Dhaka 1230";
+  const websiteUrl = settings.contactpage_website_url || settings.company_website || "https://pikooly.com.bd";
+  const websiteLabel = settings.contactpage_website_label || settings.company_website?.replace(/^https?:\/\//, '') || "pikooly.com.bd";
 
   const cleanWhatsapp = whatsappNumber.replace(/[^0-9]/g, "");
 
