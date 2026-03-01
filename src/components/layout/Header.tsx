@@ -25,7 +25,7 @@ const Header = () => {
   const { settings, isLoading: settingsLoading } = useSiteSettings();
   const { currencies, selectedCurrency, setSelectedCurrency, formatPrice } = useMultiCurrency();
   const { user } = useAuth();
-  const { language, setLanguage, t, languages } = useLanguage();
+  const { language, setLanguage, t, languages, multiLanguageEnabled } = useLanguage();
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
@@ -214,7 +214,8 @@ const Header = () => {
                   {theme === "dark" ? "Light" : "Dark"}
                 </span>
               </button>
-              {/* Language Switcher */}
+              {/* Language Switcher - only when multi-language enabled */}
+              {multiLanguageEnabled && languages.length > 1 && (
               <div className="relative" ref={languageRef}>
                 <button
                   onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
@@ -243,6 +244,7 @@ const Header = () => {
                   </div>
                 )}
               </div>
+              )}
               <Link to="/product-category/same-day" className="hidden md:flex flex-col items-center justify-center px-2 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted" aria-label="Same Day Delivery">
                 <Truck size={20} />
                 <span className="text-[9px] font-medium mt-0.5 leading-none">{t("same_day")}</span>
