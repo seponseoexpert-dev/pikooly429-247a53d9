@@ -61,8 +61,8 @@ const HeroSection = memo(() => {
           }}
         >
           {/* Text content */}
-          <div className="absolute left-5 sm:left-8 md:left-12 lg:left-16 top-1/2 -translate-y-1/2 z-10 max-w-[55%] sm:max-w-[50%]">
-            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-3 sm:mb-4 md:mb-5">
+          <div className="absolute left-5 sm:left-8 md:left-12 lg:left-16 top-1/2 -translate-y-1/2 z-10 max-w-[45%] sm:max-w-[45%] md:max-w-[50%]">
+            <h2 className="font-display text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-3 sm:mb-4 md:mb-5">
               {slide.title}
             </h2>
             {slide.link && (
@@ -77,7 +77,7 @@ const HeroSection = memo(() => {
 
           {/* Image */}
           {slide.image_url && (
-            <div className="absolute right-3 sm:right-6 md:right-10 lg:right-16 top-1/2 -translate-y-1/2 w-[140px] h-[140px] sm:w-[180px] sm:h-[180px] md:w-[240px] md:h-[240px] lg:w-[300px] lg:h-[300px]">
+            <div className="absolute right-2 sm:right-4 md:right-10 lg:right-16 top-1/2 -translate-y-1/2 w-[48%] sm:w-[45%] md:w-[240px] lg:w-[300px] h-[75%] sm:h-[80%] md:h-[240px] lg:h-[300px]">
               <img
                 src={slide.image_url}
                 alt={slide.title}
