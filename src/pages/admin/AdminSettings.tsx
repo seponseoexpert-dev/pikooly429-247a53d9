@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -244,10 +244,7 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "admin_registration_enabled", label: "Admin Registration", type: "switch" },
     { key: "default_user_role", label: "Default User Role" },
   ],
-  languages: [
-    { key: "default_language_code", label: "Default Language Code" },
-    { key: "multi_language_enabled_setting", label: "Enable Multi Language", type: "switch" },
-  ],
+  languages: [], // Handled by custom LanguagesSection component
   sms_gateway: [], // Handled by custom SmsGatewaySection component
   payment_gateway: [], // Handled by custom PaymentGatewaySection component
   license: [
@@ -1106,6 +1103,143 @@ const DynamicFAQSection = ({
   );
 };
 
+// Languages Section
+const LanguagesSection = ({
+  formValues,
+  setFormValues,
+}: {
+  formValues: Record<string, string>;
+  setFormValues: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+}) => {
+  const allLanguages = [
+    { code: "en", name: "English", nativeName: "English" },
+    { code: "bn", name: "Bengali", nativeName: "বাংলা" },
+    { code: "hi", name: "Hindi", nativeName: "हिन्दी" },
+    { code: "ar", name: "Arabic", nativeName: "العربية" },
+    { code: "es", name: "Spanish", nativeName: "Español" },
+    { code: "fr", name: "French", nativeName: "Français" },
+    { code: "zh", name: "Chinese", nativeName: "中文" },
+    { code: "ja", name: "Japanese", nativeName: "日本語" },
+    { code: "ko", name: "Korean", nativeName: "한국어" },
+    { code: "pt", name: "Portuguese", nativeName: "Português" },
+    { code: "ru", name: "Russian", nativeName: "Русский" },
+    { code: "de", name: "German", nativeName: "Deutsch" },
+    { code: "tr", name: "Turkish", nativeName: "Türkçe" },
+    { code: "ur", name: "Urdu", nativeName: "اردو" },
+    { code: "ms", name: "Malay", nativeName: "Bahasa Melayu" },
+    { code: "th", name: "Thai", nativeName: "ไทย" },
+  ];
+
+  const defaultLang = formValues["default_language_code"] || "en";
+  const multiEnabled = formValues["multi_language_enabled_setting"] === "true";
+
+  // Parse enabled languages from comma-separated string
+  const enabledLangs = (formValues["enabled_languages"] || "en").split(",").filter(Boolean);
+
+  const toggleLanguage = (code: string) => {
+    let updated: string[];
+    if (enabledLangs.includes(code)) {
+      // Can't disable default language
+      if (code === defaultLang) return;
+      updated = enabledLangs.filter((c) => c !== code);
+    } else {
+      updated = [...enabledLangs, code];
+    }
+    setFormValues((prev) => ({ ...prev, enabled_languages: updated.join(",") }));
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Default Language */}
+      <div className="space-y-1.5">
+        <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Default Language Code</label>
+        <Select
+          value={defaultLang}
+          onValueChange={(v) => {
+            setFormValues((prev) => ({
+              ...prev,
+              default_language_code: v,
+              // Ensure default language is always enabled
+              enabled_languages: prev["enabled_languages"]?.includes(v)
+                ? prev["enabled_languages"]
+                : [...(prev["enabled_languages"] || "en").split(",").filter(Boolean), v].join(","),
+            }));
+          }}
+        >
+          <SelectTrigger><SelectValue /></SelectTrigger>
+          <SelectContent>
+            {allLanguages.map((lang) => (
+              <SelectItem key={lang.code} value={lang.code}>
+                {lang.name} ({lang.nativeName})
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Enable Multi Language Toggle */}
+      <div className="flex items-center justify-between border border-border rounded-lg px-4 py-3">
+        <div>
+          <p className="text-sm font-medium">Enable Multi Language</p>
+          <p className="text-xs text-muted-foreground">Allow users to switch languages on the frontend</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">{multiEnabled ? "Enabled" : "Disabled"}</span>
+          <Switch
+            checked={multiEnabled}
+            onCheckedChange={(checked) =>
+              setFormValues((prev) => ({ ...prev, multi_language_enabled_setting: checked ? "true" : "false" }))
+            }
+          />
+        </div>
+      </div>
+
+      {/* Language List */}
+      {multiEnabled && (
+        <div className="space-y-2">
+          <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Available Languages</label>
+          <p className="text-xs text-muted-foreground mb-2">Toggle languages users can switch to. Default language cannot be disabled.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {allLanguages.map((lang) => {
+              const isEnabled = enabledLangs.includes(lang.code);
+              const isDefault = lang.code === defaultLang;
+              return (
+                <div
+                  key={lang.code}
+                  className={cn(
+                    "flex items-center justify-between border rounded-lg px-3 py-2.5 transition-colors",
+                    isEnabled ? "border-primary/40 bg-primary/5" : "border-border"
+                  )}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-xs font-bold uppercase">
+                      {lang.code}
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium">{lang.name}</p>
+                      <p className="text-xs text-muted-foreground">{lang.nativeName}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {isDefault && (
+                      <span className="text-[10px] bg-primary/10 text-primary font-semibold px-2 py-0.5 rounded-full">Default</span>
+                    )}
+                    <Switch
+                      checked={isEnabled}
+                      disabled={isDefault}
+                      onCheckedChange={() => toggleLanguage(lang.code)}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const AdminSettings = () => {
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -1151,9 +1285,11 @@ const AdminSettings = () => {
     }
     if (activeSection === "faq") {
       const base = (sectionFields["faq"] || []).map((f) => f.key);
-      // Collect all dynamic faq keys from formValues
       const dynamicKeys = Object.keys(formValues).filter((k) => /^faq_\d+_(question|answer)$/.test(k));
       return [...new Set([...base, ...dynamicKeys])];
+    }
+    if (activeSection === "languages") {
+      return ["default_language_code", "multi_language_enabled_setting", "enabled_languages"];
     }
     return (sectionFields[activeSection] || []).map((f) => f.key);
   };
@@ -1270,6 +1406,8 @@ const AdminSettings = () => {
                     <PaymentGatewaySection formValues={formValues} setFormValues={setFormValues} />
                   ) : activeSection === "faq" ? (
                     <DynamicFAQSection formValues={formValues} setFormValues={setFormValues} />
+                  ) : activeSection === "languages" ? (
+                    <LanguagesSection formValues={formValues} setFormValues={setFormValues} />
                   ) : currentFields.length === 0 ? (
                     <p className="text-muted-foreground text-sm py-4 text-center">No settings available for this section yet.</p>
                   ) : (
