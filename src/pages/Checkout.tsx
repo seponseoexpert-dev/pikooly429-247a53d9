@@ -373,10 +373,10 @@ const Checkout = () => {
       if (form.email.trim()) {
         const itemsHtml = items.map((item) => {
           const imgSrc = (item.product as any).image_url || item.product.image || "";
-          const imgHtml = imgSrc ? `<img src="${imgSrc}" alt="${item.product.name}" width="56" height="56" style="width:56px;height:56px;object-fit:cover;border-radius:8px;display:block;" />` : `<div style="width:56px;height:56px;background:#f0f0f0;border-radius:8px;"></div>`;
+          const imgTag = imgSrc ? `<img src="${imgSrc}" alt="${item.product.name}" width="48" height="48" style="width:48px;height:48px;object-fit:cover;border-radius:8px;display:inline-block;vertical-align:middle;margin-right:10px;" />` : "";
           return `<tr>
-            <td style="padding:12px 16px;border-bottom:1px solid #f0f0f0;width:56px;vertical-align:middle;">${imgHtml}</td>
-            <td style="padding:12px 12px;border-bottom:1px solid #f0f0f0;font-size:14px;color:#333;vertical-align:middle;">${item.product.name}<br/><span style="font-size:12px;color:#888;">Qty: ${item.quantity}</span></td>
+            <td style="padding:12px 16px;border-bottom:1px solid #f0f0f0;font-size:14px;color:#333;vertical-align:middle;">${imgTag}${item.product.name}</td>
+            <td style="padding:12px 16px;border-bottom:1px solid #f0f0f0;text-align:center;font-size:14px;color:#333;vertical-align:middle;">${item.quantity}</td>
             <td style="padding:12px 16px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:14px;font-weight:600;color:#333;vertical-align:middle;">৳${(item.product.price * item.quantity).toFixed(2)}</td>
           </tr>`;
         }).join("");
