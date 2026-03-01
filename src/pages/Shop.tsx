@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams, useParams, Link } from "react-router-dom";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import ProductCard from "@/components/product/ProductCard";
 import { ProductCardSkeleton } from "@/components/ui/skeletons";
@@ -8,9 +8,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const Shop = () => {
+  const { catSlug, subSlug } = useParams();
   const [searchParams] = useSearchParams();
-  const catParam = searchParams.get("cat") || "";
-  const subParam = searchParams.get("sub") || "";
+  const catParam = catSlug || searchParams.get("cat") || "";
+  const subParam = subSlug || searchParams.get("sub") || "";
   const searchParam = searchParams.get("search") || "";
   const [selectedCat, setSelectedCat] = useState(catParam);
   const [selectedSub, setSelectedSub] = useState(subParam);

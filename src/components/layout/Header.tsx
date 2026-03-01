@@ -207,7 +207,7 @@ const Header = () => {
                   {theme === "dark" ? "Light" : "Dark"}
                 </span>
               </button>
-              <Link to="/shop?cat=same-day" className="hidden md:flex flex-col items-center justify-center px-2 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted" aria-label="Same Day Delivery">
+              <Link to="/product-category/same-day" className="hidden md:flex flex-col items-center justify-center px-2 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted" aria-label="Same Day Delivery">
                 <Truck size={20} />
                 <span className="text-[9px] font-medium mt-0.5 leading-none">Same Day</span>
               </Link>
@@ -316,7 +316,7 @@ const Header = () => {
           <nav className="hidden md:flex items-center justify-center gap-1 border-t border-border/40">
             {categories.map((cat) => {
               const subs = subsByCategory[cat.id] || [];
-              const isActive = location.pathname + location.search === `/shop?cat=${cat.slug}`;
+              const isActive = location.pathname === `/product-category/${cat.slug}`;
               return (
                 <div
                   key={cat.id}
@@ -325,7 +325,7 @@ const Header = () => {
                   onMouseLeave={() => setHoveredCat(null)}
                 >
                   <Link
-                    to={`/shop?cat=${cat.slug}`}
+                    to={`/product-category/${cat.slug}`}
                     className={`flex items-center gap-0.5 px-3 lg:px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors hover:text-primary ${
                       isActive ? "text-primary border-b-2 border-primary" : "text-muted-foreground"
                     }`}
@@ -338,7 +338,7 @@ const Header = () => {
                       {subs.map((sub) => (
                         <Link
                           key={sub.id}
-                          to={`/shop?cat=${cat.slug}&sub=${sub.slug}`}
+                          to={`/product-category/${cat.slug}/${sub.slug}`}
                           className="block px-4 py-2 text-sm text-muted-foreground hover:text-primary hover:bg-muted transition-colors"
                           onClick={() => setHoveredCat(null)}
                         >

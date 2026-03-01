@@ -96,6 +96,8 @@ const App = () => (
               {/* Public routes */}
               <Route path="/" element={<PublicLayout><Index /></PublicLayout>} />
               <Route path="/shop" element={<PublicLayout><Shop /></PublicLayout>} />
+              <Route path="/product-category/:catSlug" element={<PublicLayout><Shop /></PublicLayout>} />
+              <Route path="/product-category/:catSlug/:subSlug" element={<PublicLayout><Shop /></PublicLayout>} />
               <Route path="/all-gifts" element={<PublicLayout><AllGifts /></PublicLayout>} />
               <Route path="/product/:id" element={<PublicLayout><ProductDetail /></PublicLayout>} />
               <Route path="/blog" element={<PublicLayout><Blog /></PublicLayout>} />
