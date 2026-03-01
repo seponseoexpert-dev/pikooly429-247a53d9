@@ -102,6 +102,34 @@ const AdminOrders = () => {
     if (!template) return;
 
     try {
+      // Fetch order items with product images
+      const { data: rawItems } = await supabase
+        .from("order_items")
+        .select("product_name, quantity, price, total, product_id")
+        .eq("order_id", order.id);
+
+      const itemRows = await Promise.all((rawItems || []).map(async (item: any) => {
+        let imgUrl = "";
+        if (item.product_id) {
+          const { data: prod } = await supabase.from("products").select("image_url").eq("id", item.product_id).maybeSingle();
+          imgUrl = prod?.image_url || "";
+        }
+        const imgHtml = imgUrl ? `<img src="${imgUrl}" alt="${item.product_name}" width="56" height="56" style="width:56px;height:56px;object-fit:cover;border-radius:8px;display:block;" />` : `<div style="width:56px;height:56px;background:#f0f0f0;border-radius:8px;"></div>`;
+        return `<tr>
+          <td style="padding:10px 12px;border-bottom:1px solid #f0f0f0;width:56px;vertical-align:middle;">${imgHtml}</td>
+          <td style="padding:10px 8px;border-bottom:1px solid #f0f0f0;font-size:14px;color:#333;vertical-align:middle;">${item.product_name}<br/><span style="font-size:12px;color:#888;">Qty: ${item.quantity}</span></td>
+          <td style="padding:10px 12px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:14px;font-weight:600;color:#333;vertical-align:middle;">৳${Number(item.total).toFixed(2)}</td>
+        </tr>`;
+      }));
+      const itemsTableHtml = itemRows.length > 0 ? `
+        <!-- Order Items -->
+        <tr><td style="padding:0 40px 20px;">
+          <h3 style="margin:0 0 12px;font-size:14px;font-weight:600;color:#333;">Order Items</h3>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-radius:12px;overflow:hidden;border:1px solid #eee;">
+            ${itemRows.join("")}
+          </table>
+        </td></tr>` : "";
+
       await supabase.functions.invoke("send-email", {
         body: {
           to: order.customer_email,
@@ -145,6 +173,8 @@ const AdminOrders = () => {
                         </td></tr>
                       </table>
                     </td></tr>
+
+                    ${itemsTableHtml}
 
                     <!-- CTA -->
                     <tr><td style="padding:0 40px 32px;text-align:center;">
