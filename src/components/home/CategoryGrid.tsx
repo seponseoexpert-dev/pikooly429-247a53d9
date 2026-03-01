@@ -37,7 +37,7 @@ const CategoryGrid = memo(() => {
         {categories.map((cat) => (
           <div key={cat.id}>
             <Link
-              to={`/shop?cat=${cat.slug}`}
+              to={`/product-category/${cat.slug}`}
               className="flex flex-col items-center gap-2 group"
             >
               <div className="w-full aspect-square rounded-2xl overflow-hidden bg-secondary border border-border/30 group-hover:border-primary/40 group-hover:shadow-lg transition-all duration-200 group-hover:scale-105">

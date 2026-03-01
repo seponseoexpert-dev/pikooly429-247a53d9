@@ -90,7 +90,7 @@ const AllGifts = () => {
               {/* Category header */}
               <div className="flex items-center justify-between">
                 <Link
-                  to={`/shop?cat=${cat.slug}`}
+                  to={`/product-category/${cat.slug}`}
                   className="flex items-center gap-3 flex-1 p-3"
                 >
                   {activeTab === "category" && (
@@ -130,7 +130,7 @@ const AllGifts = () => {
                   {subs.map((sub: any) => (
                     <Link
                       key={sub.id}
-                      to={`/shop?cat=${cat.slug}&sub=${sub.slug}`}
+                      to={`/product-category/${cat.slug}/${sub.slug}`}
                       className="flex items-center justify-between py-3 px-3 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted/50"
                     >
                       <span>{sub.name}</span>
