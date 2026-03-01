@@ -444,6 +444,7 @@ const Checkout = () => {
                         <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                           <tr><td style="padding:4px 0;font-size:14px;color:#666;">Subtotal</td><td style="padding:4px 0;font-size:14px;color:#333;text-align:right;">৳${totalPrice.toFixed(2)}</td></tr>
                           <tr><td style="padding:4px 0;font-size:14px;color:#666;">Delivery</td><td style="padding:4px 0;font-size:14px;color:#333;text-align:right;">৳${deliveryFee.toFixed(2)}</td></tr>
+                          ${couponDiscount > 0 ? `<tr><td style="padding:4px 0;font-size:14px;color:#666;">Discount ${appliedCoupon ? `<span style="display:inline-block;background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;margin-left:4px;">${appliedCoupon.code}</span>` : ""}</td><td style="padding:4px 0;font-size:14px;color:#e53e3e;font-weight:600;text-align:right;">-৳${couponDiscount.toFixed(2)}</td></tr>` : ""}
                           <tr><td colspan="2" style="padding:12px 0 0;border-top:2px solid #eee;"></td></tr>
                           <tr><td style="padding:4px 0;font-size:18px;font-weight:700;color:#333;">Total</td><td style="padding:4px 0;font-size:18px;font-weight:700;color:#2e7d32;text-align:right;">৳${grandTotal.toFixed(2)}</td></tr>
                         </table>
