@@ -4,9 +4,11 @@ import { Facebook, Instagram, Twitter, Youtube, Send, Phone, Mail, MapPin, Heart
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Footer = memo(() => {
   const { settings } = useSiteSettings();
+  const { t } = useLanguage();
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -123,10 +125,10 @@ const Footer = memo(() => {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-center sm:text-left">
               <h3 className="text-base sm:text-lg font-display font-bold text-primary-foreground dark:text-primary-foreground">
-                Subscribe & Get 10% Off
+                {t("subscribe_title")}
               </h3>
               <p className="text-xs sm:text-sm text-primary-foreground/70 mt-0.5">
-                Be the first to know about new arrivals & exclusive deals
+                {t("subscribe_subtitle")}
               </p>
             </div>
             <form onSubmit={handleSubscribe} className="flex w-full sm:w-auto max-w-sm">
@@ -134,7 +136,7 @@ const Footer = memo(() => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
+                placeholder={t("enter_email")}
                 required
                 className="flex-1 sm:w-56 h-11 rounded-l-lg border-0 bg-primary-foreground/15 backdrop-blur-sm px-4 text-sm text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary-foreground/30"
               />
@@ -144,7 +146,7 @@ const Footer = memo(() => {
                 className="h-11 px-5 rounded-r-lg bg-primary-foreground text-primary text-sm font-semibold hover:bg-primary-foreground/90 transition-colors disabled:opacity-50 flex items-center gap-1.5"
               >
                 <Send size={14} />
-                <span className="hidden sm:inline">Subscribe</span>
+                <span className="hidden sm:inline">{t("subscribe")}</span>
               </button>
             </form>
           </div>
@@ -196,7 +198,7 @@ const Footer = memo(() => {
             {/* Quick Links */}
             <div>
               <h4 className="text-xs font-bold uppercase tracking-widest text-white/40 mb-4">
-                Quick Links
+                {t("quick_links")}
               </h4>
               <ul className="space-y-2.5">
                 {finalQuickLinks.map((link, i) => (
@@ -216,7 +218,7 @@ const Footer = memo(() => {
             {/* Categories */}
             <div>
               <h4 className="text-xs font-bold uppercase tracking-widest text-white/40 mb-4">
-                Categories
+                {t("categories")}
               </h4>
               <ul className="space-y-2.5">
                 {finalCategoryLinks.map((link, i) => (
@@ -236,7 +238,7 @@ const Footer = memo(() => {
             {/* Contact Info */}
             <div>
               <h4 className="text-xs font-bold uppercase tracking-widest text-white/40 mb-4">
-                Contact Us
+                {t("contact_us")}
               </h4>
               <ul className="space-y-3">
                 <li>

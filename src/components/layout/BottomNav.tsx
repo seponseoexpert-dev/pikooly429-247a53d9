@@ -1,17 +1,19 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, Truck, Gift, ShoppingCart, User } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const BottomNav = () => {
   const location = useLocation();
   const { totalItems, setIsOpen } = useCart();
+  const { t } = useLanguage();
 
   const links = [
-    { icon: Home, label: "Home", href: "/" },
-    { icon: Truck, label: "Same Day", href: "/product-category/same-day" },
-    { icon: Gift, label: "All Gifts", href: "/all-gifts" },
-    { icon: ShoppingCart, label: "Cart", href: "#cart", isCart: true },
-    { icon: User, label: "Account", href: "/account" },
+    { icon: Home, label: t("home"), href: "/" },
+    { icon: Truck, label: t("same_day"), href: "/product-category/same-day" },
+    { icon: Gift, label: t("all_gifts"), href: "/all-gifts" },
+    { icon: ShoppingCart, label: t("cart"), href: "#cart", isCart: true },
+    { icon: User, label: t("account"), href: "/account" },
   ];
 
   return (

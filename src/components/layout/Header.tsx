@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Search, ShoppingCart, X, User, Truck, ChevronDown, MapPinCheck, Moon, Sun } from "lucide-react";
+import { Search, ShoppingCart, X, User, Truck, ChevronDown, MapPinCheck, Moon, Sun, Globe } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useTheme } from "next-themes";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -19,15 +20,18 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
+  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const { totalItems, setIsOpen } = useCart();
   const { settings, isLoading: settingsLoading } = useSiteSettings();
   const { currencies, selectedCurrency, setSelectedCurrency, formatPrice } = useMultiCurrency();
   const { user } = useAuth();
+  const { language, setLanguage, t, languages } = useLanguage();
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const searchRef = useRef<HTMLDivElement>(null);
   const currencyRef = useRef<HTMLDivElement>(null);
+  const languageRef = useRef<HTMLDivElement>(null);
 
   const logoUrl = settings.company_logo || "";
   const announcementText = settings.announcement_bar_text || "🌸 Same Day Delivery Available in 500+ Cities";
@@ -99,6 +103,9 @@ const Header = () => {
       if (currencyRef.current && !currencyRef.current.contains(e.target as Node)) {
         setShowCurrencyDropdown(false);
       }
+      if (languageRef.current && !languageRef.current.contains(e.target as Node)) {
+        setShowLanguageDropdown(false);
+      }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -159,7 +166,7 @@ const Header = () => {
                   value={searchQuery}
                   onChange={(e) => { setSearchQuery(e.target.value); setShowSuggestions(true); }}
                   onFocus={() => setShowSuggestions(true)}
-                  placeholder="Search flowers, cakes, gifts..."
+                placeholder={t("search_placeholder")}
                   className="w-full pl-11 pr-10 py-2.5 rounded-lg bg-muted border border-border focus:border-primary outline-none text-sm"
                 />
                 {searchQuery && (
@@ -207,13 +214,42 @@ const Header = () => {
                   {theme === "dark" ? "Light" : "Dark"}
                 </span>
               </button>
+              {/* Language Switcher */}
+              <div className="relative" ref={languageRef}>
+                <button
+                  onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
+                  className="flex flex-col items-center justify-center px-2 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted"
+                  aria-label="Language"
+                >
+                  <Globe size={20} />
+                  <span className="hidden md:flex items-center text-[9px] font-medium mt-0.5 leading-none gap-0.5">
+                    {language.code.toUpperCase()} <ChevronDown size={8} />
+                  </span>
+                </button>
+                {showLanguageDropdown && (
+                  <div className="absolute right-0 top-full mt-1 z-[100] bg-card border border-border rounded-xl shadow-lg overflow-hidden min-w-[180px] max-h-[320px] overflow-y-auto">
+                    {languages.map((lang) => (
+                      <button
+                        key={lang.code}
+                        onClick={() => { setLanguage(lang); setShowLanguageDropdown(false); }}
+                        className={`flex items-center gap-2 w-full px-4 py-2.5 text-left text-sm hover:bg-muted transition-colors ${
+                          language.code === lang.code ? "bg-primary/10 text-primary font-semibold" : "text-foreground"
+                        }`}
+                      >
+                        <span className="w-5 text-center font-semibold text-xs">{lang.code.toUpperCase()}</span>
+                        <span>{lang.nativeName}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
               <Link to="/product-category/same-day" className="hidden md:flex flex-col items-center justify-center px-2 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted" aria-label="Same Day Delivery">
                 <Truck size={20} />
-                <span className="text-[9px] font-medium mt-0.5 leading-none">Same Day</span>
+                <span className="text-[9px] font-medium mt-0.5 leading-none">{t("same_day")}</span>
               </Link>
               <Link to="/track-order" className="flex flex-col items-center justify-center px-2 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted" aria-label="Track Order">
                 <MapPinCheck size={20} />
-                <span className="hidden md:block text-[9px] font-medium mt-0.5 leading-none">Track</span>
+                <span className="hidden md:block text-[9px] font-medium mt-0.5 leading-none">{t("track")}</span>
               </Link>
               <div className="relative" ref={currencyRef}>
                 <button
@@ -252,7 +288,7 @@ const Header = () => {
                     {totalItems}
                   </span>
                 )}
-                <span className="hidden md:block text-[9px] font-medium mt-0.5 leading-none">Cart</span>
+                <span className="hidden md:block text-[9px] font-medium mt-0.5 leading-none">{t("cart")}</span>
               </button>
               <Link
                 to={user ? "/account" : "/auth"}
@@ -261,7 +297,7 @@ const Header = () => {
               >
                 <User size={20} />
                 <span className="hidden md:block text-[9px] font-medium mt-0.5 leading-none truncate max-w-[60px]">
-                  {user ? "Account" : "Sign In"}
+                  {user ? t("account") : t("sign_in")}
                 </span>
               </Link>
             </div>
@@ -276,7 +312,7 @@ const Header = () => {
                 value={searchQuery}
                 onChange={(e) => { setSearchQuery(e.target.value); setShowSuggestions(true); }}
                 onFocus={() => setShowSuggestions(true)}
-                placeholder="Search flowers, cakes, gifts..."
+                placeholder={t("search_placeholder")}
                 className="w-full pl-11 pr-10 py-2.5 rounded-full bg-muted border border-border focus:border-primary outline-none text-sm"
               />
               {searchQuery && (

@@ -1,6 +1,7 @@
 import { faqItems as defaultFaqItems } from "@/data/mockData";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Accordion,
   AccordionContent,
@@ -11,9 +12,10 @@ import {
 const FAQSection = () => {
   const { ref, isVisible } = useScrollAnimation();
   const { settings } = useSiteSettings();
+  const { t } = useLanguage();
 
-  const sectionTitle = settings.faq_section_title || "Frequently Asked Questions";
-  const sectionSubtitle = settings.faq_section_subtitle || "Everything you need to know about our services";
+  const sectionTitle = settings.faq_section_title || t("faq");
+  const sectionSubtitle = settings.faq_section_subtitle || t("faq_subtitle");
 
   // Build FAQ items from settings dynamically (unlimited)
   const dynamicFaqs: { question: string; answer: string }[] = [];
