@@ -79,19 +79,19 @@ const HeroSection = memo(() => {
           <AnimatePresence custom={direction} mode="wait">
             <motion.div
               key={slide.id}
-              custom={direction}
-              initial={{ opacity: 0, x: direction > 0 ? 80 : -80 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: direction > 0 ? -80 : 80 }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
               className="grid grid-cols-2 min-h-[200px] sm:min-h-[240px] md:min-h-[300px] lg:min-h-[380px]"
             >
               {/* Left: Text */}
               <div className="flex flex-col justify-center pl-5 sm:pl-8 md:pl-12 lg:pl-16 py-6 sm:py-8 md:py-10 lg:py-12">
                 <motion.h2
-                  initial={{ opacity: 0, y: 18 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.12, duration: 0.4 }}
+                  key={`title-${slide.id}`}
+                  initial={{ opacity: 0, x: -30, filter: "blur(6px)" }}
+                  animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                  transition={{ delay: 0.15, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
                   className="font-display text-lg sm:text-2xl md:text-3xl lg:text-5xl font-bold text-foreground leading-snug sm:leading-tight"
                 >
                   {slide.title}
@@ -99,9 +99,10 @@ const HeroSection = memo(() => {
 
                 {slide.link && (
                   <motion.div
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.28, duration: 0.4 }}
+                    key={`cta-${slide.id}`}
+                    initial={{ opacity: 0, x: -20, filter: "blur(4px)" }}
+                    animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                    transition={{ delay: 0.35, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                     className="mt-3 sm:mt-4 md:mt-5"
                   >
                     <Link
@@ -119,9 +120,10 @@ const HeroSection = memo(() => {
               <div className="flex items-center justify-center pr-3 sm:pr-5 md:pr-8 lg:pr-14 py-4 sm:py-6 md:py-8">
                 {slide.image_url && (
                   <motion.img
-                    initial={{ opacity: 0, scale: 0.88 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.08, duration: 0.45, ease: "easeOut" }}
+                    key={`img-${slide.id}`}
+                    initial={{ opacity: 0, scale: 0.8, rotate: -3 }}
+                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                    transition={{ delay: 0.1, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
                     src={slide.image_url}
                     alt={slide.title}
                     className="w-full max-w-[160px] sm:max-w-[200px] md:max-w-[260px] lg:max-w-[320px] aspect-square object-cover rounded-xl sm:rounded-2xl shadow-lg"
