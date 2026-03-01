@@ -104,10 +104,10 @@ const HeroSection = memo(() => {
               animate="center"
               exit="exit"
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute inset-0"
+              className="absolute inset-0 flex items-center"
             >
               {/* Text content */}
-              <div className="absolute left-5 sm:left-8 md:left-12 lg:left-16 top-1/2 -translate-y-1/2 z-10 max-w-[42%] sm:max-w-[45%] md:max-w-[50%]">
+              <div className="pl-5 sm:pl-8 md:pl-12 lg:pl-16 z-10 w-[42%] sm:w-[45%] md:w-[50%]">
                 <motion.h2
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -138,12 +138,12 @@ const HeroSection = memo(() => {
                   initial={{ opacity: 0, scale: 0.85 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.1, duration: 0.5, ease: "easeOut" }}
-                  className="absolute right-3 sm:right-5 md:right-10 lg:right-16 top-[50%] -translate-y-1/2 w-[150px] h-[160px] sm:w-[180px] sm:h-[195px] md:w-[250px] md:h-[260px] lg:w-[310px] lg:h-[320px]"
+                  className="ml-auto pr-3 sm:pr-5 md:pr-10 lg:pr-16 flex items-center"
                 >
                   <img
                     src={slide.image_url}
                     alt={slide.title}
-                    className="w-full h-full object-cover rounded-2xl shadow-xl"
+                    className="w-[150px] h-[160px] sm:w-[180px] sm:h-[195px] md:w-[250px] md:h-[260px] lg:w-[310px] lg:h-[320px] object-cover rounded-2xl shadow-xl"
                     loading="eager"
                   />
                 </motion.div>
