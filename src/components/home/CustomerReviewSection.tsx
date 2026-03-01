@@ -1,7 +1,7 @@
-import { Star, Quote, ChevronDown, ChevronUp } from "lucide-react";
+import { Star, Quote, ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 
 const ReviewCard = ({ review }: { review: { id: string; customer_name: string; rating: number; comment: string | null; created_at: string } }) => {
   const [expanded, setExpanded] = useState(false);
@@ -51,6 +51,7 @@ const ReviewCard = ({ review }: { review: { id: string; customer_name: string; r
 const CustomerReviewSection = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [desktopPage, setDesktopPage] = useState(0);
 
   const { data: reviews = [], isLoading } = useQuery({
     queryKey: ["home-reviews"],
@@ -60,12 +61,14 @@ const CustomerReviewSection = () => {
         .select("id, customer_name, rating, comment, created_at")
         .eq("is_approved", true)
         .order("created_at", { ascending: false })
-        .limit(10);
+        .limit(12);
       if (error) throw error;
       return data;
     },
     staleTime: 5 * 60 * 1000,
   });
+
+  const totalDesktopPages = Math.ceil(reviews.length / 3);
 
   // Auto-scroll on mobile
   useEffect(() => {
@@ -83,6 +86,25 @@ const CustomerReviewSection = () => {
       scrollRef.current.scrollTo({ left: card.offsetLeft - 16, behavior: "smooth" });
     }
   }, [activeIndex, reviews.length]);
+
+  // Auto-slide on desktop
+  useEffect(() => {
+    if (totalDesktopPages <= 1) return;
+    const interval = setInterval(() => {
+      setDesktopPage((prev) => (prev + 1) % totalDesktopPages);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [totalDesktopPages]);
+
+  const goDesktopPrev = useCallback(() => {
+    setDesktopPage((prev) => (prev - 1 + totalDesktopPages) % totalDesktopPages);
+  }, [totalDesktopPages]);
+
+  const goDesktopNext = useCallback(() => {
+    setDesktopPage((prev) => (prev + 1) % totalDesktopPages);
+  }, [totalDesktopPages]);
+
+  const desktopReviews = reviews.slice(desktopPage * 3, desktopPage * 3 + 3);
 
   if (!isLoading && reviews.length === 0) return null;
 
@@ -120,17 +142,62 @@ const CustomerReviewSection = () => {
         </div>
       ) : (
         <>
-          {/* Cards */}
+          {/* Mobile: horizontal scroll */}
           <div
             ref={scrollRef}
-            className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-3 -mx-4 px-4 md:mx-0 md:px-0 md:grid md:grid-cols-3 md:overflow-visible"
+            className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-3 -mx-4 px-4 md:hidden"
           >
             {reviews.map((review) => (
               <ReviewCard key={review.id} review={review} />
             ))}
           </div>
 
-          {/* Dots indicator for mobile */}
+          {/* Desktop: 3-card slider */}
+          <div className="hidden md:block relative">
+            <div className="grid grid-cols-3 gap-4 transition-all duration-300">
+              {desktopReviews.map((review) => (
+                <ReviewCard key={review.id} review={review} />
+              ))}
+            </div>
+
+            {/* Desktop navigation arrows */}
+            {totalDesktopPages > 1 && (
+              <>
+                <button
+                  onClick={goDesktopPrev}
+                  className="absolute -left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-card border border-border shadow-sm flex items-center justify-center hover:bg-accent transition-colors"
+                  aria-label="Previous reviews"
+                >
+                  <ChevronLeft size={16} className="text-foreground" />
+                </button>
+                <button
+                  onClick={goDesktopNext}
+                  className="absolute -right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-card border border-border shadow-sm flex items-center justify-center hover:bg-accent transition-colors"
+                  aria-label="Next reviews"
+                >
+                  <ChevronRight size={16} className="text-foreground" />
+                </button>
+              </>
+            )}
+
+            {/* Desktop dots */}
+            {totalDesktopPages > 1 && (
+              <div className="flex items-center justify-center gap-1.5 mt-4">
+                {Array.from({ length: totalDesktopPages }).map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setDesktopPage(i)}
+                    className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                      i === desktopPage ? "bg-primary w-4" : "bg-border"
+                    }`}
+                    aria-label={`Go to page ${i + 1}`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Mobile dots */}
           {reviews.length > 1 && (
             <div className="flex items-center justify-center gap-1.5 mt-3 md:hidden">
               {reviews.map((_, i) => (
