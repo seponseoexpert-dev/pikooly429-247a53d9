@@ -372,7 +372,11 @@ const Checkout = () => {
       // Send order confirmation email (fire & forget)
       if (form.email.trim()) {
         const itemsHtml = items.map((item) =>
-          `<tr><td style="padding:8px;border-bottom:1px solid #eee;">${item.product.name}</td><td style="padding:8px;border-bottom:1px solid #eee;text-align:center;">${item.quantity}</td><td style="padding:8px;border-bottom:1px solid #eee;text-align:right;">৳${(item.product.price * item.quantity).toFixed(2)}</td></tr>`
+          `<tr>
+            <td style="padding:12px 16px;border-bottom:1px solid #f0f0f0;font-size:14px;color:#333;">${item.product.name}</td>
+            <td style="padding:12px 16px;border-bottom:1px solid #f0f0f0;text-align:center;font-size:14px;color:#666;">${item.quantity}</td>
+            <td style="padding:12px 16px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:14px;font-weight:600;color:#333;">৳${(item.product.price * item.quantity).toFixed(2)}</td>
+          </tr>`
         ).join("");
 
         supabase.functions.invoke("send-email", {
@@ -380,35 +384,84 @@ const Checkout = () => {
             to: form.email.trim(),
             subject: `Order Confirmed - ${order.order_number} | PikoolyFlora`,
             html: `
-              <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;">
-                <div style="text-align:center;padding:20px 0;border-bottom:2px solid #e85d5d;">
-                  <h1 style="margin:0;color:#333;"><span style="color:#333;">Pikooly</span><span style="color:#e85d5d;">Flora</span></h1>
-                </div>
-                <div style="padding:20px 0;">
-                  <h2 style="color:#e85d5d;">🎉 Order Confirmed!</h2>
-                  <p>Hi <strong>${form.fullName}</strong>,</p>
-                  <p>Thank you for your order. We've received your order and it's being processed.</p>
-                  <div style="background:#f9f9f9;border-radius:8px;padding:16px;margin:16px 0;">
-                    <p style="margin:0 0 4px;"><strong>Order Number:</strong> ${order.order_number}</p>
-                    <p style="margin:0 0 4px;"><strong>Recipient:</strong> ${form.recipientName || form.fullName}</p>
-                    <p style="margin:0 0 4px;"><strong>Delivery Address:</strong> ${activeDistrict?.name || ""} - ${form.address}</p>
-                    ${form.deliveryDate ? `<p style="margin:0 0 4px;"><strong>Delivery Date:</strong> ${form.deliveryDate}</p>` : ""}
-                    ${form.deliveryTime ? `<p style="margin:0 0 4px;"><strong>Delivery Time:</strong> ${form.deliveryTime}</p>` : ""}
-                  </div>
-                  <table style="width:100%;border-collapse:collapse;margin:16px 0;">
-                    <thead><tr style="background:#f0f0f0;"><th style="padding:8px;text-align:left;">Product</th><th style="padding:8px;text-align:center;">Qty</th><th style="padding:8px;text-align:right;">Total</th></tr></thead>
-                    <tbody>${itemsHtml}</tbody>
-                  </table>
-                  <div style="text-align:right;margin-top:12px;">
-                    <p style="margin:0;"><strong>Subtotal:</strong> ৳${totalPrice.toFixed(2)}</p>
-                    <p style="margin:0;"><strong>Delivery:</strong> ৳${deliveryFee.toFixed(2)}</p>
-                    <p style="margin:8px 0 0;font-size:18px;color:#e85d5d;"><strong>Total: ৳${grandTotal.toFixed(2)}</strong></p>
-                  </div>
-                </div>
-                <div style="border-top:1px solid #eee;padding-top:16px;text-align:center;color:#999;font-size:12px;">
-                  <p>PikoolyFlora - Not just a Gift, It's sharing of Love.</p>
-                </div>
-              </div>
+              <!DOCTYPE html>
+              <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+              <body style="margin:0;padding:0;background-color:#f4f4f7;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f7;padding:32px 16px;">
+                  <tr><td align="center">
+                    <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
+                      
+                      <!-- Header -->
+                      <tr><td style="background: linear-gradient(135deg, #4a7c59 0%, #6b9f5c 100%);padding:32px 40px;text-align:center;">
+                        <h1 style="margin:0;font-size:26px;font-weight:700;color:#ffffff;letter-spacing:0.5px;">Pikooly<span style="color:#ffd700;">Flora</span></h1>
+                        <p style="margin:8px 0 0;font-size:13px;color:rgba(255,255,255,0.8);letter-spacing:1px;">NOT JUST A GIFT, IT'S SHARING OF LOVE</p>
+                      </td></tr>
+
+                      <!-- Success Icon -->
+                      <tr><td style="padding:32px 40px 0;text-align:center;">
+                        <div style="width:72px;height:72px;margin:0 auto;background:#e8f5e9;border-radius:50%;line-height:72px;font-size:36px;">✅</div>
+                        <h2 style="margin:16px 0 4px;font-size:22px;font-weight:700;color:#2e7d32;">Order Confirmed!</h2>
+                        <p style="margin:0;font-size:15px;color:#666;">Thank you for your order</p>
+                      </td></tr>
+
+                      <!-- Greeting -->
+                      <tr><td style="padding:24px 40px 0;">
+                        <p style="margin:0;font-size:15px;color:#444;line-height:1.6;">Hi <strong style="color:#333;">${form.fullName}</strong>,</p>
+                        <p style="margin:8px 0 0;font-size:15px;color:#555;line-height:1.6;">We've received your order and it's being processed. You'll receive updates as your order progresses.</p>
+                      </td></tr>
+
+                      <!-- Order Info Card -->
+                      <tr><td style="padding:24px 40px;">
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8faf8;border:1px solid #e8efe8;border-radius:12px;overflow:hidden;">
+                          <tr><td style="padding:20px 24px;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                              <tr><td style="padding:6px 0;font-size:14px;color:#888;width:140px;">Order Number</td><td style="padding:6px 0;font-size:14px;font-weight:700;color:#333;">${order.order_number}</td></tr>
+                              <tr><td style="padding:6px 0;font-size:14px;color:#888;">Recipient</td><td style="padding:6px 0;font-size:14px;font-weight:600;color:#333;">${form.recipientName || form.fullName}</td></tr>
+                              <tr><td style="padding:6px 0;font-size:14px;color:#888;">Delivery Address</td><td style="padding:6px 0;font-size:14px;color:#333;">${activeDistrict?.name || ""} - ${form.address}</td></tr>
+                              ${form.deliveryDate ? `<tr><td style="padding:6px 0;font-size:14px;color:#888;">Delivery Date</td><td style="padding:6px 0;font-size:14px;color:#333;">${form.deliveryDate}</td></tr>` : ""}
+                              ${form.deliveryTime ? `<tr><td style="padding:6px 0;font-size:14px;color:#888;">Delivery Time</td><td style="padding:6px 0;font-size:14px;color:#333;">${form.deliveryTime}</td></tr>` : ""}
+                            </table>
+                          </td></tr>
+                        </table>
+                      </td></tr>
+
+                      <!-- Items Table -->
+                      <tr><td style="padding:0 40px;">
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-radius:12px;overflow:hidden;border:1px solid #eee;">
+                          <thead><tr style="background:#fafafa;">
+                            <th style="padding:12px 16px;text-align:left;font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.5px;">Product</th>
+                            <th style="padding:12px 16px;text-align:center;font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.5px;">Qty</th>
+                            <th style="padding:12px 16px;text-align:right;font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.5px;">Total</th>
+                          </tr></thead>
+                          <tbody>${itemsHtml}</tbody>
+                        </table>
+                      </td></tr>
+
+                      <!-- Totals -->
+                      <tr><td style="padding:20px 40px;">
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                          <tr><td style="padding:4px 0;font-size:14px;color:#666;">Subtotal</td><td style="padding:4px 0;font-size:14px;color:#333;text-align:right;">৳${totalPrice.toFixed(2)}</td></tr>
+                          <tr><td style="padding:4px 0;font-size:14px;color:#666;">Delivery</td><td style="padding:4px 0;font-size:14px;color:#333;text-align:right;">৳${deliveryFee.toFixed(2)}</td></tr>
+                          <tr><td colspan="2" style="padding:12px 0 0;border-top:2px solid #eee;"></td></tr>
+                          <tr><td style="padding:4px 0;font-size:18px;font-weight:700;color:#333;">Total</td><td style="padding:4px 0;font-size:18px;font-weight:700;color:#2e7d32;text-align:right;">৳${grandTotal.toFixed(2)}</td></tr>
+                        </table>
+                      </td></tr>
+
+                      <!-- CTA -->
+                      <tr><td style="padding:8px 40px 32px;text-align:center;">
+                        <a href="${window.location.origin}/track-order" style="display:inline-block;background:linear-gradient(135deg,#4a7c59,#6b9f5c);color:#fff;padding:14px 36px;border-radius:50px;text-decoration:none;font-weight:600;font-size:14px;letter-spacing:0.3px;box-shadow:0 4px 12px rgba(74,124,89,0.3);">Track Your Order</a>
+                      </td></tr>
+
+                      <!-- Footer -->
+                      <tr><td style="background:#fafafa;padding:24px 40px;text-align:center;border-top:1px solid #f0f0f0;">
+                        <p style="margin:0;font-size:12px;color:#aaa;">PikoolyFlora — Not just a Gift, It's sharing of Love.</p>
+                        <p style="margin:8px 0 0;font-size:11px;color:#ccc;">This is an automated email. Please do not reply.</p>
+                      </td></tr>
+
+                    </table>
+                  </td></tr>
+                </table>
+              </body></html>
             `,
           },
         }).catch(console.error);

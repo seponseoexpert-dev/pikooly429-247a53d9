@@ -107,28 +107,60 @@ const AdminOrders = () => {
           to: order.customer_email,
           subject: `${template.subject} - ${order.order_number} | PikoolyFlora`,
           html: `
-            <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;">
-              <div style="text-align:center;padding:20px 0;border-bottom:2px solid #e85d5d;">
-                <h1 style="margin:0;"><span style="color:#333;">Pikooly</span><span style="color:#e85d5d;">Flora</span></h1>
-              </div>
-              <div style="padding:20px 0;">
-                <h2 style="color:${template.color};">${template.heading}</h2>
-                <p>Hi <strong>${order.customer_name}</strong>,</p>
-                <p>${template.message}</p>
-                <div style="background:#f9f9f9;border-radius:8px;padding:16px;margin:16px 0;">
-                  <p style="margin:0 0 4px;"><strong>Order Number:</strong> ${order.order_number}</p>
-                  <p style="margin:0 0 4px;"><strong>Status:</strong> <span style="color:${template.color};font-weight:bold;text-transform:capitalize;">${newStatus}</span></p>
-                  <p style="margin:0 0 4px;"><strong>Total:</strong> ৳${Number(order.total).toFixed(2)}</p>
-                  <p style="margin:0;"><strong>Delivery Address:</strong> ${order.delivery_address}</p>
-                </div>
-                <p style="text-align:center;margin-top:24px;">
-                  <a href="${window.location.origin}/track-order" style="background:${template.color};color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Track Your Order</a>
-                </p>
-              </div>
-              <div style="border-top:1px solid #eee;padding-top:16px;text-align:center;color:#999;font-size:12px;">
-                <p>PikoolyFlora - Not just a Gift, It's sharing of Love.</p>
-              </div>
-            </div>
+            <!DOCTYPE html>
+            <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+            <body style="margin:0;padding:0;background-color:#f4f4f7;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f7;padding:32px 16px;">
+                <tr><td align="center">
+                  <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
+                    
+                    <!-- Header -->
+                    <tr><td style="background:linear-gradient(135deg,#4a7c59 0%,#6b9f5c 100%);padding:32px 40px;text-align:center;">
+                      <h1 style="margin:0;font-size:26px;font-weight:700;color:#ffffff;letter-spacing:0.5px;">Pikooly<span style="color:#ffd700;">Flora</span></h1>
+                      <p style="margin:8px 0 0;font-size:13px;color:rgba(255,255,255,0.8);letter-spacing:1px;">NOT JUST A GIFT, IT'S SHARING OF LOVE</p>
+                    </td></tr>
+
+                    <!-- Status Icon -->
+                    <tr><td style="padding:32px 40px 0;text-align:center;">
+                      <div style="width:72px;height:72px;margin:0 auto;background:${template.color}15;border-radius:50%;line-height:72px;font-size:36px;">${template.emoji}</div>
+                      <h2 style="margin:16px 0 4px;font-size:22px;font-weight:700;color:${template.color};">${template.heading}</h2>
+                    </td></tr>
+
+                    <!-- Message -->
+                    <tr><td style="padding:24px 40px 0;">
+                      <p style="margin:0;font-size:15px;color:#444;line-height:1.6;">Hi <strong style="color:#333;">${order.customer_name}</strong>,</p>
+                      <p style="margin:8px 0 0;font-size:15px;color:#555;line-height:1.6;">${template.message}</p>
+                    </td></tr>
+
+                    <!-- Order Info Card -->
+                    <tr><td style="padding:24px 40px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8faf8;border:1px solid #e8efe8;border-radius:12px;overflow:hidden;">
+                        <tr><td style="padding:20px 24px;">
+                          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                            <tr><td style="padding:6px 0;font-size:14px;color:#888;width:140px;">Order Number</td><td style="padding:6px 0;font-size:14px;font-weight:700;color:#333;">${order.order_number}</td></tr>
+                            <tr><td style="padding:6px 0;font-size:14px;color:#888;">Status</td><td style="padding:6px 0;font-size:14px;font-weight:700;color:${template.color};text-transform:capitalize;">${newStatus}</td></tr>
+                            <tr><td style="padding:6px 0;font-size:14px;color:#888;">Total</td><td style="padding:6px 0;font-size:14px;font-weight:700;color:#333;">৳${Number(order.total).toFixed(2)}</td></tr>
+                            <tr><td style="padding:6px 0;font-size:14px;color:#888;">Delivery Address</td><td style="padding:6px 0;font-size:14px;color:#333;">${order.delivery_address}</td></tr>
+                          </table>
+                        </td></tr>
+                      </table>
+                    </td></tr>
+
+                    <!-- CTA -->
+                    <tr><td style="padding:0 40px 32px;text-align:center;">
+                      <a href="${window.location.origin}/track-order" style="display:inline-block;background:linear-gradient(135deg,#4a7c59,#6b9f5c);color:#fff;padding:14px 36px;border-radius:50px;text-decoration:none;font-weight:600;font-size:14px;letter-spacing:0.3px;box-shadow:0 4px 12px rgba(74,124,89,0.3);">Track Your Order</a>
+                    </td></tr>
+
+                    <!-- Footer -->
+                    <tr><td style="background:#fafafa;padding:24px 40px;text-align:center;border-top:1px solid #f0f0f0;">
+                      <p style="margin:0;font-size:12px;color:#aaa;">PikoolyFlora — Not just a Gift, It's sharing of Love.</p>
+                      <p style="margin:8px 0 0;font-size:11px;color:#ccc;">This is an automated email. Please do not reply.</p>
+                    </td></tr>
+
+                  </table>
+                </td></tr>
+              </table>
+            </body></html>
           `,
         },
       });
