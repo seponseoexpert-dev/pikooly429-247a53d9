@@ -138,7 +138,7 @@ const HeroSection = memo(() => {
                   initial={{ opacity: 0, scale: 0.85 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.1, duration: 0.5, ease: "easeOut" }}
-                  className="absolute right-3 sm:right-5 md:right-10 lg:right-16 top-1/2 -translate-y-1/2 w-[48%] sm:w-[46%] md:w-[250px] lg:w-[310px] h-[78%] sm:h-[82%] md:h-[250px] lg:h-[310px]"
+                  className="absolute right-3 sm:right-5 md:right-10 lg:right-16 top-[50%] -translate-y-1/2 w-[150px] h-[160px] sm:w-[180px] sm:h-[195px] md:w-[250px] md:h-[260px] lg:w-[310px] lg:h-[320px]"
                 >
                   <img
                     src={slide.image_url}
