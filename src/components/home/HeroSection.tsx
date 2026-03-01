@@ -124,9 +124,11 @@ const HeroSection = memo(() => {
                   >
                     <Link
                       to={slide.link}
-                      className="inline-block bg-primary text-primary-foreground font-sans font-semibold text-xs sm:text-sm md:text-base px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 rounded-lg tracking-wider uppercase hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200 touch-target shadow-md"
+                      className="group relative inline-flex items-center gap-2 bg-primary text-primary-foreground font-sans font-semibold text-xs sm:text-sm md:text-base px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 rounded-full tracking-wider uppercase overflow-hidden hover:shadow-lg hover:shadow-primary/30 active:scale-95 transition-all duration-300 touch-target"
                     >
-                      {slide.cta_text || "ORDER NOW"}
+                      <span className="relative z-10">{slide.cta_text || "ORDER NOW"}</span>
+                      <ChevronRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
+                      <span className="absolute inset-0 bg-foreground/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out" />
                     </Link>
                   </motion.div>
                 )}
