@@ -1,6 +1,6 @@
 import { memo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Twitter, Youtube, Send } from "lucide-react";
+import { Facebook, Instagram, Twitter, Youtube, Send, Phone, Mail, MapPin, Heart, ArrowRight } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -14,7 +14,7 @@ const Footer = memo(() => {
   const phone = settings.store_phone || "+880 1XXX-XXXXXX";
   const storeEmail = settings.store_email || "hello@pikoolyflora.com";
   const address = settings.store_address || "";
-  const copyright = settings.site_copyright || `© ${new Date().getFullYear()} PikoolyFlora. All Rights Reserved.`;
+  const copyright = settings.site_copyright || `© ${new Date().getFullYear()} ${storeName}. All Rights Reserved.`;
   const footerText = settings.site_footer_text || "";
 
   const handleSubscribe = async (e: React.FormEvent) => {
@@ -39,14 +39,14 @@ const Footer = memo(() => {
       setSubmitting(false);
     }
   };
+
   const socialLinks = [
-    { icon: Facebook, url: settings.facebook_url },
-    { icon: Instagram, url: settings.instagram_url },
-    { icon: Twitter, url: settings.twitter_url },
-    { icon: Youtube, url: settings.youtube_url },
+    { icon: Facebook, url: settings.facebook_url, label: "Facebook" },
+    { icon: Instagram, url: settings.instagram_url, label: "Instagram" },
+    { icon: Twitter, url: settings.twitter_url, label: "Twitter" },
+    { icon: Youtube, url: settings.youtube_url, label: "YouTube" },
   ].filter((s) => s.url);
 
-  // Dynamic quick links from admin settings
   const quickLinks = [1, 2, 3, 4]
     .map((i) => ({
       label: settings[`footer_quick_link_${i}_label`],
@@ -63,7 +63,6 @@ const Footer = memo(() => {
 
   const finalQuickLinks = quickLinks.length > 0 ? quickLinks : defaultQuickLinks;
 
-  // Dynamic category links from admin settings
   const categoryLinks = [1, 2, 3, 4]
     .map((i) => ({
       label: settings[`footer_category_${i}_label`],
@@ -80,7 +79,6 @@ const Footer = memo(() => {
 
   const finalCategoryLinks = categoryLinks.length > 0 ? categoryLinks : defaultCategoryLinks;
 
-  // Payment method icons from admin settings
   const paymentMethods = [
     { key: "footer_payment_visa", label: "Visa", svg: (
       <svg viewBox="0 0 48 32" className="w-10 h-7"><rect width="48" height="32" rx="4" fill="#1A1F71"/><text x="24" y="20" textAnchor="middle" fill="#fff" fontSize="12" fontWeight="bold" fontFamily="sans-serif">VISA</text></svg>
@@ -110,108 +108,184 @@ const Footer = memo(() => {
 
   const activePaymentMethods = paymentMethods.filter((m) => settings[m.key] === "true");
 
+  const defaultSocials = [
+    { icon: Facebook, label: "Facebook" },
+    { icon: Instagram, label: "Instagram" },
+    { icon: Twitter, label: "Twitter" },
+    { icon: Youtube, label: "YouTube" },
+  ];
+
   return (
-    <footer className="bg-secondary/50 border-t border-border pb-20 md:pb-0">
-      <div className="section-container py-6 sm:py-8 md:py-10 lg:py-12">
-        <div className="grid grid-cols-2 gap-6 sm:gap-8 md:grid-cols-4 lg:gap-10 mb-6 sm:mb-8">
-          {/* Brand */}
-          <div className="col-span-2 md:col-span-1">
-            {settings.footer_logo ? (
-              <img src={settings.footer_logo} alt="Footer Logo" className="h-10 sm:h-12 w-auto mb-2 object-contain" />
-            ) : (
-              <h3 className="text-xl sm:text-2xl font-display font-bold mb-2">
-                <span className="text-foreground">{storeName}</span>
+    <footer className="relative pb-20 md:pb-0 overflow-hidden">
+      {/* Newsletter CTA Band */}
+      <div className="bg-primary">
+        <div className="section-container py-6 sm:py-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-center sm:text-left">
+              <h3 className="text-base sm:text-lg font-display font-bold text-primary-foreground">
+                Subscribe & Get 10% Off
               </h3>
-            )}
-            {footerText ? (
-              <p className="text-xs sm:text-sm text-muted-foreground italic">{footerText}</p>
-            ) : (
-              <p className="text-xs sm:text-sm text-muted-foreground italic">
-                "Not just a Gift,<br />It's sharing of Love."
+              <p className="text-xs sm:text-sm text-primary-foreground/70 mt-0.5">
+                Be the first to know about new arrivals & exclusive deals
               </p>
-            )}
-            {socialLinks.length > 0 ? (
-              <div className="flex gap-2.5 mt-3">
-                {socialLinks.map(({ icon: Icon, url }, i) => (
-                  <a key={i} href={url} target="_blank" rel="noopener noreferrer"
-                    className="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/80 transition-colors" aria-label="Social link">
-                    <Icon size={16} />
-                  </a>
-                ))}
-              </div>
-            ) : (
-              <div className="flex gap-2.5 mt-3">
-                {[Facebook, Instagram, Twitter, Youtube].map((Icon, i) => (
-                  <a key={i} href="#"
-                    className="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/80 transition-colors" aria-label="Social link">
-                    <Icon size={16} />
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h4 className="font-display font-semibold text-sm sm:text-base mb-3 text-foreground">Quick Links</h4>
-            <ul className="space-y-1.5 text-xs sm:text-sm text-muted-foreground">
-              {finalQuickLinks.map((link, i) => (
-                <li key={i}>
-                  <Link to={link.url || "#"} className="hover:text-primary transition-colors">{link.label}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Categories */}
-          <div>
-            <h4 className="font-display font-semibold text-sm sm:text-base mb-3 text-foreground">Categories</h4>
-            <ul className="space-y-1.5 text-xs sm:text-sm text-muted-foreground">
-              {finalCategoryLinks.map((link, i) => (
-                <li key={i}>
-                  <Link to={link.url || "/shop"} className="hover:text-primary transition-colors">{link.label}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contact Us + Newsletter */}
-          <div>
-            <h4 className="font-display font-semibold text-sm sm:text-base mb-3 text-foreground">Contact Us</h4>
-            <ul className="space-y-1.5 text-xs sm:text-sm text-muted-foreground">
-              <li className="flex items-center gap-2">📞 {phone}</li>
-              <li className="flex items-center gap-2">📧 {storeEmail}</li>
-              {address && <li className="flex items-center gap-2">📍 {address}</li>}
-            </ul>
-            <p className="text-xs sm:text-sm font-semibold text-foreground mt-4 mb-2">Subscribe to Newsletter</p>
-            <form onSubmit={handleSubscribe} className="flex gap-1.5">
+            </div>
+            <form onSubmit={handleSubscribe} className="flex w-full sm:w-auto max-w-sm">
               <input
-                type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                placeholder="Your email" required
-                className="flex-1 min-w-0 h-9 rounded-md border border-input bg-background px-2.5 text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                required
+                className="flex-1 sm:w-56 h-11 rounded-l-lg border-0 bg-primary-foreground/15 backdrop-blur-sm px-4 text-sm text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary-foreground/30"
               />
-              <button type="submit" disabled={submitting}
-                className="h-9 px-3 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center">
+              <button
+                type="submit"
+                disabled={submitting}
+                className="h-11 px-5 rounded-r-lg bg-primary-foreground text-primary text-sm font-semibold hover:bg-primary-foreground/90 transition-colors disabled:opacity-50 flex items-center gap-1.5"
+              >
                 <Send size={14} />
+                <span className="hidden sm:inline">Subscribe</span>
               </button>
             </form>
           </div>
         </div>
+      </div>
 
-        {/* Payment Methods & Copyright */}
-        <div className="border-t border-border pt-3 sm:pt-5 space-y-3">
-          {activePaymentMethods.length > 0 && (
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              {activePaymentMethods.map((m) => (
-                <div key={m.key} title={m.label} className="opacity-80 hover:opacity-100 transition-opacity">
-                  {m.svg}
-                </div>
-              ))}
+      {/* Main Footer */}
+      <div className="bg-[hsl(var(--foreground))]">
+        <div className="section-container py-8 sm:py-10 md:py-12">
+          <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:gap-12">
+            {/* Brand Column */}
+            <div className="col-span-2 md:col-span-1">
+              {settings.footer_logo ? (
+                <img
+                  src={settings.footer_logo}
+                  alt="Footer Logo"
+                  className="h-10 sm:h-12 w-auto mb-3 object-contain brightness-0 invert"
+                />
+              ) : (
+                <h3 className="text-xl sm:text-2xl font-display font-bold mb-3 text-white">
+                  {storeName}
+                </h3>
+              )}
+              {footerText ? (
+                <p className="text-xs sm:text-sm text-white/50 italic leading-relaxed">
+                  {footerText}
+                </p>
+              ) : (
+                <p className="text-xs sm:text-sm text-white/50 italic leading-relaxed">
+                  "Not just a Gift,<br />It's sharing of Love."
+                </p>
+              )}
+              <div className="flex gap-2 mt-4">
+                {(socialLinks.length > 0 ? socialLinks : defaultSocials).map(({ icon: Icon, label }, i) => (
+                  <a
+                    key={i}
+                    href={socialLinks.length > 0 ? (socialLinks[i] as any)?.url || "#" : "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+                    aria-label={label}
+                  >
+                    <Icon size={15} />
+                  </a>
+                ))}
+              </div>
             </div>
-          )}
-          <p className="text-[10px] sm:text-xs text-muted-foreground text-center">
-            {copyright}
-          </p>
+
+            {/* Quick Links */}
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-widest text-white/40 mb-4">
+                Quick Links
+              </h4>
+              <ul className="space-y-2.5">
+                {finalQuickLinks.map((link, i) => (
+                  <li key={i}>
+                    <Link
+                      to={link.url || "#"}
+                      className="group flex items-center gap-1.5 text-sm text-white/60 hover:text-white transition-colors"
+                    >
+                      <ArrowRight size={12} className="opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-200" />
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Categories */}
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-widest text-white/40 mb-4">
+                Categories
+              </h4>
+              <ul className="space-y-2.5">
+                {finalCategoryLinks.map((link, i) => (
+                  <li key={i}>
+                    <Link
+                      to={link.url || "/shop"}
+                      className="group flex items-center gap-1.5 text-sm text-white/60 hover:text-white transition-colors"
+                    >
+                      <ArrowRight size={12} className="opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-200" />
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Contact Info */}
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-widest text-white/40 mb-4">
+                Contact Us
+              </h4>
+              <ul className="space-y-3">
+                <li>
+                  <a href={`tel:${phone}`} className="flex items-start gap-2.5 text-sm text-white/60 hover:text-white transition-colors">
+                    <Phone size={14} className="mt-0.5 shrink-0 text-primary" />
+                    <span>{phone}</span>
+                  </a>
+                </li>
+                <li>
+                  <a href={`mailto:${storeEmail}`} className="flex items-start gap-2.5 text-sm text-white/60 hover:text-white transition-colors">
+                    <Mail size={14} className="mt-0.5 shrink-0 text-primary" />
+                    <span>{storeEmail}</span>
+                  </a>
+                </li>
+                {address && (
+                  <li className="flex items-start gap-2.5 text-sm text-white/60">
+                    <MapPin size={14} className="mt-0.5 shrink-0 text-primary" />
+                    <span>{address}</span>
+                  </li>
+                )}
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="border-t border-white/10">
+          <div className="section-container py-4 sm:py-5">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+              {/* Payment Methods */}
+              {activePaymentMethods.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2">
+                  {activePaymentMethods.map((m) => (
+                    <div
+                      key={m.key}
+                      title={m.label}
+                      className="opacity-70 hover:opacity-100 transition-opacity"
+                    >
+                      {m.svg}
+                    </div>
+                  ))}
+                </div>
+              )}
+              {/* Copyright */}
+              <p className="text-[10px] sm:text-xs text-white/40 flex items-center gap-1">
+                {copyright} — Made with <Heart size={10} className="text-destructive inline" /> in Bangladesh
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
