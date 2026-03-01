@@ -75,7 +75,7 @@ const CustomerReviewSection = () => {
     if (reviews.length <= 1) return;
     const interval = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % reviews.length);
-    }, 4000);
+    }, 30000);
     return () => clearInterval(interval);
   }, [reviews.length]);
 
