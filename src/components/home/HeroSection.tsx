@@ -37,7 +37,7 @@ const HeroSection = memo(() => {
     const timer = setInterval(() => {
       setDirection(1);
       setCurrent((p) => (p + 1) % slides.length);
-    }, 5000);
+    }, 20000);
     return () => clearInterval(timer);
   }, [slides.length]);
 
@@ -187,7 +187,7 @@ const HeroSection = memo(() => {
                         className="absolute inset-0 bg-primary rounded-full origin-left"
                         initial={{ scaleX: 0 }}
                         animate={{ scaleX: 1 }}
-                        transition={{ duration: 5, ease: "linear" }}
+                        transition={{ duration: 20, ease: "easeInOut" }}
                       />
                     )}
                   </button>
