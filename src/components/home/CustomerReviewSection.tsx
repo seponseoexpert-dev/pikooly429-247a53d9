@@ -83,8 +83,7 @@ const ReviewCard = ({ review }: { review: Review }) => {
       {comment && (
         <div className="min-w-0">
           <p
-            className="text-[13px] text-foreground/80 leading-[1.6] text-left whitespace-normal break-words"
-            style={!expanded && hasLongComment ? { maxHeight: "3.2em", overflow: "hidden" } : undefined}
+            className={`text-[13px] text-foreground/80 leading-[1.6] text-left whitespace-normal break-words ${!expanded && hasLongComment ? "line-clamp-2" : ""}`}
           >
             {comment}
           </p>
@@ -166,8 +165,8 @@ const CustomerReviewSection = () => {
   return (
     <section className="py-6 sm:py-8 md:py-12 section-container" aria-label="Customer Reviews">
       {/* Header */}
-      <div className="flex items-center justify-between mb-5 md:mb-8">
-        <h2 className="text-[18px] leading-[26px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground">
+      <div className="text-center mb-5 md:mb-8">
+        <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground">
           Customer Reviews
         </h2>
       </div>
