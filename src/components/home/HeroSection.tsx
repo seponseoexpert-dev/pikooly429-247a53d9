@@ -158,29 +158,41 @@ const HeroSection = memo(() => {
           </>
         )}
 
-        {/* Dots */}
+        {/* Dots + Progress */}
         {slides.length > 1 && (
-          <div className="flex items-center justify-center gap-1.5 mt-3">
-            <span className="text-xs text-muted-foreground font-sans">
-              {current + 1}/{slides.length}
-            </span>
-            <div className="flex gap-1.5">
-              {slides.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => {
-                    setDirection(i > current ? 1 : -1);
-                    setCurrent(i);
-                  }}
-                  className={cn(
-                    "h-2 rounded-full transition-all duration-300",
-                    i === current
-                      ? "bg-primary w-5"
-                      : "bg-muted-foreground/25 w-2 hover:bg-muted-foreground/40"
-                  )}
-                  aria-label={`Go to slide ${i + 1}`}
-                />
-              ))}
+          <div className="flex flex-col items-center gap-2 mt-3">
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-muted-foreground font-sans">
+                {current + 1}/{slides.length}
+              </span>
+              <div className="flex gap-1.5">
+                {slides.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setDirection(i > current ? 1 : -1);
+                      setCurrent(i);
+                    }}
+                    className={cn(
+                      "h-2 rounded-full transition-all duration-300 relative overflow-hidden",
+                      i === current
+                        ? "bg-muted-foreground/15 w-7"
+                        : "bg-muted-foreground/25 w-2 hover:bg-muted-foreground/40"
+                    )}
+                    aria-label={`Go to slide ${i + 1}`}
+                  >
+                    {i === current && (
+                      <motion.span
+                        key={`progress-${current}`}
+                        className="absolute inset-0 bg-primary rounded-full origin-left"
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: 1 }}
+                        transition={{ duration: 5, ease: "linear" }}
+                      />
+                    )}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         )}
