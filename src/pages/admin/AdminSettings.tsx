@@ -482,22 +482,22 @@ const NotificationAlertSection = ({
 }) => {
   return (
     <Tabs defaultValue="mail">
-      <TabsList className="w-full grid grid-cols-3 mb-4">
-        <TabsTrigger value="mail" className="flex items-center gap-2">
-          <Mail className="h-4 w-4" /> Mail
+      <TabsList className="w-full grid grid-cols-3 mb-4 h-auto">
+        <TabsTrigger value="mail" className="flex items-center gap-1.5 text-xs sm:text-sm px-2 py-2">
+          <Mail className="h-3.5 w-3.5 shrink-0" /> Mail
         </TabsTrigger>
-        <TabsTrigger value="sms" className="flex items-center gap-2">
-          <MessageSquare className="h-4 w-4" /> SMS
+        <TabsTrigger value="sms" className="flex items-center gap-1.5 text-xs sm:text-sm px-2 py-2">
+          <MessageSquare className="h-3.5 w-3.5 shrink-0" /> SMS
         </TabsTrigger>
-        <TabsTrigger value="push" className="flex items-center gap-2">
-          <Bell className="h-4 w-4" /> Push Notification
+        <TabsTrigger value="push" className="flex items-center gap-1.5 text-xs sm:text-sm px-2 py-2">
+          <Bell className="h-3.5 w-3.5 shrink-0" /> Push
         </TabsTrigger>
       </TabsList>
 
       {notificationAlertChannels.map((channel) => (
         <TabsContent key={channel} value={channel} className="space-y-4">
           <h4 className="font-medium text-base capitalize">{channel === "push" ? "Push Notification" : channel.charAt(0).toUpperCase() + channel.slice(1)} Notification Messages</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             {notificationAlertStatuses.map((status) => {
               const msgKey = `alert_${channel}_${status.key}_message`;
               const enableKey = `alert_${channel}_${status.key}_enabled`;
