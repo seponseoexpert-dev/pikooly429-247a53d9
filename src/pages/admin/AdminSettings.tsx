@@ -847,6 +847,7 @@ const SlidersSection = () => {
           .from("sliders")
           .update({
             title: s.title,
+            subtitle: s.subtitle,
             image_url: s.image_url,
             link: s.link,
             bg_color: s.bg_color,
@@ -969,6 +970,12 @@ const SlidersSection = () => {
                     }}
                   />
                 </div>
+              </div>
+
+              {/* Subtitle (small text) */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Small Text</label>
+                <Input value={slider.subtitle || ""} onChange={(e) => updateField(slider.id, "subtitle", e.target.value)} placeholder="Fresh & Real" />
               </div>
 
               {/* Title */}
