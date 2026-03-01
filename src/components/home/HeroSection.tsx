@@ -90,14 +90,14 @@ const HeroSection = memo(() => {
               className="grid grid-cols-2 min-h-[200px] sm:min-h-[240px] md:min-h-[300px] lg:min-h-[380px]"
             >
               {/* Left: Text */}
-              <div className="flex flex-col justify-center pl-5 sm:pl-8 md:pl-12 lg:pl-16 py-6 sm:py-8 md:py-10 lg:py-12">
+              <div className="flex flex-col justify-center pl-4 sm:pl-8 md:pl-12 lg:pl-16 py-5 sm:py-8 md:py-10 lg:py-12">
                 {slide.subtitle && (
                   <motion.p
                     key={`subtitle-${slide.id}`}
-                    initial={{ opacity: 0, y: -10 }}
+                    initial={{ opacity: 0, y: -8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.05, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                    className="text-[10px] sm:text-xs md:text-sm font-medium text-muted-foreground mb-1 sm:mb-1.5 tracking-wide"
+                    className="text-[9px] sm:text-[11px] md:text-xs font-medium text-muted-foreground/70 mb-0.5 sm:mb-1 tracking-widest uppercase italic"
                   >
                     {slide.subtitle}
                   </motion.p>
@@ -107,7 +107,7 @@ const HeroSection = memo(() => {
                   initial={{ opacity: 0, x: -30, filter: "blur(6px)" }}
                   animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
                   transition={{ delay: 0.15, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                  className="font-display text-lg sm:text-2xl md:text-3xl lg:text-5xl font-bold text-foreground leading-snug sm:leading-tight"
+                  className="font-display text-base sm:text-xl md:text-2xl lg:text-4xl font-bold text-foreground leading-snug sm:leading-tight"
                 >
                   {slide.title}
                 </motion.h2>
@@ -118,14 +118,14 @@ const HeroSection = memo(() => {
                     initial={{ opacity: 0, x: -20, filter: "blur(4px)" }}
                     animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
                     transition={{ delay: 0.35, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                    className="mt-3 sm:mt-4 md:mt-5"
+                    className="mt-2.5 sm:mt-3 md:mt-4"
                   >
                     <Link
                       to={slide.link}
-                      className="group inline-flex items-center gap-1.5 sm:gap-2 bg-primary text-primary-foreground font-sans font-semibold text-[11px] sm:text-xs md:text-sm lg:text-base px-4 sm:px-5 md:px-7 lg:px-8 py-2 sm:py-2.5 md:py-3 rounded-full tracking-wide uppercase whitespace-nowrap hover:shadow-lg hover:shadow-primary/25 active:scale-[0.97] transition-all duration-300 touch-target"
+                      className="group inline-flex items-center gap-1 sm:gap-1.5 bg-primary text-primary-foreground font-sans font-semibold text-[9px] sm:text-[10px] md:text-xs lg:text-sm px-3 sm:px-4 md:px-5 lg:px-6 py-1.5 sm:py-2 md:py-2.5 rounded-full tracking-wider uppercase whitespace-nowrap hover:shadow-lg hover:shadow-primary/25 active:scale-[0.97] transition-all duration-300"
                     >
-                      {slide.cta_text || "ORDER NOW"}
-                      <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-0.5 transition-transform" />
+                      {slide.cta_text || "SHOP NOW"}
+                      <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 group-hover:translate-x-0.5 transition-transform" />
                     </Link>
                   </motion.div>
                 )}
