@@ -1,5 +1,5 @@
 import { memo, useState, useEffect, useCallback, useRef } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -32,7 +32,6 @@ const HeroSection = memo(() => {
       });
   }, []);
 
-  // Auto-play
   useEffect(() => {
     if (slides.length <= 1) return;
     const timer = setInterval(() => {
@@ -59,8 +58,7 @@ const HeroSection = memo(() => {
   const handleTouchEnd = (e: React.TouchEvent) => {
     const diff = touchStartX.current - e.changedTouches[0].clientX;
     if (Math.abs(diff) > 50) {
-      if (diff > 0) next();
-      else prev();
+      diff > 0 ? next() : prev();
     }
   };
 
@@ -68,30 +66,13 @@ const HeroSection = memo(() => {
 
   const slide = slides[current];
 
-  const slideVariants = {
-    enter: (dir: number) => ({
-      x: dir > 0 ? "60%" : "-60%",
-      opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (dir: number) => ({
-      x: dir > 0 ? "-60%" : "60%",
-      opacity: 0,
-    }),
-  };
-
   return (
     <section className="section-container py-3 sm:py-4">
       <div className="relative">
         {/* Banner */}
         <div
-          className="relative overflow-hidden rounded-2xl lg:rounded-3xl h-[230px] sm:h-[270px] md:h-[330px] lg:h-[400px] transition-colors duration-500"
-          style={{
-            backgroundColor: slide.bg_color || "hsl(85 20% 92%)",
-          }}
+          className="relative overflow-hidden rounded-2xl lg:rounded-3xl transition-colors duration-500"
+          style={{ backgroundColor: slide.bg_color || "hsl(85 20% 92%)" }}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
@@ -99,57 +80,55 @@ const HeroSection = memo(() => {
             <motion.div
               key={slide.id}
               custom={direction}
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute inset-0 flex items-center"
+              initial={{ opacity: 0, x: direction > 0 ? 80 : -80 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: direction > 0 ? -80 : 80 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="grid grid-cols-2 min-h-[200px] sm:min-h-[240px] md:min-h-[300px] lg:min-h-[380px]"
             >
-              {/* Text content */}
-              <div className="pl-5 sm:pl-8 md:pl-12 lg:pl-16 z-10 w-[42%] sm:w-[45%] md:w-[50%]">
+              {/* Left: Text */}
+              <div className="flex flex-col justify-center pl-5 sm:pl-8 md:pl-12 lg:pl-16 py-6 sm:py-8 md:py-10 lg:py-12">
                 <motion.h2
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 18 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.15, duration: 0.4 }}
-                  className="font-display text-[22px] sm:text-2xl md:text-4xl lg:text-5xl font-bold text-foreground leading-[1.2] mb-3 sm:mb-4 md:mb-5"
+                  transition={{ delay: 0.12, duration: 0.4 }}
+                  className="font-display text-lg sm:text-2xl md:text-3xl lg:text-5xl font-bold text-foreground leading-snug sm:leading-tight"
                 >
                   {slide.title}
                 </motion.h2>
+
                 {slide.link && (
                   <motion.div
-                    initial={{ opacity: 0, y: 15 }}
+                    initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3, duration: 0.4 }}
+                    transition={{ delay: 0.28, duration: 0.4 }}
+                    className="mt-3 sm:mt-4 md:mt-5"
                   >
                     <Link
                       to={slide.link}
-                      className="group relative inline-flex items-center gap-2 bg-primary text-primary-foreground font-sans font-semibold text-xs sm:text-sm md:text-base px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 rounded-full tracking-wider uppercase overflow-hidden hover:shadow-lg hover:shadow-primary/30 active:scale-95 transition-all duration-300 touch-target"
+                      className="group inline-flex items-center gap-1.5 sm:gap-2 bg-primary text-primary-foreground font-sans font-semibold text-[11px] sm:text-xs md:text-sm lg:text-base px-4 sm:px-5 md:px-7 lg:px-8 py-2 sm:py-2.5 md:py-3 rounded-full tracking-wide uppercase whitespace-nowrap hover:shadow-lg hover:shadow-primary/25 active:scale-[0.97] transition-all duration-300 touch-target"
                     >
-                      <span className="relative z-10">{slide.cta_text || "ORDER NOW"}</span>
-                      <ChevronRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
-                      <span className="absolute inset-0 bg-foreground/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out" />
+                      {slide.cta_text || "ORDER NOW"}
+                      <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-0.5 transition-transform" />
                     </Link>
                   </motion.div>
                 )}
               </div>
 
-              {/* Image */}
-              {slide.image_url && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.85 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.1, duration: 0.5, ease: "easeOut" }}
-                  className="ml-auto pr-3 sm:pr-5 md:pr-10 lg:pr-16 flex items-center"
-                >
-                  <img
+              {/* Right: Image */}
+              <div className="flex items-center justify-center pr-3 sm:pr-5 md:pr-8 lg:pr-14 py-4 sm:py-6 md:py-8">
+                {slide.image_url && (
+                  <motion.img
+                    initial={{ opacity: 0, scale: 0.88 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.08, duration: 0.45, ease: "easeOut" }}
                     src={slide.image_url}
                     alt={slide.title}
-                    className="w-[150px] h-[160px] sm:w-[180px] sm:h-[195px] md:w-[250px] md:h-[260px] lg:w-[310px] lg:h-[320px] object-cover rounded-2xl shadow-xl"
+                    className="w-full max-w-[160px] sm:max-w-[200px] md:max-w-[260px] lg:max-w-[320px] aspect-square object-cover rounded-xl sm:rounded-2xl shadow-lg"
                     loading="eager"
                   />
-                </motion.div>
-              )}
+                )}
+              </div>
             </motion.div>
           </AnimatePresence>
         </div>
