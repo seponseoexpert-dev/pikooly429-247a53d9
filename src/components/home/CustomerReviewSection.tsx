@@ -1,49 +1,103 @@
-import { Star, Quote, ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from "lucide-react";
+import { Star, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useRef, useState, useEffect, useCallback } from "react";
 
-const ReviewCard = ({ review }: { review: { id: string; customer_name: string; rating: number; comment: string | null; created_at: string } }) => {
+const getInitials = (name: string) => {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return name.slice(0, 2).toUpperCase();
+};
+
+const getAvatarColor = (name: string) => {
+  const colors = [
+    "bg-olive", "bg-primary", "bg-sage", "bg-gold",
+    "hsl(142 40% 35%)", "hsl(200 40% 40%)", "hsl(280 30% 45%)", "hsl(20 50% 45%)"
+  ];
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  return colors[Math.abs(hash) % colors.length];
+};
+
+const timeAgo = (dateStr: string) => {
+  const now = new Date();
+  const date = new Date(dateStr);
+  const diffMs = now.getTime() - date.getTime();
+  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  if (days < 1) return "Today";
+  if (days < 30) return `${days} day${days > 1 ? "s" : ""} ago`;
+  const months = Math.floor(days / 30);
+  if (months < 12) return `${months} month${months > 1 ? "s" : ""} ago`;
+  const years = Math.floor(months / 12);
+  return `${years} year${years > 1 ? "s" : ""} ago`;
+};
+
+type Review = {
+  id: string;
+  customer_name: string;
+  rating: number;
+  comment: string | null;
+  created_at: string;
+};
+
+const ReviewCard = ({ review }: { review: Review }) => {
   const [expanded, setExpanded] = useState(false);
   const comment = review.comment?.trim() ?? "";
-  const hasLongComment = comment.length > 140;
+  const hasLongComment = comment.length > 100;
+  const initials = getInitials(review.customer_name);
+  const avatarColor = getAvatarColor(review.customer_name);
+  const isClassName = avatarColor.startsWith("bg-");
 
   return (
-    <div className="w-[280px] sm:w-[300px] md:w-auto md:min-w-0 min-w-0 snap-start flex-shrink-0 md:flex-shrink bg-card border border-border/50 rounded-xl p-4 sm:p-5 flex flex-col gap-3 relative hover:shadow-md transition-shadow duration-200">
-      <Quote size={20} className="text-primary/20 absolute top-3 right-3" />
-      <div className="flex items-center gap-0.5">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Star key={i} size={14} className={i < review.rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"} />
-        ))}
+    <div className="min-w-[260px] sm:min-w-[280px] md:min-w-0 snap-start flex-shrink-0 md:flex-shrink bg-card border border-border/40 rounded-xl p-4 sm:p-5 flex flex-col gap-3 hover:shadow-md transition-shadow duration-200">
+      {/* Header: Avatar + Name + Time */}
+      <div className="flex items-center gap-3">
+        <div
+          className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0 ${isClassName ? avatarColor : ""}`}
+          style={!isClassName ? { backgroundColor: avatarColor } : undefined}
+        >
+          {initials}
+        </div>
+        <div className="min-w-0">
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm font-semibold text-foreground truncate max-w-[120px]">
+              {review.customer_name}
+            </span>
+            <span className="text-[11px] text-muted-foreground flex-shrink-0">
+              • {timeAgo(review.created_at)}
+            </span>
+          </div>
+          <div className="flex items-center gap-0.5 mt-0.5">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star
+                key={i}
+                size={13}
+                className={i < review.rating ? "fill-amber-500 text-amber-500" : "text-muted-foreground/30"}
+              />
+            ))}
+          </div>
+        </div>
       </div>
 
+      {/* Comment */}
       {comment && (
         <div className="min-w-0">
           <p
-            className="text-xs sm:text-sm text-muted-foreground leading-[1.6] italic text-left whitespace-normal break-words"
-            style={!expanded && hasLongComment ? { maxHeight: "4.8em", overflow: "hidden" } : undefined}
+            className="text-[13px] text-foreground/80 leading-[1.6] text-left whitespace-normal break-words"
+            style={!expanded && hasLongComment ? { maxHeight: "3.2em", overflow: "hidden" } : undefined}
           >
-            "{comment}"
+            {comment}
           </p>
-
           {hasLongComment && (
             <button
               onClick={() => setExpanded((prev) => !prev)}
-              className="text-[11px] sm:text-xs text-primary font-medium mt-1.5 flex items-center gap-0.5 hover:underline"
+              className="text-xs text-primary font-medium mt-1 hover:underline"
             >
-              {expanded ? "Show less" : "Read more"}
-              {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+              {expanded ? "show less" : "read more"}
             </button>
           )}
         </div>
       )}
-
-      <div className="mt-auto pt-2 border-t border-border/30">
-        <span className="text-xs sm:text-sm font-semibold text-foreground">{review.customer_name}</span>
-        <p className="text-[10px] text-muted-foreground mt-0.5">
-          {new Date(review.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
-        </p>
-      </div>
     </div>
   );
 };
@@ -68,9 +122,10 @@ const CustomerReviewSection = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  const totalDesktopPages = Math.ceil(reviews.length / 3);
+  const cardsPerPage = 4;
+  const totalDesktopPages = Math.ceil(reviews.length / cardsPerPage);
 
-  // Auto-scroll on mobile
+  // Mobile auto-scroll
   useEffect(() => {
     if (reviews.length <= 1) return;
     const interval = setInterval(() => {
@@ -87,7 +142,7 @@ const CustomerReviewSection = () => {
     }
   }, [activeIndex, reviews.length]);
 
-  // Auto-slide on desktop
+  // Desktop auto-slide
   useEffect(() => {
     if (totalDesktopPages <= 1) return;
     const interval = setInterval(() => {
@@ -104,36 +159,17 @@ const CustomerReviewSection = () => {
     setDesktopPage((prev) => (prev + 1) % totalDesktopPages);
   }, [totalDesktopPages]);
 
-  const desktopReviews = reviews.slice(desktopPage * 3, desktopPage * 3 + 3);
+  const desktopReviews = reviews.slice(desktopPage * cardsPerPage, desktopPage * cardsPerPage + cardsPerPage);
 
   if (!isLoading && reviews.length === 0) return null;
-
-  const avgRating = reviews.length
-    ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1)
-    : "0";
 
   return (
     <section className="py-6 sm:py-8 md:py-12 section-container" aria-label="Customer Reviews">
       {/* Header */}
-      <div className="text-center mb-5 md:mb-8">
-        <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground">
+      <div className="flex items-center justify-between mb-5 md:mb-8">
+        <h2 className="text-[18px] leading-[26px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground">
           Customer Reviews
         </h2>
-        {reviews.length > 0 && (
-          <div className="flex items-center justify-center gap-2 mt-2">
-            <div className="flex items-center gap-0.5">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star
-                  key={i}
-                  size={14}
-                  className={i < Math.round(Number(avgRating)) ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}
-                />
-              ))}
-            </div>
-            <span className="text-sm font-semibold text-foreground">{avgRating}</span>
-            <span className="text-xs text-muted-foreground">({reviews.length} reviews)</span>
-          </div>
-        )}
       </div>
 
       {isLoading ? (
@@ -152,15 +188,14 @@ const CustomerReviewSection = () => {
             ))}
           </div>
 
-          {/* Desktop: 3-card slider */}
+          {/* Desktop: 4-card slider */}
           <div className="hidden md:block relative">
-            <div className="grid grid-cols-3 gap-4 transition-all duration-300">
+            <div className="grid grid-cols-4 gap-4 transition-all duration-300">
               {desktopReviews.map((review) => (
                 <ReviewCard key={review.id} review={review} />
               ))}
             </div>
 
-            {/* Desktop navigation arrows */}
             {totalDesktopPages > 1 && (
               <>
                 <button
@@ -180,7 +215,6 @@ const CustomerReviewSection = () => {
               </>
             )}
 
-            {/* Desktop dots */}
             {totalDesktopPages > 1 && (
               <div className="flex items-center justify-center gap-1.5 mt-4">
                 {Array.from({ length: totalDesktopPages }).map((_, i) => (
