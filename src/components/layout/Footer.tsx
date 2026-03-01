@@ -122,7 +122,7 @@ const Footer = memo(() => {
         <div className="section-container py-6 sm:py-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-center sm:text-left">
-              <h3 className="text-base sm:text-lg font-display font-bold text-primary-foreground">
+              <h3 className="text-base sm:text-lg font-display font-bold text-primary-foreground dark:text-primary-foreground">
                 Subscribe & Get 10% Off
               </h3>
               <p className="text-xs sm:text-sm text-primary-foreground/70 mt-0.5">
@@ -152,7 +152,7 @@ const Footer = memo(() => {
       </div>
 
       {/* Main Footer */}
-      <div className="bg-[hsl(var(--foreground))]">
+      <div className="bg-[hsl(30,15%,12%)]">
         <div className="section-container py-8 sm:py-10 md:py-12">
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:gap-12">
             {/* Brand Column */}
