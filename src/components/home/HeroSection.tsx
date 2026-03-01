@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 interface Slide {
   id: string;
   title: string;
+  subtitle: string | null;
   image_url: string | null;
   link: string | null;
   cta_text: string | null;
@@ -90,6 +91,17 @@ const HeroSection = memo(() => {
             >
               {/* Left: Text */}
               <div className="flex flex-col justify-center pl-5 sm:pl-8 md:pl-12 lg:pl-16 py-6 sm:py-8 md:py-10 lg:py-12">
+                {slide.subtitle && (
+                  <motion.p
+                    key={`subtitle-${slide.id}`}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.05, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                    className="text-[10px] sm:text-xs md:text-sm font-medium text-muted-foreground mb-1 sm:mb-1.5 tracking-wide"
+                  >
+                    {slide.subtitle}
+                  </motion.p>
+                )}
                 <motion.h2
                   key={`title-${slide.id}`}
                   initial={{ opacity: 0, x: -30, filter: "blur(6px)" }}
