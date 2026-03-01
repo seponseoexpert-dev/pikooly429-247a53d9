@@ -47,7 +47,7 @@ const settingSections = [
   { key: "about_page", label: "About Us Page", icon: FileText },
   { key: "contact_page", label: "Contact Us Page", icon: Phone },
   { key: "faq", label: "FAQ Section", icon: MessageSquare },
-  { key: "google_reviews", label: "Google Reviews", icon: Star },
+  
   { key: "license", label: "License", icon: Award },
   { key: "footer", label: "Footer", icon: FileText },
 ];
@@ -250,11 +250,6 @@ const sectionFields: Record<string, FieldDef[]> = {
   ],
   sms_gateway: [], // Handled by custom SmsGatewaySection component
   payment_gateway: [], // Handled by custom PaymentGatewaySection component
-  google_reviews: [
-    { key: "google_rating", label: "Google Rating", placeholder: "4.8" },
-    { key: "google_review_count", label: "Review Count", placeholder: "0" },
-    { key: "google_review_link", label: "Google Review Link", fullWidth: true, placeholder: "https://g.page/r/your-business/review" },
-  ],
   license: [
     { key: "license_code", label: "License Code" },
   ],
