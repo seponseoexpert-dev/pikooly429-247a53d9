@@ -80,8 +80,6 @@ const sectionFields: Record<string, FieldDef[]> = {
     ]},
     { key: "company_zip", label: "Zip Code" },
     { key: "store_address", label: "Address", type: "textarea", fullWidth: true },
-    { key: "company_logo", label: "Logo", type: "image_upload" },
-    { key: "company_favicon", label: "Favicon", type: "image_upload" },
   ],
   site: [
     { key: "announcement_bar_enabled", label: "Announcement Bar", type: "radio", options: [
