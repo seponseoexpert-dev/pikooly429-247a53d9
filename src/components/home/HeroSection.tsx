@@ -66,13 +66,16 @@ const HeroSection = memo(() => {
 
   const slide = slides[current];
 
+  const bgColor = slide.bg_color || "hsl(85 20% 92%)";
+
   return (
     <section className="section-container py-3 sm:py-4">
       <div className="relative">
         {/* Banner */}
-        <div
-          className="relative overflow-hidden rounded-2xl lg:rounded-3xl transition-colors duration-500"
-          style={{ backgroundColor: slide.bg_color || "hsl(85 20% 92%)" }}
+        <motion.div
+          className="relative overflow-hidden rounded-2xl lg:rounded-3xl"
+          animate={{ backgroundColor: bgColor }}
+          transition={{ duration: 0.6, ease: "easeInOut" }}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
@@ -133,7 +136,7 @@ const HeroSection = memo(() => {
               </div>
             </motion.div>
           </AnimatePresence>
-        </div>
+        </motion.div>
 
         {/* Arrows */}
         {slides.length > 1 && (
