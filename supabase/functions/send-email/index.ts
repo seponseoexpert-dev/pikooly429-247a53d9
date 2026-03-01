@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { SmtpClient } from "https://deno.land/x/smtp@v0.7.0/mod.ts";
+import nodemailer from "npm:nodemailer@6.9.12";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -23,7 +23,6 @@ serve(async (req) => {
       });
     }
 
-    // Fetch SMTP settings from site_settings
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
@@ -63,30 +62,23 @@ serve(async (req) => {
       );
     }
 
-    const client = new SmtpClient();
-
-    const connectConfig = {
-      hostname: host,
+    const transporter = nodemailer.createTransport({
+      host: host,
       port: port,
-      username: username,
-      password: password,
-    };
+      secure: encryption === "ssl",
+      auth: {
+        user: username,
+        pass: password,
+      },
+    });
 
-    if (encryption === "tls") {
-      await client.connectTLS(connectConfig);
-    } else {
-      await client.connectTLS(connectConfig);
-    }
-
-    await client.send({
+    await transporter.sendMail({
       from: `${fromName} <${fromAddress}>`,
       to: to,
       subject: subject,
-      content: body || "",
+      text: body || "",
       html: html || body || "",
     });
-
-    await client.close();
 
     return new Response(JSON.stringify({ success: true, message: "Email sent successfully" }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
