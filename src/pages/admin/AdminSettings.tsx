@@ -189,6 +189,8 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "linkedin_url", label: "LinkedIn" },
     { key: "tiktok_url", label: "TikTok" },
     { key: "whatsapp_number", label: "WhatsApp" },
+    { key: "order_whatsapp_number", label: "Order WhatsApp Number", placeholder: "+8801XXXXXXXXX" },
+    { key: "order_phone_number", label: "Call For Order Number", placeholder: "+8801XXXXXXXXX" },
   ],
   cookies: [
     { key: "cookies_details_page", label: "Cookies Details Page", type: "select", fullWidth: true, options: [

@@ -126,7 +126,9 @@ const ProductDetail = () => {
     navigate("/checkout");
   };
 
-  const whatsappUrl = `https://wa.me/8801XXXXXXXXX?text=${encodeURIComponent(`Hi! I want to order: ${product.name} (${formatPrice(product.price)}) x ${qty}`)}`;
+  const orderWhatsApp = settings.order_whatsapp_number || settings.whatsapp_number || "";
+  const orderPhone = settings.order_phone_number || settings.store_phone || "";
+  const whatsappUrl = orderWhatsApp ? `https://wa.me/${orderWhatsApp.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(`Hi! I want to order: ${product.name} (${formatPrice(product.price)}) x ${qty}`)}` : "";
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
 
   return (
@@ -233,14 +235,18 @@ const ProductDetail = () => {
           </div>
 
           {/* WhatsApp Order */}
-          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full h-12 rounded-lg bg-[hsl(142,70%,45%)] hover:bg-[hsl(142,70%,40%)] text-white font-semibold text-sm transition-colors mb-3">
-            <MessageCircle size={18} /> Order On WhatsApp
-          </a>
+          {whatsappUrl && (
+            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full h-12 rounded-lg bg-[hsl(142,70%,45%)] hover:bg-[hsl(142,70%,40%)] text-white font-semibold text-sm transition-colors mb-3">
+              <MessageCircle size={18} /> Order On WhatsApp
+            </a>
+          )}
 
           {/* Call For Order */}
-          <a href="tel:+8801XXXXXXXXX" className="flex items-center justify-center gap-2 w-full h-12 rounded-lg bg-[hsl(240,60%,35%)] hover:bg-[hsl(240,60%,30%)] text-white font-semibold text-sm transition-colors mb-5">
-            <Phone size={18} /> Call For Order
-          </a>
+          {orderPhone && (
+            <a href={`tel:${orderPhone}`} className="flex items-center justify-center gap-2 w-full h-12 rounded-lg bg-[hsl(240,60%,35%)] hover:bg-[hsl(240,60%,30%)] text-white font-semibold text-sm transition-colors mb-5">
+              <Phone size={18} /> Call For Order
+            </a>
+          )}
 
           {/* Share */}
           <div>
