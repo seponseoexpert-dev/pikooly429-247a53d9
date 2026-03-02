@@ -44,13 +44,13 @@ type Review = {
 const ReviewCard = ({ review }: { review: Review }) => {
   const [expanded, setExpanded] = useState(false);
   const comment = review.comment?.trim() ?? "";
-  const hasLongComment = comment.length > 40;
+  const hasLongComment = comment.length > 60;
   const initials = getInitials(review.customer_name);
   const avatarColor = getAvatarColor(review.customer_name);
   const isClassName = avatarColor.startsWith("bg-");
 
   return (
-    <div className="min-w-[calc(100vw-48px)] sm:min-w-[300px] md:min-w-0 snap-center flex-shrink-0 md:flex-shrink bg-card border border-border/30 rounded-2xl p-4 sm:p-6 flex flex-col gap-3 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+    <div className="w-[calc(100vw-48px)] min-w-[calc(100vw-48px)] sm:w-[300px] sm:min-w-[300px] md:w-auto md:min-w-0 snap-center flex-shrink-0 md:flex-shrink bg-card border border-border/30 rounded-2xl p-4 sm:p-6 flex flex-col gap-3 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
       {/* Header: Avatar + Name + Time */}
       <div className="flex items-center gap-3">
         <div
@@ -85,7 +85,7 @@ const ReviewCard = ({ review }: { review: Review }) => {
       {comment && (
         <div className="min-w-0">
           <p
-            className={`text-[13px] text-foreground/80 leading-[1.6] text-left whitespace-normal break-words ${!expanded && hasLongComment ? "line-clamp-2" : ""}`}
+            className={`text-[13px] text-foreground/80 leading-[1.6] text-left whitespace-normal break-words overflow-hidden ${!expanded && hasLongComment ? "line-clamp-3" : ""}`}
           >
             {comment}
           </p>
