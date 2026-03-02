@@ -3,6 +3,7 @@
 interface OrderEmailData {
   storeName?: string;
   tagline?: string;
+  logoUrl?: string;
   customerName: string;
   orderNumber: string;
   deliveryAddress: string;
@@ -60,10 +61,13 @@ function itemRow(item: { name: string; quantity: number; total: number; imageUrl
   </tr>`;
 }
 
-function wrap(content: string) {
+function wrap(content: string, logoUrl?: string, storeName = "PikoolyFlora") {
+  const footerLogo = logoUrl
+    ? `<img src="${logoUrl}" alt="${storeName}" style="max-height:36px;max-width:140px;width:auto;height:auto;margin-bottom:8px;" />`
+    : `<p style="margin:0;font-size:13px;font-weight:600;color:${S.primary};letter-spacing:0.5px;">Pikooly<span style="color:${S.gold};">Flora</span></p>`;
   return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>PikoolyFlora</title></head>
+<title>${storeName}</title></head>
 <body style="margin:0;padding:0;background-color:${S.bg};font-family:${S.font};-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${S.bg};padding:48px 16px;">
     <tr><td align="center">
@@ -80,8 +84,8 @@ function wrap(content: string) {
       <!-- Footer -->
       <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
         <tr><td style="padding:32px 40px 16px;text-align:center;">
-          <p style="margin:0;font-size:13px;font-weight:600;color:${S.primary};letter-spacing:0.5px;">Pikooly<span style="color:${S.gold};">Flora</span></p>
-          <p style="margin:8px 0 0;font-size:11px;color:${S.muted};line-height:1.6;">© ${new Date().getFullYear()} PikoolyFlora. All rights reserved.<br/>This is an automated email. Please do not reply.</p>
+          ${footerLogo}
+          <p style="margin:8px 0 0;font-size:11px;color:${S.muted};line-height:1.6;">© ${new Date().getFullYear()} ${storeName}. All rights reserved.<br/>This is an automated email. Please do not reply.</p>
         </td></tr>
       </table>
     </td></tr>
@@ -89,14 +93,17 @@ function wrap(content: string) {
 </body></html>`;
 }
 
-function header(storeName = "PikoolyFlora", tagline = "NOT JUST A GIFT, IT'S SHARING OF LOVE") {
+function header(storeName = "PikoolyFlora", tagline = "NOT JUST A GIFT, IT'S SHARING OF LOVE", logoUrl?: string) {
+  const logoHtml = logoUrl
+    ? `<img src="${logoUrl}" alt="${storeName}" style="max-height:48px;max-width:180px;width:auto;height:auto;" />`
+    : `<span style="font-size:32px;font-weight:300;color:#ffffff;letter-spacing:2px;">Pikooly<span style="font-weight:700;color:${S.gold};">Flora</span></span>`;
   return `<!-- Header -->
   <tr><td style="background:${S.primary};padding:44px 40px 40px;text-align:center;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
       <tr><td style="text-align:center;">
         <!-- Gold line accent -->
         <div style="width:40px;height:2px;background:${S.gold};margin:0 auto 20px;"></div>
-        <h1 style="margin:0;font-size:32px;font-weight:300;color:#ffffff;letter-spacing:2px;">Pikooly<span style="font-weight:700;color:${S.gold};">Flora</span></h1>
+        ${logoHtml}
         <p style="margin:14px 0 0;font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:3.5px;text-transform:uppercase;font-weight:400;">${tagline}</p>
         <div style="width:40px;height:2px;background:${S.gold};margin:20px auto 0;"></div>
       </td></tr>
@@ -210,7 +217,7 @@ function goldDivider() {
 
 export function buildOrderConfirmationEmail(data: OrderEmailData): string {
   const content = [
-    header(data.storeName, data.tagline),
+    header(data.storeName, data.tagline, data.logoUrl),
     statusIcon("✓", "Order Confirmed", "#16a34a"),
     greeting(
       data.customerName,
@@ -230,12 +237,12 @@ export function buildOrderConfirmationEmail(data: OrderEmailData): string {
     ctaButton(data.trackOrderUrl, "Track Your Order →"),
   ].join("");
 
-  return wrap(content);
+  return wrap(content, data.logoUrl, data.storeName);
 }
 
 export function buildStatusUpdateEmail(data: StatusEmailData): string {
   const content = [
-    header(data.storeName, data.tagline),
+    header(data.storeName, data.tagline, data.logoUrl),
     statusIcon(data.statusEmoji, data.statusHeading, data.statusColor),
     greeting(data.customerName, data.statusMessage),
     goldDivider(),
@@ -249,12 +256,12 @@ export function buildStatusUpdateEmail(data: StatusEmailData): string {
     ctaButton(data.trackOrderUrl, "Track Your Order →"),
   ].join("");
 
-  return wrap(content);
+  return wrap(content, data.logoUrl, data.storeName);
 }
 
 export function buildAdminNewOrderEmail(data: OrderEmailData & { customerPhone?: string; customerEmail?: string; billingCountry?: string }): string {
   const content = [
-    header(data.storeName, data.tagline),
+    header(data.storeName, data.tagline, data.logoUrl),
     statusIcon("🛒", "New Order Received", "#2563eb", `from <strong>${data.customerName}</strong>`),
     goldDivider(),
     infoCard("Customer", [
@@ -280,5 +287,5 @@ export function buildAdminNewOrderEmail(data: OrderEmailData & { customerPhone?:
     ctaButton(data.trackOrderUrl, "Manage Order →", "#2563eb"),
   ].join("");
 
-  return wrap(content);
+  return wrap(content, data.logoUrl, data.storeName);
 }
