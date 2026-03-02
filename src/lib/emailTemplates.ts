@@ -127,8 +127,8 @@ function infoCard(title: string, rows: { label: string; value: string; bold?: bo
     .map(
       (r) =>
         `<tr>
-          <td style="padding:10px 0;font-size:12px;color:${S.light};width:130px;vertical-align:top;text-transform:uppercase;letter-spacing:0.5px;font-weight:500;">${r.label}</td>
-          <td style="padding:10px 0;font-size:14px;${r.bold ? "font-weight:700;" : "font-weight:500;"}color:${r.color || S.dark};letter-spacing:-0.1px;">${r.value}</td>
+          <td style="padding:8px 12px 8px 0;font-size:12px;color:${S.light};white-space:nowrap;vertical-align:top;text-transform:uppercase;letter-spacing:0.5px;font-weight:500;">${r.label}</td>
+          <td style="padding:8px 0;font-size:14px;${r.bold ? "font-weight:700;" : "font-weight:500;"}color:${r.color || S.dark};word-break:break-word;">${r.value}</td>
         </tr>`
     )
     .join("");
@@ -138,7 +138,7 @@ function infoCard(title: string, rows: { label: string; value: string; bold?: bo
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${S.cream};border-radius:12px;overflow:hidden;border-left:3px solid ${accent};">
       <tr><td style="padding:24px 28px;">
         <p style="margin:0 0 16px;font-size:11px;font-weight:700;color:${accent};text-transform:uppercase;letter-spacing:1.5px;">${title}</p>
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="table-layout:auto;">
           ${rowsHtml}
         </table>
       </td></tr>
