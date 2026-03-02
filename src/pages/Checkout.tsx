@@ -393,6 +393,7 @@ const Checkout = () => {
             imageUrl: (item.product as any).image_url || item.product.image || "",
           })),
           trackOrderUrl: `${window.location.origin}/track-order`,
+          logoUrl: gatewaySettings.company_logo || "",
         });
 
         supabase.functions.invoke("send-email", {
@@ -432,6 +433,7 @@ const Checkout = () => {
           customerPhone: form.phone,
           customerEmail: form.email || undefined,
           billingCountry: form.billingCountry || undefined,
+          logoUrl: gatewaySettings.company_logo || "",
         });
 
         supabase.functions.invoke("send-email", {

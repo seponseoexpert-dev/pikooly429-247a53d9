@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
 import { Search, Eye, Package } from "lucide-react";
 import { useCurrency } from "@/hooks/useCurrency";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Order = Tables<"orders">;
@@ -34,6 +35,7 @@ const statusColors: Record<string, string> = {
 
 const AdminOrders = () => {
   const { formatCurrency } = useCurrency();
+  const { settings: siteSettings } = useSiteSettings();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -127,6 +129,7 @@ const AdminOrders = () => {
         total: Number(order.total),
         items: emailItems,
         trackOrderUrl: `${window.location.origin}/track-order`,
+        logoUrl: siteSettings.company_logo || "",
         status: newStatus,
         statusHeading: template.heading,
         statusMessage: template.message,
