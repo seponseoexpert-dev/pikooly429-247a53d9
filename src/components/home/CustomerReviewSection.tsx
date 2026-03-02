@@ -44,7 +44,7 @@ type Review = {
 const ReviewCard = ({ review }: { review: Review }) => {
   const [expanded, setExpanded] = useState(false);
   const comment = review.comment?.trim() ?? "";
-  const hasLongComment = comment.length > 80;
+  const hasLongComment = comment.length > 40;
   const initials = getInitials(review.customer_name);
   const avatarColor = getAvatarColor(review.customer_name);
   const isClassName = avatarColor.startsWith("bg-");
