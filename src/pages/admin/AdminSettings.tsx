@@ -67,6 +67,7 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "company_latitude", label: "Latitude", placeholder: "23.7699072" },
     { key: "company_longitude", label: "Longitude", placeholder: "90.3643136" },
     { key: "store_email", label: "Email" },
+    { key: "admin_notification_email", label: "Admin Notification Email", placeholder: "admin@yourstore.com (for new order alerts)" },
     { key: "store_phone", label: "Phone" },
     { key: "company_website", label: "Website" },
     { key: "company_city", label: "City" },
