@@ -80,7 +80,7 @@ const Checkout = () => {
   const { data: gatewaySettings = {} } = useQuery({
     queryKey: ["payment-gateway-settings"],
     queryFn: async () => {
-      const keys = ["cod_enabled", "cod_status", "paypal_status", "stripe_status", "eps_status"];
+      const keys = ["cod_enabled", "cod_status", "paypal_status", "stripe_status", "eps_status", "store_email", "admin_notification_email"];
       const { data, error } = await supabase
         .from("site_settings")
         .select("key, value")
@@ -400,6 +400,45 @@ const Checkout = () => {
             to: form.email.trim(),
             subject: `Order Confirmed - ${order.order_number} | PikoolyFlora`,
             html: emailHtml,
+          },
+        }).catch(console.error);
+      }
+
+      // Send admin notification email (fire & forget)
+      const adminEmail = gatewaySettings.admin_notification_email || gatewaySettings.store_email;
+      if (adminEmail) {
+        const { buildAdminNewOrderEmail } = await import("@/lib/emailTemplates");
+        const adminHtml = buildAdminNewOrderEmail({
+          customerName: form.fullName,
+          orderNumber: order.order_number,
+          deliveryAddress: `${activeDistrict?.name || ""} - ${form.address}`,
+          deliveryDate: form.deliveryDate || undefined,
+          deliveryTime: form.deliveryTime || undefined,
+          recipientName: form.recipientName || undefined,
+          paymentMethod: form.paymentMethod === "cod" ? "Cash on Delivery" : form.paymentMethod.toUpperCase(),
+          subtotal: totalPrice,
+          deliveryFee,
+          discount: couponDiscount,
+          couponCode: appliedCoupon?.code,
+          total: grandTotal,
+          note: form.notes || undefined,
+          items: items.map((item) => ({
+            name: item.product.name,
+            quantity: item.quantity,
+            total: item.product.price * item.quantity,
+            imageUrl: (item.product as any).image_url || item.product.image || "",
+          })),
+          trackOrderUrl: `${window.location.origin}/admin`,
+          customerPhone: form.phone,
+          customerEmail: form.email || undefined,
+          billingCountry: form.billingCountry || undefined,
+        });
+
+        supabase.functions.invoke("send-email", {
+          body: {
+            to: adminEmail,
+            subject: `🛒 New Order - ${order.order_number} | PikoolyFlora`,
+            html: adminHtml,
           },
         }).catch(console.error);
       }
