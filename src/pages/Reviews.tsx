@@ -1,4 +1,4 @@
-import { Star } from "lucide-react";
+import { Star, BadgeCheck } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
@@ -45,7 +45,7 @@ const Reviews = () => {
 
       const { data, error, count } = await supabase
         .from("reviews")
-        .select("id, customer_name, rating, comment, created_at", { count: "exact" })
+        .select("id, customer_name, rating, comment, created_at, products(name, slug, image_url)", { count: "exact" })
         .eq("is_approved", true)
         .order("created_at", { ascending: false })
         .range(from, to);
@@ -109,6 +109,7 @@ const Reviews = () => {
                           <span className="text-sm font-semibold text-foreground truncate max-w-[140px]">
                             {review.customer_name}
                           </span>
+                          <BadgeCheck size={14} className="text-emerald-500 flex-shrink-0" />
                           <span className="text-[11px] text-muted-foreground flex-shrink-0">
                             • {timeAgo(review.created_at)}
                           </span>
@@ -129,6 +130,26 @@ const Reviews = () => {
                       <p className="text-[13px] text-foreground/80 leading-[1.6] whitespace-normal break-words">
                         {comment}
                       </p>
+                    )}
+
+                    {/* Product info */}
+                    {(review as any).products && (
+                      <a
+                        href={`/product/${(review as any).products.slug}`}
+                        className="flex items-center gap-2 mt-auto pt-2 border-t border-border/20 group/product"
+                      >
+                        {(review as any).products.image_url && (
+                          <img
+                            src={(review as any).products.image_url}
+                            alt={(review as any).products.name}
+                            className="w-8 h-8 rounded-md object-cover flex-shrink-0"
+                            loading="lazy"
+                          />
+                        )}
+                        <span className="text-[11px] text-muted-foreground truncate group-hover/product:text-primary transition-colors">
+                          {(review as any).products.name}
+                        </span>
+                      </a>
                     )}
                   </div>
                 );
