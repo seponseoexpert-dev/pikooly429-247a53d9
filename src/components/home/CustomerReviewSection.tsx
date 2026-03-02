@@ -38,6 +38,7 @@ type Review = {
   rating: number;
   comment: string | null;
   created_at: string;
+  products?: { name: string; slug: string; image_url: string | null } | null;
 };
 
 const ReviewCard = ({ review }: { review: Review }) => {
@@ -98,6 +99,26 @@ const ReviewCard = ({ review }: { review: Review }) => {
           )}
         </div>
       )}
+
+      {/* Product info */}
+      {review.products && (
+        <a
+          href={`/product/${review.products.slug}`}
+          className="flex items-center gap-2 mt-auto pt-2 border-t border-border/20 group/product"
+        >
+          {review.products.image_url && (
+            <img
+              src={review.products.image_url}
+              alt={review.products.name}
+              className="w-8 h-8 rounded-md object-cover flex-shrink-0"
+              loading="lazy"
+            />
+          )}
+          <span className="text-[11px] text-muted-foreground truncate group-hover/product:text-primary transition-colors">
+            {review.products.name}
+          </span>
+        </a>
+      )}
     </div>
   );
 };
@@ -112,7 +133,7 @@ const CustomerReviewSection = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("reviews")
-        .select("id, customer_name, rating, comment, created_at")
+        .select("id, customer_name, rating, comment, created_at, products(name, slug, image_url)")
         .eq("is_approved", true)
         .order("created_at", { ascending: false })
         .limit(12);
