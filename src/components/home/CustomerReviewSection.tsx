@@ -165,10 +165,16 @@ const CustomerReviewSection = () => {
   return (
     <section className="py-6 sm:py-8 md:py-12 section-container" aria-label="Customer Reviews">
       {/* Header */}
-      <div className="text-center mb-5 md:mb-8">
+      <div className="flex items-center justify-between mb-5 md:mb-8">
+        <div className="flex-1" />
         <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground">
           Customer Reviews
         </h2>
+        <div className="flex-1 flex justify-end">
+          <a href="/reviews" className="text-xs md:text-sm font-medium text-primary hover:underline transition-colors">
+            Show All Reviews
+          </a>
+        </div>
       </div>
 
       {isLoading ? (
