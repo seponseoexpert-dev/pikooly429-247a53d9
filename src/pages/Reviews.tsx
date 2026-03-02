@@ -34,6 +34,82 @@ const timeAgo = (dateStr: string) => {
 
 const REVIEWS_PER_PAGE = 12;
 
+const ReviewPageCard = ({ review }: { review: any }) => {
+  const [expanded, setExpanded] = useState(false);
+  const initials = getInitials(review.customer_name);
+  const avatarColor = getAvatarColor(review.customer_name);
+  const comment = review.comment?.trim() ?? "";
+  const hasLongComment = comment.length > 60;
+
+  return (
+    <div className="bg-card border border-border/30 rounded-2xl p-5 sm:p-6 flex flex-col gap-3.5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+      <div className="flex items-center gap-3">
+        <div
+          className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
+          style={{ backgroundColor: avatarColor }}
+        >
+          {initials}
+        </div>
+        <div className="min-w-0">
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm font-semibold text-foreground truncate max-w-[140px]">
+              {review.customer_name}
+            </span>
+            <BadgeCheck size={14} className="text-emerald-500 flex-shrink-0" />
+            <span className="text-[11px] text-muted-foreground flex-shrink-0">
+              • {timeAgo(review.created_at)}
+            </span>
+          </div>
+          <div className="flex items-center gap-0.5 mt-0.5">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star
+                key={i}
+                size={13}
+                className={i < review.rating ? "fill-amber-500 text-amber-500" : "text-muted-foreground/30"}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {comment && (
+        <div className="min-w-0">
+          <p className={`text-[13px] text-foreground/80 leading-[1.6] whitespace-normal break-words overflow-hidden ${!expanded && hasLongComment ? "line-clamp-3" : ""}`}>
+            {comment}
+          </p>
+          {hasLongComment && (
+            <button
+              onClick={() => setExpanded((prev) => !prev)}
+              className="text-xs text-primary font-medium mt-1 hover:underline"
+            >
+              {expanded ? "show less" : "read more"}
+            </button>
+          )}
+        </div>
+      )}
+
+      {review.products && (
+        <a
+          href={`/product/${review.products.slug}`}
+          className="flex items-center gap-2 mt-auto pt-2 border-t border-border/20 group/product"
+        >
+          {review.products.image_url && (
+            <img
+              src={review.products.image_url}
+              alt={review.products.name}
+              className="w-8 h-8 rounded-md object-cover flex-shrink-0"
+              loading="lazy"
+            />
+          )}
+          <span className="text-[11px] text-muted-foreground truncate group-hover/product:text-primary transition-colors">
+            {review.products.name}
+          </span>
+        </a>
+      )}
+    </div>
+  );
+};
+
 const Reviews = () => {
   const [page, setPage] = useState(1);
 
@@ -87,73 +163,9 @@ const Reviews = () => {
           <>
             {/* Reviews Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {reviews.map((review) => {
-                const initials = getInitials(review.customer_name);
-                const avatarColor = getAvatarColor(review.customer_name);
-                const comment = review.comment?.trim() ?? "";
-
-                return (
-                  <div
-                    key={review.id}
-                    className="bg-card border border-border/30 rounded-2xl p-5 sm:p-6 flex flex-col gap-3.5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
-                        style={{ backgroundColor: avatarColor }}
-                      >
-                        {initials}
-                      </div>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-sm font-semibold text-foreground truncate max-w-[140px]">
-                            {review.customer_name}
-                          </span>
-                          <BadgeCheck size={14} className="text-emerald-500 flex-shrink-0" />
-                          <span className="text-[11px] text-muted-foreground flex-shrink-0">
-                            • {timeAgo(review.created_at)}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-0.5 mt-0.5">
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <Star
-                              key={i}
-                              size={13}
-                              className={i < review.rating ? "fill-amber-500 text-amber-500" : "text-muted-foreground/30"}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    {comment && (
-                      <p className="text-[13px] text-foreground/80 leading-[1.6] whitespace-normal break-words">
-                        {comment}
-                      </p>
-                    )}
-
-                    {/* Product info */}
-                    {(review as any).products && (
-                      <a
-                        href={`/product/${(review as any).products.slug}`}
-                        className="flex items-center gap-2 mt-auto pt-2 border-t border-border/20 group/product"
-                      >
-                        {(review as any).products.image_url && (
-                          <img
-                            src={(review as any).products.image_url}
-                            alt={(review as any).products.name}
-                            className="w-8 h-8 rounded-md object-cover flex-shrink-0"
-                            loading="lazy"
-                          />
-                        )}
-                        <span className="text-[11px] text-muted-foreground truncate group-hover/product:text-primary transition-colors">
-                          {(review as any).products.name}
-                        </span>
-                      </a>
-                    )}
-                  </div>
-                );
-              })}
+              {reviews.map((review) => (
+                <ReviewPageCard key={review.id} review={review} />
+              ))}
             </div>
 
             {/* Pagination */}
