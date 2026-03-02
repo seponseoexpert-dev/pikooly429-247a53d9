@@ -49,7 +49,7 @@ const ReviewCard = ({ review }: { review: Review }) => {
   const isClassName = avatarColor.startsWith("bg-");
 
   return (
-    <div className="min-w-[260px] sm:min-w-[280px] md:min-w-0 snap-start flex-shrink-0 md:flex-shrink bg-card border border-border/30 rounded-2xl p-5 sm:p-6 flex flex-col gap-3.5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+    <div className="min-w-[calc(100vw-48px)] sm:min-w-[300px] md:min-w-0 snap-center flex-shrink-0 md:flex-shrink bg-card border border-border/30 rounded-2xl p-4 sm:p-6 flex flex-col gap-3 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
       {/* Header: Avatar + Name + Time */}
       <div className="flex items-center gap-3">
         <div
