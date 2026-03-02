@@ -1,4 +1,4 @@
-import { Star, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
+import { Star, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, BadgeCheck } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useRef, useState, useEffect, useCallback } from "react";
@@ -63,6 +63,7 @@ const ReviewCard = ({ review }: { review: Review }) => {
             <span className="text-sm font-semibold text-foreground truncate max-w-[120px]">
               {review.customer_name}
             </span>
+            <BadgeCheck size={14} className="text-emerald-500 flex-shrink-0" />
             <span className="text-[11px] text-muted-foreground flex-shrink-0">
               • {timeAgo(review.created_at)}
             </span>
