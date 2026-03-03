@@ -1,5 +1,5 @@
 import { useCart } from "@/contexts/CartContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, Star } from "lucide-react";
 import { useState, memo } from "react";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
@@ -26,6 +26,7 @@ interface ProductCardProps {
 const ProductCard = memo(({ product }: ProductCardProps) => {
   const { addItem } = useCart();
   const { formatPrice } = useMultiCurrency();
+  const navigate = useNavigate();
   const [isAdding, setIsAdding] = useState(false);
   const origPrice = product.original_price ?? product.originalPrice;
   const discount = origPrice
@@ -72,12 +73,23 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
         </div>
 
         <div className="mt-2.5 sm:mt-3 flex gap-2">
-          <Link
-            to={linkTo}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              addItem({
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                image: imgSrc,
+                category: product.category || "",
+                inStock: product.stock !== 0,
+              });
+              navigate("/checkout");
+            }}
             className="flex-1 py-2 sm:py-2.5 rounded-lg bg-primary text-primary-foreground text-xs sm:text-sm font-semibold hover:bg-primary/90 transition-colors uppercase tracking-wide text-center"
           >
             Shop Now
-          </Link>
+          </button>
           <button
             onClick={(e) => {
               e.preventDefault();
