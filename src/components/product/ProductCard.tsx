@@ -71,25 +71,33 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
           )}
         </div>
 
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            setIsAdding(true);
-            addItem({
-              id: product.id,
-              name: product.name,
-              price: product.price,
-              image: imgSrc,
-              category: product.category || "",
-              inStock: product.stock !== 0,
-            });
-            setTimeout(() => setIsAdding(false), 600);
-          }}
-          className="mt-2.5 sm:mt-3 w-full py-2 sm:py-2.5 rounded-lg bg-primary text-primary-foreground text-xs sm:text-sm font-semibold hover:bg-primary/90 transition-colors uppercase tracking-wide flex items-center justify-center gap-2"
-        >
-          <ShoppingCart size={16} className={isAdding ? "animate-bounce" : ""} />
-          Add to Cart
-        </button>
+        <div className="mt-2.5 sm:mt-3 flex gap-2">
+          <Link
+            to={linkTo}
+            className="flex-1 py-2 sm:py-2.5 rounded-lg bg-primary text-primary-foreground text-xs sm:text-sm font-semibold hover:bg-primary/90 transition-colors uppercase tracking-wide text-center"
+          >
+            Shop Now
+          </Link>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              setIsAdding(true);
+              addItem({
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                image: imgSrc,
+                category: product.category || "",
+                inStock: product.stock !== 0,
+              });
+              setTimeout(() => setIsAdding(false), 600);
+            }}
+            className="px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-lg bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors flex items-center justify-center"
+            aria-label="Add to Cart"
+          >
+            <ShoppingCart size={18} className={isAdding ? "animate-bounce" : ""} />
+          </button>
+        </div>
       </div>
     </div>
   );
