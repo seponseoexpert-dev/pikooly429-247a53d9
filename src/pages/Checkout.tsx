@@ -405,6 +405,19 @@ const Checkout = () => {
         }).catch(console.error);
       }
 
+      // Send order SMS to customer (fire & forget)
+      if (form.phone.trim()) {
+        const trackUrl = `${window.location.origin}/track-order`;
+        const smsMessage = `✅ Order Confirmed!\n\nOrder: ${order.order_number}\nTotal: ৳${grandTotal.toFixed(2)}\nDelivery: ${activeDistrict?.name || ""} - ${form.address.trim()}\n\n📦 Track your order:\n${trackUrl}\n\nThank you for shopping with PikoolyFlora! 🌸`;
+
+        supabase.functions.invoke("send-sms", {
+          body: {
+            to: form.phone.trim(),
+            message: smsMessage,
+          },
+        }).catch(console.error);
+      }
+
       // Send admin notification email (fire & forget)
       const adminEmail = gatewaySettings.admin_notification_email || gatewaySettings.store_email;
       if (adminEmail) {
