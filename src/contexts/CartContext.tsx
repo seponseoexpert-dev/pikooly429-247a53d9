@@ -3,7 +3,7 @@ import { CartItem, Product } from "@/types";
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (product: Product, customImages?: File[]) => void;
+  addItem: (product: Product, customImages?: File[], skipDrawer?: boolean) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   updateCustomImages: (productId: string, images: File[]) => void;
@@ -20,7 +20,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
-  const addItem = useCallback((product: Product, customImages?: File[]) => {
+  const addItem = useCallback((product: Product, customImages?: File[], skipDrawer?: boolean) => {
     setItems((prev) => {
       const existing = prev.find((i) => i.product.id === product.id);
       if (existing) {
@@ -36,7 +36,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       return [...prev, { product, quantity: 1, customImages }];
     });
-    setIsOpen(true);
+    if (!skipDrawer) setIsOpen(true);
   }, []);
 
   const removeItem = useCallback((productId: string) => {

@@ -83,7 +83,7 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
                 image: imgSrc,
                 category: product.category || "",
                 inStock: product.stock !== 0,
-              });
+              }, undefined, true);
               navigate("/checkout");
             }}
             className="flex-1 py-2 sm:py-2.5 rounded-lg bg-primary text-primary-foreground text-xs sm:text-sm font-semibold hover:bg-primary/90 transition-colors uppercase tracking-wide text-center"
