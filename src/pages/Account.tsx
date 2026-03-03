@@ -61,6 +61,7 @@ const Account = () => {
       throw error;
     }
     await queryClient.invalidateQueries({ queryKey: ["profile", user.id] });
+    queryClient.invalidateQueries({ queryKey: ["checkout-profile"] });
     toast.success("Profile updated!");
   };
 
