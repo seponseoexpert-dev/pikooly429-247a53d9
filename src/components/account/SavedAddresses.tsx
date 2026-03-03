@@ -45,6 +45,7 @@ const SavedAddresses = ({ userId }: SavedAddressesProps) => {
       });
       if (error) throw error;
       await queryClient.invalidateQueries({ queryKey: ["saved-addresses", userId] });
+      queryClient.invalidateQueries({ queryKey: ["checkout-default-address"] });
       setForm({ label: "Home", full_name: "", phone: "", address: "", district: "" });
       setShowForm(false);
       toast.success("Address saved!");
@@ -59,6 +60,7 @@ const SavedAddresses = ({ userId }: SavedAddressesProps) => {
     const { error } = await supabase.from("saved_addresses").delete().eq("id", id);
     if (!error) {
       queryClient.invalidateQueries({ queryKey: ["saved-addresses", userId] });
+      queryClient.invalidateQueries({ queryKey: ["checkout-default-address"] });
       toast.success("Address deleted");
     }
   };
@@ -67,6 +69,7 @@ const SavedAddresses = ({ userId }: SavedAddressesProps) => {
     await supabase.from("saved_addresses").update({ is_default: false }).eq("user_id", userId);
     await supabase.from("saved_addresses").update({ is_default: true }).eq("id", id);
     queryClient.invalidateQueries({ queryKey: ["saved-addresses", userId] });
+    queryClient.invalidateQueries({ queryKey: ["checkout-default-address"] });
   };
 
   return (
