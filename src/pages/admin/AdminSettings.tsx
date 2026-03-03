@@ -48,6 +48,7 @@ const settingSections = [
   { key: "contact_page", label: "Contact Us Page", icon: Phone },
   { key: "faq", label: "FAQ Section", icon: MessageSquare },
   
+  { key: "social_login", label: "Social Login", icon: Share2 },
   { key: "license", label: "License", icon: Award },
   { key: "footer", label: "Footer", icon: FileText },
 ];
@@ -539,6 +540,119 @@ const NotificationAlertSection = ({
               onChange={(e) => setFormValues({ ...formValues, [`alert_${channel}_admin_new_order_message`]: e.target.value })}
               placeholder="You have a new order."
             />
+          </div>
+        </TabsContent>
+      ))}
+    </Tabs>
+  );
+};
+
+// Social Login providers config
+const socialLoginProviders = [
+  {
+    key: "google",
+    label: "Google",
+    supported: true,
+    fields: [
+      { key: "social_google_client_id", label: "Google Client ID" },
+      { key: "social_google_client_secret", label: "Google Client Secret" },
+      { key: "social_google_status", label: "Google Status", type: "select" as const, options: [
+        { value: "enable", label: "Enable" },
+        { value: "disable", label: "Disable" },
+      ]},
+    ],
+  },
+  {
+    key: "apple",
+    label: "Apple",
+    supported: true,
+    fields: [
+      { key: "social_apple_client_id", label: "Apple Client ID" },
+      { key: "social_apple_client_secret", label: "Apple Client Secret" },
+      { key: "social_apple_status", label: "Apple Status", type: "select" as const, options: [
+        { value: "enable", label: "Enable" },
+        { value: "disable", label: "Disable" },
+      ]},
+    ],
+  },
+  {
+    key: "facebook",
+    label: "Facebook",
+    supported: false,
+    fields: [
+      { key: "social_facebook_app_id", label: "Facebook App ID" },
+      { key: "social_facebook_app_secret", label: "Facebook App Secret" },
+      { key: "social_facebook_status", label: "Facebook Status", type: "select" as const, options: [
+        { value: "enable", label: "Enable" },
+        { value: "disable", label: "Disable" },
+      ]},
+    ],
+  },
+  {
+    key: "phone",
+    label: "Phone",
+    supported: false,
+    fields: [
+      { key: "social_phone_otp_provider", label: "OTP Provider" },
+      { key: "social_phone_status", label: "Phone Login Status", type: "select" as const, options: [
+        { value: "enable", label: "Enable" },
+        { value: "disable", label: "Disable" },
+      ]},
+    ],
+  },
+];
+
+const SocialLoginSection = ({
+  formValues,
+  setFormValues,
+}: {
+  formValues: Record<string, string>;
+  setFormValues: (v: Record<string, string>) => void;
+}) => {
+  return (
+    <Tabs defaultValue="google">
+      <TabsList className="w-full grid grid-cols-4 mb-4 h-auto">
+        {socialLoginProviders.map((p) => (
+          <TabsTrigger key={p.key} value={p.key} className="text-xs sm:text-sm px-2 py-2 relative">
+            {p.label}
+            {!p.supported && (
+              <span className="absolute -top-1 -right-1 text-[8px] bg-muted text-muted-foreground px-1 rounded-full leading-tight">Soon</span>
+            )}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+      {socialLoginProviders.map((provider) => (
+        <TabsContent key={provider.key} value={provider.key} className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h4 className="font-medium text-base">{provider.label}</h4>
+            {!provider.supported && (
+              <span className="text-xs bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 px-2.5 py-1 rounded-full font-medium">
+                Coming Soon
+              </span>
+            )}
+          </div>
+          <div className={cn("grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4", !provider.supported && "opacity-50 pointer-events-none")}>
+            {provider.fields.map((field) => (
+              <div key={field.key} className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{field.label}</label>
+                {field.type === "select" && field.options ? (
+                  <Select value={formValues[field.key] || "disable"} onValueChange={(v) => setFormValues({ ...formValues, [field.key]: v })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {field.options.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Input
+                    value={formValues[field.key] || ""}
+                    onChange={(e) => setFormValues({ ...formValues, [field.key]: e.target.value })}
+                    placeholder={field.label}
+                  />
+                )}
+              </div>
+            ))}
           </div>
         </TabsContent>
       ))}
@@ -1294,6 +1408,9 @@ const AdminSettings = () => {
     if (activeSection === "languages") {
       return ["default_language_code", "multi_language_enabled_setting", "enabled_languages"];
     }
+    if (activeSection === "social_login") {
+      return socialLoginProviders.flatMap((p) => p.fields.map((f) => f.key));
+    }
     return (sectionFields[activeSection] || []).map((f) => f.key);
   };
 
@@ -1411,6 +1528,8 @@ const AdminSettings = () => {
                     <DynamicFAQSection formValues={formValues} setFormValues={setFormValues} />
                   ) : activeSection === "languages" ? (
                     <LanguagesSection formValues={formValues} setFormValues={setFormValues} />
+                  ) : activeSection === "social_login" ? (
+                    <SocialLoginSection formValues={formValues} setFormValues={setFormValues} />
                   ) : currentFields.length === 0 ? (
                     <p className="text-muted-foreground text-sm py-4 text-center">No settings available for this section yet.</p>
                   ) : (
