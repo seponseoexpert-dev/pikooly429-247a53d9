@@ -43,14 +43,29 @@ serve(async (req) => {
 
     const isEnabled = (v: string) => ["enable", "enabled", "true", "1", "yes", "on"].includes((v || "").toLowerCase());
 
+    // Convert local BD number to E.164 format
+    const formatPhone = (phone: string): string => {
+      let cleaned = phone.replace(/[^0-9+]/g, "");
+      if (cleaned.startsWith("0")) {
+        cleaned = "+88" + cleaned;
+      } else if (cleaned.startsWith("88") && !cleaned.startsWith("+")) {
+        cleaned = "+" + cleaned;
+      } else if (!cleaned.startsWith("+")) {
+        cleaned = "+88" + cleaned;
+      }
+      return cleaned;
+    };
+
+    const formattedTo = formatPhone(to);
+
     // Try Twilio first
     if (isEnabled(config.twilio_status) && config.twilio_account_sid && config.twilio_auth_token && config.twilio_from) {
       const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${config.twilio_account_sid}/Messages.json`;
       const auth = btoa(`${config.twilio_account_sid}:${config.twilio_auth_token}`);
 
       const body = new URLSearchParams({
-        To: to,
-        From: config.twilio_from,
+        To: formattedTo,
+        From: config.twilio_from.startsWith("+") ? config.twilio_from : "+88" + config.twilio_from,
         Body: message,
       });
 
@@ -88,7 +103,7 @@ serve(async (req) => {
         },
         body: JSON.stringify({
           content: message,
-          to: [to.replace(/[^0-9]/g, "")],
+          to: [formattedTo.replace(/[^0-9]/g, "")],
         }),
       });
 
@@ -114,7 +129,7 @@ serve(async (req) => {
         body: JSON.stringify({
           api_key: config.nexmo_key,
           api_secret: config.nexmo_secret,
-          to: to.replace(/[^0-9]/g, ""),
+          to: formattedTo.replace(/[^0-9]/g, ""),
           from: "PikoolyFlora",
           text: message,
         }),
