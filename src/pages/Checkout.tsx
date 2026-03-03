@@ -1,8 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useCart } from "@/contexts/CartContext";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/contexts/AuthContext";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -65,6 +66,7 @@ const Checkout = () => {
   const navigate = useNavigate();
   const { formatPrice } = useMultiCurrency();
   const { settings: siteSettings } = useSiteSettings();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [countryOpen, setCountryOpen] = useState(false);
@@ -72,6 +74,7 @@ const Checkout = () => {
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
   const [couponLoading, setCouponLoading] = useState(false);
+  const [autoFilled, setAutoFilled] = useState(false);
   const [form, setForm] = useState({
     fullName: "",
     billingCountry: "",
@@ -86,6 +89,67 @@ const Checkout = () => {
     deliveryTime: "",
     paymentMethod: "eps",
   });
+
+  // Auto-fill form for logged-in users
+  const { data: userProfile } = useQuery({
+    queryKey: ["checkout-profile", user?.id],
+    enabled: !!user && !autoFilled,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("user_id", user!.id)
+        .maybeSingle();
+      return data;
+    },
+  });
+
+  const { data: defaultAddress } = useQuery({
+    queryKey: ["checkout-default-address", user?.id],
+    enabled: !!user && !autoFilled,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("saved_addresses")
+        .select("*")
+        .eq("user_id", user!.id)
+        .eq("is_default", true)
+        .maybeSingle();
+      // If no default, get most recent
+      if (!data) {
+        const { data: latest } = await supabase
+          .from("saved_addresses")
+          .select("*")
+          .eq("user_id", user!.id)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        return latest;
+      }
+      return data;
+    },
+  });
+
+  useEffect(() => {
+    if (autoFilled || !user) return;
+    if (userProfile || defaultAddress) {
+      setForm((prev) => ({
+        ...prev,
+        fullName: prev.fullName || userProfile?.full_name || user.user_metadata?.full_name || "",
+        phone: prev.phone || userProfile?.phone || defaultAddress?.phone || "",
+        email: prev.email || user.email || "",
+        billingCountry: prev.billingCountry || "Bangladesh",
+        recipientName: prev.recipientName || defaultAddress?.full_name || userProfile?.full_name || "",
+        recipientPhone: prev.recipientPhone || defaultAddress?.phone || userProfile?.phone || "",
+        address: prev.address || defaultAddress?.address || "",
+      }));
+      // Auto-select district if address has one
+      if (defaultAddress?.district) {
+        // Will be matched after districts load
+        setSelectedDistrict((prev) => prev || "");
+      }
+      setAutoFilled(true);
+    }
+  }, [user, userProfile, defaultAddress, autoFilled]);
 
   const isGatewayEnabled = (value?: string | null) =>
     ["enable", "enabled", "true", "1", "yes", "on"].includes((value ?? "").toLowerCase());
@@ -135,6 +199,15 @@ const Checkout = () => {
       return data;
     },
   });
+
+  // Auto-select district for logged-in users with saved address
+  useEffect(() => {
+    if (!defaultAddress?.district || !districts.length || selectedDistrict) return;
+    const match = districts.find((d: any) => 
+      d.name.toLowerCase() === defaultAddress.district.toLowerCase()
+    );
+    if (match) setSelectedDistrict(match.id);
+  }, [districts, defaultAddress, selectedDistrict]);
 
   // Fetch category-specific shipping fees
   const { data: categoryFees = [] } = useQuery({
