@@ -575,7 +575,7 @@ const Checkout = () => {
                       <Input
                         id="phone"
                         type="tel"
-                        placeholder={form.billingCountry && countryPhoneCodes[form.billingCountry] ? "Phone number" : "01XXXXXXXXX"}
+                        placeholder="Enter your number"
                         value={form.phone.startsWith("+") ? form.phone.slice((countryPhoneCodes[form.billingCountry] || "").length) : form.phone}
                         onChange={(e) => {
                           const code = countryPhoneCodes[form.billingCountry] || "";
