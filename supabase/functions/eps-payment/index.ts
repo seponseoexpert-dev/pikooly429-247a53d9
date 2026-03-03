@@ -36,7 +36,7 @@ Deno.serve(async (req) => {
     );
 
     const body = await req.json();
-    const { action, order_id } = body;
+    const { action } = body;
 
     // Fetch EPS settings from site_settings
     const { data: settingsData, error: settingsError } = await supabaseAdmin
@@ -70,7 +70,10 @@ Deno.serve(async (req) => {
         ? "https://pgapi.eps.com.bd"
         : "https://sandboxpgapi.eps.com.bd";
 
+    // ============ ORDER PAYMENT ============
     if (action === "initialize") {
+      const { order_id } = body;
+
       // Step 1: Get Token
       const usernameHash = await generateHash(
         settings.eps_username,
@@ -163,7 +166,7 @@ Deno.serve(async (req) => {
         storeId: settings.eps_store_id,
         merchantTransactionId: merchantTransactionId,
         CustomerOrderId: order.order_number,
-        transactionTypeId: 1, // Web
+        transactionTypeId: 1,
         financialEntityId: 0,
         transitionStatusId: 0,
         totalAmount: Number(order.total),
@@ -233,6 +236,142 @@ Deno.serve(async (req) => {
       );
     }
 
+    // ============ WALLET TOP-UP ============
+    if (action === "wallet_topup") {
+      const { user_id, amount, transaction_id } = body;
+
+      if (!user_id || !amount || !transaction_id) {
+        return new Response(
+          JSON.stringify({ error: "user_id, amount, and transaction_id are required" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      // Step 1: Get Token
+      const usernameHash = await generateHash(
+        settings.eps_username,
+        settings.eps_hash_key
+      );
+
+      const tokenRes = await fetch(`${baseUrl}/v1/Auth/GetToken`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-hash": usernameHash,
+        },
+        body: JSON.stringify({
+          userName: settings.eps_username,
+          password: settings.eps_password,
+        }),
+      });
+
+      const tokenData = await tokenRes.json();
+      if (!tokenData.token) {
+        return new Response(
+          JSON.stringify({ error: "EPS authentication failed" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      const merchantTransactionId = `WT-${Date.now()}${Math.floor(Math.random() * 10000)}`;
+
+      // Store reference in wallet_transactions
+      await supabaseAdmin
+        .from("wallet_transactions")
+        .update({ reference_id: merchantTransactionId })
+        .eq("id", transaction_id);
+
+      const siteUrl = req.headers.get("origin") || req.headers.get("referer")?.replace(/\/$/, "") || "";
+      const successUrl = `${siteUrl}/eps-callback?status=success&type=wallet&txn=${merchantTransactionId}&wtxn=${transaction_id}`;
+      const failUrl = `${siteUrl}/eps-callback?status=fail&type=wallet&txn=${merchantTransactionId}&wtxn=${transaction_id}`;
+      const cancelUrl = `${siteUrl}/eps-callback?status=cancel&type=wallet&txn=${merchantTransactionId}&wtxn=${transaction_id}`;
+
+      const txnHash = await generateHash(
+        merchantTransactionId,
+        settings.eps_hash_key
+      );
+
+      const initPayload = {
+        storeId: settings.eps_store_id,
+        merchantTransactionId,
+        CustomerOrderId: `WALLET-${transaction_id.slice(0, 8)}`,
+        transactionTypeId: 1,
+        financialEntityId: 0,
+        transitionStatusId: 0,
+        totalAmount: Number(amount),
+        ipAddress: "0.0.0.0",
+        version: "1",
+        successUrl,
+        failUrl,
+        cancelUrl,
+        customerName: "Customer",
+        customerEmail: "customer@example.com",
+        customerAddress: "N/A",
+        customerAddress2: "",
+        customerCity: "Dhaka",
+        customerState: "Dhaka",
+        customerPostcode: "1000",
+        customerCountry: "BD",
+        customerPhone: "01700000000",
+        shipmentName: "Wallet Top-up",
+        shipmentAddress: "N/A",
+        shipmentAddress2: "",
+        shipmentCity: "Dhaka",
+        shipmentState: "Dhaka",
+        shipmentPostcode: "1000",
+        shipmentCountry: "BD",
+        valueA: transaction_id,
+        valueB: user_id,
+        valueC: "wallet_topup",
+        valueD: String(amount),
+        shippingMethod: "N/A",
+        noOfItem: "1",
+        productName: "Wallet Top-up",
+        productProfile: "general",
+        productCategory: "topup",
+        ProductList: [{
+          ProductName: "Wallet Top-up",
+          NoOfItem: "1",
+          ProductProfile: "general",
+          ProductCategory: "topup",
+          ProductPrice: String(amount),
+        }],
+      };
+
+      const initRes = await fetch(`${baseUrl}/v1/EPSEngine/InitializeEPS`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-hash": txnHash,
+          Authorization: `Bearer ${tokenData.token}`,
+        },
+        body: JSON.stringify(initPayload),
+      });
+
+      const initData = await initRes.json();
+
+      if (!initData.RedirectURL) {
+        console.error("EPS Wallet Init failed:", initData);
+        return new Response(
+          JSON.stringify({
+            error: "EPS payment initialization failed",
+            details: initData.ErrorMessage || "No redirect URL received",
+          }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({
+          redirectUrl: initData.RedirectURL,
+          transactionId: initData.TransactionId,
+          merchantTransactionId,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // ============ VERIFY ============
     if (action === "verify") {
       const { merchantTransactionId } = body;
 
@@ -287,7 +426,50 @@ Deno.serve(async (req) => {
 
       const verifyData = await verifyRes.json();
 
-      // Update order payment status if successful
+      // Check if this is a wallet top-up verification
+      if (verifyData.Status === "Success" && verifyData.ValueC === "wallet_topup") {
+        const walletTxnId = verifyData.ValueA;
+        const walletUserId = verifyData.ValueB;
+        const topupAmount = parseFloat(verifyData.ValueD || "0");
+
+        if (walletTxnId && walletUserId && topupAmount > 0) {
+          // Update wallet balance
+          const { data: existingWallet } = await supabaseAdmin
+            .from("wallets")
+            .select("*")
+            .eq("user_id", walletUserId)
+            .maybeSingle();
+
+          const newBalance = (existingWallet?.balance || 0) + topupAmount;
+
+          if (existingWallet) {
+            await supabaseAdmin
+              .from("wallets")
+              .update({ balance: newBalance })
+              .eq("user_id", walletUserId);
+          } else {
+            await supabaseAdmin
+              .from("wallets")
+              .insert({ user_id: walletUserId, balance: newBalance });
+          }
+
+          // Update transaction status
+          await supabaseAdmin
+            .from("wallet_transactions")
+            .update({
+              status: "completed",
+              balance_after: newBalance,
+            })
+            .eq("id", walletTxnId);
+        }
+
+        return new Response(
+          JSON.stringify({ ...verifyData, wallet_updated: true }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      // Regular order payment verification
       if (verifyData.Status === "Success") {
         const orderId = verifyData.ValueA;
         if (orderId) {
@@ -307,7 +489,7 @@ Deno.serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ error: "Invalid action. Use 'initialize' or 'verify'" }),
+      JSON.stringify({ error: "Invalid action. Use 'initialize', 'wallet_topup', or 'verify'" }),
       { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error: any) {

@@ -11,6 +11,7 @@ import AccountStats from "@/components/account/AccountStats";
 import RecentOrders from "@/components/account/RecentOrders";
 import SavedAddresses from "@/components/account/SavedAddresses";
 import WishlistSection from "@/components/account/WishlistSection";
+import WalletSection from "@/components/account/WalletSection";
 
 const Account = () => {
   const { user, loading, signOut } = useAuth();
@@ -98,6 +99,9 @@ const Account = () => {
 
       {/* Stats Cards */}
       <AccountStats userId={user.id} orderCount={orders.length} totalSpent={totalSpent} />
+
+      {/* Wallet */}
+      <WalletSection userId={user.id} />
 
       {/* Two-column layout for larger screens */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">

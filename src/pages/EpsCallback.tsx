@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, CheckCircle, XCircle, AlertTriangle } from "lucide-react";
+import { Loader2, CheckCircle, XCircle, AlertTriangle, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 
@@ -15,10 +15,21 @@ const EpsCallback = () => {
   const status = searchParams.get("status");
   const orderNumber = searchParams.get("order");
   const txn = searchParams.get("txn");
+  const type = searchParams.get("type"); // "wallet" for wallet topup
+  const wtxn = searchParams.get("wtxn"); // wallet transaction id
+
+  const isWallet = type === "wallet";
 
   useEffect(() => {
     const verify = async () => {
       if (status === "cancel") {
+        // If wallet topup was cancelled, mark transaction as failed
+        if (isWallet && wtxn) {
+          await supabase
+            .from("wallet_transactions")
+            .update({ status: "failed" })
+            .eq("id", wtxn);
+        }
         setResult("cancel");
         setVerifying(false);
         return;
@@ -31,15 +42,30 @@ const EpsCallback = () => {
           });
 
           if (!error && data?.Status === "Success") {
-            clearCart();
+            if (!isWallet) {
+              clearCart();
+            }
             setResult("success");
           } else {
+            // Mark wallet transaction as failed
+            if (isWallet && wtxn) {
+              await supabase
+                .from("wallet_transactions")
+                .update({ status: "failed" })
+                .eq("id", wtxn);
+            }
             setResult("fail");
           }
         } catch {
           setResult("fail");
         }
       } else {
+        if (isWallet && wtxn) {
+          await supabase
+            .from("wallet_transactions")
+            .update({ status: "failed" })
+            .eq("id", wtxn);
+        }
         setResult("fail");
       }
       setVerifying(false);
@@ -66,14 +92,26 @@ const EpsCallback = () => {
         {result === "success" && (
           <>
             <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto">
-              <CheckCircle size={40} className="text-green-600" />
+              {isWallet ? (
+                <Wallet size={40} className="text-green-600" />
+              ) : (
+                <CheckCircle size={40} className="text-green-600" />
+              )}
             </div>
-            <h1 className="text-2xl font-bold">Payment Successful!</h1>
+            <h1 className="text-2xl font-bold">
+              {isWallet ? "Wallet Top-up Successful!" : "Payment Successful!"}
+            </h1>
             <p className="text-muted-foreground">
-              Your payment has been confirmed via EPS. Order: <strong>{orderNumber}</strong>
+              {isWallet
+                ? "Your wallet has been topped up successfully. The balance is now available in your account."
+                : <>Your payment has been confirmed via EPS. Order: <strong>{orderNumber}</strong></>
+              }
             </p>
-            <Button onClick={() => navigate(`/order-success/${orderNumber}`)} className="rounded-full">
-              View Order Details
+            <Button
+              onClick={() => navigate(isWallet ? "/account" : `/order-success/${orderNumber}`)}
+              className="rounded-full"
+            >
+              {isWallet ? "Back to Account" : "View Order Details"}
             </Button>
           </>
         )}
@@ -83,17 +121,28 @@ const EpsCallback = () => {
             <div className="w-20 h-20 rounded-full bg-destructive/10 flex items-center justify-center mx-auto">
               <XCircle size={40} className="text-destructive" />
             </div>
-            <h1 className="text-2xl font-bold">Payment Failed</h1>
+            <h1 className="text-2xl font-bold">
+              {isWallet ? "Top-up Failed" : "Payment Failed"}
+            </h1>
             <p className="text-muted-foreground">
-              Your payment could not be processed. Please try again or choose a different payment method.
+              {isWallet
+                ? "Your wallet top-up could not be processed. Please try again."
+                : "Your payment could not be processed. Please try again or choose a different payment method."
+              }
             </p>
             <div className="flex gap-3 justify-center">
-              <Button variant="outline" onClick={() => navigate("/checkout")} className="rounded-full">
-                Back to Checkout
+              <Button
+                variant="outline"
+                onClick={() => navigate(isWallet ? "/account" : "/checkout")}
+                className="rounded-full"
+              >
+                {isWallet ? "Back to Account" : "Back to Checkout"}
               </Button>
-              <Button onClick={() => navigate("/shop")} className="rounded-full">
-                Continue Shopping
-              </Button>
+              {!isWallet && (
+                <Button onClick={() => navigate("/shop")} className="rounded-full">
+                  Continue Shopping
+                </Button>
+              )}
             </div>
           </>
         )}
@@ -103,13 +152,22 @@ const EpsCallback = () => {
             <div className="w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center mx-auto">
               <AlertTriangle size={40} className="text-amber-600" />
             </div>
-            <h1 className="text-2xl font-bold">Payment Cancelled</h1>
+            <h1 className="text-2xl font-bold">
+              {isWallet ? "Top-up Cancelled" : "Payment Cancelled"}
+            </h1>
             <p className="text-muted-foreground">
-              You cancelled the payment. Your order has not been charged.
+              {isWallet
+                ? "You cancelled the wallet top-up. No amount was charged."
+                : "You cancelled the payment. Your order has not been charged."
+              }
             </p>
             <div className="flex gap-3 justify-center">
-              <Button variant="outline" onClick={() => navigate("/checkout")} className="rounded-full">
-                Back to Checkout
+              <Button
+                variant="outline"
+                onClick={() => navigate(isWallet ? "/account" : "/checkout")}
+                className="rounded-full"
+              >
+                {isWallet ? "Back to Account" : "Back to Checkout"}
               </Button>
             </div>
           </>
