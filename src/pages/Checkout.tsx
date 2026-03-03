@@ -15,6 +15,8 @@ import { toast } from "sonner";
 import { Loader2, ShoppingBag, Truck, CreditCard, Minus, Plus, X, Ticket, Check, ChevronsUpDown } from "lucide-react";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { cn } from "@/lib/utils";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { shouldSendMail, shouldSendSms, shouldSendPush, shouldSendAdminMail, sendBrowserPush } from "@/lib/notificationHelper";
 
 const countryPhoneCodes: Record<string, string> = {
   "Afghanistan": "+93", "Albania": "+355", "Algeria": "+213", "Andorra": "+376", "Angola": "+244",
@@ -62,6 +64,7 @@ const Checkout = () => {
   const { items, totalPrice, clearCart, updateQuantity, removeItem } = useCart();
   const navigate = useNavigate();
   const { formatPrice } = useMultiCurrency();
+  const { settings: siteSettings } = useSiteSettings();
   const [loading, setLoading] = useState(false);
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [countryOpen, setCountryOpen] = useState(false);
@@ -386,8 +389,11 @@ const Checkout = () => {
 
       // COD orders go straight to success
 
-      // Send order confirmation email (fire & forget)
-      if (form.email.trim()) {
+      // Fetch alert settings for notification toggles
+      const alertSettings = siteSettings;
+
+      // Send order confirmation email (fire & forget) — respects admin toggle
+      if (form.email.trim() && shouldSendMail(alertSettings, "pending")) {
         const { buildOrderConfirmationEmail } = await import("@/lib/emailTemplates");
         const emailHtml = buildOrderConfirmationEmail({
           customerName: form.fullName,
@@ -422,8 +428,8 @@ const Checkout = () => {
         }).catch(console.error);
       }
 
-      // Send order SMS to customer (fire & forget)
-      if (form.phone.trim()) {
+      // Send order SMS to customer (fire & forget) — respects admin toggle
+      if (form.phone.trim() && shouldSendSms(alertSettings, "pending")) {
         const trackUrl = `${window.location.origin}/track-order`;
         const smsMessage = `✅ Order Confirmed!\n\nOrder: ${order.order_number}\nTotal: ৳${grandTotal.toFixed(2)}\nDelivery: ${activeDistrict?.name || ""} - ${form.address.trim()}\n\n📦 Track your order:\n${trackUrl}\n\nThank you for shopping with PikoolyFlora! 🌸`;
 
@@ -435,9 +441,17 @@ const Checkout = () => {
         }).catch(console.error);
       }
 
-      // Send admin notification email (fire & forget)
+      // Send browser push notification — respects admin toggle
+      if (shouldSendPush(alertSettings, "pending")) {
+        sendBrowserPush(
+          "Order Placed! ✅",
+          `Order ${order.order_number} has been placed successfully. Total: ৳${grandTotal.toFixed(2)}`
+        );
+      }
+
+      // Send admin notification email (fire & forget) — respects admin toggle
       const adminEmail = gatewaySettings.admin_notification_email || gatewaySettings.store_email;
-      if (adminEmail) {
+      if (adminEmail && shouldSendAdminMail(alertSettings)) {
         const { buildAdminNewOrderEmail } = await import("@/lib/emailTemplates");
         const adminHtml = buildAdminNewOrderEmail({
           customerName: form.fullName,
