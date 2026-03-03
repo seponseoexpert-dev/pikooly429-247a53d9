@@ -12,6 +12,7 @@ import { toast } from "@/hooks/use-toast";
 import { Search, Eye, Package } from "lucide-react";
 import { useCurrency } from "@/hooks/useCurrency";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { shouldSendMail, shouldSendSms, shouldSendPush, sendBrowserPush } from "@/lib/notificationHelper";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Order = Tables<"orders">;
@@ -100,6 +101,7 @@ const AdminOrders = () => {
 
   const sendStatusEmail = async (order: Order, newStatus: string) => {
     if (!order.customer_email) return;
+    if (!shouldSendMail(siteSettings, newStatus)) return;
     const template = statusEmailTemplates[newStatus];
     if (!template) return;
 
@@ -149,14 +151,48 @@ const AdminOrders = () => {
     }
   };
 
+  const sendStatusSms = async (order: Order, newStatus: string) => {
+    if (!order.customer_phone) return;
+    if (!shouldSendSms(siteSettings, newStatus)) return;
+    const template = statusEmailTemplates[newStatus];
+    if (!template) return;
+
+    try {
+      const trackUrl = `${window.location.origin}/track-order`;
+      const smsMessage = `${template.emoji} ${template.subject}\n\nOrder: ${order.order_number}\nTotal: ৳${Number(order.total).toFixed(2)}\n\n${template.message}\n\n📦 Track: ${trackUrl}`;
+
+      await supabase.functions.invoke("send-sms", {
+        body: {
+          to: order.customer_phone,
+          message: smsMessage,
+        },
+      });
+    } catch (err) {
+      console.error("Failed to send status SMS:", err);
+    }
+  };
+
+  const sendStatusPush = (order: Order, newStatus: string) => {
+    if (!shouldSendPush(siteSettings, newStatus)) return;
+    const template = statusEmailTemplates[newStatus];
+    if (!template) return;
+    sendBrowserPush(
+      `${template.emoji} ${template.subject}`,
+      `Order ${order.order_number} - ${template.message}`
+    );
+  };
+
   const updateStatus = async (orderId: string, status: string) => {
     const order = orders.find((o) => o.id === orderId);
     const { error } = await supabase.from("orders").update({ status }).eq("id", orderId);
     if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
     else {
       toast({ title: "Status updated" });
-      // Send email notification
-      if (order) sendStatusEmail(order, status);
+      if (order) {
+        sendStatusEmail(order, status);
+        sendStatusSms(order, status);
+        sendStatusPush(order, status);
+      }
       fetchOrders();
       if (selectedOrder?.id === orderId) setSelectedOrder({ ...selectedOrder, status });
     }
