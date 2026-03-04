@@ -23,28 +23,30 @@ const ProductGrid = memo(() => {
     staleTime: 5 * 60 * 1000,
   });
 
-  const { data: categories = [] } = useQuery({
-    queryKey: ["homepage-categories"],
+  const { data: occasionCategories = [] } = useQuery({
+    queryKey: ["homepage-occasion-categories"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("categories")
-        .select("id, name, slug, image_url")
+        .select("id, name, slug")
         .eq("is_active", true)
         .eq("show_in_homepage", true)
+        .eq("category_type", "occasion")
         .order("display_order");
       if (error) throw error;
       return data;
     },
+    staleTime: 5 * 60 * 1000,
   });
 
   const dynamicTabs = useMemo(() => [
-    { label: "All", icon: TrendingUp },
-    ...categories.slice(0, 3).map((c) => ({
+    { label: "All", slug: "all", icon: TrendingUp },
+    ...occasionCategories.map((c) => ({
       label: c.name,
       slug: c.slug,
       icon: Gift,
     })),
-  ], [categories]);
+  ], [occasionCategories]);
 
   const featured = products.filter((p: any) => p.is_featured);
   const displayFeatured = featured.length > 0 ? featured.slice(0, 5) : products.slice(0, 5);
