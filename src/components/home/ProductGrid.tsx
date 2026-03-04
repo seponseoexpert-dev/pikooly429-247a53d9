@@ -31,7 +31,7 @@ const ProductGrid = memo(() => {
         .select("id, name, slug")
         .eq("is_active", true)
         .eq("show_in_homepage", true)
-        .eq("category_type", "occasion")
+        .eq("category_type", "tailored")
         .order("display_order");
       if (error) throw error;
       return data;
