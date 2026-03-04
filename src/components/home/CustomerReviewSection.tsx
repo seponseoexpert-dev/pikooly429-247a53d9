@@ -1,4 +1,4 @@
-import { Star, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, BadgeCheck } from "lucide-react";
+import { Star, ChevronLeft, ChevronRight, BadgeCheck } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useRef, useState, useEffect, useCallback } from "react";
@@ -11,7 +11,7 @@ const getInitials = (name: string) => {
 
 const getAvatarColor = (name: string) => {
   const colors = [
-    "bg-olive", "bg-primary", "bg-sage", "bg-gold",
+    "hsl(85 30% 33%)", "hsl(145 20% 45%)", "hsl(38 70% 50%)",
     "hsl(142 40% 35%)", "hsl(200 40% 40%)", "hsl(280 30% 45%)", "hsl(20 50% 45%)"
   ];
   let hash = 0;
@@ -47,15 +47,13 @@ const ReviewCard = ({ review }: { review: Review }) => {
   const hasLongComment = comment.length > 60;
   const initials = getInitials(review.customer_name);
   const avatarColor = getAvatarColor(review.customer_name);
-  const isClassName = avatarColor.startsWith("bg-");
 
   return (
     <div className="w-[calc(100vw-48px)] min-w-[calc(100vw-48px)] sm:w-[300px] sm:min-w-[300px] md:w-auto md:min-w-0 snap-center flex-shrink-0 md:flex-shrink bg-card border border-border/30 rounded-2xl p-4 sm:p-6 flex flex-col gap-3 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
-      {/* Header: Avatar + Name + Time */}
       <div className="flex items-center gap-3">
         <div
-          className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0 ${isClassName ? avatarColor : ""}`}
-          style={!isClassName ? { backgroundColor: avatarColor } : undefined}
+          className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
+          style={{ backgroundColor: avatarColor }}
         >
           {initials}
         </div>
@@ -81,7 +79,6 @@ const ReviewCard = ({ review }: { review: Review }) => {
         </div>
       </div>
 
-      {/* Comment */}
       {comment && (
         <div className="min-w-0">
           <p
@@ -100,7 +97,6 @@ const ReviewCard = ({ review }: { review: Review }) => {
         </div>
       )}
 
-      {/* Product info */}
       {review.products && (
         <a
           href={`/product/${review.products.slug}`}
@@ -110,8 +106,11 @@ const ReviewCard = ({ review }: { review: Review }) => {
             <img
               src={review.products.image_url}
               alt={review.products.name}
+              width={32}
+              height={32}
               className="w-8 h-8 rounded-md object-cover flex-shrink-0"
               loading="lazy"
+              decoding="async"
             />
           )}
           <span className="text-[11px] text-muted-foreground truncate group-hover/product:text-primary transition-colors">
@@ -146,7 +145,6 @@ const CustomerReviewSection = () => {
   const cardsPerPage = 4;
   const totalDesktopPages = Math.ceil(reviews.length / cardsPerPage);
 
-  // Mobile auto-scroll
   useEffect(() => {
     if (reviews.length <= 1) return;
     const interval = setInterval(() => {
@@ -163,7 +161,6 @@ const CustomerReviewSection = () => {
     }
   }, [activeIndex, reviews.length]);
 
-  // Desktop auto-slide
   useEffect(() => {
     if (totalDesktopPages <= 1) return;
     const interval = setInterval(() => {
@@ -185,8 +182,7 @@ const CustomerReviewSection = () => {
   if (!isLoading && reviews.length === 0) return null;
 
   return (
-    <section className="py-6 sm:py-8 md:py-12 section-container" aria-label="Customer Reviews">
-      {/* Header */}
+    <section className="py-6 sm:py-8 md:py-12 section-container" aria-label="Customer Reviews" style={{ contain: "layout style" }}>
       <div className="flex flex-col items-center gap-1.5 mb-5 md:mb-8 md:flex-row md:justify-between">
         <div className="hidden md:block md:flex-1" />
         <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground text-center">
@@ -200,12 +196,11 @@ const CustomerReviewSection = () => {
       </div>
 
       {isLoading ? (
-        <div className="flex items-center justify-center py-8">
+        <div className="flex items-center justify-center py-8 min-h-[200px]">
           <div className="w-7 h-7 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
         </div>
       ) : (
         <>
-          {/* Mobile: horizontal scroll */}
           <div
             ref={scrollRef}
             className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-3 -mx-4 px-4 md:hidden"
@@ -215,9 +210,8 @@ const CustomerReviewSection = () => {
             ))}
           </div>
 
-          {/* Desktop: 4-card slider */}
           <div className="hidden md:block relative">
-            <div className="grid grid-cols-4 gap-4 transition-all duration-300">
+            <div className="grid grid-cols-4 gap-4">
               {desktopReviews.map((review) => (
                 <ReviewCard key={review.id} review={review} />
               ))}
@@ -258,7 +252,6 @@ const CustomerReviewSection = () => {
             )}
           </div>
 
-          {/* Mobile dots */}
           {reviews.length > 1 && (
             <div className="flex items-center justify-center gap-1.5 mt-3 md:hidden">
               {reviews.map((_, i) => (

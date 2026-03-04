@@ -83,28 +83,28 @@ const Footer = memo(() => {
 
   const paymentMethods = [
     { key: "footer_payment_visa", label: "Visa", svg: (
-      <svg viewBox="0 0 48 32" className="w-10 h-7"><rect width="48" height="32" rx="4" fill="#1A1F71"/><text x="24" y="20" textAnchor="middle" fill="#fff" fontSize="12" fontWeight="bold" fontFamily="sans-serif">VISA</text></svg>
+      <svg viewBox="0 0 48 32" width={40} height={28} role="img" aria-label="Visa"><rect width="48" height="32" rx="4" fill="#1A1F71"/><text x="24" y="20" textAnchor="middle" fill="#fff" fontSize="12" fontWeight="bold" fontFamily="sans-serif">VISA</text></svg>
     )},
     { key: "footer_payment_mastercard", label: "Mastercard", svg: (
-      <svg viewBox="0 0 48 32" className="w-10 h-7"><rect width="48" height="32" rx="4" fill="#2D2D2D"/><circle cx="19" cy="16" r="9" fill="#EB001B" opacity="0.9"/><circle cx="29" cy="16" r="9" fill="#F79E1B" opacity="0.9"/><path d="M24 9.5a9 9 0 010 13 9 9 0 010-13z" fill="#FF5F00"/></svg>
+      <svg viewBox="0 0 48 32" width={40} height={28} role="img" aria-label="Mastercard"><rect width="48" height="32" rx="4" fill="#2D2D2D"/><circle cx="19" cy="16" r="9" fill="#EB001B" opacity="0.9"/><circle cx="29" cy="16" r="9" fill="#F79E1B" opacity="0.9"/><path d="M24 9.5a9 9 0 010 13 9 9 0 010-13z" fill="#FF5F00"/></svg>
     )},
     { key: "footer_payment_amex", label: "Amex", svg: (
-      <svg viewBox="0 0 48 32" className="w-10 h-7"><rect width="48" height="32" rx="4" fill="#2E77BC"/><text x="24" y="20" textAnchor="middle" fill="#fff" fontSize="9" fontWeight="bold" fontFamily="sans-serif">AMEX</text></svg>
+      <svg viewBox="0 0 48 32" width={40} height={28} role="img" aria-label="Amex"><rect width="48" height="32" rx="4" fill="#2E77BC"/><text x="24" y="20" textAnchor="middle" fill="#fff" fontSize="9" fontWeight="bold" fontFamily="sans-serif">AMEX</text></svg>
     )},
     { key: "footer_payment_paypal", label: "PayPal", svg: (
-      <svg viewBox="0 0 48 32" className="w-10 h-7"><rect width="48" height="32" rx="4" fill="#FFF" stroke="#ddd" strokeWidth="0.5"/><text x="24" y="20" textAnchor="middle" fill="#003087" fontSize="9" fontWeight="bold" fontFamily="sans-serif">PayPal</text></svg>
+      <svg viewBox="0 0 48 32" width={40} height={28} role="img" aria-label="PayPal"><rect width="48" height="32" rx="4" fill="#FFF" stroke="#ddd" strokeWidth="0.5"/><text x="24" y="20" textAnchor="middle" fill="#003087" fontSize="9" fontWeight="bold" fontFamily="sans-serif">PayPal</text></svg>
     )},
     { key: "footer_payment_stripe", label: "Stripe", svg: (
-      <svg viewBox="0 0 48 32" className="w-10 h-7"><rect width="48" height="32" rx="4" fill="#635BFF"/><text x="24" y="20" textAnchor="middle" fill="#fff" fontSize="9" fontWeight="bold" fontFamily="sans-serif">Stripe</text></svg>
+      <svg viewBox="0 0 48 32" width={40} height={28} role="img" aria-label="Stripe"><rect width="48" height="32" rx="4" fill="#635BFF"/><text x="24" y="20" textAnchor="middle" fill="#fff" fontSize="9" fontWeight="bold" fontFamily="sans-serif">Stripe</text></svg>
     )},
     { key: "footer_payment_bkash", label: "bKash", svg: (
-      <svg viewBox="0 0 48 32" className="w-10 h-7"><rect width="48" height="32" rx="4" fill="#E2136E"/><text x="24" y="20" textAnchor="middle" fill="#fff" fontSize="9" fontWeight="bold" fontFamily="sans-serif">bKash</text></svg>
+      <svg viewBox="0 0 48 32" width={40} height={28} role="img" aria-label="bKash"><rect width="48" height="32" rx="4" fill="#E2136E"/><text x="24" y="20" textAnchor="middle" fill="#fff" fontSize="9" fontWeight="bold" fontFamily="sans-serif">bKash</text></svg>
     )},
     { key: "footer_payment_nagad", label: "Nagad", svg: (
-      <svg viewBox="0 0 48 32" className="w-10 h-7"><rect width="48" height="32" rx="4" fill="#F6921E"/><text x="24" y="20" textAnchor="middle" fill="#fff" fontSize="9" fontWeight="bold" fontFamily="sans-serif">Nagad</text></svg>
+      <svg viewBox="0 0 48 32" width={40} height={28} role="img" aria-label="Nagad"><rect width="48" height="32" rx="4" fill="#F6921E"/><text x="24" y="20" textAnchor="middle" fill="#fff" fontSize="9" fontWeight="bold" fontFamily="sans-serif">Nagad</text></svg>
     )},
     { key: "footer_payment_cod", label: "Cash on Delivery", svg: (
-      <svg viewBox="0 0 48 32" className="w-10 h-7"><rect width="48" height="32" rx="4" fill="#4CAF50"/><text x="24" y="20" textAnchor="middle" fill="#fff" fontSize="8" fontWeight="bold" fontFamily="sans-serif">COD</text></svg>
+      <svg viewBox="0 0 48 32" width={40} height={28} role="img" aria-label="Cash on Delivery"><rect width="48" height="32" rx="4" fill="#4CAF50"/><text x="24" y="20" textAnchor="middle" fill="#fff" fontSize="8" fontWeight="bold" fontFamily="sans-serif">COD</text></svg>
     )},
   ];
 
@@ -118,7 +118,7 @@ const Footer = memo(() => {
   ];
 
   return (
-    <footer className="relative pb-20 md:pb-0 overflow-hidden">
+    <footer className="relative pb-20 md:pb-0 overflow-hidden" style={{ contain: "layout style" }}>
       {/* Newsletter CTA Band */}
       <div className="bg-primary">
         <div className="section-container py-6 sm:py-8">
@@ -163,7 +163,11 @@ const Footer = memo(() => {
                 <img
                   src={settings.footer_logo}
                   alt="Footer Logo"
+                  width={120}
+                  height={48}
                   className="h-10 sm:h-12 w-auto mb-3 object-contain brightness-0 invert"
+                  loading="lazy"
+                  decoding="async"
                 />
               ) : (
                 <h3 className="text-xl sm:text-2xl font-display font-bold mb-3 text-white">
@@ -268,7 +272,6 @@ const Footer = memo(() => {
         <div className="border-t border-white/10">
           <div className="section-container py-4 sm:py-5">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-              {/* Payment Methods */}
               {activePaymentMethods.length > 0 && (
                 <div className="flex flex-wrap items-center gap-2">
                   {activePaymentMethods.map((m) => (
@@ -282,7 +285,6 @@ const Footer = memo(() => {
                   ))}
                 </div>
               )}
-              {/* Copyright */}
               <p className="text-[10px] sm:text-xs text-white/40 flex items-center gap-1">
                 {copyright} — Made with <Heart size={10} className="text-destructive inline" /> in Bangladesh
               </p>

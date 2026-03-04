@@ -60,7 +60,7 @@ const ProductGrid = memo(() => {
       });
 
   return (
-    <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container animate-fade-in" aria-label="Products">
+    <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Products" style={{ contain: "layout style" }}>
       <div className="flex items-center justify-between mb-4 md:mb-6">
         <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground">
           Trending Gifts
