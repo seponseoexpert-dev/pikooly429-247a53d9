@@ -283,10 +283,11 @@ const AdminCategories = () => {
                   className="w-full border border-input rounded-md px-3 py-2 text-sm bg-background"
                 >
                   <option value="category">Category (Shop by Category)</option>
-                  <option value="occasion">Occasion (Tailored For Your Occasions)</option>
+                  <option value="occasion">Occasion (All Gifts Page)</option>
+                  <option value="tailored">Tailored For Your Occasions (Homepage)</option>
                 </select>
                 <p className="text-xs text-muted-foreground">
-                  "Occasion" টাইপ সিলেক্ট করলে হোমপেজের "Tailored For Your Occasions" সেকশনে দেখাবে।
+                  "Category" = Shop by Category সেকশন। "Occasion" = All Gifts পেজে। "Tailored" = হোমপেজের "Tailored For Your Occasions" সেকশনে ট্যাব হিসেবে দেখাবে।
                 </p>
               </div>
               <div className="flex items-center gap-2">
