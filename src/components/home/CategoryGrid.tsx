@@ -29,7 +29,7 @@ const CategoryGrid = memo(() => {
   if (categories.length === 0) return null;
 
   return (
-    <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container animate-fade-in" aria-label="Shop by Category">
+    <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Shop by Category" style={{ contain: "layout style" }}>
       <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-4 md:mb-6 text-center">
         Shop by Category
       </h2>

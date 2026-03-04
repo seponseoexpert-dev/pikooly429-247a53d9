@@ -1,4 +1,4 @@
-import { Calendar, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useRef, useState } from "react";
@@ -7,8 +7,6 @@ import { BlogCardSkeleton } from "@/components/ui/skeletons";
 
 const BlogSection = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
 
   const { data: posts = [], isLoading } = useQuery({
     queryKey: ["home-blogs"],
@@ -24,23 +22,10 @@ const BlogSection = () => {
     },
   });
 
-  const updateScrollButtons = () => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 4);
-    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
-  };
-
-  const scroll = (dir: "left" | "right") => {
-    const el = scrollRef.current;
-    if (!el) return;
-    el.scrollBy({ left: dir === "left" ? -300 : 300, behavior: "smooth" });
-  };
-
   if (!isLoading && posts.length === 0) return null;
 
   return (
-    <section className="py-8 md:py-12 section-container">
+    <section className="py-8 md:py-12 section-container" style={{ contain: "layout style" }}>
       <div className="flex items-center justify-between mb-5">
         <h2 className="text-xl md:text-2xl font-display font-semibold">Latest from Blog</h2>
         <Link to="/blog" className="text-sm text-primary font-medium hover:underline inline-flex items-center gap-1">
@@ -52,7 +37,6 @@ const BlogSection = () => {
       <div className="relative md:hidden">
         <div
           ref={scrollRef}
-          onScroll={updateScrollButtons}
           className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2 -mx-4 px-4"
         >
           {isLoading
@@ -68,7 +52,7 @@ const BlogSection = () => {
                   className="w-[44vw] max-w-[200px] snap-start flex-shrink-0 group bg-card rounded-xl overflow-hidden border border-border/50 hover:shadow-lg transition-all"
                 >
                   <div className="aspect-[4/3] overflow-hidden">
-                    <img src={post.image_url || "/placeholder.svg"} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                    <img src={post.image_url || "/placeholder.svg"} alt={post.title} width={200} height={150} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
                   </div>
                   <div className="p-2.5">
                     <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mb-1">
@@ -96,7 +80,7 @@ const BlogSection = () => {
                 className="group bg-card rounded-xl overflow-hidden border border-border/50 hover:shadow-lg transition-all flex flex-col"
               >
                 <div className="aspect-[16/10] overflow-hidden">
-                  <img src={post.image_url || "/placeholder.svg"} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                  <img src={post.image_url || "/placeholder.svg"} alt={post.title} width={400} height={250} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
                 </div>
                 <div className="p-4 flex flex-col flex-1">
                   <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">

@@ -3,7 +3,6 @@ import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
 
 interface Slide {
   id: string;
@@ -19,7 +18,6 @@ interface Slide {
 const HeroSection = memo(() => {
   const [slides, setSlides] = useState<Slide[]>([]);
   const [current, setCurrent] = useState(0);
-  const [direction, setDirection] = useState(1);
   const touchStartX = useRef(0);
 
   useEffect(() => {
@@ -36,19 +34,16 @@ const HeroSection = memo(() => {
   useEffect(() => {
     if (slides.length <= 1) return;
     const timer = setInterval(() => {
-      setDirection(1);
       setCurrent((p) => (p + 1) % slides.length);
     }, 20000);
     return () => clearInterval(timer);
   }, [slides.length]);
 
   const prev = useCallback(() => {
-    setDirection(-1);
     setCurrent((p) => (p - 1 + slides.length) % slides.length);
   }, [slides.length]);
 
   const next = useCallback(() => {
-    setDirection(1);
     setCurrent((p) => (p + 1) % slides.length);
   }, [slides.length]);
 
@@ -63,92 +58,60 @@ const HeroSection = memo(() => {
     }
   };
 
-  if (slides.length === 0) return null;
-
   const slide = slides[current];
-
-  const bgColor = slide.bg_color || "hsl(85 20% 92%)";
+  const bgColor = slide?.bg_color || "hsl(85 20% 92%)";
 
   return (
     <section className="section-container py-3 sm:py-4">
       <div className="relative">
-        {/* Banner */}
-        <motion.div
-          className="relative overflow-hidden rounded-2xl lg:rounded-3xl"
-          animate={{ backgroundColor: bgColor }}
-          transition={{ duration: 0.6, ease: "easeInOut" }}
+        {/* Banner - fixed height to prevent CLS */}
+        <div
+          className="relative overflow-hidden rounded-2xl lg:rounded-3xl transition-colors duration-500"
+          style={{ backgroundColor: bgColor, contain: "layout style" }}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
-          <AnimatePresence custom={direction} mode="wait">
-            <motion.div
-              key={slide.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              className="grid grid-cols-2 min-h-[200px] sm:min-h-[240px] md:min-h-[300px] lg:min-h-[380px]"
-            >
-              {/* Left: Text */}
-              <div className="flex flex-col justify-center pl-4 sm:pl-8 md:pl-12 lg:pl-16 py-5 sm:py-8 md:py-10 lg:py-12">
-                {slide.subtitle && (
-                  <motion.p
-                    key={`subtitle-${slide.id}`}
-                    initial={{ opacity: 0, y: -8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.05, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                    className="text-[9px] sm:text-[11px] md:text-xs font-medium text-muted-foreground/70 mb-0.5 sm:mb-1 tracking-widest uppercase italic"
-                  >
-                    {slide.subtitle}
-                  </motion.p>
-                )}
-                <motion.h2
-                  key={`title-${slide.id}`}
-                  initial={{ opacity: 0, x: -30, filter: "blur(6px)" }}
-                  animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                  transition={{ delay: 0.15, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                  className="font-display text-base sm:text-xl md:text-2xl lg:text-4xl font-bold text-foreground leading-snug sm:leading-tight"
-                >
-                  {slide.title}
-                </motion.h2>
+          <div className="grid grid-cols-2 min-h-[200px] sm:min-h-[240px] md:min-h-[300px] lg:min-h-[380px]">
+            {/* Left: Text */}
+            <div className="flex flex-col justify-center pl-4 sm:pl-8 md:pl-12 lg:pl-16 py-5 sm:py-8 md:py-10 lg:py-12">
+              {slide?.subtitle && (
+                <p className="text-[9px] sm:text-[11px] md:text-xs font-medium text-muted-foreground/70 mb-0.5 sm:mb-1 tracking-widest uppercase italic">
+                  {slide.subtitle}
+                </p>
+              )}
+              <h2 className="font-display text-base sm:text-xl md:text-2xl lg:text-4xl font-bold text-foreground leading-snug sm:leading-tight">
+                {slide?.title || "\u00A0"}
+              </h2>
 
-                {slide.link && (
-                  <motion.div
-                    key={`cta-${slide.id}`}
-                    initial={{ opacity: 0, x: -20, filter: "blur(4px)" }}
-                    animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                    transition={{ delay: 0.35, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                    className="mt-2.5 sm:mt-3 md:mt-4"
+              {slide?.link && (
+                <div className="mt-2.5 sm:mt-3 md:mt-4">
+                  <Link
+                    to={slide.link}
+                    className="group inline-flex items-center gap-1 sm:gap-1.5 bg-primary text-primary-foreground font-sans font-semibold text-[9px] sm:text-[10px] md:text-xs lg:text-sm px-3 sm:px-4 md:px-5 lg:px-6 py-1.5 sm:py-2 md:py-2.5 rounded-full tracking-wider uppercase whitespace-nowrap hover:shadow-lg hover:shadow-primary/25 active:scale-[0.97] transition-all duration-300"
                   >
-                    <Link
-                      to={slide.link}
-                      className="group inline-flex items-center gap-1 sm:gap-1.5 bg-primary text-primary-foreground font-sans font-semibold text-[9px] sm:text-[10px] md:text-xs lg:text-sm px-3 sm:px-4 md:px-5 lg:px-6 py-1.5 sm:py-2 md:py-2.5 rounded-full tracking-wider uppercase whitespace-nowrap hover:shadow-lg hover:shadow-primary/25 active:scale-[0.97] transition-all duration-300"
-                    >
-                      {slide.cta_text || "SHOP NOW"}
-                      <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                    </Link>
-                  </motion.div>
-                )}
-              </div>
+                    {slide.cta_text || "SHOP NOW"}
+                    <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                  </Link>
+                </div>
+              )}
+            </div>
 
-              {/* Right: Image */}
-              <div className="flex items-center justify-center pr-3 sm:pr-5 md:pr-8 lg:pr-14 py-4 sm:py-6 md:py-8">
-                {slide.image_url && (
-                  <motion.img
-                    key={`img-${slide.id}`}
-                    initial={{ opacity: 0, scale: 0.8, rotate: -3 }}
-                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                    transition={{ delay: 0.1, duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
-                    src={slide.image_url}
-                    alt={slide.title}
-                    className="w-full max-w-[160px] sm:max-w-[200px] md:max-w-[260px] lg:max-w-[320px] aspect-square object-cover rounded-xl sm:rounded-2xl shadow-lg"
-                    loading="eager"
-                  />
-                )}
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </motion.div>
+            {/* Right: Image */}
+            <div className="flex items-center justify-center pr-3 sm:pr-5 md:pr-8 lg:pr-14 py-4 sm:py-6 md:py-8">
+              {slide?.image_url && (
+                <img
+                  src={slide.image_url}
+                  alt={slide.title}
+                  width={320}
+                  height={320}
+                  fetchPriority="high"
+                  decoding="async"
+                  className="w-full max-w-[160px] sm:max-w-[200px] md:max-w-[260px] lg:max-w-[320px] aspect-square object-cover rounded-xl sm:rounded-2xl shadow-lg"
+                />
+              )}
+            </div>
+          </div>
+        </div>
 
         {/* Arrows */}
         {slides.length > 1 && (
@@ -170,7 +133,7 @@ const HeroSection = memo(() => {
           </>
         )}
 
-        {/* Dots + Progress */}
+        {/* Dots */}
         {slides.length > 1 && (
           <div className="flex flex-col items-center gap-2 mt-3">
             <div className="flex items-center gap-1.5">
@@ -181,28 +144,15 @@ const HeroSection = memo(() => {
                 {slides.map((_, i) => (
                   <button
                     key={i}
-                    onClick={() => {
-                      setDirection(i > current ? 1 : -1);
-                      setCurrent(i);
-                    }}
+                    onClick={() => setCurrent(i)}
                     className={cn(
-                      "h-2 rounded-full transition-all duration-300 relative overflow-hidden",
+                      "h-2 rounded-full transition-all duration-300",
                       i === current
-                        ? "bg-muted-foreground/15 w-7"
+                        ? "bg-primary w-7"
                         : "bg-muted-foreground/25 w-2 hover:bg-muted-foreground/40"
                     )}
                     aria-label={`Go to slide ${i + 1}`}
-                  >
-                    {i === current && (
-                      <motion.span
-                        key={`progress-${current}`}
-                        className="absolute inset-0 bg-primary rounded-full origin-left"
-                        initial={{ scaleX: 0 }}
-                        animate={{ scaleX: 1 }}
-                        transition={{ duration: 20, ease: "easeInOut" }}
-                      />
-                    )}
-                  </button>
+                  />
                 ))}
               </div>
             </div>
