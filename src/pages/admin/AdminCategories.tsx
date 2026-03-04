@@ -275,28 +275,23 @@ const AdminCategories = () => {
                 <Switch checked={form.is_active} onCheckedChange={(checked) => setForm({ ...form, is_active: checked })} />
                 <Label>Active</Label>
               </div>
-              <div className="flex items-center gap-2">
-                <Switch checked={form.show_in_homepage} onCheckedChange={(checked) => setForm({ ...form, show_in_homepage: checked })} />
-                <Label>Show in Homepage (Shop by Category)</Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Switch checked={form.show_in_header} onCheckedChange={(checked) => setForm({ ...form, show_in_header: checked })} />
-                <Label>Show in Header (Category Navigation)</Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Switch checked={form.allow_custom_image} onCheckedChange={(checked) => setForm({ ...form, allow_custom_image: checked })} />
-                <Label>Allow Custom Image Upload (Mug, Photo Cake etc.)</Label>
-              </div>
               <div className="space-y-2">
-                <Label>Type (All Gifts Page)</Label>
+                <Label>Category Type *</Label>
                 <select
                   value={form.category_type}
                   onChange={(e) => setForm({ ...form, category_type: e.target.value })}
                   className="w-full border border-input rounded-md px-3 py-2 text-sm bg-background"
                 >
-                  <option value="category">Category</option>
-                  <option value="occasion">Occasion</option>
+                  <option value="category">Category (Shop by Category)</option>
+                  <option value="occasion">Occasion (Tailored For Your Occasions)</option>
                 </select>
+                <p className="text-xs text-muted-foreground">
+                  "Occasion" টাইপ সিলেক্ট করলে হোমপেজের "Tailored For Your Occasions" সেকশনে দেখাবে।
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Switch checked={form.show_in_homepage} onCheckedChange={(checked) => setForm({ ...form, show_in_homepage: checked })} />
+                <Label>Show in Homepage</Label>
               </div>
               {/* FAQ Section */}
               <div className="space-y-3 border-t pt-4">
