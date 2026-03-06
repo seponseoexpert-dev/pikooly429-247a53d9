@@ -53,6 +53,7 @@ const AdminShipping = lazy(() => import("./pages/admin/AdminShipping"));
 const AdminCurrencies = lazy(() => import("./pages/admin/AdminCurrencies"));
 const AdminSubscribers = lazy(() => import("./pages/admin/AdminSubscribers"));
 const AdminMigrate = lazy(() => import("./pages/admin/AdminMigrate"));
+const AdminHomepageContent = lazy(() => import("./pages/admin/AdminHomepageContent"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -131,6 +132,7 @@ const App = () => (
               <Route path="/admin/currencies" element={<AdminRoute><AdminCurrencies /></AdminRoute>} />
               <Route path="/admin/subscribers" element={<AdminRoute><AdminSubscribers /></AdminRoute>} />
               <Route path="/admin/migrate" element={<AdminRoute><AdminMigrate /></AdminRoute>} />
+              <Route path="/admin/homepage-content" element={<AdminRoute><AdminHomepageContent /></AdminRoute>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>
