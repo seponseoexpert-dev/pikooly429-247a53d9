@@ -125,6 +125,42 @@ export type Database = {
         }
         Relationships: []
       }
+      celebrations: {
+        Row: {
+          created_at: string
+          date_label: string
+          display_order: number
+          id: string
+          image_url: string | null
+          is_active: boolean
+          link: string | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date_label: string
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          link?: string | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date_label?: string
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          link?: string | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       coupons: {
         Row: {
           code: string
@@ -212,6 +248,45 @@ export type Database = {
         }
         Relationships: []
       }
+      gifting_stories: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          label: string | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          video_url: string | null
+          views_count: number
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          label?: string | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+          views_count?: number
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          label?: string | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+          views_count?: number
+        }
+        Relationships: []
+      }
       newsletter_subscribers: {
         Row: {
           created_at: string
@@ -230,6 +305,51 @@ export type Database = {
           email?: string
           id?: string
           is_active?: boolean
+        }
+        Relationships: []
+      }
+      offer_banners: {
+        Row: {
+          bg_color: string | null
+          created_at: string
+          description: string | null
+          display_order: number
+          id: string
+          image_url: string | null
+          is_active: boolean
+          link: string | null
+          logo_url: string | null
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          bg_color?: string | null
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          link?: string | null
+          logo_url?: string | null
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          bg_color?: string | null
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          link?: string | null
+          logo_url?: string | null
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -515,6 +635,42 @@ export type Database = {
           phone?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      relationship_categories: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          image_url: string | null
+          is_active: boolean
+          link: string | null
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          link?: string | null
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          link?: string | null
+          name?: string
+          slug?: string
+          updated_at?: string
         }
         Relationships: []
       }
