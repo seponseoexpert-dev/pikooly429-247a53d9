@@ -32,8 +32,8 @@ const AboutSection = () => {
 
         {/* Medals */}
         <div className="flex items-center justify-center gap-4 mt-4 sm:mt-5">
-          <img src={medal1} alt="PikoolyFlora Badge" width={187} height={64} className="h-12 sm:h-14 md:h-16" style={{ aspectRatio: '187/64' }} loading="lazy" decoding="async" />
-          <img src={medal2} alt="PikoolyFlora Badge" width={187} height={64} className="h-12 sm:h-14 md:h-16" style={{ aspectRatio: '187/64' }} loading="lazy" decoding="async" />
+          <img src={medal1} alt="PikoolyFlora Badge" width="140" height="48" className="w-[140px] h-[48px] sm:w-[163px] sm:h-[56px] md:w-[187px] md:h-[64px] object-contain" loading="lazy" decoding="async" />
+          <img src={medal2} alt="PikoolyFlora Badge" width="140" height="48" className="w-[140px] h-[48px] sm:w-[163px] sm:h-[56px] md:w-[187px] md:h-[64px] object-contain" loading="lazy" decoding="async" />
         </div>
       </div>
     </section>

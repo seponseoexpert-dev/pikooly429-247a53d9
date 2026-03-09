@@ -47,7 +47,7 @@ const OfferBanners = memo(() => {
                 style={{ backgroundColor: b.bg_color || "hsl(var(--secondary))" }}
               >
                 {b.logo_url && (
-                  <img src={b.logo_url} alt="" width={120} height={28} className="h-6 sm:h-7 mb-3 object-contain" style={{ aspectRatio: '120/28' }} loading="lazy" decoding="async" />
+                  <img src={b.logo_url} alt="" width="120" height="28" className="w-[120px] h-[28px] mb-3 object-contain" loading="lazy" decoding="async" />
                 )}
                 {b.subtitle && (
                   <p className="text-xs sm:text-sm font-medium text-muted-foreground uppercase tracking-wide">
