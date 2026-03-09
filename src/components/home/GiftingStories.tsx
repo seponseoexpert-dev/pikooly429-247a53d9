@@ -53,9 +53,12 @@ const GiftingStories = memo(() => {
               <img
                 src={s.thumbnail_url || "/placeholder.svg"}
                 alt={s.title}
+                width={180}
+                height={320}
                 className="w-full h-full object-cover"
                 loading="lazy"
                 decoding="async"
+                sizes="(max-width: 640px) 140px, (max-width: 768px) 160px, 180px"
               />
               {/* Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />

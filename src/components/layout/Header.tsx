@@ -88,7 +88,6 @@ const Header = () => {
 
   const [hoveredCat, setHoveredCat] = useState<string | null>(null);
 
-  // Nav links are static only; categories rendered separately with dropdowns
   const navLinks = staticNavLinks;
 
   const suggestions = searchQuery.trim().length > 0
@@ -148,7 +147,15 @@ const Header = () => {
             {settingsLoading ? (
                 <div className="h-8 sm:h-9 md:h-10 w-24 sm:w-28 md:w-32 bg-muted rounded animate-pulse" />
               ) : logoUrl ? (
-                <img src={logoUrl} alt={settings.store_name || "Store"} width={120} height={40} decoding="async" fetchPriority="high" className="h-8 sm:h-9 md:h-10 w-auto object-contain" />
+                <img
+                  src={logoUrl}
+                  alt={settings.store_name || "Store"}
+                  width={120}
+                  height={40}
+                  decoding="async"
+                  fetchPriority="high"
+                  className="h-8 sm:h-9 md:h-10 w-[96px] sm:w-[108px] md:w-[120px] object-contain"
+                />
               ) : (
                 <span className="text-lg sm:text-xl md:text-2xl font-display font-bold">
                   <span className="text-foreground">Pikooly</span>
@@ -185,7 +192,7 @@ const Header = () => {
                       className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-muted transition-colors text-left"
                     >
                       {p.image_url && (
-                        <img src={p.image_url} alt={p.name} className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                        <img src={p.image_url} alt={p.name} width={40} height={40} className="w-10 h-10 rounded-lg object-cover shrink-0" loading="lazy" decoding="async" />
                       )}
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-foreground truncate">{p.name}</p>
@@ -333,7 +340,7 @@ const Header = () => {
                     className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-muted transition-colors text-left"
                   >
                     {p.image_url && (
-                      <img src={p.image_url} alt={p.name} className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                      <img src={p.image_url} alt={p.name} width={40} height={40} className="w-10 h-10 rounded-lg object-cover shrink-0" loading="lazy" decoding="async" />
                     )}
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-foreground truncate">{p.name}</p>
@@ -364,23 +371,28 @@ const Header = () => {
                 >
                   <Link
                     to={`/product-category/${cat.slug}`}
-                    className={`flex items-center gap-0.5 px-3 lg:px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors hover:text-primary ${
-                      isActive ? "text-primary border-b-2 border-primary" : "text-muted-foreground"
+                    className={`flex items-center gap-1 px-3 py-2.5 text-[13px] font-medium whitespace-nowrap transition-colors ${
+                      isActive
+                        ? "text-primary border-b-2 border-primary"
+                        : "text-foreground/70 hover:text-primary"
                     }`}
                   >
                     {cat.name}
-                    {subs.length > 0 && <ChevronDown size={12} className="ml-0.5 opacity-60" />}
+                    {subs.length > 0 && <ChevronDown size={12} className="text-muted-foreground" />}
                   </Link>
-                  {hoveredCat === cat.id && subs.length > 0 && (
-                    <div className="absolute left-0 top-full z-[100] bg-card border border-border rounded-lg shadow-lg min-w-[200px] py-1.5">
+
+                  {subs.length > 0 && hoveredCat === cat.id && (
+                    <div className="absolute left-0 top-full z-50 bg-card border border-border rounded-xl shadow-xl py-2 min-w-[200px]">
                       {subs.map((sub) => (
                         <Link
                           key={sub.id}
                           to={`/product-category/${cat.slug}/${sub.slug}`}
-                          className="block px-4 py-2 text-sm text-muted-foreground hover:text-primary hover:bg-muted transition-colors"
-                          onClick={() => setHoveredCat(null)}
+                          className="flex items-center gap-2.5 px-4 py-2 text-sm text-foreground/80 hover:text-primary hover:bg-muted transition-colors"
                         >
-                          {sub.name}
+                          {sub.image_url && (
+                            <img src={sub.image_url} alt={sub.name} width={28} height={28} className="w-7 h-7 rounded-md object-cover" loading="lazy" decoding="async" />
+                          )}
+                          <span>{sub.name}</span>
                         </Link>
                       ))}
                     </div>
