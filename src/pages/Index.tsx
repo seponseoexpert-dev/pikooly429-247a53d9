@@ -53,7 +53,9 @@ const Index = () => {
       <BlogSection />
       <CustomerReviewSection />
       <AboutSection />
-      <FAQSection />
+      <Suspense fallback={<div className="py-10" />}>
+        <FAQSection />
+      </Suspense>
     </main>
   );
 };
