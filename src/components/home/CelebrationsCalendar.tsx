@@ -45,9 +45,12 @@ const CelebrationsCalendar = memo(() => {
                   <img
                     src={c.image_url || "/placeholder.svg"}
                     alt={c.name}
+                    width={240}
+                    height={300}
                     className="w-full h-full object-cover"
                     loading="lazy"
                     decoding="async"
+                    sizes="(max-width: 640px) 200px, (max-width: 768px) 220px, 240px"
                   />
                   {/* Date label at top */}
                   <div className="absolute top-0 left-0 right-0">

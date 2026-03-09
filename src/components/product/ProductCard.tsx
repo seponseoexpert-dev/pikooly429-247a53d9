@@ -38,7 +38,16 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
   return (
     <div className="group bg-card rounded-xl sm:rounded-2xl overflow-hidden border border-border/50 hover:shadow-lg transition-shadow duration-200 flex flex-col">
       <Link to={linkTo} className="block relative overflow-hidden aspect-square bg-secondary/30">
-        <img src={imgSrc} alt={product.name} width={300} height={300} decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+        <img
+          src={imgSrc}
+          alt={product.name}
+          width={300}
+          height={300}
+          decoding="async"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          loading="lazy"
+          sizes="(max-width: 640px) 45vw, (max-width: 768px) 45vw, (max-width: 1024px) 30vw, 20vw"
+        />
         {discount > 0 && (
           <span className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 px-2 sm:px-2.5 py-0.5 sm:py-1 text-[10px] sm:text-[11px] font-bold bg-primary text-primary-foreground rounded-full">
             {discount}% off

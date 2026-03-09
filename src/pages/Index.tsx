@@ -1,18 +1,20 @@
 import { useEffect, lazy, Suspense } from "react";
 import HeroSection from "@/components/home/HeroSection";
-import FeaturesBar from "@/components/home/FeaturesBar";
-import BlogSection from "@/components/home/BlogSection";
-import CustomerReviewSection from "@/components/home/CustomerReviewSection";
 import CategoryGrid from "@/components/home/CategoryGrid";
 import ProductGrid from "@/components/home/ProductGrid";
-import AboutSection from "@/components/home/AboutSection";
-import OfferBanners from "@/components/home/OfferBanners";
-import RelationshipGrid from "@/components/home/RelationshipGrid";
-import GiftingStories from "@/components/home/GiftingStories";
-import CelebrationsCalendar from "@/components/home/CelebrationsCalendar";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
+// Lazy load all below-fold sections
+const OfferBanners = lazy(() => import("@/components/home/OfferBanners"));
+const RelationshipGrid = lazy(() => import("@/components/home/RelationshipGrid"));
+const CelebrationsCalendar = lazy(() => import("@/components/home/CelebrationsCalendar"));
+const GiftingStories = lazy(() => import("@/components/home/GiftingStories"));
+const BlogSection = lazy(() => import("@/components/home/BlogSection"));
+const CustomerReviewSection = lazy(() => import("@/components/home/CustomerReviewSection"));
+const AboutSection = lazy(() => import("@/components/home/AboutSection"));
 const FAQSection = lazy(() => import("@/components/home/FAQSection"));
+
+const LazyFallback = () => <div className="min-h-[100px]" />;
 
 const Index = () => {
   const { settings } = useSiteSettings();
@@ -43,17 +45,30 @@ const Index = () => {
   return (
     <main>
       <HeroSection />
-      <FeaturesBar />
       <CategoryGrid />
-      <OfferBanners />
-      <RelationshipGrid />
+      <Suspense fallback={<LazyFallback />}>
+        <OfferBanners />
+      </Suspense>
+      <Suspense fallback={<LazyFallback />}>
+        <RelationshipGrid />
+      </Suspense>
       <ProductGrid />
-      <CelebrationsCalendar />
-      <GiftingStories />
-      <BlogSection />
-      <CustomerReviewSection />
-      <AboutSection />
-      <Suspense fallback={<div className="py-10" />}>
+      <Suspense fallback={<LazyFallback />}>
+        <CelebrationsCalendar />
+      </Suspense>
+      <Suspense fallback={<LazyFallback />}>
+        <GiftingStories />
+      </Suspense>
+      <Suspense fallback={<LazyFallback />}>
+        <BlogSection />
+      </Suspense>
+      <Suspense fallback={<LazyFallback />}>
+        <CustomerReviewSection />
+      </Suspense>
+      <Suspense fallback={<LazyFallback />}>
+        <AboutSection />
+      </Suspense>
+      <Suspense fallback={<LazyFallback />}>
         <FAQSection />
       </Suspense>
     </main>

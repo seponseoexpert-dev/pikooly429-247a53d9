@@ -27,7 +27,18 @@ const HeroSection = memo(() => {
       .eq("is_active", true)
       .order("display_order")
       .then(({ data }) => {
-        if (data && data.length > 0) setSlides(data);
+        if (data && data.length > 0) {
+          setSlides(data);
+          // Preload first slide image for LCP
+          if (data[0]?.image_url) {
+            const link = document.createElement("link");
+            link.rel = "preload";
+            link.as = "image";
+            link.href = data[0].image_url;
+            link.fetchPriority = "high";
+            document.head.appendChild(link);
+          }
+        }
       });
   }, []);
 
@@ -62,12 +73,12 @@ const HeroSection = memo(() => {
   const bgColor = slide?.bg_color || "hsl(85 20% 92%)";
 
   return (
-    <section className="section-container py-3 sm:py-4">
+    <section className="section-container py-3 sm:py-4" style={{ contain: "layout style" }}>
       <div className="relative">
         {/* Banner - fixed height to prevent CLS */}
         <div
           className="relative overflow-hidden rounded-2xl lg:rounded-3xl transition-colors duration-500"
-          style={{ backgroundColor: bgColor, contain: "layout style" }}
+          style={{ backgroundColor: bgColor }}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
@@ -98,7 +109,7 @@ const HeroSection = memo(() => {
 
             {/* Right: Image */}
             <div className="flex items-center justify-center pr-3 sm:pr-5 md:pr-8 lg:pr-14 py-4 sm:py-6 md:py-8">
-              {slide?.image_url && (
+              {slide?.image_url ? (
                 <img
                   src={slide.image_url}
                   alt={slide.title}
@@ -107,7 +118,10 @@ const HeroSection = memo(() => {
                   fetchPriority="high"
                   decoding="async"
                   className="w-full max-w-[160px] sm:max-w-[200px] md:max-w-[260px] lg:max-w-[320px] aspect-square object-cover rounded-xl sm:rounded-2xl shadow-lg"
+                  sizes="(max-width: 640px) 160px, (max-width: 768px) 200px, (max-width: 1024px) 260px, 320px"
                 />
+              ) : (
+                <div className="w-full max-w-[160px] sm:max-w-[200px] md:max-w-[260px] lg:max-w-[320px] aspect-square rounded-xl sm:rounded-2xl bg-muted/50" />
               )}
             </div>
           </div>
