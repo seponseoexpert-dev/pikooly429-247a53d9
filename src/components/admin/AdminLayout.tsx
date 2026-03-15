@@ -20,6 +20,7 @@ const navItems = [
   { label: "Shipping", icon: Truck, path: "/admin/shipping" },
   { label: "Currencies", icon: Coins, path: "/admin/currencies" },
   { label: "Subscribers", icon: Mail, path: "/admin/subscribers" },
+  { label: "Bouquet", icon: Flower2, path: "/admin/bouquet" },
   { label: "Homepage", icon: LayoutDashboard, path: "/admin/homepage-content" },
   { label: "Settings", icon: Settings, path: "/admin/settings" },
   { label: "WP Migrate", icon: Download, path: "/admin/migrate" },
