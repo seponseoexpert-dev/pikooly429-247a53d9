@@ -54,6 +54,8 @@ const AdminCurrencies = lazy(() => import("./pages/admin/AdminCurrencies"));
 const AdminSubscribers = lazy(() => import("./pages/admin/AdminSubscribers"));
 const AdminMigrate = lazy(() => import("./pages/admin/AdminMigrate"));
 const AdminHomepageContent = lazy(() => import("./pages/admin/AdminHomepageContent"));
+const AdminBouquet = lazy(() => import("./pages/admin/AdminBouquet"));
+const BouquetBuilder = lazy(() => import("./pages/BouquetBuilder"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -114,6 +116,7 @@ const App = () => (
               <Route path="/about-us" element={<PublicLayout><AboutUs /></PublicLayout>} />
               <Route path="/contact-us" element={<PublicLayout><ContactUs /></PublicLayout>} />
               <Route path="/reviews" element={<PublicLayout><Reviews /></PublicLayout>} />
+              <Route path="/custom-bouquet" element={<PublicLayout><BouquetBuilder /></PublicLayout>} />
               <Route path="/auth" element={<PublicLayout><Auth /></PublicLayout>} />
               <Route path="/account" element={<PublicLayout><Account /></PublicLayout>} />
               <Route path="/reset-password" element={<PublicLayout><ResetPassword /></PublicLayout>} />
@@ -133,6 +136,7 @@ const App = () => (
               <Route path="/admin/subscribers" element={<AdminRoute><AdminSubscribers /></AdminRoute>} />
               <Route path="/admin/migrate" element={<AdminRoute><AdminMigrate /></AdminRoute>} />
               <Route path="/admin/homepage-content" element={<AdminRoute><AdminHomepageContent /></AdminRoute>} />
+              <Route path="/admin/bouquet" element={<AdminRoute><AdminBouquet /></AdminRoute>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>
