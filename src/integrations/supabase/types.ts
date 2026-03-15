@@ -65,6 +65,160 @@ export type Database = {
         }
         Relationships: []
       }
+      bouquet_flowers: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          price: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          price?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          price?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      bouquet_materials: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          price: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          price?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          price?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      bouquet_orders: {
+        Row: {
+          created_at: string
+          flowers: Json
+          gift_message: string | null
+          id: string
+          material_id: string | null
+          order_id: string | null
+          size_id: string | null
+          total_price: number
+        }
+        Insert: {
+          created_at?: string
+          flowers?: Json
+          gift_message?: string | null
+          id?: string
+          material_id?: string | null
+          order_id?: string | null
+          size_id?: string | null
+          total_price?: number
+        }
+        Update: {
+          created_at?: string
+          flowers?: Json
+          gift_message?: string | null
+          id?: string
+          material_id?: string | null
+          order_id?: string | null
+          size_id?: string | null
+          total_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bouquet_orders_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "bouquet_materials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bouquet_orders_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bouquet_orders_size_id_fkey"
+            columns: ["size_id"]
+            isOneToOne: false
+            referencedRelation: "bouquet_sizes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bouquet_sizes: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          extra_price: number
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          extra_price?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          extra_price?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           allow_custom_image: boolean
