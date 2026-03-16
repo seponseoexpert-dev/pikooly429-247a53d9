@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Truck, Gift, ShoppingCart, User } from "lucide-react";
+import { Home, Truck, Flower2, ShoppingCart, User } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -10,8 +10,8 @@ const BottomNav = () => {
 
   const links = [
     { icon: Home, label: t("home"), href: "/" },
+    { icon: Flower2, label: "Bouquet", href: "/custom-bouquet" },
     { icon: Truck, label: t("same_day"), href: "/product-category/same-day" },
-    { icon: Gift, label: t("all_gifts"), href: "/all-gifts" },
     { icon: ShoppingCart, label: t("cart"), href: "#cart", isCart: true },
     { icon: User, label: t("account"), href: "/account" },
   ];
