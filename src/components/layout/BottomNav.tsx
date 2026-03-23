@@ -46,7 +46,7 @@ const BottomNav = () => {
           </Link>
 
           {/* Bouquet - elevated center */}
-          <div className="flex items-center justify-center relative">
+          <div className="flex flex-col items-center justify-end pb-1.5 relative">
             <Link
               to="/custom-bouquet"
               className={`absolute -top-5 flex items-center justify-center w-[52px] h-[52px] rounded-full shadow-lg transition-all duration-300 active:scale-90 ${
@@ -58,6 +58,9 @@ const BottomNav = () => {
               <Flower2 size={26} strokeWidth={1.8} />
               <span className="absolute inset-0 rounded-full border-[3px] border-card" />
             </Link>
+            <span className={`text-[10px] leading-none ${isActive("/custom-bouquet") ? "font-semibold text-primary" : "font-medium text-muted-foreground"}`}>
+              Bouquet
+            </span>
           </div>
 
           {/* Cart */}
