@@ -29,6 +29,8 @@ const navItems = [
 
 const AdminLayout = ({ children }: { children: ReactNode }) => {
   const { user, signOut } = useAuth();
+  const { settings } = useSiteSettings();
+  const logoUrl = settings.company_logo || "";
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
