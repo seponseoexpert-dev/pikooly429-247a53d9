@@ -159,10 +159,10 @@ const Footer = memo(() => {
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:gap-12">
             {/* Brand Column */}
             <div className="col-span-2 md:col-span-1">
-              {settings.footer_logo ? (
+              {(settings.footer_logo || settings.company_logo) ? (
                 <img
-                  src={settings.footer_logo}
-                  alt="Footer Logo"
+                  src={settings.footer_logo || settings.company_logo}
+                  alt={settings.store_name || "Store Logo"}
                   width={120}
                   height={48}
                   className="h-10 sm:h-12 w-auto mb-3 object-contain brightness-0 invert"
