@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +10,8 @@ import { toast } from "@/hooks/use-toast";
 import { Lock, Mail } from "lucide-react";
 
 const AdminLogin = () => {
+  const { settings } = useSiteSettings();
+  const logoUrl = settings.company_logo || "";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -35,8 +38,14 @@ const AdminLogin = () => {
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center space-y-1">
           <CardTitle className="text-2xl font-display">
-            <span className="text-foreground">Pikooly</span>
-            <span className="text-primary">Flora</span>
+            {logoUrl ? (
+              <img src={logoUrl} alt={settings.store_name || "Store"} className="h-10 mx-auto object-contain" />
+            ) : (
+              <>
+                <span className="text-foreground">{settings.store_name || "Pikooly"}</span>
+                <span className="text-primary">Flora</span>
+              </>
+            )}
           </CardTitle>
           <CardDescription>Admin Panel Login</CardDescription>
         </CardHeader>
