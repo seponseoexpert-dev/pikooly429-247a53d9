@@ -81,7 +81,7 @@ const NavItem = ({
   href,
   active,
 }: {
-  icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>;
+  icon: React.ComponentType<any>;
   label: string;
   href: string;
   active: boolean;
