@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import {
   LayoutDashboard, Package, ShoppingCart, FileText, Tag, LogOut, Menu, X, Users, Star, Ticket, Settings, Truck, Coins, Mail, Download, Flower2,
 } from "lucide-react";
@@ -28,6 +29,8 @@ const navItems = [
 
 const AdminLayout = ({ children }: { children: ReactNode }) => {
   const { user, signOut } = useAuth();
+  const { settings } = useSiteSettings();
+  const logoUrl = settings.company_logo || "";
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -52,9 +55,15 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
         )}
       >
         <div className="p-4 border-b border-border flex items-center justify-between">
-          <Link to="/admin" className="font-display text-xl font-bold">
-            <span className="text-foreground">Pikooly</span>
-            <span className="text-primary">Flora</span>
+          <Link to="/admin" className="font-display text-xl font-bold flex items-center">
+            {logoUrl ? (
+              <img src={logoUrl} alt={settings.store_name || "Store"} className="h-8 w-auto object-contain" />
+            ) : (
+              <>
+                <span className="text-foreground">{settings.store_name || "Pikooly"}</span>
+                <span className="text-primary">Flora</span>
+              </>
+            )}
           </Link>
           <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setSidebarOpen(false)}>
             <X className="h-5 w-5" />
