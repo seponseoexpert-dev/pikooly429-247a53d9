@@ -30,6 +30,21 @@ const BottomNav = () => {
           {/* Same Day */}
           <NavItem icon={Truck} label={t("same_day")} href="/product-category/same-day" active={isActive("/product-category/same-day")} />
 
+          {/* Bouquet - icon only, elevated */}
+          <div className="flex flex-col items-center -mt-5 relative">
+            <Link
+              to="/custom-bouquet"
+              className={`relative flex items-center justify-center w-[52px] h-[52px] rounded-full shadow-lg transition-all duration-300 active:scale-90 ${
+                isActive("/custom-bouquet")
+                  ? "bg-primary text-primary-foreground shadow-primary/30"
+                  : "bg-primary/90 text-primary-foreground shadow-primary/20 hover:bg-primary"
+              }`}
+            >
+              <Flower2 size={26} strokeWidth={1.8} />
+              <span className="absolute inset-0 rounded-full border-[3px] border-card" />
+            </Link>
+          </div>
+
           {/* Cart */}
           <button
             onClick={() => setIsOpen(true)}
