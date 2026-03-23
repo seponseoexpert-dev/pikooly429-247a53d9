@@ -55,9 +55,15 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
         )}
       >
         <div className="p-4 border-b border-border flex items-center justify-between">
-          <Link to="/admin" className="font-display text-xl font-bold">
-            <span className="text-foreground">Pikooly</span>
-            <span className="text-primary">Flora</span>
+          <Link to="/admin" className="font-display text-xl font-bold flex items-center">
+            {logoUrl ? (
+              <img src={logoUrl} alt={settings.store_name || "Store"} className="h-8 w-auto object-contain" />
+            ) : (
+              <>
+                <span className="text-foreground">{settings.store_name || "Pikooly"}</span>
+                <span className="text-primary">Flora</span>
+              </>
+            )}
           </Link>
           <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setSidebarOpen(false)}>
             <X className="h-5 w-5" />
