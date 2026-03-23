@@ -88,22 +88,27 @@ function orderLink(orderNumber: string, date: string, url: string) {
   </td></tr>`;
 }
 
-function itemsTable(items: { name: string; quantity: number; total: number }[]) {
+function itemsTable(items: { name: string; quantity: number; total: number; imageUrl?: string }[]) {
   if (!items.length) return "";
-  const rows = items.map(item =>
-    `<tr>
-      <td style="padding:12px 14px;border:1px solid ${C.border};font-size:13px;color:${C.dark};font-family:${C.font};">${item.name}</td>
-      <td style="padding:12px 14px;border:1px solid ${C.border};font-size:13px;color:${C.dark};text-align:center;font-family:${C.font};">${item.quantity}</td>
-      <td style="padding:12px 14px;border:1px solid ${C.border};font-size:13px;color:${C.dark};text-align:right;font-family:${C.font};">৳ ${Number(item.total).toFixed(2)}</td>
-    </tr>`
-  ).join("");
+  const rows = items.map(item => {
+    const img = item.imageUrl
+      ? `<img src="${item.imageUrl}" alt="${item.name}" width="56" height="56" style="width:56px;height:56px;object-fit:cover;border-radius:6px;display:block;border:1px solid ${C.border};" />`
+      : `<div style="width:56px;height:56px;background:${C.bg};border-radius:6px;border:1px solid ${C.border};"></div>`;
+    return `<tr>
+      <td style="padding:12px 14px;border:1px solid ${C.border};vertical-align:middle;width:56px;">${img}</td>
+      <td style="padding:12px 14px;border:1px solid ${C.border};font-size:13px;color:${C.dark};font-family:${C.font};vertical-align:middle;">${item.name}</td>
+      <td style="padding:12px 14px;border:1px solid ${C.border};font-size:13px;color:${C.dark};text-align:center;font-family:${C.font};vertical-align:middle;">${item.quantity}</td>
+      <td style="padding:12px 14px;border:1px solid ${C.border};font-size:13px;color:${C.dark};text-align:right;font-family:${C.font};vertical-align:middle;white-space:nowrap;">৳ ${Number(item.total).toFixed(2)}</td>
+    </tr>`;
+  }).join("");
 
   return `<tr><td style="padding:0 30px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
       <tr style="background:${C.bg};">
-        <th style="padding:12px 14px;border:1px solid ${C.border};font-size:13px;color:${C.dark};text-align:left;font-weight:600;font-family:${C.font};">Product</th>
-        <th style="padding:12px 14px;border:1px solid ${C.border};font-size:13px;color:${C.dark};text-align:center;font-weight:600;font-family:${C.font};">Quantity</th>
-        <th style="padding:12px 14px;border:1px solid ${C.border};font-size:13px;color:${C.dark};text-align:right;font-weight:600;font-family:${C.font};">Price</th>
+        <th style="padding:12px 14px;border:1px solid ${C.border};font-size:12px;color:${C.light};text-align:left;font-weight:600;font-family:${C.font};width:56px;">Image</th>
+        <th style="padding:12px 14px;border:1px solid ${C.border};font-size:12px;color:${C.light};text-align:left;font-weight:600;font-family:${C.font};">Product</th>
+        <th style="padding:12px 14px;border:1px solid ${C.border};font-size:12px;color:${C.light};text-align:center;font-weight:600;font-family:${C.font};">Qty</th>
+        <th style="padding:12px 14px;border:1px solid ${C.border};font-size:12px;color:${C.light};text-align:right;font-weight:600;font-family:${C.font};">Price</th>
       </tr>
       ${rows}
     </table>
