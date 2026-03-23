@@ -38,8 +38,14 @@ const AdminLogin = () => {
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center space-y-1">
           <CardTitle className="text-2xl font-display">
-            <span className="text-foreground">Pikooly</span>
-            <span className="text-primary">Flora</span>
+            {logoUrl ? (
+              <img src={logoUrl} alt={settings.store_name || "Store"} className="h-10 mx-auto object-contain" />
+            ) : (
+              <>
+                <span className="text-foreground">{settings.store_name || "Pikooly"}</span>
+                <span className="text-primary">Flora</span>
+              </>
+            )}
           </CardTitle>
           <CardDescription>Admin Panel Login</CardDescription>
         </CardHeader>
