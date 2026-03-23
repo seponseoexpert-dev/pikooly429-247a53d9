@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +10,8 @@ import { toast } from "@/hooks/use-toast";
 import { Lock, Mail } from "lucide-react";
 
 const AdminLogin = () => {
+  const { settings } = useSiteSettings();
+  const logoUrl = settings.company_logo || "";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
