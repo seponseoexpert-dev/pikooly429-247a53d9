@@ -81,6 +81,24 @@ const ProductGrid = memo(() => {
 
   return (
     <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Products" style={{ contain: "layout style" }}>
+      {/* Trending Tabs */}
+      <div className="flex gap-1 overflow-x-auto pb-3 mb-4 scrollbar-hide">
+        {trendingTabs.map(({ id, label, icon: Icon }) => (
+          <button
+            key={id}
+            onClick={() => setActiveTrendingTab(id)}
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-200 ${
+              activeTrendingTab === id
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "bg-muted text-muted-foreground hover:bg-muted/80"
+            }`}
+          >
+            <Icon size={14} className={activeTrendingTab === id ? "fill-primary-foreground" : ""} />
+            {label}
+          </button>
+        ))}
+      </div>
+
       <div className="flex items-center justify-between mb-4 md:mb-6">
         <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground">
           Trending Gifts
