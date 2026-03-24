@@ -207,12 +207,12 @@ const Shop = () => {
         </select>
       </div>
 
-      {activeCategory && (activeCategory as any).short_description && (
+      {activeContent && (activeContent as any).short_description && (
         <div className="mb-6 max-w-none">
           <div
             ref={shortDescRef}
             className={`prose max-w-none dark:prose-invert prose-headings:text-foreground prose-headings:font-display prose-headings:text-base prose-headings:md:text-xl prose-headings:lg:text-2xl prose-headings:mb-1 prose-p:text-muted-foreground prose-p:text-xs prose-p:md:text-sm prose-p:leading-relaxed prose-p:mt-0 overflow-hidden transition-all duration-300 ${!shortDescExpanded ? "[&_p]:line-clamp-3" : ""}`}
-            dangerouslySetInnerHTML={{ __html: (activeCategory as any).short_description }}
+            dangerouslySetInnerHTML={{ __html: (activeContent as any).short_description }}
           />
           <button
             onClick={() => setShortDescExpanded(!shortDescExpanded)}
