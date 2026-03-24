@@ -290,7 +290,7 @@ const Shop = () => {
               <h2 className="text-xl md:text-2xl font-display font-semibold text-foreground">
                 Frequently Asked Questions
               </h2>
-              <p className="text-sm text-muted-foreground mt-1">Find answers to common questions about {activeCategory?.name}</p>
+              <p className="text-sm text-muted-foreground mt-1">Find answers to common questions about {(activeContent as any)?.name}</p>
             </div>
             <div className="max-w-3xl mx-auto">
               <Accordion type="single" collapsible className="w-full space-y-3">
