@@ -277,12 +277,12 @@ const Shop = () => {
         </div>
       )}
 
-      {activeCategory && (activeCategory as any).long_description && (
-        <div className="mt-10 prose prose-sm dark:prose-invert max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: (activeCategory as any).long_description }} />
+      {activeContent && (activeContent as any).long_description && (
+        <div className="mt-10 prose prose-sm dark:prose-invert max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: (activeContent as any).long_description }} />
       )}
 
-      {activeCategory && (() => {
-        const faqs = (activeCategory as any).faq;
+      {activeContent && (() => {
+        const faqs = (activeContent as any).faq;
         if (!Array.isArray(faqs) || faqs.length === 0) return null;
         return (
           <div className="mt-14 mb-8">
