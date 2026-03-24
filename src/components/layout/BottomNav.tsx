@@ -51,7 +51,7 @@ const BottomNav = () => {
               <span className="absolute inset-0 rounded-full border-[3px] border-card" />
             </Link>
             <span className={labelClass(isActive("/custom-bouquet"))}>
-              Bouquet
+              Custom
             </span>
           </div>
 
