@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const ProductGrid = memo(() => {
   const [activeTab, setActiveTab] = useState("All");
+  const [activeTrendingTab, setActiveTrendingTab] = useState("for-you");
 
   const { data: products = [], isLoading: productsLoading } = useQuery({
     queryKey: ["homepage-products"],
@@ -48,8 +49,27 @@ const ProductGrid = memo(() => {
     })),
   ], [occasionCategories]);
 
+  const trendingTabs = [
+    { id: "for-you", label: "For You", icon: Heart },
+    { id: "featured", label: "Featured", icon: Star },
+    { id: "new", label: "New Arrival", icon: Sparkles },
+    { id: "best", label: "Best Seller", icon: Zap },
+  ];
+
   const featured = products.filter((p: any) => p.is_featured);
-  const displayFeatured = featured.length > 0 ? featured.slice(0, 5) : products.slice(0, 5);
+  const displayFeatured = useMemo(() => {
+    if (activeTrendingTab === "featured") {
+      return featured.length > 0 ? featured.slice(0, 5) : products.slice(0, 5);
+    }
+    if (activeTrendingTab === "new") {
+      return [...products].sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5);
+    }
+    if (activeTrendingTab === "best") {
+      return [...products].sort((a: any, b: any) => (b.review_count || 0) - (a.review_count || 0)).slice(0, 5);
+    }
+    // for-you: mix of featured + recent
+    return featured.length > 0 ? featured.slice(0, 5) : products.slice(0, 5);
+  }, [products, featured, activeTrendingTab]);
 
   const filtered = activeTab === "All"
     ? products
