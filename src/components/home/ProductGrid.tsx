@@ -2,12 +2,13 @@ import { useState, useMemo, memo } from "react";
 import ProductCard from "@/components/product/ProductCard";
 
 import { Link } from "react-router-dom";
-import { ChevronRight, TrendingUp, Gift } from "lucide-react";
+import { ChevronRight, TrendingUp, Gift, Heart, ShoppingBag, Zap, Star, Sparkles } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 const ProductGrid = memo(() => {
   const [activeTab, setActiveTab] = useState("All");
+  const [activeTrendingTab, setActiveTrendingTab] = useState("for-you");
 
   const { data: products = [], isLoading: productsLoading } = useQuery({
     queryKey: ["homepage-products"],
@@ -48,8 +49,27 @@ const ProductGrid = memo(() => {
     })),
   ], [occasionCategories]);
 
+  const trendingTabs = [
+    { id: "for-you", label: "For You", icon: Heart },
+    { id: "featured", label: "Featured", icon: Star },
+    { id: "new", label: "New Arrival", icon: Sparkles },
+    { id: "best", label: "Best Seller", icon: Zap },
+  ];
+
   const featured = products.filter((p: any) => p.is_featured);
-  const displayFeatured = featured.length > 0 ? featured.slice(0, 5) : products.slice(0, 5);
+  const displayFeatured = useMemo(() => {
+    if (activeTrendingTab === "featured") {
+      return featured.length > 0 ? featured.slice(0, 5) : products.slice(0, 5);
+    }
+    if (activeTrendingTab === "new") {
+      return [...products].sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5);
+    }
+    if (activeTrendingTab === "best") {
+      return [...products].sort((a: any, b: any) => (b.review_count || 0) - (a.review_count || 0)).slice(0, 5);
+    }
+    // for-you: mix of featured + recent
+    return featured.length > 0 ? featured.slice(0, 5) : products.slice(0, 5);
+  }, [products, featured, activeTrendingTab]);
 
   const filtered = activeTab === "All"
     ? products
@@ -61,6 +81,24 @@ const ProductGrid = memo(() => {
 
   return (
     <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Products" style={{ contain: "layout style" }}>
+      {/* Trending Tabs */}
+      <div className="flex gap-1 overflow-x-auto pb-3 mb-4 scrollbar-hide">
+        {trendingTabs.map(({ id, label, icon: Icon }) => (
+          <button
+            key={id}
+            onClick={() => setActiveTrendingTab(id)}
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-200 ${
+              activeTrendingTab === id
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "bg-muted text-muted-foreground hover:bg-muted/80"
+            }`}
+          >
+            <Icon size={14} className={activeTrendingTab === id ? "fill-primary-foreground" : ""} />
+            {label}
+          </button>
+        ))}
+      </div>
+
       <div className="flex items-center justify-between mb-4 md:mb-6">
         <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground">
           Trending Gifts
