@@ -95,12 +95,13 @@ const Shop = () => {
   }, [activeCategory, subcategories]);
 
   useEffect(() => {
+    setShortDescExpanded(false);
     setTimeout(() => {
       if (shortDescRef.current) {
         setNeedsTruncation(shortDescRef.current.scrollHeight > 72);
       }
     }, 100);
-  }, [activeCategory]);
+  }, [activeCategory, selectedSub]);
 
   const activeSubcategory = useMemo(() => {
     if (!selectedSub) return null;
