@@ -324,12 +324,6 @@ const BouquetBuilder = () => {
                 ))}
               </div>
 
-              <div className="bg-card border border-border rounded-xl p-4">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-foreground font-medium">Bouquet Making Charge</span>
-                  <span className="text-muted-foreground">{formatPrice(MAKING_CHARGE)}</span>
-                </div>
-              </div>
 
               {designPreviews.length > 0 && (
                 <div className="bg-card border border-border rounded-xl p-4">
