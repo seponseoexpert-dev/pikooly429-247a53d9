@@ -55,21 +55,14 @@ const BottomNav = () => {
             </span>
           </div>
 
-          {/* Cart */}
-          <button
-            onClick={() => setIsOpen(true)}
-            className={itemClass(false)}
+          {/* All Gifts */}
+          <Link
+            to="/all-gifts"
+            className={itemClass(isActive("/all-gifts"))}
           >
-            <div className="relative">
-              <ShoppingBag size={iconSize} strokeWidth={strokeW} />
-              {totalItems > 0 && (
-                <span className="absolute -top-1.5 -right-2.5 bg-primary text-primary-foreground text-[8px] min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center font-bold animate-scale-in">
-                  {totalItems}
-                </span>
-              )}
-            </div>
-            <span className={labelClass(false)}>{t("cart")}</span>
-          </button>
+            <Gift size={iconSize} strokeWidth={isActive("/all-gifts") ? activeStrokeW : strokeW} />
+            <span className={labelClass(isActive("/all-gifts"))}>All Gifts</span>
+          </Link>
 
           {/* Account */}
           <Link to="/account" className={itemClass(isActive("/account"))}>
