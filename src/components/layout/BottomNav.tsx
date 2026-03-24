@@ -4,7 +4,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const BottomNav = () => {
   const location = useLocation();
-  const { totalItems, setIsOpen } = useCart();
   const { t } = useLanguage();
 
   const isActive = (href: string) =>
