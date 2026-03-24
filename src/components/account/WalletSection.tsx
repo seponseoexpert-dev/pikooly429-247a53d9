@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Wallet, Plus, ArrowUpRight, ArrowDownLeft, Clock, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
-import { useCurrency } from "@/hooks/useCurrency";
+import { useMultiCurrency } from "@/contexts/CurrencyContext";
 
 interface WalletSectionProps {
   userId: string;
@@ -13,7 +13,8 @@ const TOPUP_AMOUNTS = [100, 200, 500, 1000, 2000, 5000];
 
 const WalletSection = ({ userId }: WalletSectionProps) => {
   const queryClient = useQueryClient();
-  const { formatCurrency, symbol } = useCurrency();
+  const { formatPrice, selectedCurrency } = useMultiCurrency();
+  const symbol = selectedCurrency?.symbol || "৳";
   const [showTopup, setShowTopup] = useState(false);
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
@@ -48,11 +49,11 @@ const WalletSection = ({ userId }: WalletSectionProps) => {
   const handleTopup = async () => {
     const topupAmount = parseFloat(amount);
     if (!topupAmount || topupAmount < 10) {
-      toast.error(`Minimum top-up amount is ${formatCurrency(10)}`);
+      toast.error(`Minimum top-up amount is ${formatPrice(10)}`);
       return;
     }
     if (topupAmount > 50000) {
-      toast.error(`Maximum top-up amount is ${formatCurrency(50000)}`);
+      toast.error(`Maximum top-up amount is ${formatPrice(50000)}`);
       return;
     }
 
@@ -132,7 +133,7 @@ const WalletSection = ({ userId }: WalletSectionProps) => {
       <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 rounded-xl p-4 sm:p-5 mb-4 border border-primary/20">
         <p className="text-xs text-muted-foreground mb-1">Available Balance</p>
         <p className="text-2xl sm:text-3xl font-bold text-foreground font-display">
-          {formatCurrency(balance)}
+          {formatPrice(balance)}
         </p>
         <p className="text-[10px] text-muted-foreground mt-1">
           Use wallet balance during checkout
@@ -156,7 +157,7 @@ const WalletSection = ({ userId }: WalletSectionProps) => {
                     : "bg-card border border-border text-foreground hover:border-primary/50"
                 }`}
               >
-                {formatCurrency(a)}
+                {formatPrice(a)}
               </button>
             ))}
           </div>
@@ -185,11 +186,11 @@ const WalletSection = ({ userId }: WalletSectionProps) => {
             ) : (
               <Plus size={16} />
             )}
-            {loading ? "Processing..." : `Add ${amount ? formatCurrency(parseFloat(amount) || 0) : "Fund"}`}
+            {loading ? "Processing..." : `Add ${amount ? formatPrice(parseFloat(amount) || 0) : "Fund"}`}
           </button>
           
           <p className="text-[10px] text-muted-foreground text-center">
-            Payment via EPS • Min {formatCurrency(10)} • Max {formatCurrency(50000)}
+            Payment via EPS • Min {formatPrice(10)} • Max {formatPrice(50000)}
           </p>
         </div>
       )}
@@ -220,7 +221,7 @@ const WalletSection = ({ userId }: WalletSectionProps) => {
                   <p className={`text-sm font-semibold ${
                     txn.type === "spent" ? "text-amber-600" : "text-green-600"
                   }`}>
-                    {txn.type === "spent" ? "-" : "+"}{formatCurrency(txn.amount)}
+                    {txn.type === "spent" ? "-" : "+"}{formatPrice(txn.amount)}
                   </p>
                 </div>
                 <div className="flex items-center justify-between">
