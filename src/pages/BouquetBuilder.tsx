@@ -353,6 +353,16 @@ const BouquetBuilder = () => {
                 />
               </div>
 
+              <div className="bg-card border border-border rounded-xl p-4">
+                <div className="flex justify-between items-center text-sm">
+                  <div>
+                    <span className="text-foreground font-medium">Bouquet Making Charge</span>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">Hand arrangement, decoration & premium packaging</p>
+                  </div>
+                  <span className="text-muted-foreground font-medium">{formatPrice(MAKING_CHARGE)}</span>
+                </div>
+              </div>
+
               <div className="bg-primary/5 border-2 border-primary rounded-xl p-4 flex justify-between items-center">
                 <span className="font-display font-bold text-lg text-foreground">Total</span>
                 <span className="font-display font-bold text-xl text-primary">{formatPrice(totalPrice)}</span>
