@@ -189,7 +189,7 @@ const WalletSection = ({ userId }: WalletSectionProps) => {
           </button>
           
           <p className="text-[10px] text-muted-foreground text-center">
-            Payment via EPS • Min ৳10 • Max ৳50,000
+            Payment via EPS • Min {formatCurrency(10)} • Max {formatCurrency(50000)}
           </p>
         </div>
       )}
