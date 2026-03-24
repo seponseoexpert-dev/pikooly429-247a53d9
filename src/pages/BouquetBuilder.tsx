@@ -1,19 +1,27 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/contexts/CartContext";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { useNavigate, Link } from "react-router-dom";
-import { Check, ChevronRight, ChevronLeft, Flower2, Package, Ruler, MessageSquare, ShoppingCart } from "lucide-react";
+import { Check, ChevronRight, ChevronLeft, Flower2, Upload, Ruler, MessageSquare, ShoppingCart, ImagePlus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 const STEPS = [
   { id: 1, label: "Choose Flowers", icon: Flower2 },
-  { id: 2, label: "Choose Materials", icon: Package },
+  { id: 2, label: "Upload Design", icon: Upload },
   { id: 3, label: "Choose Size", icon: Ruler },
   { id: 4, label: "Review & Order", icon: MessageSquare },
+];
+
+const FIXED_SIZES = [
+  { id: "s", name: "S", description: "Small bouquet" },
+  { id: "m", name: "M", description: "Medium bouquet" },
+  { id: "l", name: "L", description: "Large bouquet" },
+  { id: "xl", name: "XL", description: "Extra large bouquet" },
 ];
 
 const BouquetBuilder = () => {
@@ -22,32 +30,16 @@ const BouquetBuilder = () => {
   const { formatPrice } = useMultiCurrency();
   const [step, setStep] = useState(1);
   const [selectedFlowers, setSelectedFlowers] = useState<Record<string, number>>({});
-  const [selectedMaterial, setSelectedMaterial] = useState<string | null>(null);
+  const [designImages, setDesignImages] = useState<File[]>([]);
+  const [designPreviews, setDesignPreviews] = useState<string[]>([]);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [giftMessage, setGiftMessage] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: flowers = [] } = useQuery({
     queryKey: ["bouquet-flowers"],
     queryFn: async () => {
       const { data, error } = await supabase.from("bouquet_flowers").select("*").eq("is_active", true).order("display_order");
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const { data: materials = [] } = useQuery({
-    queryKey: ["bouquet-materials"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("bouquet_materials").select("*").eq("is_active", true).order("display_order");
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const { data: sizes = [] } = useQuery({
-    queryKey: ["bouquet-sizes"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("bouquet_sizes").select("*").eq("is_active", true).order("display_order");
       if (error) throw error;
       return data;
     },
@@ -63,16 +55,13 @@ const BouquetBuilder = () => {
       .filter(Boolean) as any[];
   }, [selectedFlowers, flowers]);
 
-  const materialItem = materials.find((m: any) => m.id === selectedMaterial);
-  const sizeItem = sizes.find((s: any) => s.id === selectedSize);
+  const selectedSizeItem = FIXED_SIZES.find((s) => s.id === selectedSize);
 
   const totalPrice = useMemo(() => {
     let total = 0;
     selectedFlowersList.forEach((f) => { total += f.price * f.qty; });
-    if (materialItem) total += Number(materialItem.price);
-    if (sizeItem) total += Number(sizeItem.extra_price);
     return total;
-  }, [selectedFlowersList, materialItem, sizeItem]);
+  }, [selectedFlowersList]);
 
   const toggleFlower = (id: string) => {
     setSelectedFlowers((prev) => {
@@ -92,9 +81,43 @@ const BouquetBuilder = () => {
     });
   };
 
+  const handleDesignUpload = (files: FileList | null) => {
+    if (!files) return;
+    const maxImages = 3;
+    const remaining = maxImages - designImages.length;
+    if (remaining <= 0) {
+      toast.error(`Maximum ${maxImages} images allowed`);
+      return;
+    }
+    const newFiles: File[] = [];
+    const newPreviews: string[] = [];
+    Array.from(files).slice(0, remaining).forEach((file) => {
+      if (!file.type.startsWith("image/")) {
+        toast.error(`${file.name} is not an image`);
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error(`${file.name} is too large (max 5MB)`);
+        return;
+      }
+      newFiles.push(file);
+      newPreviews.push(URL.createObjectURL(file));
+    });
+    if (newFiles.length > 0) {
+      setDesignImages((prev) => [...prev, ...newFiles]);
+      setDesignPreviews((prev) => [...prev, ...newPreviews]);
+    }
+  };
+
+  const removeDesignImage = (index: number) => {
+    URL.revokeObjectURL(designPreviews[index]);
+    setDesignImages((prev) => prev.filter((_, i) => i !== index));
+    setDesignPreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const canProceed = () => {
     if (step === 1) return selectedFlowersList.length > 0;
-    if (step === 2) return !!selectedMaterial;
+    if (step === 2) return true; // design upload is optional
     if (step === 3) return !!selectedSize;
     return true;
   };
@@ -116,7 +139,6 @@ const BouquetBuilder = () => {
 
   return (
     <main className="section-container py-4 md:py-8 pb-24 md:pb-10">
-      {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-sm text-muted-foreground mb-5">
         <Link to="/" className="hover:text-primary transition-colors">Home</Link>
         <span>/</span>
@@ -130,7 +152,6 @@ const BouquetBuilder = () => {
         </div>
         <div className="flex justify-between">
           {STEPS.map((s) => {
-            const Icon = s.icon;
             const isActive = step === s.id;
             const isDone = step > s.id;
             return (
@@ -179,12 +200,7 @@ const BouquetBuilder = () => {
                     )}
                   >
                     <div className="aspect-square bg-secondary/20 overflow-hidden" onClick={() => toggleFlower(flower.id)}>
-                      <img
-                        src={flower.image_url || "/placeholder.svg"}
-                        alt={flower.name}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                      />
+                      <img src={flower.image_url || "/placeholder.svg"} alt={flower.name} className="w-full h-full object-cover" loading="lazy" />
                       {isSelected && (
                         <div className="absolute top-2 right-2 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
                           <Check className="h-3.5 w-3.5" />
@@ -211,35 +227,51 @@ const BouquetBuilder = () => {
 
         {step === 2 && (
           <div>
-            <h2 className="text-xl md:text-2xl font-display font-bold text-foreground mb-1">Choose Materials</h2>
-            <p className="text-sm text-muted-foreground mb-6">Select wrapping & packaging</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-              {materials.map((mat: any) => {
-                const isSelected = selectedMaterial === mat.id;
-                return (
-                  <div
-                    key={mat.id}
-                    onClick={() => setSelectedMaterial(mat.id)}
-                    className={cn(
-                      "relative rounded-xl border-2 overflow-hidden cursor-pointer transition-all bg-card",
-                      isSelected ? "border-primary shadow-md" : "border-border/50 hover:border-primary/30"
-                    )}
-                  >
-                    <div className="aspect-square bg-secondary/20 overflow-hidden">
-                      <img src={mat.image_url || "/placeholder.svg"} alt={mat.name} className="w-full h-full object-cover" loading="lazy" />
-                      {isSelected && (
-                        <div className="absolute top-2 right-2 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
-                          <Check className="h-3.5 w-3.5" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-2.5 sm:p-3">
-                      <h3 className="font-medium text-sm text-foreground line-clamp-1">{mat.name}</h3>
-                      <p className="text-primary font-bold text-sm mt-0.5">{formatPrice(mat.price)}</p>
-                    </div>
+            <h2 className="text-xl md:text-2xl font-display font-bold text-foreground mb-1">Upload Your Design</h2>
+            <p className="text-sm text-muted-foreground mb-6">Upload your preferred bouquet design (optional, max 3 images)</p>
+
+            <div className="max-w-md space-y-4">
+              <div className="flex gap-3 flex-wrap">
+                {designPreviews.map((src, i) => (
+                  <div key={i} className="relative w-24 h-24 rounded-xl overflow-hidden border-2 border-border group">
+                    <img src={src} alt={`Design ${i + 1}`} className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => removeDesignImage(i)}
+                      className="absolute top-1 right-1 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X size={14} />
+                    </button>
                   </div>
-                );
-              })}
+                ))}
+
+                {designImages.length < 3 && (
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-24 h-24 rounded-xl border-2 border-dashed border-primary/40 flex flex-col items-center justify-center gap-1.5 text-primary/60 hover:border-primary hover:text-primary transition-colors"
+                  >
+                    <ImagePlus size={24} />
+                    <span className="text-[10px] font-medium">Add Photo</span>
+                  </button>
+                )}
+              </div>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                multiple
+                className="hidden"
+                onChange={(e) => {
+                  handleDesignUpload(e.target.files);
+                  e.target.value = "";
+                }}
+              />
+
+              <p className="text-xs text-muted-foreground">
+                Share a photo of how you'd like your bouquet to look. We'll try to match it as closely as possible.
+              </p>
             </div>
           </div>
         )}
@@ -248,30 +280,25 @@ const BouquetBuilder = () => {
           <div>
             <h2 className="text-xl md:text-2xl font-display font-bold text-foreground mb-1">Choose Size</h2>
             <p className="text-sm text-muted-foreground mb-6">Pick your bouquet size</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {sizes.map((size: any) => {
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {FIXED_SIZES.map((size) => {
                 const isSelected = selectedSize === size.id;
                 return (
                   <div
                     key={size.id}
                     onClick={() => setSelectedSize(size.id)}
                     className={cn(
-                      "rounded-xl border-2 p-5 cursor-pointer transition-all bg-card",
+                      "rounded-xl border-2 p-4 cursor-pointer transition-all bg-card text-center",
                       isSelected ? "border-primary shadow-md bg-primary/5" : "border-border/50 hover:border-primary/30"
                     )}
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold text-lg text-foreground">{size.name}</h3>
-                      {isSelected && (
-                        <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
-                          <Check className="h-3.5 w-3.5" />
-                        </div>
-                      )}
-                    </div>
-                    {size.description && <p className="text-sm text-muted-foreground mb-2">{size.description}</p>}
-                    <p className="text-primary font-bold">
-                      {Number(size.extra_price) > 0 ? `+ ${formatPrice(size.extra_price)}` : "No extra charge"}
-                    </p>
+                    <div className="text-2xl font-display font-bold text-foreground mb-1">{size.name}</div>
+                    <p className="text-xs text-muted-foreground">{size.description}</p>
+                    {isSelected && (
+                      <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto mt-2">
+                        <Check className="h-3.5 w-3.5" />
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -285,7 +312,6 @@ const BouquetBuilder = () => {
             <p className="text-sm text-muted-foreground mb-6">Review your custom bouquet</p>
 
             <div className="space-y-4 max-w-xl">
-              {/* Flowers summary */}
               <div className="bg-card border border-border rounded-xl p-4">
                 <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2"><Flower2 className="h-4 w-4 text-primary" /> Flowers</h3>
                 {selectedFlowersList.map((f) => (
@@ -296,31 +322,24 @@ const BouquetBuilder = () => {
                 ))}
               </div>
 
-              {/* Material summary */}
-              {materialItem && (
+              {designPreviews.length > 0 && (
                 <div className="bg-card border border-border rounded-xl p-4">
-                  <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2"><Package className="h-4 w-4 text-primary" /> Wrapping</h3>
-                  <div className="flex justify-between text-sm">
-                    <span>{materialItem.name}</span>
-                    <span className="text-muted-foreground">{formatPrice(materialItem.price)}</span>
+                  <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2"><Upload className="h-4 w-4 text-primary" /> Your Design</h3>
+                  <div className="flex gap-2">
+                    {designPreviews.map((src, i) => (
+                      <img key={i} src={src} alt={`Design ${i + 1}`} className="w-16 h-16 rounded-lg object-cover border border-border" />
+                    ))}
                   </div>
                 </div>
               )}
 
-              {/* Size summary */}
-              {sizeItem && (
+              {selectedSizeItem && (
                 <div className="bg-card border border-border rounded-xl p-4">
                   <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2"><Ruler className="h-4 w-4 text-primary" /> Size</h3>
-                  <div className="flex justify-between text-sm">
-                    <span>{sizeItem.name}</span>
-                    <span className="text-muted-foreground">
-                      {Number(sizeItem.extra_price) > 0 ? `+ ${formatPrice(sizeItem.extra_price)}` : "Free"}
-                    </span>
-                  </div>
+                  <span className="text-sm text-foreground">{selectedSizeItem.name} — {selectedSizeItem.description}</span>
                 </div>
               )}
 
-              {/* Gift Message */}
               <div className="bg-card border border-border rounded-xl p-4">
                 <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2"><MessageSquare className="h-4 w-4 text-primary" /> Gift Message (Optional)</h3>
                 <Textarea
@@ -331,7 +350,6 @@ const BouquetBuilder = () => {
                 />
               </div>
 
-              {/* Total */}
               <div className="bg-primary/5 border-2 border-primary rounded-xl p-4 flex justify-between items-center">
                 <span className="font-display font-bold text-lg text-foreground">Total</span>
                 <span className="font-display font-bold text-xl text-primary">{formatPrice(totalPrice)}</span>
@@ -343,12 +361,7 @@ const BouquetBuilder = () => {
 
       {/* Bottom Navigation */}
       <div className="flex justify-between items-center mt-8 pt-4 border-t border-border">
-        <Button
-          variant="outline"
-          onClick={() => setStep((s) => s - 1)}
-          disabled={step === 1}
-          className="gap-1"
-        >
+        <Button variant="outline" onClick={() => setStep((s) => s - 1)} disabled={step === 1} className="gap-1">
           <ChevronLeft className="h-4 w-4" /> Back
         </Button>
 
