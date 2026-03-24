@@ -116,10 +116,10 @@ const ProductGrid = memo(() => {
 
       <div className="flex items-center justify-between mb-4 md:mb-6">
         <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground">
-          Trending Gifts
+          {trendingTabs.find(t => t.id === activeTrendingTab)?.label || "For You"}
         </h2>
         <Link to="/shop" className="flex items-center gap-1 text-xs sm:text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-          VIEW ALL <ChevronRight size={16} />
+          View All {trendingTabs.find(t => t.id === activeTrendingTab)?.label || "For You"} <ChevronRight size={16} />
         </Link>
       </div>
 
