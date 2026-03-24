@@ -102,16 +102,23 @@ const Shop = () => {
     }, 100);
   }, [activeCategory]);
 
-  const activeCategoryName = activeCategory?.name || "All Products";
+  const activeSubcategory = useMemo(() => {
+    if (!selectedSub) return null;
+    return subcategories.find((s: any) => s.slug === selectedSub) || null;
+  }, [selectedSub, subcategories]);
+
+  // Use subcategory content if selected, otherwise category
+  const activeContent = activeSubcategory || activeCategory;
+  const activeCategoryName = activeSubcategory?.name || activeCategory?.name || "All Products";
   const { settings } = useSiteSettings();
 
   useEffect(() => {
     const siteName = settings.site_title || "Pikooly";
-    const catName = activeCategory?.name;
-    const seoTitle = (activeCategory as any)?.seo_title;
-    const metaDesc = activeCategory?.description || (activeCategory as any)?.short_description || "";
+    const contentName = (activeContent as any)?.name;
+    const seoTitle = (activeContent as any)?.seo_title;
+    const metaDesc = (activeContent as any)?.description || (activeContent as any)?.short_description || "";
 
-    document.title = seoTitle || (catName ? `${catName} - ${siteName}` : `Shop - ${siteName}`);
+    document.title = seoTitle || (contentName ? `${contentName} - ${siteName}` : `Shop - ${siteName}`);
 
     let metaTag = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
     if (!metaTag) {
@@ -119,12 +126,12 @@ const Shop = () => {
       metaTag.name = "description";
       document.head.appendChild(metaTag);
     }
-    metaTag.content = metaDesc || `Shop ${catName || "all products"} at ${siteName}`;
+    metaTag.content = metaDesc || `Shop ${contentName || "all products"} at ${siteName}`;
 
     const existingSchema = document.getElementById("faq-schema-jsonld");
     if (existingSchema) existingSchema.remove();
 
-    const faqs = (activeCategory as any)?.faq;
+    const faqs = (activeContent as any)?.faq;
     if (Array.isArray(faqs) && faqs.length > 0) {
       const schema = {
         "@context": "https://schema.org",
@@ -147,7 +154,7 @@ const Shop = () => {
       const schemaTag = document.getElementById("faq-schema-jsonld");
       if (schemaTag) schemaTag.remove();
     };
-  }, [activeCategory, settings]);
+  }, [activeContent, settings]);
 
   const filtered = useMemo(() => {
     let list = selectedCat
