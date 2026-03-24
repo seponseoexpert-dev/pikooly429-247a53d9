@@ -324,6 +324,13 @@ const BouquetBuilder = () => {
                 ))}
               </div>
 
+              <div className="bg-card border border-border rounded-xl p-4">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-foreground font-medium">Bouquet Making Charge</span>
+                  <span className="text-muted-foreground">{formatPrice(MAKING_CHARGE)}</span>
+                </div>
+              </div>
+
               {designPreviews.length > 0 && (
                 <div className="bg-card border border-border rounded-xl p-4">
                   <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2"><Upload className="h-4 w-4 text-primary" /> Your Design</h3>
