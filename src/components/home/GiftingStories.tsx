@@ -28,8 +28,7 @@ const getEmbedUrl = (url: string): string | null => {
 
 const GiftingStories = memo(() => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [activeVideo, setActiveVideo] = useState<string | null>(null);
-
+  const [activeId, setActiveId] = useState<string | null>(null);
   const { data: stories = [] } = useQuery({
     queryKey: ["gifting-stories"],
     queryFn: async () => {
