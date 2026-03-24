@@ -112,7 +112,7 @@
   }
 
   h1, h2, h3, h4 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Lora', serif;
   }
 }
 
@@ -161,7 +161,7 @@
 .rich-text-content h2,
 .rich-text-content h3,
 .rich-text-content h4 {
-  font-family: "Playfair Display", serif;
+  font-family: "Lora", serif;
   font-weight: 600;
   color: hsl(var(--foreground));
   margin-top: 1.25em;
