@@ -15,6 +15,7 @@ const Shop = () => {
   const searchParam = searchParams.get("search") || "";
   const [selectedCat, setSelectedCat] = useState(catParam);
   const [selectedSub, setSelectedSub] = useState(subParam);
+  const [resolvedAsSub, setResolvedAsSub] = useState(false);
   const [shortDescExpanded, setShortDescExpanded] = useState(false);
   const shortDescRef = useRef<HTMLDivElement>(null);
   const [needsTruncation, setNeedsTruncation] = useState(false);
