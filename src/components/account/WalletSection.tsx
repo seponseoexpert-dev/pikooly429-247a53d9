@@ -13,7 +13,7 @@ const TOPUP_AMOUNTS = [100, 200, 500, 1000, 2000, 5000];
 
 const WalletSection = ({ userId }: WalletSectionProps) => {
   const queryClient = useQueryClient();
-  const { formatCurrency } = useCurrency();
+  const { formatCurrency, symbol } = useCurrency();
   const [showTopup, setShowTopup] = useState(false);
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
@@ -48,11 +48,11 @@ const WalletSection = ({ userId }: WalletSectionProps) => {
   const handleTopup = async () => {
     const topupAmount = parseFloat(amount);
     if (!topupAmount || topupAmount < 10) {
-      toast.error("Minimum top-up amount is ৳10");
+      toast.error(`Minimum top-up amount is ${formatCurrency(10)}`);
       return;
     }
     if (topupAmount > 50000) {
-      toast.error("Maximum top-up amount is ৳50,000");
+      toast.error(`Maximum top-up amount is ${formatCurrency(50000)}`);
       return;
     }
 
@@ -163,7 +163,7 @@ const WalletSection = ({ userId }: WalletSectionProps) => {
 
           {/* Custom amount */}
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">৳</span>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{symbol}</span>
             <input
               type="number"
               placeholder="Custom amount"
@@ -189,7 +189,7 @@ const WalletSection = ({ userId }: WalletSectionProps) => {
           </button>
           
           <p className="text-[10px] text-muted-foreground text-center">
-            Payment via EPS • Min ৳10 • Max ৳50,000
+            Payment via EPS • Min {formatCurrency(10)} • Max {formatCurrency(50000)}
           </p>
         </div>
       )}
