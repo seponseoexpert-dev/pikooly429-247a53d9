@@ -114,14 +114,6 @@ const ProductGrid = memo(() => {
         ))}
       </div>
 
-      <div className="flex items-center justify-between mb-4 md:mb-6">
-        <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground">
-          {trendingTabs.find(t => t.id === activeTrendingTab)?.label || "For You"}
-        </h2>
-        <Link to="/shop" className="flex items-center gap-1 text-xs sm:text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-          View All {trendingTabs.find(t => t.id === activeTrendingTab)?.label || "For You"} <ChevronRight size={16} />
-        </Link>
-      </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
         {productsLoading
