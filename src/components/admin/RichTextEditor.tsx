@@ -37,7 +37,7 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
       type="button"
       variant="ghost"
       size="icon"
-      className={`h-8 w-8 ${active ? "bg-muted text-foreground" : "text-muted-foreground"}`}
+      className={`h-7 w-7 sm:h-8 sm:w-8 ${active ? "bg-muted text-foreground" : "text-muted-foreground"}`}
       onClick={onClick}
     >
       {children}
