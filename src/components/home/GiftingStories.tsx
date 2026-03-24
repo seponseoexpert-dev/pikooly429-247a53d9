@@ -129,7 +129,7 @@ const GiftingStories = memo(() => {
       {/* Video Modal */}
       {activeVideo && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4" onClick={() => setActiveVideo(null)}>
-          <div className="relative w-full max-w-[400px] aspect-[9/16] sm:max-w-[480px]" onClick={(e) => e.stopPropagation()}>
+          <div className="relative w-[280px] h-[500px] sm:w-[320px] sm:h-[570px]" onClick={(e) => e.stopPropagation()}>
             <button
               onClick={() => setActiveVideo(null)}
               className="absolute -top-10 right-0 w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition-colors z-10"
@@ -138,7 +138,7 @@ const GiftingStories = memo(() => {
             </button>
             <iframe
               src={activeVideo}
-              className="w-full h-full rounded-xl"
+              className="w-full h-full rounded-2xl border-0"
               allow="autoplay; encrypted-media; picture-in-picture"
               allowFullScreen
               title="Video"
