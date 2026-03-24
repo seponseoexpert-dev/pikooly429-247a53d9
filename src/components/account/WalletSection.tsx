@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Wallet, Plus, ArrowUpRight, ArrowDownLeft, Clock, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
-import { useCurrency } from "@/hooks/useCurrency";
+import { useMultiCurrency } from "@/contexts/CurrencyContext";
 
 interface WalletSectionProps {
   userId: string;
