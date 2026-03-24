@@ -48,11 +48,11 @@ const WalletSection = ({ userId }: WalletSectionProps) => {
   const handleTopup = async () => {
     const topupAmount = parseFloat(amount);
     if (!topupAmount || topupAmount < 10) {
-      toast.error("Minimum top-up amount is ৳10");
+      toast.error(`Minimum top-up amount is ${formatCurrency(10)}`);
       return;
     }
     if (topupAmount > 50000) {
-      toast.error("Maximum top-up amount is ৳50,000");
+      toast.error(`Maximum top-up amount is ${formatCurrency(50000)}`);
       return;
     }
 
