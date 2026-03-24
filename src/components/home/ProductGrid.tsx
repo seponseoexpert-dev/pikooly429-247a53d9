@@ -2,7 +2,7 @@ import { useState, useMemo, memo } from "react";
 import ProductCard from "@/components/product/ProductCard";
 
 import { Link } from "react-router-dom";
-import { ChevronRight, TrendingUp, Gift } from "lucide-react";
+import { ChevronRight, TrendingUp, Gift, Heart, ShoppingBag, Zap, Star, Sparkles } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
