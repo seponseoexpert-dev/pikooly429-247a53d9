@@ -84,6 +84,7 @@ const Shop = () => {
     setShortDescExpanded(false);
   }, [catParam, subParam, categories, subcategories]);
 
+  const activeCategory = useMemo(() => {
     if (!selectedCat) return null;
     return categories.find((c: any) => c.slug === selectedCat) || null;
   }, [selectedCat, categories]);
