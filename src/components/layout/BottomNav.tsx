@@ -1,6 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Truck, ShoppingBag, User, Flower2 } from "lucide-react";
-import { useCart } from "@/contexts/CartContext";
+import { Home, Truck, Gift, User, Flower2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const BottomNav = () => {
