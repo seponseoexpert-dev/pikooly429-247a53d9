@@ -381,7 +381,7 @@ const BouquetBuilder = () => {
         </Button>
 
         <div className="text-sm font-semibold text-primary">
-          {totalPrice > 0 && `Total: ${formatPrice(totalPrice)}`}
+          {flowersPrice > 0 && `Flowers: ${formatPrice(flowersPrice)}`}
         </div>
 
         {step < 4 ? (
