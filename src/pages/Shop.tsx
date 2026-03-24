@@ -15,15 +15,10 @@ const Shop = () => {
   const searchParam = searchParams.get("search") || "";
   const [selectedCat, setSelectedCat] = useState(catParam);
   const [selectedSub, setSelectedSub] = useState(subParam);
+  const [resolvedAsSub, setResolvedAsSub] = useState(false);
   const [shortDescExpanded, setShortDescExpanded] = useState(false);
   const shortDescRef = useRef<HTMLDivElement>(null);
   const [needsTruncation, setNeedsTruncation] = useState(false);
-
-  useEffect(() => {
-    setSelectedCat(catParam);
-    setSelectedSub(subParam);
-    setShortDescExpanded(false);
-  }, [catParam, subParam]);
 
   const [sortBy, setSortBy] = useState("newest");
 
@@ -65,6 +60,29 @@ const Shop = () => {
       return data as any[];
     },
   });
+
+  // Resolve catSlug: if it matches a subcategory instead of a category, auto-select parent cat + sub
+  useEffect(() => {
+    if (catParam && !subParam && categories.length > 0 && subcategories.length > 0) {
+      const matchedCat = categories.find((c: any) => c.slug === catParam);
+      if (!matchedCat) {
+        const matchedSub = subcategories.find((s: any) => s.slug === catParam);
+        if (matchedSub) {
+          const parentCat = categories.find((c: any) => c.id === matchedSub.category_id);
+          if (parentCat) {
+            setSelectedCat(parentCat.slug);
+            setSelectedSub(matchedSub.slug);
+            setResolvedAsSub(true);
+            return;
+          }
+        }
+      }
+    }
+    setSelectedCat(catParam);
+    setSelectedSub(subParam);
+    setResolvedAsSub(false);
+    setShortDescExpanded(false);
+  }, [catParam, subParam, categories, subcategories]);
 
   const activeCategory = useMemo(() => {
     if (!selectedCat) return null;
