@@ -57,8 +57,10 @@ const BouquetBuilder = () => {
 
   const selectedSizeItem = FIXED_SIZES.find((s) => s.id === selectedSize);
 
+  const MAKING_CHARGE = 420;
+
   const totalPrice = useMemo(() => {
-    let total = 0;
+    let total = MAKING_CHARGE;
     selectedFlowersList.forEach((f) => { total += f.price * f.qty; });
     return total;
   }, [selectedFlowersList]);
@@ -320,6 +322,13 @@ const BouquetBuilder = () => {
                     <span className="text-muted-foreground">{formatPrice(f.price * f.qty)}</span>
                   </div>
                 ))}
+              </div>
+
+              <div className="bg-card border border-border rounded-xl p-4">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-foreground font-medium">Bouquet Making Charge</span>
+                  <span className="text-muted-foreground">{formatPrice(MAKING_CHARGE)}</span>
+                </div>
               </div>
 
               {designPreviews.length > 0 && (
