@@ -57,8 +57,10 @@ const BouquetBuilder = () => {
 
   const selectedSizeItem = FIXED_SIZES.find((s) => s.id === selectedSize);
 
+  const MAKING_CHARGE = 420;
+
   const totalPrice = useMemo(() => {
-    let total = 0;
+    let total = MAKING_CHARGE;
     selectedFlowersList.forEach((f) => { total += f.price * f.qty; });
     return total;
   }, [selectedFlowersList]);
