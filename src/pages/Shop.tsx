@@ -95,23 +95,31 @@ const Shop = () => {
   }, [activeCategory, subcategories]);
 
   useEffect(() => {
+    setShortDescExpanded(false);
     setTimeout(() => {
       if (shortDescRef.current) {
         setNeedsTruncation(shortDescRef.current.scrollHeight > 72);
       }
     }, 100);
-  }, [activeCategory]);
+  }, [activeCategory, selectedSub]);
 
-  const activeCategoryName = activeCategory?.name || "All Products";
+  const activeSubcategory = useMemo(() => {
+    if (!selectedSub) return null;
+    return subcategories.find((s: any) => s.slug === selectedSub) || null;
+  }, [selectedSub, subcategories]);
+
+  // Use subcategory content if selected, otherwise category
+  const activeContent = activeSubcategory || activeCategory;
+  const activeCategoryName = activeSubcategory?.name || activeCategory?.name || "All Products";
   const { settings } = useSiteSettings();
 
   useEffect(() => {
     const siteName = settings.site_title || "Pikooly";
-    const catName = activeCategory?.name;
-    const seoTitle = (activeCategory as any)?.seo_title;
-    const metaDesc = activeCategory?.description || (activeCategory as any)?.short_description || "";
+    const contentName = (activeContent as any)?.name;
+    const seoTitle = (activeContent as any)?.seo_title;
+    const metaDesc = (activeContent as any)?.description || (activeContent as any)?.short_description || "";
 
-    document.title = seoTitle || (catName ? `${catName} - ${siteName}` : `Shop - ${siteName}`);
+    document.title = seoTitle || (contentName ? `${contentName} - ${siteName}` : `Shop - ${siteName}`);
 
     let metaTag = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
     if (!metaTag) {
@@ -119,12 +127,12 @@ const Shop = () => {
       metaTag.name = "description";
       document.head.appendChild(metaTag);
     }
-    metaTag.content = metaDesc || `Shop ${catName || "all products"} at ${siteName}`;
+    metaTag.content = metaDesc || `Shop ${contentName || "all products"} at ${siteName}`;
 
     const existingSchema = document.getElementById("faq-schema-jsonld");
     if (existingSchema) existingSchema.remove();
 
-    const faqs = (activeCategory as any)?.faq;
+    const faqs = (activeContent as any)?.faq;
     if (Array.isArray(faqs) && faqs.length > 0) {
       const schema = {
         "@context": "https://schema.org",
@@ -147,7 +155,7 @@ const Shop = () => {
       const schemaTag = document.getElementById("faq-schema-jsonld");
       if (schemaTag) schemaTag.remove();
     };
-  }, [activeCategory, settings]);
+  }, [activeContent, settings]);
 
   const filtered = useMemo(() => {
     let list = selectedCat
@@ -200,12 +208,12 @@ const Shop = () => {
         </select>
       </div>
 
-      {activeCategory && (activeCategory as any).short_description && (
+      {activeContent && (activeContent as any).short_description && (
         <div className="mb-6 max-w-none">
           <div
             ref={shortDescRef}
             className={`prose max-w-none dark:prose-invert prose-headings:text-foreground prose-headings:font-display prose-headings:text-base prose-headings:md:text-xl prose-headings:lg:text-2xl prose-headings:mb-1 prose-p:text-muted-foreground prose-p:text-xs prose-p:md:text-sm prose-p:leading-relaxed prose-p:mt-0 overflow-hidden transition-all duration-300 ${!shortDescExpanded ? "[&_p]:line-clamp-3" : ""}`}
-            dangerouslySetInnerHTML={{ __html: (activeCategory as any).short_description }}
+            dangerouslySetInnerHTML={{ __html: (activeContent as any).short_description }}
           />
           <button
             onClick={() => setShortDescExpanded(!shortDescExpanded)}
@@ -270,12 +278,12 @@ const Shop = () => {
         </div>
       )}
 
-      {activeCategory && (activeCategory as any).long_description && (
-        <div className="mt-10 prose prose-sm dark:prose-invert max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: (activeCategory as any).long_description }} />
+      {activeContent && (activeContent as any).long_description && (
+        <div className="mt-10 prose prose-sm dark:prose-invert max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: (activeContent as any).long_description }} />
       )}
 
-      {activeCategory && (() => {
-        const faqs = (activeCategory as any).faq;
+      {activeContent && (() => {
+        const faqs = (activeContent as any).faq;
         if (!Array.isArray(faqs) || faqs.length === 0) return null;
         return (
           <div className="mt-14 mb-8">
@@ -283,7 +291,7 @@ const Shop = () => {
               <h2 className="text-xl md:text-2xl font-display font-semibold text-foreground">
                 Frequently Asked Questions
               </h2>
-              <p className="text-sm text-muted-foreground mt-1">Find answers to common questions about {activeCategory?.name}</p>
+              <p className="text-sm text-muted-foreground mt-1">Find answers to common questions about {(activeContent as any)?.name}</p>
             </div>
             <div className="max-w-3xl mx-auto">
               <Accordion type="single" collapsible className="w-full space-y-3">
