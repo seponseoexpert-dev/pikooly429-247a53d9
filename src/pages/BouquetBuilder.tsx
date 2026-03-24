@@ -59,11 +59,13 @@ const BouquetBuilder = () => {
 
   const MAKING_CHARGE = 420;
 
-  const totalPrice = useMemo(() => {
-    let total = MAKING_CHARGE;
+  const flowersPrice = useMemo(() => {
+    let total = 0;
     selectedFlowersList.forEach((f) => { total += f.price * f.qty; });
     return total;
   }, [selectedFlowersList]);
+
+  const totalPrice = flowersPrice + MAKING_CHARGE;
 
   const toggleFlower = (id: string) => {
     setSelectedFlowers((prev) => {
