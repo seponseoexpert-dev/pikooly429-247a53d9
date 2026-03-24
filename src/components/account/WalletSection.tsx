@@ -13,7 +13,8 @@ const TOPUP_AMOUNTS = [100, 200, 500, 1000, 2000, 5000];
 
 const WalletSection = ({ userId }: WalletSectionProps) => {
   const queryClient = useQueryClient();
-  const { formatCurrency, symbol } = useCurrency();
+  const { formatPrice, selectedCurrency } = useMultiCurrency();
+  const symbol = selectedCurrency?.symbol || "৳";
   const [showTopup, setShowTopup] = useState(false);
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
