@@ -82,7 +82,7 @@ const AdminCategories = () => {
       faq: JSON.stringify((cat as any).faq || []),
       image_url: cat.image_url || "", is_active: cat.is_active, show_in_homepage: (cat as any).show_in_homepage !== false, show_in_header: (cat as any).show_in_header !== false, display_order: cat.display_order,
       seo_title: (cat as any).seo_title || "",
-      category_type: (cat as any).category_type || "category",
+      category_type: (cat as any).category_type || "",
       allow_custom_image: (cat as any).allow_custom_image || false,
     });
     setImageFile(null);
