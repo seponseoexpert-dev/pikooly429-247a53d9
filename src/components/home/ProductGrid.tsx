@@ -133,7 +133,7 @@ const ProductGrid = memo(() => {
 
       {tailoredTabs.length > 0 && (
         <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-3 mb-4 md:mb-6 scrollbar-hide justify-start sm:justify-center px-1">
-          {tailoredTabs.map(({ label, slug, icon: Icon }) => (
+          {tailoredTabs.map(({ label, slug, imageUrl, icon: Icon }) => (
             <button
               key={slug}
               onClick={() => setActiveTailoredSlug(slug)}
@@ -143,7 +143,17 @@ const ProductGrid = memo(() => {
                   : "bg-card border border-border text-muted-foreground hover:border-primary/30"
               }`}
             >
-              <Icon size={14} className="sm:w-4 sm:h-4" />
+              {imageUrl ? (
+                <img
+                  src={imageUrl}
+                  alt={label}
+                  className="w-4 h-4 sm:w-5 sm:h-5 rounded-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <Icon size={14} className="sm:w-4 sm:h-4" />
+              )}
               {label}
             </button>
           ))}
