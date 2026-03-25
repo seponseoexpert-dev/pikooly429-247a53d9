@@ -40,16 +40,24 @@ const ProductGrid = memo(() => {
     staleTime: 5 * 60 * 1000,
   });
 
-  const tailoredTabs = useMemo(
-    () =>
-      occasionCategories.map((c) => ({
-        label: c.name,
-        slug: c.slug,
-        imageUrl: c.image_url,
-        icon: Gift,
-      })),
-    [occasionCategories]
-  );
+  const tailoredTabs = useMemo(() => {
+    const getFallbackImage = (slug: string) => {
+      const matchedProduct = products.find((p: any) => {
+        const inPrimaryCategory = p.categories?.slug === slug;
+        const inMappedCategory = p.product_categories?.some((pc: any) => pc.categories?.slug === slug);
+        return (inPrimaryCategory || inMappedCategory) && (p.image_url || p.images?.[0]);
+      });
+
+      return matchedProduct?.image_url || matchedProduct?.images?.[0] || null;
+    };
+
+    return occasionCategories.map((c) => ({
+      label: c.name,
+      slug: c.slug,
+      imageUrl: c.image_url || getFallbackImage(c.slug),
+      icon: Gift,
+    }));
+  }, [occasionCategories, products]);
 
   useEffect(() => {
     if (!tailoredTabs.length) {
