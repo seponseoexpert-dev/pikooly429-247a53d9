@@ -390,59 +390,118 @@ const AdminProducts = () => {
         </Select>
       </div>
 
-      <Card>
+      {/* Mobile Card Layout */}
+      <div className="sm:hidden space-y-3">
+        {loading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i} className="animate-pulse">
+              <CardContent className="p-3 flex items-center gap-3">
+                <div className="h-14 w-14 bg-muted rounded-xl shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-muted rounded w-3/4" />
+                  <div className="h-3 bg-muted rounded w-1/2" />
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        ) : filtered.length === 0 ? (
+          <Card><CardContent className="p-8 text-center text-muted-foreground">No products found.</CardContent></Card>
+        ) : (
+          filtered.map((p) => (
+            <Card key={p.id} className="overflow-hidden hover:shadow-md transition-shadow">
+              <CardContent className="p-0">
+                <div className="flex items-start gap-3 p-3">
+                  {p.image_url ? (
+                    <img src={p.image_url} alt="" className="h-16 w-16 object-cover rounded-xl shrink-0 border border-border" />
+                  ) : (
+                    <div className="h-16 w-16 bg-muted rounded-xl shrink-0 flex items-center justify-center">
+                      <Package className="h-6 w-6 text-muted-foreground/40" />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <h3 className="font-semibold text-sm leading-tight line-clamp-2">{p.name}</h3>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="font-bold text-sm text-primary">{formatCurrency(p.price)}</span>
+                          {p.original_price && p.original_price > p.price && (
+                            <span className="text-xs text-muted-foreground line-through">{formatCurrency(p.original_price)}</span>
+                          )}
+                        </div>
+                      </div>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full whitespace-nowrap shrink-0 ${p.is_active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                        {p.is_active ? "Active" : "Inactive"}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between mt-2">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span>Stock: {p.stock}</span>
+                        {p.is_featured && <span className="bg-accent/10 text-accent px-1.5 py-0.5 rounded text-[10px]">Featured</span>}
+                      </div>
+                      <div className="flex items-center gap-0">
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(p)}><Pencil className="h-3.5 w-3.5" /></Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(p.id)}><Trash2 className="h-3.5 w-3.5 text-destructive" /></Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
+
+      {/* Desktop Table Layout */}
+      <Card className="hidden sm:block">
         <CardContent className="p-0">
           {loading ? (
             <div className="divide-y divide-border">{Array.from({ length: 6 }).map((_, i) => <div key={i} className="flex items-center gap-4 p-4"><div className="h-12 w-12 bg-muted rounded-lg animate-pulse" /><div className="h-4 flex-1 bg-muted rounded animate-pulse" /><div className="h-4 w-16 bg-muted rounded animate-pulse" /><div className="h-5 w-14 bg-muted rounded-full animate-pulse" /><div className="h-8 w-8 bg-muted rounded animate-pulse" /></div>)}</div>
           ) : filtered.length === 0 ? (
             <p className="p-6 text-muted-foreground text-center">No products found.</p>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="hidden sm:table-cell">Image</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Price</TableHead>
-                    <TableHead className="hidden md:table-cell">Stock</TableHead>
-                    <TableHead className="hidden lg:table-cell">Categories</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Image</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Price</TableHead>
+                  <TableHead className="hidden md:table-cell">Stock</TableHead>
+                  <TableHead className="hidden lg:table-cell">Categories</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filtered.map((p) => (
+                  <TableRow key={p.id}>
+                    <TableCell>
+                      {p.image_url ? <img src={p.image_url} alt="" className="h-10 w-10 object-cover rounded" /> : <div className="h-10 w-10 bg-muted rounded" />}
+                    </TableCell>
+                    <TableCell>
+                      <div className="font-medium text-sm">{p.name}</div>
+                      {p.is_featured && <span className="text-[10px] bg-accent/10 text-accent px-1.5 py-0.5 rounded">Featured</span>}
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-medium text-sm">{formatCurrency(p.price)}</span>
+                      {p.original_price && <span className="text-xs text-muted-foreground line-through ml-1">{formatCurrency(p.original_price)}</span>}
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell">{p.stock}</TableCell>
+                    <TableCell className="hidden lg:table-cell text-sm max-w-[150px] truncate">{getCategoryNames(p.id, p.category_id)}</TableCell>
+                    <TableCell>
+                      <span className={`text-xs px-2 py-1 rounded-full ${p.is_active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                        {p.is_active ? "Active" : "Inactive"}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-0">
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(p)}><Pencil className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(p.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                      </div>
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filtered.map((p) => (
-                    <TableRow key={p.id}>
-                      <TableCell className="hidden sm:table-cell">
-                        {p.image_url ? <img src={p.image_url} alt="" className="h-10 w-10 object-cover rounded" /> : <div className="h-10 w-10 bg-muted rounded" />}
-                      </TableCell>
-                      <TableCell>
-                        <div className="font-medium text-sm">{p.name}</div>
-                        {p.is_featured && <span className="text-[10px] bg-accent/10 text-accent px-1.5 py-0.5 rounded">Featured</span>}
-                        <span className="block text-xs text-muted-foreground sm:hidden">Stock: {p.stock}</span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="font-medium text-sm">{formatCurrency(p.price)}</span>
-                        {p.original_price && <span className="text-xs text-muted-foreground line-through block sm:inline sm:ml-1">{formatCurrency(p.original_price)}</span>}
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell">{p.stock}</TableCell>
-                      <TableCell className="hidden lg:table-cell text-sm max-w-[150px] truncate">{getCategoryNames(p.id, p.category_id)}</TableCell>
-                      <TableCell>
-                        <span className={`text-xs px-2 py-1 rounded-full ${p.is_active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
-                          {p.is_active ? "Active" : "Inactive"}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-0">
-                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(p)}><Pencil className="h-4 w-4" /></Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(p.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                ))}
+              </TableBody>
+            </Table>
           )}
         </CardContent>
       </Card>
