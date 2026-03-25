@@ -35,7 +35,7 @@ const AdminMigrate = () => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-display font-bold">WordPress Migration</h2>
+      <h2 className="text-xl sm:text-2xl font-display font-bold">WordPress Migration</h2>
       <p className="text-muted-foreground">
         pikooly.com.bd থেকে প্রোডাক্ট, ব্লগ পোস্ট এবং ক্যাটেগরি ইম্পোর্ট করুন। 
         ডুপ্লিকেট slug থাকলে সেগুলো স্কিপ হবে।

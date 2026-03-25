@@ -180,7 +180,7 @@ const AdminShipping = () => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-display font-bold">Shipping Districts</h2>
+          <h2 className="text-xl sm:text-2xl font-display font-bold">Shipping Districts</h2>
           <p className="text-muted-foreground text-sm">Manage delivery areas, fees & category-specific pricing</p>
         </div>
       </div>

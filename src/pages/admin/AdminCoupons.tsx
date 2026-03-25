@@ -122,7 +122,7 @@ const AdminCoupons = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-display font-bold">Coupon Management</h2>
+          <h2 className="text-xl sm:text-2xl font-display font-bold">Coupon Management</h2>
           <p className="text-muted-foreground text-sm">Manage promo codes & coupons</p>
         </div>
         <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { setForm(empty); setEditId(null); } }}>

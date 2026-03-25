@@ -228,7 +228,6 @@ const AdminBouquet = () => {
           ))}
         </Tabs>
       </div>
-    </AdminLayout>
   );
 };
 
