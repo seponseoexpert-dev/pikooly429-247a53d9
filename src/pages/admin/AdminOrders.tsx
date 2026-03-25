@@ -219,7 +219,7 @@ const AdminOrders = () => {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-display font-bold">Orders</h2>
+        <h2 className="text-xl sm:text-2xl font-display font-bold">Orders</h2>
         <Badge variant="outline" className="text-sm">{orders.length} total</Badge>
       </div>
 

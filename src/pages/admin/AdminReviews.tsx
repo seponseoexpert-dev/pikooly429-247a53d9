@@ -89,7 +89,7 @@ const AdminReviews = () => {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-display font-bold">Reviews</h2>
+        <h2 className="text-xl sm:text-2xl font-display font-bold">Reviews</h2>
         <div className="flex items-center gap-3">
           <Badge variant="outline">{reviews.length} total</Badge>
           <Select value={filter} onValueChange={setFilter}>

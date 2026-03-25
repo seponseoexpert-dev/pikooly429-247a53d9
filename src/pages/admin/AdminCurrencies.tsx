@@ -92,7 +92,7 @@ const AdminCurrencies = () => {
     <div className="max-w-4xl">
         <div className="flex items-center gap-3 mb-6">
           <Coins className="h-6 w-6 text-primary" />
-          <h2 className="text-2xl font-display font-bold">Currencies</h2>
+          <h2 className="text-xl sm:text-2xl font-display font-bold">Currencies</h2>
         </div>
         <p className="text-sm text-muted-foreground mb-6">
           Manage currencies and exchange rates. The default currency is your base price currency (BDT). 

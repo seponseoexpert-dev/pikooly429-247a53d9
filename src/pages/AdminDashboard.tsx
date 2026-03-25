@@ -116,18 +116,18 @@ const AdminDashboard = () => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-display font-bold">Dashboard</h2>
+      <h2 className="text-xl sm:text-2xl font-display font-bold">Dashboard</h2>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
         {summaryCards.map((card) => (
           <Card key={card.label}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground">{card.label}</CardTitle>
-              <card.icon className={`h-4 w-4 ${card.color}`} />
+            <CardHeader className="flex flex-row items-center justify-between pb-1 sm:pb-2 p-3 sm:p-6">
+              <CardTitle className="text-[10px] sm:text-xs font-medium text-muted-foreground">{card.label}</CardTitle>
+              <card.icon className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${card.color}`} />
             </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">{loading ? "..." : card.value}</p>
+            <CardContent className="p-3 pt-0 sm:p-6 sm:pt-0">
+              <p className="text-lg sm:text-2xl font-bold truncate">{loading ? "..." : card.value}</p>
             </CardContent>
           </Card>
         ))}
