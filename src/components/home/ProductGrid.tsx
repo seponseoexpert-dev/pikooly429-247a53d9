@@ -29,7 +29,7 @@ const ProductGrid = memo(() => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("categories")
-        .select("id, name, slug")
+        .select("id, name, slug, image_url")
         .eq("is_active", true)
         .eq("show_in_homepage", true)
         .eq("category_type", "tailored")
@@ -45,6 +45,7 @@ const ProductGrid = memo(() => {
       occasionCategories.map((c) => ({
         label: c.name,
         slug: c.slug,
+        imageUrl: c.image_url,
         icon: Gift,
       })),
     [occasionCategories]
