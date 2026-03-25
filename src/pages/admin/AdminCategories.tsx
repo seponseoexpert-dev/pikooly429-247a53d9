@@ -276,18 +276,19 @@ const AdminCategories = () => {
                 <Label>Active</Label>
               </div>
               <div className="space-y-2">
-                <Label>Category Type *</Label>
+                <Label>Category Type</Label>
                 <select
                   value={form.category_type}
                   onChange={(e) => setForm({ ...form, category_type: e.target.value })}
                   className="w-full border border-input rounded-md px-3 py-2 text-sm bg-background"
                 >
+                  <option value="">— সিলেক্ট করুন (অপশনাল) —</option>
                   <option value="category">Category (Shop by Category)</option>
                   <option value="occasion">Occasion (All Gifts Page)</option>
                   <option value="tailored">Tailored For Your Occasions (Homepage)</option>
                 </select>
                 <p className="text-xs text-muted-foreground">
-                  "Category" = Shop by Category সেকশন। "Occasion" = All Gifts পেজে। "Tailored" = হোমপেজের "Tailored For Your Occasions" সেকশনে ট্যাব হিসেবে দেখাবে।
+                  সিলেক্ট না করলে কোনো সেকশনে দেখাবে না। "Category" = Shop by Category। "Occasion" = All Gifts পেজে। "Tailored" = হোমপেজের ট্যাব।
                 </p>
               </div>
               <div className="flex items-center gap-2">
