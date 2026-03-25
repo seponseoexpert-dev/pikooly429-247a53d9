@@ -116,7 +116,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-display font-bold">Dashboard</h2>
+      <h2 className="text-xl sm:text-2xl font-display font-bold">Dashboard</h2>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
