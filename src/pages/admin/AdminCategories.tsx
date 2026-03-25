@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, GripVertical, PlusCircle, MinusCircle, ChevronDown, ChevronRight } from "lucide-react";
+import { Plus, Pencil, Trash2, GripVertical, PlusCircle, MinusCircle, ChevronDown, ChevronRight, Tag } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 
@@ -442,23 +442,114 @@ const AdminCategories = () => {
         </DialogContent>
       </Dialog>
 
-      <Card>
+      {/* Mobile Card Layout */}
+      <div className="sm:hidden space-y-3">
+        {loading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i} className="animate-pulse">
+              <CardContent className="p-3 flex items-center gap-3">
+                <div className="h-12 w-12 bg-muted rounded-xl shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-muted rounded w-2/3" />
+                  <div className="h-3 bg-muted rounded w-1/3" />
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        ) : categories.length === 0 ? (
+          <Card><CardContent className="p-8 text-center text-muted-foreground text-sm">No categories yet.</CardContent></Card>
+        ) : (
+          categories.map((cat) => {
+            const subs = getSubsForCat(cat.id);
+            const isExpanded = expandedCats.has(cat.id);
+            return (
+              <Card key={cat.id} className="overflow-hidden">
+                <CardContent className="p-0">
+                  <div className="flex items-center gap-3 p-3">
+                    {cat.image_url ? (
+                      <img src={cat.image_url} alt="" className="h-12 w-12 object-cover rounded-xl shrink-0 border border-border" />
+                    ) : (
+                      <div className="h-12 w-12 bg-muted rounded-xl shrink-0 flex items-center justify-center">
+                        <Tag className="h-5 w-5 text-muted-foreground/40" />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        {subs.length > 0 && (
+                          <button onClick={() => toggleExpand(cat.id)} className="p-0.5 hover:bg-muted rounded shrink-0">
+                            {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                          </button>
+                        )}
+                        <h3 className="font-semibold text-sm truncate">{cat.name}</h3>
+                      </div>
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full ${cat.is_active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                          {cat.is_active ? "Active" : "Inactive"}
+                        </span>
+                        {subs.length > 0 && (
+                          <span className="text-[10px] text-muted-foreground">{subs.length} subs</span>
+                        )}
+                        <span className="text-[10px] text-muted-foreground capitalize">{(cat as any).category_type || "category"}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-0 shrink-0">
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(cat)}><Pencil className="h-3.5 w-3.5" /></Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(cat.id)}><Trash2 className="h-3.5 w-3.5 text-destructive" /></Button>
+                    </div>
+                  </div>
+                  {/* Expanded subcategories */}
+                  {isExpanded && subs.length > 0 && (
+                    <div className="border-t border-border bg-muted/20 divide-y divide-border">
+                      {subs.map((sub) => (
+                        <div key={sub.id} className="flex items-center gap-3 px-3 py-2.5 pl-8">
+                          {sub.image_url ? (
+                            <img src={sub.image_url} alt="" className="h-8 w-8 object-cover rounded-lg shrink-0" />
+                          ) : (
+                            <div className="h-8 w-8 bg-muted rounded-lg shrink-0" />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium truncate">↳ {sub.name}</p>
+                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${sub.is_active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                              {sub.is_active ? "Active" : "Inactive"}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-0 shrink-0">
+                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEditSub(sub)}><Pencil className="h-3 w-3" /></Button>
+                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleDeleteSub(sub.id)}><Trash2 className="h-3 w-3 text-destructive" /></Button>
+                          </div>
+                        </div>
+                      ))}
+                      <div className="px-3 py-2">
+                        <Button variant="ghost" size="sm" className="text-xs w-full" onClick={() => openCreateSub(cat.id)}>
+                          <PlusCircle className="h-3 w-3 mr-1" /> Add Subcategory
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop Table Layout */}
+      <Card className="hidden sm:block">
         <CardContent className="p-0">
           {loading ? (
             <div className="divide-y divide-border">{Array.from({ length: 5 }).map((_, i) => <div key={i} className="flex items-center gap-4 p-4"><div className="h-10 w-10 bg-muted rounded-lg animate-pulse" /><div className="h-4 flex-1 bg-muted rounded animate-pulse" /><div className="h-5 w-16 bg-muted rounded-full animate-pulse" /><div className="h-8 w-8 bg-muted rounded animate-pulse" /></div>)}</div>
           ) : categories.length === 0 ? (
             <p className="p-6 text-muted-foreground text-center">No categories yet. Add your first category!</p>
           ) : (
-            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-12 hidden sm:table-cell">#</TableHead>
-                  <TableHead className="hidden sm:table-cell">Image</TableHead>
+                  <TableHead className="w-12">#</TableHead>
+                  <TableHead>Image</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead className="hidden md:table-cell">Type</TableHead>
                   <TableHead className="hidden lg:table-cell">Slug</TableHead>
-                  <TableHead className="hidden sm:table-cell">Subs</TableHead>
+                  <TableHead>Subs</TableHead>
                   <TableHead className="hidden md:table-cell">Homepage</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -471,8 +562,8 @@ const AdminCategories = () => {
                   return (
                     <>
                       <TableRow key={cat.id}>
-                        <TableCell className="hidden sm:table-cell"><GripVertical className="h-4 w-4 text-muted-foreground" /></TableCell>
-                        <TableCell className="hidden sm:table-cell">
+                        <TableCell><GripVertical className="h-4 w-4 text-muted-foreground" /></TableCell>
+                        <TableCell>
                           {cat.image_url ? <img src={cat.image_url} alt="" className="h-10 w-10 object-cover rounded" /> : <div className="h-10 w-10 bg-muted rounded" />}
                         </TableCell>
                         <TableCell>
@@ -482,15 +573,12 @@ const AdminCategories = () => {
                                 {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                               </button>
                             )}
-                            <div>
-                              <span className="font-medium text-sm">{cat.name}</span>
-                              <span className="block text-xs text-muted-foreground sm:hidden">{subs.length > 0 ? `${subs.length} subs` : ""}</span>
-                            </div>
+                            <span className="font-medium text-sm">{cat.name}</span>
                           </div>
                         </TableCell>
                         <TableCell className="hidden md:table-cell text-muted-foreground text-sm capitalize">{(cat as any).category_type || "category"}</TableCell>
                         <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">{cat.slug}</TableCell>
-                        <TableCell className="hidden sm:table-cell">
+                        <TableCell>
                           <Button variant="ghost" size="sm" className="text-xs" onClick={() => openCreateSub(cat.id)}>
                             <PlusCircle className="h-3 w-3 mr-1" />{subs.length > 0 ? `${subs.length} subs` : "Add sub"}
                           </Button>
@@ -514,14 +602,14 @@ const AdminCategories = () => {
                       </TableRow>
                       {isExpanded && subs.map((sub) => (
                         <TableRow key={sub.id} className="bg-muted/20">
-                          <TableCell className="hidden sm:table-cell"></TableCell>
-                          <TableCell className="hidden sm:table-cell">
+                          <TableCell></TableCell>
+                          <TableCell>
                             {sub.image_url ? <img src={sub.image_url} alt="" className="h-8 w-8 object-cover rounded" /> : <div className="h-8 w-8 bg-muted rounded" />}
                           </TableCell>
-                          <TableCell className="text-sm"><span className="pl-2 sm:pl-8">↳ {sub.name}</span></TableCell>
+                          <TableCell className="text-sm"><span className="pl-8">↳ {sub.name}</span></TableCell>
                           <TableCell className="hidden md:table-cell text-muted-foreground text-xs">{sub.slug}</TableCell>
                           <TableCell className="hidden lg:table-cell"></TableCell>
-                          <TableCell className="hidden sm:table-cell"></TableCell>
+                          <TableCell></TableCell>
                           <TableCell className="hidden md:table-cell"></TableCell>
                           <TableCell>
                             <span className={`text-xs px-2 py-1 rounded-full ${sub.is_active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
@@ -541,7 +629,6 @@ const AdminCategories = () => {
                 })}
               </TableBody>
             </Table>
-            </div>
           )}
         </CardContent>
       </Card>
