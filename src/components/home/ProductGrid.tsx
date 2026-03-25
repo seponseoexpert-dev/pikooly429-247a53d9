@@ -29,7 +29,7 @@ const ProductGrid = memo(() => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("categories")
-        .select("id, name, slug")
+        .select("id, name, slug, image_url")
         .eq("is_active", true)
         .eq("show_in_homepage", true)
         .eq("category_type", "tailored")
@@ -40,15 +40,24 @@ const ProductGrid = memo(() => {
     staleTime: 5 * 60 * 1000,
   });
 
-  const tailoredTabs = useMemo(
-    () =>
-      occasionCategories.map((c) => ({
-        label: c.name,
-        slug: c.slug,
-        icon: Gift,
-      })),
-    [occasionCategories]
-  );
+  const tailoredTabs = useMemo(() => {
+    const getFallbackImage = (slug: string) => {
+      const matchedProduct = products.find((p: any) => {
+        const inPrimaryCategory = p.categories?.slug === slug;
+        const inMappedCategory = p.product_categories?.some((pc: any) => pc.categories?.slug === slug);
+        return (inPrimaryCategory || inMappedCategory) && (p.image_url || p.images?.[0]);
+      });
+
+      return matchedProduct?.image_url || matchedProduct?.images?.[0] || null;
+    };
+
+    return occasionCategories.map((c) => ({
+      label: c.name,
+      slug: c.slug,
+      imageUrl: c.image_url || getFallbackImage(c.slug),
+      icon: Gift,
+    }));
+  }, [occasionCategories, products]);
 
   useEffect(() => {
     if (!tailoredTabs.length) {
@@ -132,7 +141,7 @@ const ProductGrid = memo(() => {
 
       {tailoredTabs.length > 0 && (
         <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-3 mb-4 md:mb-6 scrollbar-hide justify-start sm:justify-center px-1">
-          {tailoredTabs.map(({ label, slug, icon: Icon }) => (
+          {tailoredTabs.map(({ label, slug, imageUrl, icon: Icon }) => (
             <button
               key={slug}
               onClick={() => setActiveTailoredSlug(slug)}
@@ -142,7 +151,17 @@ const ProductGrid = memo(() => {
                   : "bg-card border border-border text-muted-foreground hover:border-primary/30"
               }`}
             >
-              <Icon size={14} className="sm:w-4 sm:h-4" />
+              {imageUrl ? (
+                <img
+                  src={imageUrl}
+                  alt={label}
+                  className="w-4 h-4 sm:w-5 sm:h-5 rounded-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <Icon size={14} className="sm:w-4 sm:h-4" />
+              )}
               {label}
             </button>
           ))}
