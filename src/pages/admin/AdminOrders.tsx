@@ -238,7 +238,56 @@ const AdminOrders = () => {
         </Select>
       </div>
 
-      <Card>
+      {/* Mobile Card Layout */}
+      <div className="sm:hidden space-y-3">
+        {loading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i} className="animate-pulse">
+              <CardContent className="p-3 space-y-2">
+                <div className="h-4 bg-muted rounded w-1/2" />
+                <div className="h-3 bg-muted rounded w-3/4" />
+                <div className="h-3 bg-muted rounded w-1/3" />
+              </CardContent>
+            </Card>
+          ))
+        ) : filtered.length === 0 ? (
+          <Card>
+            <CardContent className="p-8 text-center">
+              <Package className="h-10 w-10 mx-auto text-muted-foreground/40 mb-2" />
+              <p className="text-muted-foreground text-sm">No orders found.</p>
+            </CardContent>
+          </Card>
+        ) : (
+          filtered.map((order) => (
+            <Card key={order.id} className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer" onClick={() => viewOrder(order)}>
+              <CardContent className="p-3.5">
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <div className="min-w-0">
+                    <p className="font-mono text-xs text-muted-foreground">{order.order_number}</p>
+                    <h3 className="font-semibold text-sm mt-0.5">{order.customer_name}</h3>
+                    <p className="text-xs text-muted-foreground">{order.customer_phone}</p>
+                  </div>
+                  <p className="font-bold text-sm text-primary whitespace-nowrap">{formatCurrency(order.total)}</p>
+                </div>
+                <div className="flex items-center justify-between mt-2 pt-2 border-t border-border">
+                  <div className="flex items-center gap-1.5">
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full capitalize font-medium ${statusColors[order.status] || "bg-muted"}`}>
+                      {order.status}
+                    </span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full capitalize font-medium ${statusColors[order.payment_status] || "bg-muted"}`}>
+                      {order.payment_status}
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-muted-foreground">{new Date(order.created_at).toLocaleDateString("en-GB")}</span>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
+
+      {/* Desktop Table Layout */}
+      <Card className="hidden sm:block">
         <CardContent className="p-0">
           {loading ? (
             <div className="divide-y divide-border">{Array.from({ length: 6 }).map((_, i) => <div key={i} className="flex items-center gap-4 p-4"><div className="h-4 w-20 bg-muted rounded animate-pulse" /><div className="h-4 flex-1 bg-muted rounded animate-pulse" /><div className="h-5 w-16 bg-muted rounded-full animate-pulse" /><div className="h-4 w-20 bg-muted rounded animate-pulse" /></div>)}</div>
@@ -248,51 +297,49 @@ const AdminOrders = () => {
               <p className="text-muted-foreground">No orders found.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Order #</TableHead>
-                    <TableHead>Customer</TableHead>
-                    <TableHead>Total</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="hidden sm:table-cell">Payment</TableHead>
-                    <TableHead className="hidden md:table-cell">Date</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Order #</TableHead>
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Total</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Payment</TableHead>
+                  <TableHead className="hidden md:table-cell">Date</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filtered.map((order) => (
+                  <TableRow key={order.id}>
+                    <TableCell className="font-mono text-xs">{order.order_number}</TableCell>
+                    <TableCell>
+                      <div className="font-medium text-sm">{order.customer_name}</div>
+                      <div className="text-xs text-muted-foreground">{order.customer_phone}</div>
+                    </TableCell>
+                    <TableCell className="font-medium text-sm">{formatCurrency(order.total)}</TableCell>
+                    <TableCell>
+                      <span className={`text-xs px-2 py-1 rounded-full capitalize ${statusColors[order.status] || "bg-muted"}`}>
+                        {order.status}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span className={`text-xs px-2 py-1 rounded-full capitalize ${statusColors[order.payment_status] || "bg-muted"}`}>
+                        {order.payment_status}
+                      </span>
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
+                      {new Date(order.created_at).toLocaleDateString("en-GB")}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => viewOrder(order)}>
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filtered.map((order) => (
-                    <TableRow key={order.id}>
-                      <TableCell className="font-mono text-xs sm:text-sm">{order.order_number}</TableCell>
-                      <TableCell>
-                        <div className="font-medium text-sm">{order.customer_name}</div>
-                        <div className="text-xs text-muted-foreground">{order.customer_phone}</div>
-                      </TableCell>
-                      <TableCell className="font-medium text-sm">{formatCurrency(order.total)}</TableCell>
-                      <TableCell>
-                        <span className={`text-xs px-2 py-1 rounded-full capitalize ${statusColors[order.status] || "bg-muted"}`}>
-                          {order.status}
-                        </span>
-                      </TableCell>
-                      <TableCell className="hidden sm:table-cell">
-                        <span className={`text-xs px-2 py-1 rounded-full capitalize ${statusColors[order.payment_status] || "bg-muted"}`}>
-                          {order.payment_status}
-                        </span>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
-                        {new Date(order.created_at).toLocaleDateString("en-GB")}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => viewOrder(order)}>
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                ))}
+              </TableBody>
+            </Table>
           )}
         </CardContent>
       </Card>
