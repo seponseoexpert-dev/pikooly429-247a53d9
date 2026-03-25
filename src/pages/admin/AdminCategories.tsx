@@ -66,7 +66,7 @@ const AdminCategories = () => {
   const generateSlug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
   const resetForm = () => {
-    setForm({ name: "", slug: "", description: "", short_description: "", long_description: "", faq: "[]", image_url: "", is_active: true, show_in_homepage: true, show_in_header: true, display_order: 0, seo_title: "", category_type: "category", allow_custom_image: false });
+    setForm({ name: "", slug: "", description: "", short_description: "", long_description: "", faq: "[]", image_url: "", is_active: true, show_in_homepage: true, show_in_header: true, display_order: 0, seo_title: "", category_type: "", allow_custom_image: false });
     setEditing(null);
     setImageFile(null);
   };
