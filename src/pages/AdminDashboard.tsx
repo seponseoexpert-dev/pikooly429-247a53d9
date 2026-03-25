@@ -119,7 +119,7 @@ const AdminDashboard = () => {
       <h2 className="text-xl sm:text-2xl font-display font-bold">Dashboard</h2>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
         {summaryCards.map((card) => (
           <Card key={card.label}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
