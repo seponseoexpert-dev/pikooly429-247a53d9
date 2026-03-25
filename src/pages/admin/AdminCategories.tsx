@@ -112,7 +112,7 @@ const AdminCategories = () => {
     const slug = form.slug || generateSlug(form.name);
     let parsedFaq: any[] = [];
     try { parsedFaq = JSON.parse(form.faq); } catch { parsedFaq = []; }
-    const payload = { name: form.name.trim(), slug, description: form.description || null, short_description: form.short_description || null, long_description: form.long_description || null, faq: parsedFaq, image_url: imageUrl || null, is_active: form.is_active, show_in_homepage: form.show_in_homepage, show_in_header: form.show_in_header, display_order: form.display_order, seo_title: form.seo_title || null, category_type: form.category_type, allow_custom_image: form.allow_custom_image } as any;
+    const payload = { name: form.name.trim(), slug, description: form.description || null, short_description: form.short_description || null, long_description: form.long_description || null, faq: parsedFaq, image_url: imageUrl || null, is_active: form.is_active, show_in_homepage: form.show_in_homepage, show_in_header: form.show_in_header, display_order: form.display_order, seo_title: form.seo_title || null, category_type: form.category_type || "category", allow_custom_image: form.allow_custom_image } as any;
 
     if (editing) {
       const { error } = await supabase.from("categories").update(payload).eq("id", editing.id);
