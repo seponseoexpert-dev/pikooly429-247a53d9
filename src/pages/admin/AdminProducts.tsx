@@ -276,24 +276,34 @@ const AdminProducts = () => {
 
               {filteredSubs.length > 0 && (
                 <div className="space-y-2">
-                  <Label>Subcategory (optional)</Label>
-                  <div className="grid grid-cols-2 gap-2 border rounded-lg p-3 max-h-48 overflow-y-auto">
+                  <Label>Subcategory (select multiple)</Label>
+                  <div className="border rounded-lg p-3 max-h-60 overflow-y-auto space-y-1">
                     {filteredSubs.map((s) => (
-                      <label key={s.id} className="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-muted transition-colors">
-                        <Checkbox
-                          checked={form.subcategory_id === s.id}
-                          onCheckedChange={(checked) => setForm({ ...form, subcategory_id: checked ? s.id : "" })}
-                        />
+                      <label key={s.id} className="flex items-center justify-between cursor-pointer p-2.5 rounded hover:bg-muted transition-colors border-b border-border/40 last:border-0">
                         <span className="text-sm">{s.name}</span>
+                        <Checkbox
+                          checked={form.subcategory_ids.includes(s.id)}
+                          onCheckedChange={(checked) => {
+                            const ids = checked
+                              ? [...form.subcategory_ids, s.id]
+                              : form.subcategory_ids.filter(id => id !== s.id);
+                            setForm({ ...form, subcategory_ids: ids });
+                          }}
+                        />
                       </label>
                     ))}
                   </div>
-                  {form.subcategory_id && (
+                  {form.subcategory_ids.length > 0 && (
                     <div className="flex flex-wrap gap-1.5">
-                      <span className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2.5 py-1 rounded-full">
-                        {filteredSubs.find(s => s.id === form.subcategory_id)?.name}
-                        <button type="button" onClick={() => setForm({ ...form, subcategory_id: "" })} className="hover:text-destructive">×</button>
-                      </span>
+                      {form.subcategory_ids.map(sid => {
+                        const sub = subcategories.find(s => s.id === sid);
+                        return sub ? (
+                          <span key={sid} className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2.5 py-1 rounded-full">
+                            {sub.name}
+                            <button type="button" onClick={() => setForm({ ...form, subcategory_ids: form.subcategory_ids.filter(id => id !== sid) })} className="hover:text-destructive">×</button>
+                          </span>
+                        ) : null;
+                      })}
                     </div>
                   )}
                 </div>
