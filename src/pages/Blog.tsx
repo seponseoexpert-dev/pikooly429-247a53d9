@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BlogCardSkeleton } from "@/components/ui/skeletons";
+import SEOHead from "@/components/seo/SEOHead";
 
 const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
