@@ -55,7 +55,7 @@ const ContactUs = () => {
   const activeSocials = socialLinks.filter((s) => settings[s.key]);
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen pb-24 md:pb-10">
       <SEOHead
         title={`Contact Us — ${s("site_title", "Pikooly")}`}
         description={heroSubtitle}

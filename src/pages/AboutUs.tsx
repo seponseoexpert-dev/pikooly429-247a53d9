@@ -91,7 +91,7 @@ const AboutUs = () => {
   const contactWebsiteLabel = s("aboutpage_contact_website_label", "pikooly.com.bd");
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen pb-24 md:pb-10">
       <SEOHead
         title={`About Us — ${s("site_title", "Pikooly")}`}
         description={heroSubtitle}

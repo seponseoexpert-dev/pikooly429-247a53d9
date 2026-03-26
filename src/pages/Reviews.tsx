@@ -138,7 +138,7 @@ const Reviews = () => {
   const totalPages = Math.ceil(total / REVIEWS_PER_PAGE);
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen pb-24 md:pb-10">
       <SEOHead
         title="Customer Reviews — Pikooly"
         description="Read verified customer reviews and ratings for Pikooly products. See what our happy customers say about our flowers, gifts, and delivery."
