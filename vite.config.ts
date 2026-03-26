@@ -66,6 +66,7 @@ export default defineConfig(({ mode }) => ({
     target: "es2020",
     cssMinify: true,
     minify: "esbuild",
+    sourcemap: false,
     rollupOptions: {
       output: {
         manualChunks: {
@@ -83,6 +84,11 @@ export default defineConfig(({ mode }) => ({
             "@radix-ui/react-accordion",
             "@radix-ui/react-popover",
             "@radix-ui/react-dropdown-menu",
+          ],
+          "vendor-charts": ["recharts"],
+          "vendor-editor": [
+            "@tiptap/react",
+            "@tiptap/starter-kit",
           ],
         },
       },
