@@ -1,10 +1,11 @@
 import { useParams, Link } from "react-router-dom";
-import { Calendar, ArrowLeft, User } from "lucide-react";
+import { Calendar, ArrowLeft } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect } from "react";
+import { useMemo } from "react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import SEOHead from "@/components/seo/SEOHead";
 
 const BlogDetail = () => {
   const { slug } = useParams();
