@@ -80,15 +80,15 @@ const ProductGrid = memo(() => {
   const featured = products.filter((p: any) => p.is_featured);
   const displayFeatured = useMemo(() => {
     if (activeTrendingTab === "featured") {
-      return featured.length > 0 ? featured.slice(0, 5) : products.slice(0, 5);
+      return featured.length > 0 ? featured.slice(0, 10) : products.slice(0, 10);
     }
     if (activeTrendingTab === "new") {
-      return [...products].sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5);
+      return [...products].sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 10);
     }
     if (activeTrendingTab === "best") {
-      return [...products].sort((a: any, b: any) => (b.review_count || 0) - (a.review_count || 0)).slice(0, 5);
+      return [...products].sort((a: any, b: any) => (b.review_count || 0) - (a.review_count || 0)).slice(0, 10);
     }
-    return featured.length > 0 ? featured.slice(0, 5) : products.slice(0, 5);
+    return featured.length > 0 ? featured.slice(0, 10) : products.slice(0, 10);
   }, [products, featured, activeTrendingTab]);
 
   const filtered = activeTailoredSlug
