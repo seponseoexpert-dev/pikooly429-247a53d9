@@ -142,7 +142,7 @@ const AdminProducts = () => {
       name: form.name.trim(), slug, short_description: form.short_description || null, description: form.description || null,
       price: form.price, original_price: form.original_price || null,
       image_url: imageUrl || null, category_id: primaryCategoryId,
-      subcategory_id: form.subcategory_id || null,
+      subcategory_id: form.subcategory_ids.length > 0 ? form.subcategory_ids[0] : null,
       is_active: form.is_active, is_featured: form.is_featured, stock: form.stock, tags,
       specifications: specs.length > 0 ? specs : null,
       seo_title: form.seo_title.trim() || null, seo_description: form.seo_description.trim() || null,
