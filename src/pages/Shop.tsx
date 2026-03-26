@@ -27,7 +27,7 @@ const Shop = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("*, categories(name, slug), product_categories(category_id, categories(name, slug))")
+        .select("*, categories(name, slug), product_categories(category_id, categories(name, slug)), product_subcategories(subcategory_id)")
         .eq("is_active", true)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -215,7 +215,10 @@ const Shop = () => {
     if (selectedSub) {
       const sub = subcategories.find((s: any) => s.slug === selectedSub);
       if (sub) {
-        list = list.filter((p: any) => (p as any).subcategory_id === sub.id);
+        list = list.filter((p: any) => 
+          (p as any).subcategory_id === sub.id ||
+          (p as any).product_subcategories?.some((psc: any) => psc.subcategory_id === sub.id)
+        );
       }
     }
 

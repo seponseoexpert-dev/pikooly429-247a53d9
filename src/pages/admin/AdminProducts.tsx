@@ -43,24 +43,26 @@ const AdminProducts = () => {
 
   const defaultForm = {
     name: "", slug: "", short_description: "", description: "", price: 0, original_price: 0,
-    image_url: "", category_id: "", category_ids: [] as string[], subcategory_id: "", is_active: true, is_featured: false, stock: 0, tags: "",
+    image_url: "", category_id: "", category_ids: [] as string[], subcategory_ids: [] as string[], is_active: true, is_featured: false, stock: 0, tags: "",
     specifications: [] as Array<{ item: string; value: string }>,
     seo_title: "", seo_description: "",
   };
   const [form, setForm] = useState(defaultForm);
 
+  const [productSubcategoryMap, setProductSubcategoryMap] = useState<Record<string, string[]>>({});
+
   const fetchData = async () => {
-    const [prodRes, catRes, subRes, pcRes] = await Promise.all([
+    const [prodRes, catRes, subRes, pcRes, pscRes] = await Promise.all([
       supabase.from("products").select("*").order("created_at", { ascending: false }),
       supabase.from("categories").select("*").order("display_order"),
       supabase.from("subcategories").select("*").order("display_order"),
       supabase.from("product_categories").select("*"),
+      supabase.from("product_subcategories").select("*"),
     ]);
     if (prodRes.data) setProducts(prodRes.data);
     if (catRes.data) setCategories(catRes.data);
     if (subRes.data) setSubcategories(subRes.data as Subcategory[]);
     
-    // Build product -> category_ids map
     if (pcRes.data) {
       const map: Record<string, string[]> = {};
       pcRes.data.forEach((pc: any) => {
@@ -68,6 +70,14 @@ const AdminProducts = () => {
         map[pc.product_id].push(pc.category_id);
       });
       setProductCategoryMap(map);
+    }
+    if (pscRes.data) {
+      const map: Record<string, string[]> = {};
+      pscRes.data.forEach((psc: any) => {
+        if (!map[psc.product_id]) map[psc.product_id] = [];
+        map[psc.product_id].push(psc.subcategory_id);
+      });
+      setProductSubcategoryMap(map);
     }
     setLoading(false);
   };
@@ -82,12 +92,13 @@ const AdminProducts = () => {
     setEditing(p);
     const specs = (p.specifications as Array<{ item: string; value: string }>) || [];
     const catIds = productCategoryMap[p.id] || (p.category_id ? [p.category_id] : []);
+    const subIds = productSubcategoryMap[p.id] || ((p as any).subcategory_id ? [(p as any).subcategory_id] : []);
     setForm({
       name: p.name, slug: p.slug, short_description: (p as any).short_description || "", description: p.description || "",
       price: p.price, original_price: p.original_price || 0,
       image_url: p.image_url || "", category_id: p.category_id || "",
       category_ids: catIds,
-      subcategory_id: (p as any).subcategory_id || "",
+      subcategory_ids: subIds,
       is_active: p.is_active, is_featured: p.is_featured, stock: p.stock,
       tags: (p.tags || []).join(", "),
       specifications: specs,
@@ -131,7 +142,7 @@ const AdminProducts = () => {
       name: form.name.trim(), slug, short_description: form.short_description || null, description: form.description || null,
       price: form.price, original_price: form.original_price || null,
       image_url: imageUrl || null, category_id: primaryCategoryId,
-      subcategory_id: form.subcategory_id || null,
+      subcategory_id: form.subcategory_ids.length > 0 ? form.subcategory_ids[0] : null,
       is_active: form.is_active, is_featured: form.is_featured, stock: form.stock, tags,
       specifications: specs.length > 0 ? specs : null,
       seo_title: form.seo_title.trim() || null, seo_description: form.seo_description.trim() || null,
@@ -151,12 +162,17 @@ const AdminProducts = () => {
       toast({ title: "Product created" });
     }
 
-    // Sync product_categories junction table
+    // Sync junction tables
     if (productId) {
       await supabase.from("product_categories").delete().eq("product_id", productId);
       if (form.category_ids.length > 0) {
         const rows = form.category_ids.map(cid => ({ product_id: productId!, category_id: cid }));
         await supabase.from("product_categories").insert(rows);
+      }
+      await supabase.from("product_subcategories").delete().eq("product_id", productId);
+      if (form.subcategory_ids.length > 0) {
+        const subRows = form.subcategory_ids.map(sid => ({ product_id: productId!, subcategory_id: sid }));
+        await supabase.from("product_subcategories").insert(subRows);
       }
     }
 
@@ -260,24 +276,34 @@ const AdminProducts = () => {
 
               {filteredSubs.length > 0 && (
                 <div className="space-y-2">
-                  <Label>Subcategory (optional)</Label>
-                  <div className="grid grid-cols-2 gap-2 border rounded-lg p-3 max-h-48 overflow-y-auto">
+                  <Label>Subcategory (select multiple)</Label>
+                  <div className="border rounded-lg p-3 max-h-60 overflow-y-auto space-y-1">
                     {filteredSubs.map((s) => (
-                      <label key={s.id} className="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-muted transition-colors">
-                        <Checkbox
-                          checked={form.subcategory_id === s.id}
-                          onCheckedChange={(checked) => setForm({ ...form, subcategory_id: checked ? s.id : "" })}
-                        />
+                      <label key={s.id} className="flex items-center justify-between cursor-pointer p-2.5 rounded hover:bg-muted transition-colors border-b border-border/40 last:border-0">
                         <span className="text-sm">{s.name}</span>
+                        <Checkbox
+                          checked={form.subcategory_ids.includes(s.id)}
+                          onCheckedChange={(checked) => {
+                            const ids = checked
+                              ? [...form.subcategory_ids, s.id]
+                              : form.subcategory_ids.filter(id => id !== s.id);
+                            setForm({ ...form, subcategory_ids: ids });
+                          }}
+                        />
                       </label>
                     ))}
                   </div>
-                  {form.subcategory_id && (
+                  {form.subcategory_ids.length > 0 && (
                     <div className="flex flex-wrap gap-1.5">
-                      <span className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2.5 py-1 rounded-full">
-                        {filteredSubs.find(s => s.id === form.subcategory_id)?.name}
-                        <button type="button" onClick={() => setForm({ ...form, subcategory_id: "" })} className="hover:text-destructive">×</button>
-                      </span>
+                      {form.subcategory_ids.map(sid => {
+                        const sub = subcategories.find(s => s.id === sid);
+                        return sub ? (
+                          <span key={sid} className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2.5 py-1 rounded-full">
+                            {sub.name}
+                            <button type="button" onClick={() => setForm({ ...form, subcategory_ids: form.subcategory_ids.filter(id => id !== sid) })} className="hover:text-destructive">×</button>
+                          </span>
+                        ) : null;
+                      })}
                     </div>
                   )}
                 </div>
