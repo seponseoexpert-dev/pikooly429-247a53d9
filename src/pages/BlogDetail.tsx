@@ -26,23 +26,28 @@ const BlogDetail = () => {
     enabled: !!slug,
   });
 
-  useEffect(() => {
-    if (!post) return;
-    const siteName = settings.site_title || "Pikooly";
-    document.title = post.seo_title || `${post.title} - ${siteName}`;
+  const siteName = settings.site_title || "Pikooly";
+  const siteUrl = window.location.origin;
+  const seoTitle = post ? (post.seo_title || `${post.title} - ${siteName}`) : siteName;
+  const seoDesc = post ? (post.seo_description || post.excerpt || "") : "";
 
-    let metaDesc = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
-    if (!metaDesc) {
-      metaDesc = document.createElement("meta");
-      metaDesc.name = "description";
-      document.head.appendChild(metaDesc);
-    }
-    metaDesc.content = post.seo_description || post.excerpt || "";
-
-    return () => {
-      document.title = siteName;
+  const articleJsonLd = useMemo(() => {
+    if (!post) return undefined;
+    return {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      headline: post.title,
+      description: post.excerpt || "",
+      image: post.image_url || "",
+      url: `${siteUrl}/blog/${post.slug}`,
+      datePublished: post.published_at || post.created_at,
+      dateModified: post.updated_at,
+      publisher: {
+        "@type": "Organization",
+        name: siteName,
+      },
     };
-  }, [post, settings]);
+  }, [post, siteName, siteUrl]);
 
   if (isLoading) {
     return (
