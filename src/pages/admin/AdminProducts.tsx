@@ -92,12 +92,13 @@ const AdminProducts = () => {
     setEditing(p);
     const specs = (p.specifications as Array<{ item: string; value: string }>) || [];
     const catIds = productCategoryMap[p.id] || (p.category_id ? [p.category_id] : []);
+    const subIds = productSubcategoryMap[p.id] || ((p as any).subcategory_id ? [(p as any).subcategory_id] : []);
     setForm({
       name: p.name, slug: p.slug, short_description: (p as any).short_description || "", description: p.description || "",
       price: p.price, original_price: p.original_price || 0,
       image_url: p.image_url || "", category_id: p.category_id || "",
       category_ids: catIds,
-      subcategory_id: (p as any).subcategory_id || "",
+      subcategory_ids: subIds,
       is_active: p.is_active, is_featured: p.is_featured, stock: p.stock,
       tags: (p.tags || []).join(", "),
       specifications: specs,
