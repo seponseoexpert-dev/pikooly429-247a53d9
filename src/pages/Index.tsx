@@ -25,19 +25,6 @@ const Index = () => {
   const siteName = settings.store_name || settings.site_title || "Pikooly";
   const siteUrl = window.location.origin;
 
-  const jsonLd = useMemo(() => ({
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: siteName,
-    url: siteUrl,
-    description: seoDesc,
-    potentialAction: {
-      "@type": "SearchAction",
-      target: `${siteUrl}/shop?search={search_term_string}`,
-      "query-input": "required name=search_term_string",
-    },
-  }), [siteName, siteUrl, seoDesc]);
-
   const combinedJsonLd = useMemo(() => ({
     "@context": "https://schema.org",
     "@graph": [
