@@ -136,7 +136,7 @@ const AllGifts = () => {
                   {subs.map((sub: any) => (
                     <Link
                       key={sub.id}
-                      to={`/product-category/${cat.slug}/${sub.slug}`}
+                      to={`/product-category/${sub.slug}`}
                       className="flex items-center justify-between py-3 px-3 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted/50"
                     >
                       <span>{sub.name}</span>
