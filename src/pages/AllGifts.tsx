@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import SEOHead from "@/components/seo/SEOHead";
 
 const AllGifts = () => {
   const [activeTab, setActiveTab] = useState<"occasions" | "category">("occasions");

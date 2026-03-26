@@ -2,6 +2,7 @@ import { Star, BadgeCheck } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
+import SEOHead from "@/components/seo/SEOHead";
 
 const getInitials = (name: string) => {
   const parts = name.trim().split(/\s+/);

@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { Phone, Globe, Heart, Truck, ShieldCheck, Leaf, Star, Users, Target, Gift } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import SEOHead from "@/components/seo/SEOHead";
 import founderImgDefault from "@/assets/founder-ripon.jpg";
 
 const fadeUp = {
