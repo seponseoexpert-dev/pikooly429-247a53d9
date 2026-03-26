@@ -162,12 +162,17 @@ const AdminProducts = () => {
       toast({ title: "Product created" });
     }
 
-    // Sync product_categories junction table
+    // Sync junction tables
     if (productId) {
       await supabase.from("product_categories").delete().eq("product_id", productId);
       if (form.category_ids.length > 0) {
         const rows = form.category_ids.map(cid => ({ product_id: productId!, category_id: cid }));
         await supabase.from("product_categories").insert(rows);
+      }
+      await supabase.from("product_subcategories").delete().eq("product_id", productId);
+      if (form.subcategory_ids.length > 0) {
+        const subRows = form.subcategory_ids.map(sid => ({ product_id: productId!, subcategory_id: sid }));
+        await supabase.from("product_subcategories").insert(subRows);
       }
     }
 
