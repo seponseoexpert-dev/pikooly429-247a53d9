@@ -82,9 +82,10 @@ const AdminBlog = () => {
   };
 
   const uploadImage = async (file: File): Promise<string | null> => {
-    const ext = file.name.split(".").pop();
-    const path = `blogs/${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from("images").upload(path, file);
+    const { convertToWebP } = await import("@/lib/imageUtils");
+    const webpFile = await convertToWebP(file);
+    const path = `blogs/${Date.now()}.webp`;
+    const { error } = await supabase.storage.from("images").upload(path, webpFile, { contentType: "image/webp" });
     if (error) { toast({ title: "Upload failed", description: error.message, variant: "destructive" }); return null; }
     const { data } = supabase.storage.from("images").getPublicUrl(path);
     return data.publicUrl;

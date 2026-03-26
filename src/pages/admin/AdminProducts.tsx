@@ -100,9 +100,10 @@ const AdminProducts = () => {
   const filteredSubs = subcategories.filter(s => form.category_ids.includes(s.category_id));
 
   const uploadImage = async (file: File): Promise<string | null> => {
-    const ext = file.name.split(".").pop();
-    const path = `products/${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from("images").upload(path, file);
+    const { convertToWebP } = await import("@/lib/imageUtils");
+    const webpFile = await convertToWebP(file);
+    const path = `products/${Date.now()}.webp`;
+    const { error } = await supabase.storage.from("images").upload(path, webpFile, { contentType: "image/webp" });
     if (error) { toast({ title: "Upload failed", description: error.message, variant: "destructive" }); return null; }
     const { data } = supabase.storage.from("images").getPublicUrl(path);
     return data.publicUrl;
