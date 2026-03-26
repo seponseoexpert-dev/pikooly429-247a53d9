@@ -73,7 +73,7 @@ Deno.serve(async (req) => {
     for (const sub of subcategories) {
       const parentSlug = catMap.get(sub.category_id);
       if (parentSlug) {
-        urls.push(urlEntry(`${SITE_URL}/product-category/${parentSlug}/${sub.slug}`, sub.updated_at, "0.7", "weekly"));
+        urls.push(urlEntry(`${SITE_URL}/product-category/${sub.slug}`, sub.updated_at, "0.7", "weekly"));
       }
     }
 

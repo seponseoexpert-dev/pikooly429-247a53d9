@@ -171,7 +171,7 @@ const Shop = () => {
           "@type": "ListItem",
           position: 3,
           name: activeSubcategory.name,
-          item: `${siteUrl}/product-category/${activeCategory.slug}/${activeSubcategory.slug}`,
+          item: `${siteUrl}/product-category/${activeSubcategory.slug}`,
         });
       }
     } else {

@@ -365,7 +365,7 @@ const AdminCategories = () => {
               <Label className="text-base font-semibold">SEO Preview</Label>
               <div className="p-4 border rounded-lg bg-background space-y-1">
                 <p className="text-xs text-muted-foreground mb-1">Preview</p>
-                <p className="text-sm text-muted-foreground truncate">https://pikooly.com.bd/product-category/.../{subForm.slug || "..."}/</p>
+                <p className="text-sm text-muted-foreground truncate">https://pikooly.com.bd/product-category/{subForm.slug || "..."}/</p>
                 <p className="text-lg text-blue-700 font-medium leading-tight truncate">{subForm.seo_title || subForm.name || "Page Title"}</p>
                 <p className="text-sm text-muted-foreground line-clamp-2">{subForm.description || "Meta description will appear here..."}</p>
               </div>

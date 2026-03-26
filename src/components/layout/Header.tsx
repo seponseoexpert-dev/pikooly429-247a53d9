@@ -388,7 +388,7 @@ const Header = () => {
                       {subs.map((sub) => (
                         <Link
                           key={sub.id}
-                          to={`/product-category/${cat.slug}/${sub.slug}`}
+                          to={`/product-category/${sub.slug}`}
                           className="flex items-center gap-2.5 px-4 py-2 text-sm text-foreground/80 hover:text-primary hover:bg-muted transition-colors"
                         >
                           {sub.image_url && (
