@@ -77,9 +77,15 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => (
     <Header />
     <CartDrawer />
     <Suspense fallback={<PageLoader />}>{children}</Suspense>
-    <Footer />
-    <BottomNav />
-    <WhatsAppButton />
+    <Suspense fallback={null}>
+      <Footer />
+    </Suspense>
+    <Suspense fallback={null}>
+      <BottomNav />
+    </Suspense>
+    <Suspense fallback={null}>
+      <WhatsAppButton />
+    </Suspense>
   </>
 );
 
