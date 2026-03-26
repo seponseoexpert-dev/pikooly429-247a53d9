@@ -391,11 +391,12 @@ const ImageUploadField = ({
     if (!file) return;
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop();
-      const filePath = `settings/${fieldKey}-${Date.now()}.${ext}`;
+      const { convertToWebP } = await import("@/lib/imageUtils");
+      const webpFile = await convertToWebP(file);
+      const filePath = `settings/${fieldKey}-${Date.now()}.webp`;
       const { error: uploadError } = await supabase.storage
         .from("images")
-        .upload(filePath, file, { upsert: true });
+        .upload(filePath, webpFile, { upsert: true, contentType: "image/webp" });
       if (uploadError) throw uploadError;
       const { data: urlData } = supabase.storage
         .from("images")
