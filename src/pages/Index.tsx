@@ -25,35 +25,37 @@ const Index = () => {
   const siteName = settings.store_name || settings.site_title || "Pikooly";
   const siteUrl = window.location.origin;
 
-  const jsonLd = useMemo(() => ({
+  const combinedJsonLd = useMemo(() => ({
     "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: siteName,
-    url: siteUrl,
-    description: seoDesc,
-    potentialAction: {
-      "@type": "SearchAction",
-      target: `${siteUrl}/shop?search={search_term_string}`,
-      "query-input": "required name=search_term_string",
-    },
-  }), [siteName, siteUrl, seoDesc]);
-
-  const orgJsonLd = useMemo(() => ({
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: siteName,
-    url: siteUrl,
-    logo: settings.company_logo || "",
-    contactPoint: {
-      "@type": "ContactPoint",
-      telephone: settings.contact_phone || "",
-      contactType: "customer service",
-    },
-    sameAs: [
-      settings.social_facebook || "",
-      settings.social_instagram || "",
-    ].filter(Boolean),
-  }), [siteName, siteUrl, settings]);
+    "@graph": [
+      {
+        "@type": "WebSite",
+        name: siteName,
+        url: siteUrl,
+        description: seoDesc,
+        potentialAction: {
+          "@type": "SearchAction",
+          target: `${siteUrl}/shop?search={search_term_string}`,
+          "query-input": "required name=search_term_string",
+        },
+      },
+      {
+        "@type": "Organization",
+        name: siteName,
+        url: siteUrl,
+        logo: settings.company_logo || "",
+        contactPoint: {
+          "@type": "ContactPoint",
+          telephone: settings.contact_phone || "",
+          contactType: "customer service",
+        },
+        sameAs: [
+          settings.social_facebook || "",
+          settings.social_instagram || "",
+        ].filter(Boolean),
+      },
+    ],
+  }), [siteName, siteUrl, seoDesc, settings]);
 
   return (
     <main>
@@ -62,7 +64,7 @@ const Index = () => {
         description={seoDesc}
         canonical={siteUrl}
         ogImage={settings.og_image || ""}
-        jsonLd={jsonLd}
+        jsonLd={combinedJsonLd}
       />
       <HeroSection />
       <CategoryGrid />

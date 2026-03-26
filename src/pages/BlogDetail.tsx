@@ -35,17 +35,27 @@ const BlogDetail = () => {
     if (!post) return undefined;
     return {
       "@context": "https://schema.org",
-      "@type": "BlogPosting",
-      headline: post.title,
-      description: post.excerpt || "",
-      image: post.image_url || "",
-      url: `${siteUrl}/blog/${post.slug}`,
-      datePublished: post.published_at || post.created_at,
-      dateModified: post.updated_at,
-      publisher: {
-        "@type": "Organization",
-        name: siteName,
-      },
+      "@graph": [
+        {
+          "@type": "BlogPosting",
+          headline: post.title,
+          description: post.excerpt || "",
+          image: post.image_url || "",
+          url: `${siteUrl}/blog/${post.slug}`,
+          datePublished: post.published_at || post.created_at,
+          dateModified: post.updated_at,
+          publisher: { "@type": "Organization", name: siteName },
+          author: { "@type": "Organization", name: siteName },
+        },
+        {
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+            { "@type": "ListItem", position: 2, name: "Blog", item: `${siteUrl}/blog` },
+            { "@type": "ListItem", position: 3, name: post.title, item: `${siteUrl}/blog/${post.slug}` },
+          ],
+        },
+      ],
     };
   }, [post, siteName, siteUrl]);
 
