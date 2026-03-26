@@ -84,7 +84,14 @@ const BlogDetail = () => {
 
   return (
     <main className="pb-24 md:pb-10">
-      {/* Hero Image */}
+      <SEOHead
+        title={seoTitle}
+        description={seoDesc}
+        canonical={`${siteUrl}/blog/${post.slug}`}
+        ogImage={post.image_url || ""}
+        ogType="article"
+        jsonLd={articleJsonLd}
+      />
       {post.image_url && (
         <div className="w-full aspect-[16/7] sm:aspect-[16/6] md:aspect-[16/5] overflow-hidden bg-muted">
           <img

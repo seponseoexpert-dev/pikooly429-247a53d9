@@ -145,6 +145,14 @@ const ProductDetail = () => {
 
   return (
     <main className="section-container py-4 md:py-8 pb-24 md:pb-10">
+      <SEOHead
+        title={seoTitle}
+        description={seoDesc}
+        canonical={`${siteUrl}/product/${product.slug || product.id}`}
+        ogImage={product.image_url || ""}
+        ogType="product"
+        jsonLd={productJsonLd}
+      />
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6">
         <Link to="/" className="hover:text-primary transition-colors">Home</Link>
