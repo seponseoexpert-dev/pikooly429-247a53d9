@@ -92,6 +92,18 @@ const AboutUs = () => {
 
   return (
     <main className="min-h-screen">
+      <SEOHead
+        title={`About Us — ${s("site_title", "Pikooly")}`}
+        description={heroSubtitle}
+        canonical={`${window.location.origin}/about-us`}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "AboutPage",
+          name: "About Pikooly",
+          url: `${window.location.origin}/about-us`,
+          description: heroSubtitle,
+        }}
+      />
       {/* Hero */}
       <section className="relative bg-gradient-to-br from-primary/10 via-background to-primary/5 overflow-hidden">
         <div className="section-container py-12 sm:py-16 md:py-20 lg:py-24">

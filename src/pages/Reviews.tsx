@@ -139,6 +139,11 @@ const Reviews = () => {
 
   return (
     <main className="min-h-screen">
+      <SEOHead
+        title="Customer Reviews — Pikooly"
+        description="Read verified customer reviews and ratings for Pikooly products. See what our happy customers say about our flowers, gifts, and delivery."
+        canonical={`${window.location.origin}/reviews`}
+      />
       <div className="section-container py-6 md:py-10">
         {/* Header */}
         <div className="text-center mb-6 md:mb-10">
