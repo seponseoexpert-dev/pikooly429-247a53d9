@@ -75,32 +75,102 @@ const ProductDetail = () => {
   const seoDesc = product ? stripHtml((product as any).seo_description || product.description || "").slice(0, 160) : "";
   const siteUrl = window.location.origin;
 
+  // Fetch approved reviews for Review schema
+  const { data: reviewsData = [] } = useQuery({
+    queryKey: ["product-reviews-schema", product?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("reviews")
+        .select("customer_name, rating, comment, created_at")
+        .eq("product_id", product!.id)
+        .eq("is_approved", true)
+        .order("created_at", { ascending: false })
+        .limit(10);
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!product?.id,
+    staleTime: 5 * 60 * 1000,
+  });
+
   const productJsonLd = useMemo(() => {
     if (!product) return undefined;
-    return {
-      "@context": "https://schema.org",
+    const productUrl = `${siteUrl}/product/${product.slug || product.id}`;
+
+    const productSchema: Record<string, any> = {
       "@type": "Product",
       name: product.name,
       description: stripHtml(product.description || "").slice(0, 300),
-      image: product.image_url || "",
-      url: `${siteUrl}/product/${product.slug || product.id}`,
+      image: product.images?.length ? product.images : (product.image_url ? [product.image_url] : []),
+      url: productUrl,
+      sku: product.id,
       brand: { "@type": "Brand", name: siteName },
       offers: {
         "@type": "Offer",
         price: product.price,
         priceCurrency: "BDT",
         availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-        url: `${siteUrl}/product/${product.slug || product.id}`,
+        url: productUrl,
+        priceValidUntil: new Date(Date.now() + 30 * 86400000).toISOString().split("T")[0],
+        ...(product.original_price && product.original_price > product.price ? {
+          highPrice: product.original_price,
+        } : {}),
+        seller: { "@type": "Organization", name: siteName },
       },
-      ...(product.rating ? {
-        aggregateRating: {
-          "@type": "AggregateRating",
-          ratingValue: product.rating,
-          reviewCount: product.review_count || 1,
-        },
-      } : {}),
     };
-  }, [product, siteName, siteUrl]);
+
+    if (product.rating && product.review_count) {
+      productSchema.aggregateRating = {
+        "@type": "AggregateRating",
+        ratingValue: product.rating,
+        bestRating: 5,
+        worstRating: 1,
+        reviewCount: product.review_count,
+      };
+    }
+
+    if (reviewsData.length > 0) {
+      productSchema.review = reviewsData.map((r) => ({
+        "@type": "Review",
+        author: { "@type": "Person", name: r.customer_name },
+        datePublished: r.created_at?.split("T")[0],
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: r.rating,
+          bestRating: 5,
+        },
+        ...(r.comment ? { reviewBody: r.comment } : {}),
+      }));
+    }
+
+    // BreadcrumbList
+    const breadcrumbItems = [
+      { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+      { "@type": "ListItem", position: 2, name: "Products", item: `${siteUrl}/shop` },
+    ];
+    if (product.categories?.name) {
+      breadcrumbItems.push({
+        "@type": "ListItem",
+        position: 3,
+        name: product.categories.name,
+        item: `${siteUrl}/product-category/${product.categories.slug}`,
+      });
+      breadcrumbItems.push({ "@type": "ListItem", position: 4, name: product.name, item: productUrl });
+    } else {
+      breadcrumbItems.push({ "@type": "ListItem", position: 3, name: product.name, item: productUrl });
+    }
+
+    return {
+      "@context": "https://schema.org",
+      "@graph": [
+        productSchema,
+        {
+          "@type": "BreadcrumbList",
+          itemListElement: breadcrumbItems,
+        },
+      ],
+    };
+  }, [product, siteName, siteUrl, reviewsData]);
 
   if (isLoading) {
     return <ProductDetailSkeleton />;

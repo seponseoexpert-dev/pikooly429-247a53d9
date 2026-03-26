@@ -115,6 +115,7 @@ const Shop = () => {
 
   useEffect(() => {
     const siteName = settings.site_title || "Pikooly";
+    const siteUrl = window.location.origin;
     const contentName = (activeContent as any)?.name;
     const seoTitle = (activeContent as any)?.seo_title;
     const metaDesc = (activeContent as any)?.description || (activeContent as any)?.short_description || "";
@@ -129,9 +130,13 @@ const Shop = () => {
     }
     metaTag.content = metaDesc || `Shop ${contentName || "all products"} at ${siteName}`;
 
-    const existingSchema = document.getElementById("faq-schema-jsonld");
-    if (existingSchema) existingSchema.remove();
+    // Remove existing schemas
+    ["faq-schema-jsonld", "breadcrumb-schema-jsonld"].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    });
 
+    // FAQ Schema
     const faqs = (activeContent as any)?.faq;
     if (Array.isArray(faqs) && faqs.length > 0) {
       const schema = {
@@ -150,12 +155,46 @@ const Shop = () => {
       document.head.appendChild(script);
     }
 
+    // BreadcrumbList Schema
+    const breadcrumbItems: any[] = [
+      { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+    ];
+    if (activeCategory) {
+      breadcrumbItems.push({
+        "@type": "ListItem",
+        position: 2,
+        name: activeCategory.name,
+        item: `${siteUrl}/product-category/${activeCategory.slug}`,
+      });
+      if (activeSubcategory) {
+        breadcrumbItems.push({
+          "@type": "ListItem",
+          position: 3,
+          name: activeSubcategory.name,
+          item: `${siteUrl}/product-category/${activeCategory.slug}/${activeSubcategory.slug}`,
+        });
+      }
+    } else {
+      breadcrumbItems.push({ "@type": "ListItem", position: 2, name: "Shop", item: `${siteUrl}/shop` });
+    }
+    const breadcrumbScript = document.createElement("script");
+    breadcrumbScript.id = "breadcrumb-schema-jsonld";
+    breadcrumbScript.type = "application/ld+json";
+    breadcrumbScript.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: breadcrumbItems,
+    });
+    document.head.appendChild(breadcrumbScript);
+
     return () => {
       document.title = siteName;
-      const schemaTag = document.getElementById("faq-schema-jsonld");
-      if (schemaTag) schemaTag.remove();
+      ["faq-schema-jsonld", "breadcrumb-schema-jsonld"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+      });
     };
-  }, [activeContent, settings]);
+  }, [activeContent, activeCategory, activeSubcategory, settings]);
 
   const filtered = useMemo(() => {
     let list = selectedCat
