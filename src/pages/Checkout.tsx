@@ -393,12 +393,13 @@ const Checkout = () => {
       for (const item of items) {
         let customImageUrls: string[] = [];
         if (item.customImages?.length) {
+          const { convertToWebP } = await import("@/lib/imageUtils");
           for (const file of item.customImages) {
-            const ext = file.name.split(".").pop() || "jpg";
-            const path = `${order.id}/${item.product.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+            const webpFile = await convertToWebP(file);
+            const path = `${order.id}/${item.product.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.webp`;
             const { error: uploadErr } = await supabase.storage
               .from("custom-images")
-              .upload(path, file, { contentType: file.type });
+              .upload(path, webpFile, { contentType: "image/webp" });
             if (!uploadErr) {
               const { data: urlData } = supabase.storage.from("custom-images").getPublicUrl(path);
               customImageUrls.push(urlData.publicUrl);

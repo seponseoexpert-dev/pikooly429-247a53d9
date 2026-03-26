@@ -28,12 +28,13 @@ const AvatarUpload = ({ userId, avatarUrl, displayName, onUploaded }: AvatarUplo
 
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop();
-      const path = `${userId}/avatar.${ext}`;
+      const { convertToWebP } = await import("@/lib/imageUtils");
+      const webpFile = await convertToWebP(file);
+      const path = `${userId}/avatar.webp`;
 
       const { error: uploadError } = await supabase.storage
         .from("avatars")
-        .upload(path, file, { upsert: true });
+        .upload(path, webpFile, { upsert: true, contentType: "image/webp" });
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage
