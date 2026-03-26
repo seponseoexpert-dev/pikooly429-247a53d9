@@ -47,7 +47,7 @@ const settingSections = [
   { key: "about_page", label: "About Us Page", icon: FileText },
   { key: "contact_page", label: "Contact Us Page", icon: Phone },
   { key: "faq", label: "FAQ Section", icon: MessageSquare },
-  
+  { key: "push_notification", label: "Push Notification", icon: Bell },
   { key: "social_login", label: "Social Login", icon: Share2 },
   { key: "license", label: "License", icon: Award },
   { key: "footer", label: "Footer", icon: FileText },
