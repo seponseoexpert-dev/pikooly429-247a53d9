@@ -251,6 +251,23 @@ const sectionFields: Record<string, FieldDef[]> = {
   languages: [], // Handled by custom LanguagesSection component
   sms_gateway: [], // Handled by custom SmsGatewaySection component
   payment_gateway: [], // Handled by custom PaymentGatewaySection component
+  push_notification: [
+    { key: "push_enabled", label: "Enable Push Notifications", type: "radio", options: [
+      { value: "true", label: "Enable" },
+      { value: "false", label: "Disable" },
+    ]},
+    { key: "vapid_public_key", label: "VAPID Public Key", fullWidth: true, placeholder: "BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkOs-..." },
+    { key: "vapid_private_key", label: "VAPID Private Key", fullWidth: true, placeholder: "UUxI4O8-FbRouAevSmBQ6o18hgE4nSG97jDFlnyYxa8" },
+    { key: "vapid_subject", label: "VAPID Subject (mailto: or URL)", fullWidth: true, placeholder: "mailto:admin@pikoolyflora.com" },
+    { key: "push_new_order_enabled", label: "New Order Notification", type: "radio", options: [
+      { value: "true", label: "Enable" },
+      { value: "false", label: "Disable" },
+    ]},
+    { key: "push_offer_enabled", label: "Offer/Promo Notification", type: "radio", options: [
+      { value: "true", label: "Enable" },
+      { value: "false", label: "Disable" },
+    ]},
+  ],
   license: [
     { key: "license_code", label: "License Code" },
   ],
