@@ -53,7 +53,7 @@ const ResetPassword = () => {
 
   if (!isRecovery) {
     return (
-      <main className="min-h-[70vh] flex items-center justify-center px-4 py-10">
+      <main className="min-h-[70vh] flex items-center justify-center px-4 py-10 pb-24 md:pb-10">
         <div className="text-center">
           <p className="text-muted-foreground text-sm">Invalid or expired reset link.</p>
           <button onClick={() => navigate("/auth")} className="text-primary font-semibold text-sm mt-3 hover:underline">
@@ -65,7 +65,7 @@ const ResetPassword = () => {
   }
 
   return (
-    <main className="min-h-[70vh] flex items-center justify-center px-4 py-10">
+    <main className="min-h-[70vh] flex items-center justify-center px-4 py-10 pb-24 md:pb-10">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-display font-bold text-foreground">Set New Password</h1>

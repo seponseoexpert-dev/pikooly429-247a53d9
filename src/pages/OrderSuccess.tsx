@@ -67,7 +67,7 @@ const OrderSuccess = () => {
   const isCancelled = order?.status === "cancelled" || order?.status === "returned";
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-primary/5 via-background to-background pt-16 pb-32">
+    <main className="min-h-screen bg-gradient-to-b from-primary/5 via-background to-background pt-10 sm:pt-16 pb-32 md:pb-10">
       <div className="container mx-auto px-4 max-w-xl">
         {/* Success Animation */}
         <motion.div

@@ -35,13 +35,13 @@ const Install = () => {
   };
 
   return (
-    <main className="min-h-[60vh] flex items-center justify-center px-4 py-16">
+    <main className="min-h-[60vh] flex items-center justify-center px-4 py-16 pb-24 md:pb-16">
       <SEOHead title="Install Pikooly App" description="Install the Pikooly app on your phone for a faster, offline shopping experience." noindex />
       <div className="max-w-md w-full text-center space-y-6">
         <div className="mx-auto w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center">
           <Smartphone className="w-10 h-10 text-primary" />
         </div>
-        <h1 className="text-2xl font-heading font-bold text-foreground">Install Pikooly App</h1>
+        <h1 className="text-2xl font-display font-bold text-foreground">Install Pikooly App</h1>
         <p className="text-muted-foreground">
           Install our app on your phone for a faster, offline-ready shopping experience. No app store needed!
         </p>
