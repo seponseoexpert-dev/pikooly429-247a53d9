@@ -48,7 +48,8 @@ const CategoryGrid = memo(() => {
                   height={144}
                   decoding="async"
                   className="w-full h-full object-cover object-center"
-                  loading="lazy"
+                  loading={categories.indexOf(cat) < 8 ? "eager" : "lazy"}
+                  fetchPriority={categories.indexOf(cat) < 4 ? "high" : undefined}
                 />
               </div>
               <span className="text-xs sm:text-sm font-medium text-foreground/80 group-hover:text-primary transition-colors text-center leading-tight">
