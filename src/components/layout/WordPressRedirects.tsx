@@ -18,7 +18,13 @@ const WordPressRedirects = () => {
       return;
     }
 
-    // WordPress product URL: /product/slug → /product/slug (already matches)
+    // Redirect /product-category/parent/sub → /product-category/sub (flat subcategory URLs)
+    const subCatMatch = path.match(/^\/product-category\/[^/]+\/([^/]+)$/);
+    if (subCatMatch) {
+      navigate(`/product-category/${subCatMatch[1]}`, { replace: true });
+      return;
+    }
+
     // WordPress blog date URLs: /2024/01/01/slug → /blog/slug
     const blogDateMatch = path.match(/^\/(\d{4})\/(\d{2})\/(\d{2})\/(.+)$/);
     if (blogDateMatch) {
