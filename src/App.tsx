@@ -14,6 +14,7 @@ import ProtectedAdminRoute from "@/components/admin/ProtectedAdminRoute";
 import DynamicHead from "@/components/layout/DynamicHead";
 import ScrollToTop from "@/components/layout/ScrollToTop";
 import PageLoader from "@/components/layout/PageLoader";
+import WordPressRedirects from "@/components/layout/WordPressRedirects";
 import { lazy, Suspense } from "react";
 
 // Lazy-load non-critical layout components
@@ -108,6 +109,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <ScrollToTop />
+            <WordPressRedirects />
             <Routes>
               {/* Public routes */}
               <Route path="/" element={<PublicLayout><Index /></PublicLayout>} />
