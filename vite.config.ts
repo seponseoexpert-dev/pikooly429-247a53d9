@@ -28,6 +28,8 @@ export default defineConfig(({ mode }) => ({
           "vendor-react": ["react", "react-dom", "react-router-dom"],
           "vendor-query": ["@tanstack/react-query"],
           "vendor-supabase": ["@supabase/supabase-js"],
+          "vendor-motion": ["framer-motion"],
+          "vendor-icons": ["lucide-react"],
           "vendor-ui": [
             "@radix-ui/react-dialog",
             "@radix-ui/react-select",
