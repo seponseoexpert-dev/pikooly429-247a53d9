@@ -1,8 +1,9 @@
-import { useEffect, lazy, Suspense } from "react";
+import { useEffect, lazy, Suspense, useMemo } from "react";
 import HeroSection from "@/components/home/HeroSection";
 import CategoryGrid from "@/components/home/CategoryGrid";
 import ProductGrid from "@/components/home/ProductGrid";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import SEOHead from "@/components/seo/SEOHead";
 
 // Lazy load all below-fold sections
 const OfferBanners = lazy(() => import("@/components/home/OfferBanners"));
@@ -19,31 +20,50 @@ const LazyFallback = () => <div className="min-h-[100px]" />;
 const Index = () => {
   const { settings } = useSiteSettings();
 
-  useEffect(() => {
-    const seoTitle = settings.homepage_seo_title;
-    if (seoTitle) {
-      document.title = seoTitle;
-    }
+  const seoTitle = settings.homepage_seo_title || settings.site_title || "Pikooly — Online Flower, Gift & Cake Shop in Bangladesh";
+  const seoDesc = settings.homepage_meta_description || "Order fresh flowers, beautiful gifts, and delicious cakes online in Bangladesh. Same day delivery in Dhaka.";
+  const siteName = settings.store_name || settings.site_title || "Pikooly";
+  const siteUrl = window.location.origin;
 
-    let metaDesc = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
-    const descContent = settings.homepage_meta_description;
-    if (descContent) {
-      if (!metaDesc) {
-        metaDesc = document.createElement("meta");
-        metaDesc.name = "description";
-        document.head.appendChild(metaDesc);
-      }
-      metaDesc.content = descContent;
-    }
+  const jsonLd = useMemo(() => ({
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: siteName,
+    url: siteUrl,
+    description: seoDesc,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${siteUrl}/shop?search={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
+  }), [siteName, siteUrl, seoDesc]);
 
-    return () => {
-      const fallback = settings.site_title || settings.store_name;
-      if (fallback) document.title = fallback;
-    };
-  }, [settings]);
+  const orgJsonLd = useMemo(() => ({
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: siteName,
+    url: siteUrl,
+    logo: settings.company_logo || "",
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: settings.contact_phone || "",
+      contactType: "customer service",
+    },
+    sameAs: [
+      settings.social_facebook || "",
+      settings.social_instagram || "",
+    ].filter(Boolean),
+  }), [siteName, siteUrl, settings]);
 
   return (
     <main>
+      <SEOHead
+        title={seoTitle}
+        description={seoDesc}
+        canonical={siteUrl}
+        ogImage={settings.og_image || ""}
+        jsonLd={jsonLd}
+      />
       <HeroSection />
       <CategoryGrid />
       <Suspense fallback={<LazyFallback />}>

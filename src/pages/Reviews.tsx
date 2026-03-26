@@ -2,6 +2,7 @@ import { Star, BadgeCheck } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
+import SEOHead from "@/components/seo/SEOHead";
 
 const getInitials = (name: string) => {
   const parts = name.trim().split(/\s+/);
@@ -138,6 +139,11 @@ const Reviews = () => {
 
   return (
     <main className="min-h-screen">
+      <SEOHead
+        title="Customer Reviews — Pikooly"
+        description="Read verified customer reviews and ratings for Pikooly products. See what our happy customers say about our flowers, gifts, and delivery."
+        canonical={`${window.location.origin}/reviews`}
+      />
       <div className="section-container py-6 md:py-10">
         {/* Header */}
         <div className="text-center mb-6 md:mb-10">

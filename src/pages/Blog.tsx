@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BlogCardSkeleton } from "@/components/ui/skeletons";
+import SEOHead from "@/components/seo/SEOHead";
 
 const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -35,6 +36,18 @@ const Blog = () => {
 
   return (
     <main className="section-container py-4 sm:py-6 md:py-10 pb-24 md:pb-10">
+      <SEOHead
+        title="Blog — Pikooly"
+        description="Read our latest blog posts about flowers, gifts, celebrations, and gifting tips in Bangladesh."
+        canonical={`${window.location.origin}/blog`}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Blog",
+          name: "Pikooly Blog",
+          url: `${window.location.origin}/blog`,
+          description: "Latest articles about flowers, gifts, and celebrations in Bangladesh.",
+        }}
+      />
       <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold mb-4 sm:mb-6">Blog</h1>
 
       {/* Category Filter Pills */}

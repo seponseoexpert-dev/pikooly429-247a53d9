@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import SEOHead from "@/components/seo/SEOHead";
 
 const AllGifts = () => {
   const [activeTab, setActiveTab] = useState<"occasions" | "category">("occasions");
@@ -48,6 +49,11 @@ const AllGifts = () => {
 
   return (
     <main className="section-container py-4 pb-24 md:pb-10">
+      <SEOHead
+        title="All Gifts — Pikooly"
+        description="Browse all gift categories and occasions. Find the perfect gift for every celebration at Pikooly."
+        canonical={`${window.location.origin}/all-gifts`}
+      />
       <h1 className="text-xl font-display font-bold text-foreground mb-4">
         All Gifts
       </h1>

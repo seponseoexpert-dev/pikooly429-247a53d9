@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { Phone, Mail, MapPin, MessageCircle, Globe, Clock } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import SEOHead from "@/components/seo/SEOHead";
 
 const SectionBlock = ({
   children,
@@ -55,6 +56,18 @@ const ContactUs = () => {
 
   return (
     <main className="min-h-screen">
+      <SEOHead
+        title={`Contact Us — ${s("site_title", "Pikooly")}`}
+        description={heroSubtitle}
+        canonical={`${window.location.origin}/contact-us`}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          name: "Contact Pikooly",
+          url: `${window.location.origin}/contact-us`,
+          description: heroSubtitle,
+        }}
+      />
       {/* Hero */}
       <section className="relative bg-gradient-to-br from-primary/10 via-background to-primary/5 overflow-hidden">
         <div className="section-container py-12 sm:py-16 md:py-20">

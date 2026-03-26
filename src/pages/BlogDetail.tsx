@@ -1,10 +1,11 @@
 import { useParams, Link } from "react-router-dom";
-import { Calendar, ArrowLeft, User } from "lucide-react";
+import { Calendar, ArrowLeft } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect } from "react";
+import { useMemo } from "react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import SEOHead from "@/components/seo/SEOHead";
 
 const BlogDetail = () => {
   const { slug } = useParams();
@@ -25,23 +26,28 @@ const BlogDetail = () => {
     enabled: !!slug,
   });
 
-  useEffect(() => {
-    if (!post) return;
-    const siteName = settings.site_title || "Pikooly";
-    document.title = post.seo_title || `${post.title} - ${siteName}`;
+  const siteName = settings.site_title || "Pikooly";
+  const siteUrl = window.location.origin;
+  const seoTitle = post ? (post.seo_title || `${post.title} - ${siteName}`) : siteName;
+  const seoDesc = post ? (post.seo_description || post.excerpt || "") : "";
 
-    let metaDesc = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
-    if (!metaDesc) {
-      metaDesc = document.createElement("meta");
-      metaDesc.name = "description";
-      document.head.appendChild(metaDesc);
-    }
-    metaDesc.content = post.seo_description || post.excerpt || "";
-
-    return () => {
-      document.title = siteName;
+  const articleJsonLd = useMemo(() => {
+    if (!post) return undefined;
+    return {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      headline: post.title,
+      description: post.excerpt || "",
+      image: post.image_url || "",
+      url: `${siteUrl}/blog/${post.slug}`,
+      datePublished: post.published_at || post.created_at,
+      dateModified: post.updated_at,
+      publisher: {
+        "@type": "Organization",
+        name: siteName,
+      },
     };
-  }, [post, settings]);
+  }, [post, siteName, siteUrl]);
 
   if (isLoading) {
     return (
@@ -78,7 +84,14 @@ const BlogDetail = () => {
 
   return (
     <main className="pb-24 md:pb-10">
-      {/* Hero Image */}
+      <SEOHead
+        title={seoTitle}
+        description={seoDesc}
+        canonical={`${siteUrl}/blog/${post.slug}`}
+        ogImage={post.image_url || ""}
+        ogType="article"
+        jsonLd={articleJsonLd}
+      />
       {post.image_url && (
         <div className="w-full aspect-[16/7] sm:aspect-[16/6] md:aspect-[16/5] overflow-hidden bg-muted">
           <img
