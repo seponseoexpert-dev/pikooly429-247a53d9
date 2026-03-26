@@ -64,32 +64,43 @@ const ProductDetail = () => {
   // Check if this product's category allows custom image uploads
   const allowCustomImage = !!(product?.categories as any)?.allow_custom_image;
 
-  // Dynamic SEO meta tags
-  useEffect(() => {
-    if (!product) return;
-    const siteName = settings.site_title || "Store";
-    const seoTitle = (product as any).seo_title || `${product.name} - ${siteName}`;
-    document.title = seoTitle;
+  const stripHtml = (html: string) => {
+    const tmp = document.createElement("div");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
+  };
 
-    const stripHtml = (html: string) => {
-      const tmp = document.createElement("div");
-      tmp.innerHTML = html;
-      return tmp.textContent || tmp.innerText || "";
-    };
-    const rawDesc = (product as any).seo_description || product.description || "";
-    const seoDesc = stripHtml(rawDesc);
-    let metaDesc = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
-    if (!metaDesc) {
-      metaDesc = document.createElement("meta");
-      metaDesc.name = "description";
-      document.head.appendChild(metaDesc);
-    }
-    metaDesc.content = seoDesc.slice(0, 160);
+  const siteName = settings.site_title || "Pikooly";
+  const seoTitle = product ? ((product as any).seo_title || `${product.name} - ${siteName}`) : siteName;
+  const seoDesc = product ? stripHtml((product as any).seo_description || product.description || "").slice(0, 160) : "";
+  const siteUrl = window.location.origin;
 
-    return () => {
-      document.title = siteName;
+  const productJsonLd = useMemo(() => {
+    if (!product) return undefined;
+    return {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: product.name,
+      description: stripHtml(product.description || "").slice(0, 300),
+      image: product.image_url || "",
+      url: `${siteUrl}/product/${product.slug || product.id}`,
+      brand: { "@type": "Brand", name: siteName },
+      offers: {
+        "@type": "Offer",
+        price: product.price,
+        priceCurrency: "BDT",
+        availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+        url: `${siteUrl}/product/${product.slug || product.id}`,
+      },
+      ...(product.rating ? {
+        aggregateRating: {
+          "@type": "AggregateRating",
+          ratingValue: product.rating,
+          reviewCount: product.review_count || 1,
+        },
+      } : {}),
     };
-  }, [product, settings]);
+  }, [product, siteName, siteUrl]);
 
   if (isLoading) {
     return <ProductDetailSkeleton />;
