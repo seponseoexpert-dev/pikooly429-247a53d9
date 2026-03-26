@@ -1,8 +1,9 @@
-import { useEffect, lazy, Suspense } from "react";
+import { useEffect, lazy, Suspense, useMemo } from "react";
 import HeroSection from "@/components/home/HeroSection";
 import CategoryGrid from "@/components/home/CategoryGrid";
 import ProductGrid from "@/components/home/ProductGrid";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import SEOHead from "@/components/seo/SEOHead";
 
 // Lazy load all below-fold sections
 const OfferBanners = lazy(() => import("@/components/home/OfferBanners"));
