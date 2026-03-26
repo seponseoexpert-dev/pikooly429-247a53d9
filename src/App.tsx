@@ -9,14 +9,17 @@ import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "next-themes";
 import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
-import BottomNav from "@/components/layout/BottomNav";
 import CartDrawer from "@/components/layout/CartDrawer";
-import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import ProtectedAdminRoute from "@/components/admin/ProtectedAdminRoute";
 import DynamicHead from "@/components/layout/DynamicHead";
 import ScrollToTop from "@/components/layout/ScrollToTop";
 import PageLoader from "@/components/layout/PageLoader";
+import { lazy, Suspense } from "react";
+
+// Lazy-load non-critical layout components
+const Footer = lazy(() => import("@/components/layout/Footer"));
+const BottomNav = lazy(() => import("@/components/layout/BottomNav"));
+const WhatsAppButton = lazy(() => import("@/components/layout/WhatsAppButton"));
 import { lazy, Suspense } from "react";
 
 // Eager-load homepage
