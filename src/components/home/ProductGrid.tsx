@@ -170,11 +170,13 @@ const ProductGrid = memo(() => {
         </div>
       )}
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
         {productsLoading
           ? <div className="col-span-full flex items-center justify-center py-10"><div className="w-7 h-7 border-3 border-primary/30 border-t-primary rounded-full animate-spin" /></div>
-          : filtered.slice(0, 10).map((product: any) => (
-              <ProductCard key={product.id} product={product} />
+          : filtered.slice(0, 10).map((product: any, index: number) => (
+              <div key={product.id} className={index >= 6 ? "hidden lg:block" : ""}>
+                <ProductCard product={product} />
+              </div>
             ))}
       </div>
 
