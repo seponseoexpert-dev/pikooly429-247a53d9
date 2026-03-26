@@ -261,13 +261,25 @@ const AdminProducts = () => {
               {filteredSubs.length > 0 && (
                 <div className="space-y-2">
                   <Label>Subcategory (optional)</Label>
-                  <Select value={form.subcategory_id || "none"} onValueChange={(v) => setForm({ ...form, subcategory_id: v === "none" ? "" : v })}>
-                    <SelectTrigger><SelectValue placeholder="Select subcategory" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">None</SelectItem>
-                      {filteredSubs.map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
+                  <div className="grid grid-cols-2 gap-2 border rounded-lg p-3 max-h-48 overflow-y-auto">
+                    {filteredSubs.map((s) => (
+                      <label key={s.id} className="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-muted transition-colors">
+                        <Checkbox
+                          checked={form.subcategory_id === s.id}
+                          onCheckedChange={(checked) => setForm({ ...form, subcategory_id: checked ? s.id : "" })}
+                        />
+                        <span className="text-sm">{s.name}</span>
+                      </label>
+                    ))}
+                  </div>
+                  {form.subcategory_id && (
+                    <div className="flex flex-wrap gap-1.5">
+                      <span className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2.5 py-1 rounded-full">
+                        {filteredSubs.find(s => s.id === form.subcategory_id)?.name}
+                        <button type="button" onClick={() => setForm({ ...form, subcategory_id: "" })} className="hover:text-destructive">×</button>
+                      </span>
+                    </div>
+                  )}
                 </div>
               )}
 
