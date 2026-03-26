@@ -49,18 +49,20 @@ const AdminProducts = () => {
   };
   const [form, setForm] = useState(defaultForm);
 
+  const [productSubcategoryMap, setProductSubcategoryMap] = useState<Record<string, string[]>>({});
+
   const fetchData = async () => {
-    const [prodRes, catRes, subRes, pcRes] = await Promise.all([
+    const [prodRes, catRes, subRes, pcRes, pscRes] = await Promise.all([
       supabase.from("products").select("*").order("created_at", { ascending: false }),
       supabase.from("categories").select("*").order("display_order"),
       supabase.from("subcategories").select("*").order("display_order"),
       supabase.from("product_categories").select("*"),
+      supabase.from("product_subcategories").select("*"),
     ]);
     if (prodRes.data) setProducts(prodRes.data);
     if (catRes.data) setCategories(catRes.data);
     if (subRes.data) setSubcategories(subRes.data as Subcategory[]);
     
-    // Build product -> category_ids map
     if (pcRes.data) {
       const map: Record<string, string[]> = {};
       pcRes.data.forEach((pc: any) => {
@@ -68,6 +70,14 @@ const AdminProducts = () => {
         map[pc.product_id].push(pc.category_id);
       });
       setProductCategoryMap(map);
+    }
+    if (pscRes.data) {
+      const map: Record<string, string[]> = {};
+      pscRes.data.forEach((psc: any) => {
+        if (!map[psc.product_id]) map[psc.product_id] = [];
+        map[psc.product_id].push(psc.subcategory_id);
+      });
+      setProductSubcategoryMap(map);
     }
     setLoading(false);
   };
