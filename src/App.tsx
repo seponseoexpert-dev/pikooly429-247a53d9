@@ -56,6 +56,7 @@ const AdminMigrate = lazy(() => import("./pages/admin/AdminMigrate"));
 const AdminHomepageContent = lazy(() => import("./pages/admin/AdminHomepageContent"));
 const AdminBouquet = lazy(() => import("./pages/admin/AdminBouquet"));
 const BouquetBuilder = lazy(() => import("./pages/BouquetBuilder"));
+const Install = lazy(() => import("./pages/Install"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
