@@ -215,7 +215,10 @@ const Shop = () => {
     if (selectedSub) {
       const sub = subcategories.find((s: any) => s.slug === selectedSub);
       if (sub) {
-        list = list.filter((p: any) => (p as any).subcategory_id === sub.id);
+        list = list.filter((p: any) => 
+          (p as any).subcategory_id === sub.id ||
+          (p as any).product_subcategories?.some((psc: any) => psc.subcategory_id === sub.id)
+        );
       }
     }
 
