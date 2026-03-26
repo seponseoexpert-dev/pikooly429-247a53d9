@@ -49,6 +49,7 @@ const Header = () => {
       if (error) throw error;
       return data;
     },
+    enabled: searchQuery.trim().length > 0,
   });
 
   const { data: categories = [] } = useQuery({
