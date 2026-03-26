@@ -72,8 +72,6 @@ const ProductGrid = memo(() => {
 
   const trendingTabs = [
     { id: "for-you", label: "For You", icon: Heart },
-    { id: "featured", label: "Featured", icon: Star },
-    { id: "new", label: "New Arrival", icon: Sparkles },
     { id: "best", label: "Best Seller", icon: Zap },
   ];
 
