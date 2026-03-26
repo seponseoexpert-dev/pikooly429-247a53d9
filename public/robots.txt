@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://pikooly429.lovable.app/sitemap.xml
+Sitemap: https://uizdqqyiqxkcjufkksrc.supabase.co/functions/v1/sitemap
