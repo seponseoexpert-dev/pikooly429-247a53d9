@@ -111,6 +111,7 @@ const GiftingStories = memo(() => {
                       loading="lazy"
                       decoding="async"
                       sizes="(max-width: 640px) 160px, (max-width: 768px) 180px, 200px"
+                      onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.svg"; }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
