@@ -20,7 +20,6 @@ import { lazy, Suspense } from "react";
 const Footer = lazy(() => import("@/components/layout/Footer"));
 const BottomNav = lazy(() => import("@/components/layout/BottomNav"));
 const WhatsAppButton = lazy(() => import("@/components/layout/WhatsAppButton"));
-import { lazy, Suspense } from "react";
 
 // Eager-load homepage
 import Index from "./pages/Index";
