@@ -51,7 +51,27 @@ export default defineConfig(({ mode }) => ({
           {
             urlPattern: /^https:\/\/uizdqqyiqxkcjufkksrc\.supabase\.co\/storage\/.*/i,
             handler: "StaleWhileRevalidate",
-            options: { cacheName: "supabase-images", expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 30 } },
+            options: { cacheName: "supabase-images", expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 } },
+          },
+          {
+            urlPattern: /^https:\/\/pikooly\.com\.bd\/wp-content\/.*/i,
+            handler: "CacheFirst",
+            options: { cacheName: "wp-images", expiration: { maxEntries: 150, maxAgeSeconds: 60 * 60 * 24 * 90 } },
+          },
+          {
+            urlPattern: /^https:\/\/res\.cloudinary\.com\/.*/i,
+            handler: "CacheFirst",
+            options: { cacheName: "cloudinary-images", expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 90 } },
+          },
+          {
+            urlPattern: /^https:\/\/static-assets-prod\.fnp\.com\/.*/i,
+            handler: "CacheFirst",
+            options: { cacheName: "fnp-assets", expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 * 90 } },
+          },
+          {
+            urlPattern: /^https:\/\/encrypted-tbn0\.gstatic\.com\/.*/i,
+            handler: "CacheFirst",
+            options: { cacheName: "gstatic-images", expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 30 } },
           },
         ],
       },

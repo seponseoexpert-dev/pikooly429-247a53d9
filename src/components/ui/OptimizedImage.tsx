@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect, memo, ImgHTMLAttributes } from "react";
+import { useState, memo, ImgHTMLAttributes } from "react";
+import { getOptimizedImageUrl } from "@/lib/imageUtils";
 
 interface OptimizedImageProps extends ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -6,6 +7,8 @@ interface OptimizedImageProps extends ImgHTMLAttributes<HTMLImageElement> {
   fallback?: string;
   /** Set true for above-fold images */
   priority?: boolean;
+  /** Desired display width for CDN resize */
+  displayWidth?: number;
 }
 
 /**
@@ -13,16 +16,22 @@ interface OptimizedImageProps extends ImgHTMLAttributes<HTMLImageElement> {
  * - Native lazy loading (unless priority)
  * - Blur-up placeholder
  * - Error fallback
+ * - CDN image transformation (Supabase storage)
  * - Proper width/height to prevent CLS
  */
-const OptimizedImage = memo(({ src, alt, fallback = "/placeholder.svg", priority = false, className = "", ...props }: OptimizedImageProps) => {
+const OptimizedImage = memo(({ src, alt, fallback = "/placeholder.svg", priority = false, displayWidth, className = "", ...props }: OptimizedImageProps) => {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
-  const imgSrc = error ? fallback : src;
+  
+  const optimizedSrc = error
+    ? fallback
+    : displayWidth
+      ? getOptimizedImageUrl(src, { width: displayWidth, quality: 80 })
+      : src;
 
   return (
     <img
-      src={imgSrc}
+      src={optimizedSrc}
       alt={alt}
       loading={priority ? "eager" : "lazy"}
       decoding={priority ? "sync" : "async"}

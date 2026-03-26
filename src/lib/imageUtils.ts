@@ -66,3 +66,34 @@ function convertToWebPFallback(file: File, quality: number): Promise<File> {
 export function toWebPPath(path: string): string {
   return path.replace(/\.[^.]+$/, ".webp");
 }
+
+/**
+ * Supabase Storage image transformation URL builder.
+ * Serves optimized, resized images via Supabase's built-in CDN.
+ * Only works with Supabase storage URLs.
+ */
+export function getOptimizedImageUrl(
+  url: string,
+  options: { width?: number; height?: number; quality?: number; format?: string } = {}
+): string {
+  const supabaseStorageBase = "https://uizdqqyiqxkcjufkksrc.supabase.co/storage/v1/object/public/";
+  
+  // Only transform Supabase storage URLs
+  if (!url.startsWith(supabaseStorageBase)) return url;
+  
+  const params = new URLSearchParams();
+  if (options.width) params.set("width", String(options.width));
+  if (options.height) params.set("height", String(options.height));
+  if (options.quality) params.set("quality", String(options.quality));
+  if (options.format) params.set("format", options.format);
+  
+  if (params.toString() === "") return url;
+
+  // Transform: /storage/v1/object/public/ → /storage/v1/render/image/public/
+  const renderUrl = url.replace(
+    "/storage/v1/object/public/",
+    "/storage/v1/render/image/public/"
+  );
+  
+  return `${renderUrl}?${params.toString()}`;
+}
