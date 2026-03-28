@@ -45,14 +45,14 @@ const ProductGrid = memo(() => {
   const { data: allSubcategories = [] } = useQuery({
     queryKey: ["homepage-subcategories-tailored"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase
         .from("subcategories")
-        .select("id, name, slug, image_url, category_id")
+        .select("id, name, slug, image_url, category_id") as any)
         .eq("is_active", true)
-        .eq("show_in_tailored" as any, true)
+        .eq("show_in_tailored", true)
         .order("display_order");
       if (error) throw error;
-      return data;
+      return data as any[];
     },
     staleTime: 5 * 60 * 1000,
     placeholderData: (prev) => prev,
