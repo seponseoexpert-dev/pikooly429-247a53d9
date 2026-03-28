@@ -28,6 +28,7 @@ interface Subcategory {
   faq: any[] | null;
   display_order: number;
   is_active: boolean;
+  show_in_tailored: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -45,7 +46,7 @@ const AdminCategories = () => {
   // Subcategory state
   const [subDialogOpen, setSubDialogOpen] = useState(false);
   const [editingSub, setEditingSub] = useState<Subcategory | null>(null);
-  const [subForm, setSubForm] = useState({ name: "", slug: "", description: "", image_url: "", is_active: true, display_order: 0, category_id: "", seo_title: "", short_description: "", long_description: "", faq: "[]" });
+  const [subForm, setSubForm] = useState({ name: "", slug: "", description: "", image_url: "", is_active: true, display_order: 0, category_id: "", seo_title: "", short_description: "", long_description: "", faq: "[]", show_in_tailored: false });
   const [subImageFile, setSubImageFile] = useState<File | null>(null);
   const [savingSub, setSavingSub] = useState(false);
   const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set());
@@ -139,7 +140,7 @@ const AdminCategories = () => {
   };
 
   // Subcategory handlers
-  const resetSubForm = () => { setSubForm({ name: "", slug: "", description: "", image_url: "", is_active: true, display_order: 0, category_id: "", seo_title: "", short_description: "", long_description: "", faq: "[]" }); setEditingSub(null); setSubImageFile(null); };
+  const resetSubForm = () => { setSubForm({ name: "", slug: "", description: "", image_url: "", is_active: true, display_order: 0, category_id: "", seo_title: "", short_description: "", long_description: "", faq: "[]", show_in_tailored: false }); setEditingSub(null); setSubImageFile(null); };
 
   const openCreateSub = (categoryId: string) => {
     resetSubForm();
@@ -149,7 +150,7 @@ const AdminCategories = () => {
 
   const openEditSub = (sub: Subcategory) => {
     setEditingSub(sub);
-    setSubForm({ name: sub.name, slug: sub.slug, description: sub.description || "", image_url: sub.image_url || "", is_active: sub.is_active, display_order: sub.display_order, category_id: sub.category_id, seo_title: sub.seo_title || "", short_description: sub.short_description || "", long_description: sub.long_description || "", faq: JSON.stringify(sub.faq || []) });
+    setSubForm({ name: sub.name, slug: sub.slug, description: sub.description || "", image_url: sub.image_url || "", is_active: sub.is_active, display_order: sub.display_order, category_id: sub.category_id, seo_title: sub.seo_title || "", short_description: sub.short_description || "", long_description: sub.long_description || "", faq: JSON.stringify(sub.faq || []), show_in_tailored: sub.show_in_tailored ?? false });
     setSubImageFile(null);
     setSubDialogOpen(true);
   };
@@ -168,7 +169,7 @@ const AdminCategories = () => {
     const slug = subForm.slug || generateSlug(subForm.name);
     let parsedSubFaq: any[] = [];
     try { parsedSubFaq = JSON.parse(subForm.faq); } catch { parsedSubFaq = []; }
-    const payload = { name: subForm.name.trim(), slug, description: subForm.description || null, image_url: imageUrl || null, is_active: subForm.is_active, display_order: subForm.display_order, category_id: subForm.category_id, seo_title: subForm.seo_title || null, short_description: subForm.short_description || null, long_description: subForm.long_description || null, faq: parsedSubFaq } as any;
+    const payload = { name: subForm.name.trim(), slug, description: subForm.description || null, image_url: imageUrl || null, is_active: subForm.is_active, display_order: subForm.display_order, category_id: subForm.category_id, seo_title: subForm.seo_title || null, short_description: subForm.short_description || null, long_description: subForm.long_description || null, faq: parsedSubFaq, show_in_tailored: subForm.show_in_tailored } as any;
 
     if (editingSub) {
       const { error } = await supabase.from("subcategories").update(payload).eq("id", editingSub.id);
@@ -403,6 +404,11 @@ const AdminCategories = () => {
             <div className="flex items-center gap-2">
               <Switch checked={subForm.is_active} onCheckedChange={(c) => setSubForm({ ...subForm, is_active: c })} />
               <Label>Active</Label>
+            </div>
+            <div className="flex items-center gap-2">
+              <Switch checked={subForm.show_in_tailored} onCheckedChange={(c) => setSubForm({ ...subForm, show_in_tailored: c })} />
+              <Label>Show in Tailored Occasions</Label>
+              <span className="text-xs text-muted-foreground">(হোমপেজে দেখাবে)</span>
             </div>
             {/* FAQ Section */}
             <div className="space-y-3 border-t pt-4">
