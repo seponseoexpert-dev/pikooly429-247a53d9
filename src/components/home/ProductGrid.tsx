@@ -83,18 +83,15 @@ const ProductGrid = memo(() => {
       type: "cat" as const,
     }));
 
-    // Add subcategories that belong to tailored parent categories
-    const tailoredCatIds = new Set(occasionCategories.map((c) => c.id));
-    const subTabs = allSubcategories
-      .filter((s: any) => !tailoredCatIds.has(s.category_id))
-      .map((s: any) => ({
-        label: s.name,
-        slug: s.slug,
-        imageUrl: s.image_url || getFallbackImage(s.slug, "sub"),
-        icon: Gift,
-        type: "sub" as const,
-        subId: s.id,
-      }));
+    // Show all subcategories with show_in_tailored flag
+    const subTabs = allSubcategories.map((s: any) => ({
+      label: s.name,
+      slug: s.slug,
+      imageUrl: s.image_url || getFallbackImage(s.slug, "sub"),
+      icon: Gift,
+      type: "sub" as const,
+      subId: s.id,
+    }));
 
     // Show all subcategories as tabs alongside tailored categories
     return [...catTabs, ...subTabs];
