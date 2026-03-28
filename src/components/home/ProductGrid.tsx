@@ -140,29 +140,37 @@ const ProductGrid = memo(() => {
       </div>
 
       {tailoredTabs.length > 0 && (
-        <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-3 mb-4 md:mb-6 scrollbar-hide justify-start sm:justify-center px-1">
+        <div className="flex gap-4 sm:gap-5 md:gap-6 overflow-x-auto pb-3 mb-4 md:mb-6 scrollbar-hide justify-start sm:justify-center px-1">
           {tailoredTabs.map(({ label, slug, imageUrl, icon: Icon }) => (
             <button
               key={slug}
               onClick={() => setActiveTailoredSlug(slug)}
-              className={`flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-colors duration-150 ${
-                activeTailoredSlug === slug
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-card border border-border text-muted-foreground hover:border-primary/30"
-              }`}
+              className="flex flex-col items-center gap-1.5 min-w-[70px] sm:min-w-[80px] group"
             >
-              {imageUrl ? (
-                <img
-                  src={imageUrl}
-                  alt={label}
-                  className="w-4 h-4 sm:w-5 sm:h-5 rounded-full object-cover"
-                  loading="lazy"
-                  decoding="async"
-                />
-              ) : (
-                <Icon size={14} className="sm:w-4 sm:h-4" />
-              )}
-              {label}
+              <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center transition-colors duration-150 ${
+                activeTailoredSlug === slug
+                  ? "bg-primary/10 ring-2 ring-primary"
+                  : "bg-muted/50 group-hover:bg-primary/5"
+              }`}>
+                {imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt={label}
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <Icon size={24} className={`sm:w-7 sm:h-7 transition-colors ${
+                    activeTailoredSlug === slug ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+                  }`} />
+                )}
+              </div>
+              <span className={`text-[11px] sm:text-xs font-medium whitespace-nowrap transition-colors ${
+                activeTailoredSlug === slug ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
+              }`}>
+                {label}
+              </span>
             </button>
           ))}
         </div>
