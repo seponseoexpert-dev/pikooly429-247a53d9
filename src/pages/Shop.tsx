@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef, useTransition } from "react";
 import { useSearchParams, useParams, Link } from "react-router-dom";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import ProductCard from "@/components/product/ProductCard";
@@ -22,7 +22,7 @@ const Shop = () => {
 
   const [sortBy, setSortBy] = useState("newest");
 
-  const { data: products = [], isLoading: productsLoading } = useQuery({
+  const { data: products = [], isLoading: productsLoading, isFetching } = useQuery({
     queryKey: ["shop-products"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -33,6 +33,7 @@ const Shop = () => {
       if (error) throw error;
       return data;
     },
+    placeholderData: (prev) => prev,
   });
 
   const { data: categories = [] } = useQuery({
@@ -46,6 +47,7 @@ const Shop = () => {
       if (error) throw error;
       return data;
     },
+    placeholderData: (prev) => prev,
   });
 
   const { data: subcategories = [] } = useQuery({
@@ -59,6 +61,7 @@ const Shop = () => {
       if (error) throw error;
       return data as any[];
     },
+    placeholderData: (prev) => prev,
   });
 
   // Resolve catSlug: if it matches a subcategory instead of a category, auto-select parent cat + sub
