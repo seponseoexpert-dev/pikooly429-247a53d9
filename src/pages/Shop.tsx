@@ -47,6 +47,7 @@ const Shop = () => {
       if (error) throw error;
       return data;
     },
+    placeholderData: (prev) => prev,
   });
 
   const { data: subcategories = [] } = useQuery({
