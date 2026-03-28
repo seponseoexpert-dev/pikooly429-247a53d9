@@ -19,6 +19,7 @@ const CategoryGrid = memo(() => {
       return data;
     },
     staleTime: 5 * 60 * 1000,
+    placeholderData: (prev) => prev,
   });
 
   if (isLoading) return (

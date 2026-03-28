@@ -1,5 +1,6 @@
 import { memo, useState, useEffect, useCallback, useRef } from "react";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -16,31 +17,38 @@ interface Slide {
 }
 
 const HeroSection = memo(() => {
-  const [slides, setSlides] = useState<Slide[]>([]);
   const [current, setCurrent] = useState(0);
   const touchStartX = useRef(0);
 
+  const { data: slides = [] } = useQuery({
+    queryKey: ["homepage-sliders"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("sliders")
+        .select("*")
+        .eq("is_active", true)
+        .order("display_order");
+      if (error) throw error;
+      return data as Slide[];
+    },
+    staleTime: 5 * 60 * 1000,
+    placeholderData: (prev) => prev,
+  });
+
+  // Preload first slide image for LCP
   useEffect(() => {
-    supabase
-      .from("sliders")
-      .select("*")
-      .eq("is_active", true)
-      .order("display_order")
-      .then(({ data }) => {
-        if (data && data.length > 0) {
-          setSlides(data);
-          // Preload first slide image for LCP
-          if (data[0]?.image_url) {
-            const link = document.createElement("link");
-            link.rel = "preload";
-            link.as = "image";
-            link.href = data[0].image_url;
-            link.fetchPriority = "high";
-            document.head.appendChild(link);
-          }
-        }
-      });
-  }, []);
+    if (slides.length > 0 && slides[0]?.image_url) {
+      const existing = document.querySelector(`link[href="${slides[0].image_url}"]`);
+      if (!existing) {
+        const link = document.createElement("link");
+        link.rel = "preload";
+        link.as = "image";
+        link.href = slides[0].image_url;
+        link.fetchPriority = "high";
+        document.head.appendChild(link);
+      }
+    }
+  }, [slides]);
 
   useEffect(() => {
     if (slides.length <= 1) return;
