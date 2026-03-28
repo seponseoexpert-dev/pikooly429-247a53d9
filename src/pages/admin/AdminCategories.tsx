@@ -150,7 +150,7 @@ const AdminCategories = () => {
 
   const openEditSub = (sub: Subcategory) => {
     setEditingSub(sub);
-    setSubForm({ name: sub.name, slug: sub.slug, description: sub.description || "", image_url: sub.image_url || "", is_active: sub.is_active, display_order: sub.display_order, category_id: sub.category_id, seo_title: sub.seo_title || "", short_description: sub.short_description || "", long_description: sub.long_description || "", faq: JSON.stringify(sub.faq || []) });
+    setSubForm({ name: sub.name, slug: sub.slug, description: sub.description || "", image_url: sub.image_url || "", is_active: sub.is_active, display_order: sub.display_order, category_id: sub.category_id, seo_title: sub.seo_title || "", short_description: sub.short_description || "", long_description: sub.long_description || "", faq: JSON.stringify(sub.faq || []), show_in_tailored: sub.show_in_tailored ?? false });
     setSubImageFile(null);
     setSubDialogOpen(true);
   };
