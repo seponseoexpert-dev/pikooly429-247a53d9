@@ -43,6 +43,7 @@ const ProductDetail = () => {
       return data;
     },
     enabled: !!id,
+    placeholderData: (prev) => prev,
   });
 
   const { data: related = [] } = useQuery({
@@ -59,6 +60,7 @@ const ProductDetail = () => {
       return data;
     },
     enabled: !!product?.category_id,
+    placeholderData: (prev) => prev,
   });
 
   // Check if this product's category allows custom image uploads
