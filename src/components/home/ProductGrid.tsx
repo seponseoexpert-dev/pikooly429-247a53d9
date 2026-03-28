@@ -140,39 +140,43 @@ const ProductGrid = memo(() => {
       </div>
 
       {tailoredTabs.length > 0 && (
-        <div className="flex gap-4 sm:gap-5 md:gap-6 overflow-x-auto pb-3 mb-4 md:mb-6 scrollbar-hide justify-start sm:justify-center px-1">
-          {tailoredTabs.map(({ label, slug, imageUrl, icon: Icon }) => (
-            <button
-              key={slug}
-              onClick={() => setActiveTailoredSlug(slug)}
-              className="flex flex-col items-center gap-1.5 min-w-[70px] sm:min-w-[80px] group"
-            >
-              <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center transition-colors duration-150 ${
-                activeTailoredSlug === slug
-                  ? "bg-primary/10 ring-2 ring-primary"
-                  : "bg-muted/50 group-hover:bg-primary/5"
-              }`}>
-                {imageUrl ? (
-                  <img
-                    src={imageUrl}
-                    alt={label}
-                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                ) : (
-                  <Icon size={24} className={`sm:w-7 sm:h-7 transition-colors ${
-                    activeTailoredSlug === slug ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
-                  }`} />
+        <div className="flex gap-6 sm:gap-8 md:gap-10 overflow-x-auto pb-4 mb-5 md:mb-7 scrollbar-hide justify-start sm:justify-center px-2">
+          {tailoredTabs.map(({ label, slug, imageUrl, icon: Icon }) => {
+            const isActive = activeTailoredSlug === slug;
+            return (
+              <button
+                key={slug}
+                onClick={() => setActiveTailoredSlug(slug)}
+                className="flex flex-col items-center gap-2 min-w-[72px] sm:min-w-[85px] group relative"
+              >
+                <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center transition-all duration-250 shadow-sm ${
+                  isActive
+                    ? "bg-primary text-primary-foreground shadow-md scale-105"
+                    : "bg-card border border-border/60 text-muted-foreground group-hover:border-primary/40 group-hover:shadow-md group-hover:scale-[1.03]"
+                }`}>
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt={label}
+                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg object-cover transition-all ${isActive ? "brightness-0 invert" : ""}`}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <Icon size={26} className="sm:w-7 sm:h-7" />
+                  )}
+                </div>
+                <span className={`text-[11px] sm:text-xs font-semibold whitespace-nowrap transition-colors ${
+                  isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+                }`}>
+                  {label}
+                </span>
+                {isActive && (
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-5 h-[3px] rounded-full bg-primary" />
                 )}
-              </div>
-              <span className={`text-[11px] sm:text-xs font-medium whitespace-nowrap transition-colors ${
-                activeTailoredSlug === slug ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
-              }`}>
-                {label}
-              </span>
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </div>
       )}
 
