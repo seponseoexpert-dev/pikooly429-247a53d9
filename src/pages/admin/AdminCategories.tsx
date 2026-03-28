@@ -28,6 +28,7 @@ interface Subcategory {
   faq: any[] | null;
   display_order: number;
   is_active: boolean;
+  show_in_tailored: boolean;
   created_at: string;
   updated_at: string;
 }
