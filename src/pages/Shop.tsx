@@ -61,6 +61,7 @@ const Shop = () => {
       if (error) throw error;
       return data as any[];
     },
+    placeholderData: (prev) => prev,
   });
 
   // Resolve catSlug: if it matches a subcategory instead of a category, auto-select parent cat + sub
