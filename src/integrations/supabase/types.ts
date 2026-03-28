@@ -1135,6 +1135,7 @@ export type Database = {
           name: string
           seo_title: string | null
           short_description: string | null
+          show_in_tailored: boolean
           slug: string
           updated_at: string
         }
@@ -1151,6 +1152,7 @@ export type Database = {
           name: string
           seo_title?: string | null
           short_description?: string | null
+          show_in_tailored?: boolean
           slug: string
           updated_at?: string
         }
@@ -1167,6 +1169,7 @@ export type Database = {
           name?: string
           seo_title?: string | null
           short_description?: string | null
+          show_in_tailored?: boolean
           slug?: string
           updated_at?: string
         }
