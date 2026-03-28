@@ -15,7 +15,7 @@ const ProductGrid = memo(() => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("*, categories(name, slug), product_categories(category_id, categories(name, slug))")
+        .select("*, categories(name, slug), product_categories(category_id, categories(name, slug)), product_subcategories(subcategory_id)")
         .eq("is_active", true)
         .order("created_at", { ascending: false });
       if (error) throw error;
