@@ -36,7 +36,7 @@ const AllGifts = () => {
   });
 
   const occasions = categories.filter((c: any) => c.category_type === "occasion");
-  const categoryItems = categories.filter((c: any) => c.category_type !== "occasion");
+  const categoryItems = categories.filter((c: any) => c.category_type !== "occasion" && c.category_type !== "tailored");
 
   const getSubsForCat = (catId: string) =>
     subcategories.filter((s: any) => s.category_id === catId);

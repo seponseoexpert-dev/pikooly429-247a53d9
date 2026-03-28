@@ -13,6 +13,7 @@ const CategoryGrid = memo(() => {
         .select("id, name, slug, image_url")
         .eq("is_active", true)
         .eq("show_in_homepage", true)
+        .neq("category_type", "tailored")
         .order("display_order");
       if (error) throw error;
       return data;
