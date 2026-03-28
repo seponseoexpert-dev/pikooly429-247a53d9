@@ -129,13 +129,28 @@ const ProductGrid = memo(() => {
     return featured.length > 0 ? featured.slice(0, 10) : products.slice(0, 10);
   }, [products, featured, activeTrendingTab]);
 
-  const filtered = activeTailoredSlug
-    ? products.filter((p: any) => {
-        if (p.categories?.slug === activeTailoredSlug) return true;
-        if (p.product_categories?.some((pc: any) => pc.categories?.slug === activeTailoredSlug)) return true;
-        return false;
-      })
-    : products;
+  const filtered = useMemo(() => {
+    if (!activeTailoredSlug) return products;
+    const activeTab = tailoredTabs.find((t) => t.slug === activeTailoredSlug);
+    if (!activeTab) return products;
+
+    if (activeTab.type === "sub") {
+      // Filter by subcategory
+      const sub = allSubcategories.find((s: any) => s.slug === activeTailoredSlug);
+      if (!sub) return products;
+      return products.filter((p: any) =>
+        (p as any).subcategory_id === sub.id ||
+        (p as any).product_subcategories?.some((psc: any) => psc.subcategory_id === sub.id)
+      );
+    }
+
+    // Filter by category
+    return products.filter((p: any) => {
+      if (p.categories?.slug === activeTailoredSlug) return true;
+      if (p.product_categories?.some((pc: any) => pc.categories?.slug === activeTailoredSlug)) return true;
+      return false;
+    });
+  }, [activeTailoredSlug, products, tailoredTabs, allSubcategories]);
 
   const activeTailoredTab = tailoredTabs.find((tab) => tab.slug === activeTailoredSlug);
   const viewAllTailoredText = activeTailoredTab ? `View All ${activeTailoredTab.label} →` : "View All Gifts →";
