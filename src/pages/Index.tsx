@@ -20,7 +20,33 @@ const FAQSection = lazy(() => import("@/components/home/FAQSection"));
 const LazyFallback = () => <div className="min-h-[100px]" />;
 
 const Index = () => {
+  const queryClient = useQueryClient();
   const { settings } = useSiteSettings();
+
+  // Prefetch shop data so it's cached when user navigates to Shop page
+  useEffect(() => {
+    queryClient.prefetchQuery({
+      queryKey: ["shop-products"],
+      queryFn: async () => {
+        const { data } = await supabase.from("products").select("*, categories(name, slug), product_categories(category_id, categories(name, slug)), product_subcategories(subcategory_id)").eq("is_active", true).order("created_at", { ascending: false });
+        return data;
+      },
+    });
+    queryClient.prefetchQuery({
+      queryKey: ["shop-categories"],
+      queryFn: async () => {
+        const { data } = await supabase.from("categories").select("*").eq("is_active", true).order("display_order");
+        return data;
+      },
+    });
+    queryClient.prefetchQuery({
+      queryKey: ["shop-subcategories"],
+      queryFn: async () => {
+        const { data } = await supabase.from("subcategories").select("*").eq("is_active", true).order("display_order");
+        return data;
+      },
+    });
+  }, [queryClient]);
 
   const seoTitle = settings.homepage_seo_title || settings.site_title || "Pikooly — Online Flower, Gift & Cake Shop in Bangladesh";
   const seoDesc = settings.homepage_meta_description || "Order fresh flowers, beautiful gifts, and delicious cakes online in Bangladesh. Same day delivery in Dhaka.";
