@@ -231,15 +231,23 @@ const ProductGrid = memo(() => {
         </div>
       )}
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
-        {productsLoading
-          ? <div className="col-span-full flex items-center justify-center py-10"><div className="w-7 h-7 border-3 border-primary/30 border-t-primary rounded-full animate-spin" /></div>
-          : tailoredProducts.slice(0, 10).map((product: any, index: number) => (
-              <div key={product.id} className={index >= 6 ? "hidden lg:block" : ""}>
-                <ProductCard product={product} />
-              </div>
-            ))}
-      </div>
+      {productsLoading ? (
+        <div className="flex items-center justify-center py-10"><div className="w-7 h-7 border-3 border-primary/30 border-t-primary rounded-full animate-spin" /></div>
+      ) : tailoredProducts.length === 0 ? (
+        <div className="text-center py-12 px-4">
+          <Gift className="w-10 h-10 mx-auto text-muted-foreground/40 mb-3" />
+          <p className="text-muted-foreground text-sm font-medium">No products found for this occasion</p>
+          <p className="text-muted-foreground/60 text-xs mt-1">Check back soon for new additions!</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+          {tailoredProducts.slice(0, 10).map((product: any, index: number) => (
+            <div key={product.id} className={index >= 6 ? "hidden lg:block" : ""}>
+              <ProductCard product={product} />
+            </div>
+          ))}
+        </div>
+      )}
 
       {tailoredProducts.length > 0 && (
         <div className="text-center mt-6 md:mt-8">
