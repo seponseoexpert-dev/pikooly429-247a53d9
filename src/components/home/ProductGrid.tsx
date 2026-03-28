@@ -42,24 +42,62 @@ const ProductGrid = memo(() => {
     placeholderData: (prev) => prev,
   });
 
-  const tailoredTabs = useMemo(() => {
-    const getFallbackImage = (slug: string) => {
-      const matchedProduct = products.find((p: any) => {
-        const inPrimaryCategory = p.categories?.slug === slug;
-        const inMappedCategory = p.product_categories?.some((pc: any) => pc.categories?.slug === slug);
-        return (inPrimaryCategory || inMappedCategory) && (p.image_url || p.images?.[0]);
-      });
+  const { data: allSubcategories = [] } = useQuery({
+    queryKey: ["homepage-subcategories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("subcategories")
+        .select("id, name, slug, image_url, category_id")
+        .eq("is_active", true)
+        .order("display_order");
+      if (error) throw error;
+      return data;
+    },
+    staleTime: 5 * 60 * 1000,
+    placeholderData: (prev) => prev,
+  });
 
+  const tailoredTabs = useMemo(() => {
+    const getFallbackImage = (slug: string, type: "cat" | "sub") => {
+      if (type === "cat") {
+        const matchedProduct = products.find((p: any) => {
+          return p.categories?.slug === slug || p.product_categories?.some((pc: any) => pc.categories?.slug === slug);
+        });
+        return matchedProduct?.image_url || matchedProduct?.images?.[0] || null;
+      }
+      // For subcategory, find product with matching subcategory
+      const sub = allSubcategories.find((s: any) => s.slug === slug);
+      if (!sub) return null;
+      const matchedProduct = products.find((p: any) =>
+        (p as any).subcategory_id === sub.id || (p as any).product_subcategories?.some((psc: any) => psc.subcategory_id === sub.id)
+      );
       return matchedProduct?.image_url || matchedProduct?.images?.[0] || null;
     };
 
-    return occasionCategories.map((c) => ({
+    const catTabs = occasionCategories.map((c) => ({
       label: c.name,
       slug: c.slug,
-      imageUrl: c.image_url || getFallbackImage(c.slug),
+      imageUrl: c.image_url || getFallbackImage(c.slug, "cat"),
       icon: Gift,
+      type: "cat" as const,
     }));
-  }, [occasionCategories, products]);
+
+    // Add subcategories that belong to tailored parent categories
+    const tailoredCatIds = new Set(occasionCategories.map((c) => c.id));
+    const subTabs = allSubcategories
+      .filter((s: any) => !tailoredCatIds.has(s.category_id))
+      .map((s: any) => ({
+        label: s.name,
+        slug: s.slug,
+        imageUrl: s.image_url || getFallbackImage(s.slug, "sub"),
+        icon: Gift,
+        type: "sub" as const,
+        subId: s.id,
+      }));
+
+    // Show all subcategories as tabs alongside tailored categories
+    return [...catTabs, ...subTabs];
+  }, [occasionCategories, allSubcategories, products]);
 
   useEffect(() => {
     if (!tailoredTabs.length) {
