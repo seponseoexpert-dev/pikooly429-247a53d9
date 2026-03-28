@@ -154,7 +154,9 @@ const ProductGrid = memo(() => {
 
   const activeTailoredTab = tailoredTabs.find((tab) => tab.slug === activeTailoredSlug);
   const viewAllTailoredText = activeTailoredTab ? `View All ${activeTailoredTab.label} →` : "View All Gifts →";
-  const viewAllTailoredLink = activeTailoredTab ? `/shop?cat=${activeTailoredTab.slug}` : "/shop";
+  const viewAllTailoredLink = activeTailoredTab
+    ? (activeTailoredTab.type === "sub" ? `/product-category/${activeTailoredTab.slug}` : `/shop?cat=${activeTailoredTab.slug}`)
+    : "/shop";
 
   return (
     <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Products" style={{ contain: "layout style" }}>
