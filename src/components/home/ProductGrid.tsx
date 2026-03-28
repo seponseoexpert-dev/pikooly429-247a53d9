@@ -22,6 +22,7 @@ const ProductGrid = memo(() => {
       return data;
     },
     staleTime: 5 * 60 * 1000,
+    placeholderData: (prev) => prev,
   });
 
   const { data: occasionCategories = [] } = useQuery({
