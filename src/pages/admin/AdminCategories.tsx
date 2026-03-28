@@ -405,6 +405,11 @@ const AdminCategories = () => {
               <Switch checked={subForm.is_active} onCheckedChange={(c) => setSubForm({ ...subForm, is_active: c })} />
               <Label>Active</Label>
             </div>
+            <div className="flex items-center gap-2">
+              <Switch checked={subForm.show_in_tailored} onCheckedChange={(c) => setSubForm({ ...subForm, show_in_tailored: c })} />
+              <Label>Show in Tailored Occasions</Label>
+              <span className="text-xs text-muted-foreground">(হোমপেজে দেখাবে)</span>
+            </div>
             {/* FAQ Section */}
             <div className="space-y-3 border-t pt-4">
               <div className="flex items-center justify-between">
