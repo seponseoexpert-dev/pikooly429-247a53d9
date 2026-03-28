@@ -22,7 +22,7 @@ const Shop = () => {
 
   const [sortBy, setSortBy] = useState("newest");
 
-  const { data: products = [], isLoading: productsLoading } = useQuery({
+  const { data: products = [], isLoading: productsLoading, isFetching } = useQuery({
     queryKey: ["shop-products"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -33,6 +33,7 @@ const Shop = () => {
       if (error) throw error;
       return data;
     },
+    placeholderData: (prev) => prev,
   });
 
   const { data: categories = [] } = useQuery({
