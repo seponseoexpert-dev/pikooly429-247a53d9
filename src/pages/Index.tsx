@@ -111,6 +111,9 @@ const Index = () => {
         <GiftingStories />
       </Suspense>
       <Suspense fallback={<LazyFallback />}>
+        <EventsSection />
+      </Suspense>
+      <Suspense fallback={<LazyFallback />}>
         <BlogSection />
       </Suspense>
       <Suspense fallback={<LazyFallback />}>
