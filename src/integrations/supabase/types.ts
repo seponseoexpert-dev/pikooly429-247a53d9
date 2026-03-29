@@ -402,6 +402,200 @@ export type Database = {
         }
         Relationships: []
       }
+      event_bookings: {
+        Row: {
+          booking_number: string
+          category_id: string | null
+          created_at: string
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string
+          event_date: string
+          event_time: string | null
+          guest_count: number | null
+          id: string
+          notes: string | null
+          package_id: string | null
+          payment_method: string
+          payment_status: string
+          special_requests: string | null
+          status: string
+          total: number
+          updated_at: string
+          user_id: string | null
+          venue_address: string
+        }
+        Insert: {
+          booking_number: string
+          category_id?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name: string
+          customer_phone: string
+          event_date: string
+          event_time?: string | null
+          guest_count?: number | null
+          id?: string
+          notes?: string | null
+          package_id?: string | null
+          payment_method?: string
+          payment_status?: string
+          special_requests?: string | null
+          status?: string
+          total?: number
+          updated_at?: string
+          user_id?: string | null
+          venue_address: string
+        }
+        Update: {
+          booking_number?: string
+          category_id?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string
+          event_date?: string
+          event_time?: string | null
+          guest_count?: number | null
+          id?: string
+          notes?: string | null
+          package_id?: string | null
+          payment_method?: string
+          payment_status?: string
+          special_requests?: string | null
+          status?: string
+          total?: number
+          updated_at?: string
+          user_id?: string | null
+          venue_address?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_bookings_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "event_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_bookings_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "event_packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          icon: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      event_packages: {
+        Row: {
+          category_id: string
+          created_at: string
+          description: string | null
+          display_order: number
+          features: Json
+          id: string
+          image_url: string | null
+          images: string[] | null
+          is_active: boolean
+          is_featured: boolean
+          name: string
+          original_price: number | null
+          price: number
+          seo_description: string | null
+          seo_title: string | null
+          updated_at: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          features?: Json
+          id?: string
+          image_url?: string | null
+          images?: string[] | null
+          is_active?: boolean
+          is_featured?: boolean
+          name: string
+          original_price?: number | null
+          price?: number
+          seo_description?: string | null
+          seo_title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          features?: Json
+          id?: string
+          image_url?: string | null
+          images?: string[] | null
+          is_active?: boolean
+          is_featured?: boolean
+          name?: string
+          original_price?: number | null
+          price?: number
+          seo_description?: string | null
+          seo_title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_packages_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "event_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       gifting_stories: {
         Row: {
           created_at: string
