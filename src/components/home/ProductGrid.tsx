@@ -136,21 +136,27 @@ const ProductGrid = memo(() => {
   return (
     <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Products" style={{ contain: "layout style" }}>
       {/* ── Trending Tabs: For You, Best Seller + Subcategories ── */}
-      <div className="flex gap-1.5 overflow-x-auto pb-3 mb-4 scrollbar-hide">
-        {allTrendingTabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-200 ${
-              activeTab === tab.id
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "bg-muted text-muted-foreground hover:bg-muted/80"
-            }`}
-          >
-            {tab.icon && <tab.icon size={14} className={activeTab === tab.id ? "fill-primary-foreground" : ""} />}
-            {tab.label}
-          </button>
-        ))}
+      <div className="flex gap-2 overflow-x-auto pb-4 mb-5 scrollbar-hide">
+        {allTrendingTabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`relative flex items-center gap-1.5 px-5 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-300 border ${
+                isActive
+                  ? "bg-primary text-primary-foreground shadow-md border-primary scale-[1.03]"
+                  : "bg-card text-muted-foreground border-border/60 hover:border-primary/40 hover:text-foreground hover:shadow-sm"
+              }`}
+            >
+              {tab.icon && <tab.icon size={14} className={isActive ? "fill-primary-foreground" : ""} />}
+              {tab.label}
+              {isActive && (
+                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-[3px] rounded-full bg-primary" />
+              )}
+            </button>
+          );
+        })}
       </div>
 
       {productsLoading ? (
