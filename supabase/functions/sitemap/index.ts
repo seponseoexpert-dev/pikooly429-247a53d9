@@ -62,6 +62,7 @@ Deno.serve(async (req) => {
     urls.push(urlEntry(`${SITE_URL}/contact-us`, new Date().toISOString(), "0.5", "monthly"));
     urls.push(urlEntry(`${SITE_URL}/reviews`, new Date().toISOString(), "0.6", "weekly"));
     urls.push(urlEntry(`${SITE_URL}/custom-bouquet`, new Date().toISOString(), "0.6", "monthly"));
+    urls.push(urlEntry(`${SITE_URL}/events`, new Date().toISOString(), "0.8", "daily"));
     urls.push(urlEntry(`${SITE_URL}/track-order`, new Date().toISOString(), "0.4", "monthly"));
 
     // Categories
