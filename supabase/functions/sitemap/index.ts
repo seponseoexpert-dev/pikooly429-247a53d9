@@ -102,6 +102,17 @@ Deno.serve(async (req) => {
       ));
     }
 
+    // Event categories
+    for (const ec of eventCategories) {
+      urls.push(urlEntry(
+        `${SITE_URL}/events/${ec.slug}`,
+        ec.updated_at,
+        "0.7",
+        "weekly",
+        ec.image_url || undefined
+      ));
+    }
+
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
