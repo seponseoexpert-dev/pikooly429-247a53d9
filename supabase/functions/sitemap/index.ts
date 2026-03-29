@@ -33,6 +33,7 @@ Deno.serve(async (req) => {
     const categories = categoriesRes.data || [];
     const subcategories = subcategoriesRes.data || [];
     const blogs = blogsRes.data || [];
+    const eventCategories = eventCatsRes.data || [];
 
     // Build category id -> slug map for subcategory URLs
     const catMap = new Map<string, string>();
