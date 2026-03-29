@@ -288,9 +288,10 @@ const AdminCategories = () => {
                   <option value="category">Category (Shop by Category)</option>
                   <option value="occasion">Occasion (All Gifts Page)</option>
                   <option value="tailored">Tailored For Your Occasions (Homepage)</option>
+                  <option value="trending">Trending (Homepage Tabs)</option>
                 </select>
                 <p className="text-xs text-muted-foreground">
-                  সিলেক্ট না করলে কোনো সেকশনে দেখাবে না। "Category" = Shop by Category। "Occasion" = All Gifts পেজে। "Tailored" = হোমপেজের ট্যাব।
+                   সিলেক্ট না করলে কোনো সেকশনে দেখাবে না। "Category" = Shop by Category। "Occasion" = All Gifts পেজে। "Tailored" = হোমপেজের ট্যাব। "Trending" = হোমপেজের ট্রেন্ডিং ট্যাব।
                 </p>
               </div>
               <div className="flex items-center gap-2">
