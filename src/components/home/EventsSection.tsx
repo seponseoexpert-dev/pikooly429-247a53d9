@@ -49,7 +49,7 @@ const EventsSection = () => {
               transition={{ delay: i * 0.08 }}
             >
               <Link
-                to="/events"
+                to={`/events/${cat.slug}`}
                 className="group block rounded-2xl overflow-hidden border border-border hover:border-primary/50 transition-all hover:shadow-lg"
               >
                 {cat.image_url ? (

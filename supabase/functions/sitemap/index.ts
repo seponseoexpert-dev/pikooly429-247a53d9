@@ -21,17 +21,19 @@ Deno.serve(async (req) => {
     );
 
     // Fetch all data in parallel
-    const [productsRes, categoriesRes, subcategoriesRes, blogsRes] = await Promise.all([
+    const [productsRes, categoriesRes, subcategoriesRes, blogsRes, eventCatsRes] = await Promise.all([
       supabase.from("products").select("slug, updated_at, image_url").eq("is_active", true),
       supabase.from("categories").select("slug, updated_at").eq("is_active", true),
       supabase.from("subcategories").select("slug, category_id, updated_at").eq("is_active", true),
       supabase.from("blogs").select("slug, updated_at, image_url").eq("is_published", true),
+      supabase.from("event_categories").select("slug, updated_at, image_url").eq("is_active", true),
     ]);
 
     const products = productsRes.data || [];
     const categories = categoriesRes.data || [];
     const subcategories = subcategoriesRes.data || [];
     const blogs = blogsRes.data || [];
+    const eventCategories = eventCatsRes.data || [];
 
     // Build category id -> slug map for subcategory URLs
     const catMap = new Map<string, string>();
@@ -97,6 +99,17 @@ Deno.serve(async (req) => {
         "0.7",
         "monthly",
         post.image_url || undefined
+      ));
+    }
+
+    // Event categories
+    for (const ec of eventCategories) {
+      urls.push(urlEntry(
+        `${SITE_URL}/events/${ec.slug}`,
+        ec.updated_at,
+        "0.7",
+        "weekly",
+        ec.image_url || undefined
       ));
     }
 

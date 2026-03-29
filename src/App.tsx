@@ -61,6 +61,7 @@ const AdminBouquet = lazy(() => import("./pages/admin/AdminBouquet"));
 const BouquetBuilder = lazy(() => import("./pages/BouquetBuilder"));
 const Install = lazy(() => import("./pages/Install"));
 const Events = lazy(() => import("./pages/Events"));
+const EventCategoryDetail = lazy(() => import("./pages/EventCategoryDetail"));
 const AdminEvents = lazy(() => import("./pages/admin/AdminEvents"));
 
 const queryClient = new QueryClient({
@@ -132,6 +133,7 @@ const App = () => (
               <Route path="/custom-bouquet" element={<PublicLayout><BouquetBuilder /></PublicLayout>} />
               <Route path="/install" element={<PublicLayout><Install /></PublicLayout>} />
               <Route path="/events" element={<PublicLayout><Events /></PublicLayout>} />
+              <Route path="/events/:slug" element={<PublicLayout><EventCategoryDetail /></PublicLayout>} />
               <Route path="/auth" element={<PublicLayout><Auth /></PublicLayout>} />
               <Route path="/account" element={<PublicLayout><Account /></PublicLayout>} />
               <Route path="/reset-password" element={<PublicLayout><ResetPassword /></PublicLayout>} />

@@ -495,9 +495,11 @@ export type Database = {
           id: string
           image_url: string | null
           is_active: boolean
+          long_description: string | null
           name: string
           seo_description: string | null
           seo_title: string | null
+          short_description: string | null
           slug: string
           updated_at: string
         }
@@ -509,9 +511,11 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_active?: boolean
+          long_description?: string | null
           name: string
           seo_description?: string | null
           seo_title?: string | null
+          short_description?: string | null
           slug: string
           updated_at?: string
         }
@@ -523,9 +527,11 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_active?: boolean
+          long_description?: string | null
           name?: string
           seo_description?: string | null
           seo_title?: string | null
+          short_description?: string | null
           slug?: string
           updated_at?: string
         }
