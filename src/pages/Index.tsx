@@ -12,6 +12,7 @@ const OfferBanners = lazy(() => import("@/components/home/OfferBanners"));
 const RelationshipGrid = lazy(() => import("@/components/home/RelationshipGrid"));
 const CelebrationsCalendar = lazy(() => import("@/components/home/CelebrationsCalendar"));
 const GiftingStories = lazy(() => import("@/components/home/GiftingStories"));
+const EventsSection = lazy(() => import("@/components/home/EventsSection"));
 const BlogSection = lazy(() => import("@/components/home/BlogSection"));
 const CustomerReviewSection = lazy(() => import("@/components/home/CustomerReviewSection"));
 const AboutSection = lazy(() => import("@/components/home/AboutSection"));
@@ -108,6 +109,9 @@ const Index = () => {
       </Suspense>
       <Suspense fallback={<LazyFallback />}>
         <GiftingStories />
+      </Suspense>
+      <Suspense fallback={<LazyFallback />}>
+        <EventsSection />
       </Suspense>
       <Suspense fallback={<LazyFallback />}>
         <BlogSection />

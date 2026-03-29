@@ -60,6 +60,8 @@ const AdminHomepageContent = lazy(() => import("./pages/admin/AdminHomepageConte
 const AdminBouquet = lazy(() => import("./pages/admin/AdminBouquet"));
 const BouquetBuilder = lazy(() => import("./pages/BouquetBuilder"));
 const Install = lazy(() => import("./pages/Install"));
+const Events = lazy(() => import("./pages/Events"));
+const AdminEvents = lazy(() => import("./pages/admin/AdminEvents"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -129,6 +131,7 @@ const App = () => (
               <Route path="/reviews" element={<PublicLayout><Reviews /></PublicLayout>} />
               <Route path="/custom-bouquet" element={<PublicLayout><BouquetBuilder /></PublicLayout>} />
               <Route path="/install" element={<PublicLayout><Install /></PublicLayout>} />
+              <Route path="/events" element={<PublicLayout><Events /></PublicLayout>} />
               <Route path="/auth" element={<PublicLayout><Auth /></PublicLayout>} />
               <Route path="/account" element={<PublicLayout><Account /></PublicLayout>} />
               <Route path="/reset-password" element={<PublicLayout><ResetPassword /></PublicLayout>} />
@@ -149,6 +152,7 @@ const App = () => (
               <Route path="/admin/migrate" element={<AdminRoute><AdminMigrate /></AdminRoute>} />
               <Route path="/admin/homepage-content" element={<AdminRoute><AdminHomepageContent /></AdminRoute>} />
               <Route path="/admin/bouquet" element={<AdminRoute><AdminBouquet /></AdminRoute>} />
+              <Route path="/admin/events" element={<AdminRoute><AdminEvents /></AdminRoute>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>
