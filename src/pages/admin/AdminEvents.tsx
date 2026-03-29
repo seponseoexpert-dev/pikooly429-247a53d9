@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Package, Tag, CalendarCheck } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import RichTextEditor from "@/components/admin/RichTextEditor";
 
 // ─── Event Categories Tab ───
 const CategoriesTab = () => {

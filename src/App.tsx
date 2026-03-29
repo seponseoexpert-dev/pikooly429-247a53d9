@@ -61,6 +61,7 @@ const AdminBouquet = lazy(() => import("./pages/admin/AdminBouquet"));
 const BouquetBuilder = lazy(() => import("./pages/BouquetBuilder"));
 const Install = lazy(() => import("./pages/Install"));
 const Events = lazy(() => import("./pages/Events"));
+const EventCategoryDetail = lazy(() => import("./pages/EventCategoryDetail"));
 const AdminEvents = lazy(() => import("./pages/admin/AdminEvents"));
 
 const queryClient = new QueryClient({
