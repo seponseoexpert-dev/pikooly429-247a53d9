@@ -18,7 +18,7 @@ const CategoriesTab = () => {
   const queryClient = useQueryClient();
   const [editItem, setEditItem] = useState<any>(null);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ name: "", slug: "", description: "", image_url: "", icon: "", display_order: 0, is_active: true, seo_title: "", seo_description: "" });
+  const [form, setForm] = useState({ name: "", slug: "", description: "", short_description: "", long_description: "", image_url: "", icon: "", display_order: 0, is_active: true, seo_title: "", seo_description: "" });
 
   const { data: categories = [], isLoading } = useQuery({
     queryKey: ["admin-event-categories"],
