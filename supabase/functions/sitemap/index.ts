@@ -21,11 +21,12 @@ Deno.serve(async (req) => {
     );
 
     // Fetch all data in parallel
-    const [productsRes, categoriesRes, subcategoriesRes, blogsRes] = await Promise.all([
+    const [productsRes, categoriesRes, subcategoriesRes, blogsRes, eventCatsRes] = await Promise.all([
       supabase.from("products").select("slug, updated_at, image_url").eq("is_active", true),
       supabase.from("categories").select("slug, updated_at").eq("is_active", true),
       supabase.from("subcategories").select("slug, category_id, updated_at").eq("is_active", true),
       supabase.from("blogs").select("slug, updated_at, image_url").eq("is_published", true),
+      supabase.from("event_categories").select("slug, updated_at, image_url").eq("is_active", true),
     ]);
 
     const products = productsRes.data || [];
