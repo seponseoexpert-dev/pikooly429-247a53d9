@@ -131,6 +131,7 @@ const App = () => (
               <Route path="/reviews" element={<PublicLayout><Reviews /></PublicLayout>} />
               <Route path="/custom-bouquet" element={<PublicLayout><BouquetBuilder /></PublicLayout>} />
               <Route path="/install" element={<PublicLayout><Install /></PublicLayout>} />
+              <Route path="/events" element={<PublicLayout><Events /></PublicLayout>} />
               <Route path="/auth" element={<PublicLayout><Auth /></PublicLayout>} />
               <Route path="/account" element={<PublicLayout><Account /></PublicLayout>} />
               <Route path="/reset-password" element={<PublicLayout><ResetPassword /></PublicLayout>} />
