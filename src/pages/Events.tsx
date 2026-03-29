@@ -142,27 +142,32 @@ const Events = () => {
             <h2 className="text-2xl font-bold text-center text-foreground mb-8">আমাদের সার্ভিস সমূহ</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {categories.map((cat: any, i: number) => (
-                <motion.button
-                  key={cat.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                  onClick={() => setSelectedCategory(selectedCategory === cat.id ? null : cat.id)}
-                  className={`relative rounded-2xl overflow-hidden group cursor-pointer border-2 transition-all ${
-                    selectedCategory === cat.id ? "border-primary shadow-lg" : "border-border hover:border-primary/50"
-                  }`}
-                >
-                  {cat.image_url ? (
-                    <img src={cat.image_url} alt={cat.name} className="w-full h-32 md:h-44 object-cover" loading="lazy" />
-                  ) : (
-                    <div className="w-full h-32 md:h-44 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                      <Sparkles className="w-10 h-10 text-primary/50" />
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors flex items-end p-3">
-                    <span className="text-white font-semibold text-sm md:text-base">{cat.name}</span>
-                  </div>
-                </motion.button>
+                 <motion.div
+                   key={cat.id}
+                   initial={{ opacity: 0, y: 20 }}
+                   animate={{ opacity: 1, y: 0 }}
+                   transition={{ delay: i * 0.1 }}
+                 >
+                   <Link
+                     to={`/events/${cat.slug}`}
+                     className={`relative rounded-2xl overflow-hidden group cursor-pointer border-2 transition-all block ${
+                       selectedCategory === cat.id ? "border-primary shadow-lg" : "border-border hover:border-primary/50"
+                     }`}
+                     onClick={(e) => { e.preventDefault(); setSelectedCategory(selectedCategory === cat.id ? null : cat.id); }}
+                   >
+                     {cat.image_url ? (
+                       <img src={cat.image_url} alt={cat.name} className="w-full h-32 md:h-44 object-cover" loading="lazy" />
+                     ) : (
+                       <div className="w-full h-32 md:h-44 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                         <Sparkles className="w-10 h-10 text-primary/50" />
+                       </div>
+                     )}
+                     <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors flex items-end p-3">
+                       <span className="text-white font-semibold text-sm md:text-base">{cat.name}</span>
+                     </div>
+                   </Link>
+                   <Link to={`/events/${cat.slug}`} className="block text-center mt-1.5 text-xs text-primary hover:underline">বিস্তারিত দেখুন →</Link>
+                 </motion.div>
               ))}
             </div>
           </div>
