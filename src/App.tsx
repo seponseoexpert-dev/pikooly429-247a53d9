@@ -152,6 +152,7 @@ const App = () => (
               <Route path="/admin/migrate" element={<AdminRoute><AdminMigrate /></AdminRoute>} />
               <Route path="/admin/homepage-content" element={<AdminRoute><AdminHomepageContent /></AdminRoute>} />
               <Route path="/admin/bouquet" element={<AdminRoute><AdminBouquet /></AdminRoute>} />
+              <Route path="/admin/events" element={<AdminRoute><AdminEvents /></AdminRoute>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>

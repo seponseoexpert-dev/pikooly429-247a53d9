@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 const staticNavLinks = [
   { label: "Home", href: "/" },
   { label: "Shop", href: "/shop" },
+  { label: "Events", href: "/events" },
   { label: "Custom Bouquet", href: "/custom-bouquet" },
   { label: "Blog", href: "/blog" },
 ];
