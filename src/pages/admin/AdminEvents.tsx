@@ -53,7 +53,7 @@ const CategoriesTab = () => {
 
   const openEdit = (item: any) => {
     setEditItem(item);
-    setForm({ name: item.name, slug: item.slug, description: item.description || "", image_url: item.image_url || "", icon: item.icon || "", display_order: item.display_order, is_active: item.is_active, seo_title: item.seo_title || "", seo_description: item.seo_description || "" });
+    setForm({ name: item.name, slug: item.slug, description: item.description || "", short_description: item.short_description || "", long_description: item.long_description || "", image_url: item.image_url || "", icon: item.icon || "", display_order: item.display_order, is_active: item.is_active, seo_title: item.seo_title || "", seo_description: item.seo_description || "" });
     setShowForm(true);
   };
 
