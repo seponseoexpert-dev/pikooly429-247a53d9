@@ -59,7 +59,7 @@ const CategoriesTab = () => {
 
   const openNew = () => {
     setEditItem(null);
-    setForm({ name: "", slug: "", description: "", image_url: "", icon: "", display_order: 0, is_active: true, seo_title: "", seo_description: "" });
+    setForm({ name: "", slug: "", description: "", short_description: "", long_description: "", image_url: "", icon: "", display_order: 0, is_active: true, seo_title: "", seo_description: "" });
     setShowForm(true);
   };
 
