@@ -128,11 +128,6 @@ const Header = () => {
     navigate(`/product/${slug}`);
   };
 
-  const isActiveLink = (href: string) => {
-    if (href === "/") return location.pathname === "/";
-    return location.pathname + location.search === href || location.pathname.startsWith(href.split("?")[0]) && href !== "/shop" ? false : location.pathname + location.search === href;
-  };
-
   return (
     <>
       {showAnnouncement && (
@@ -143,24 +138,24 @@ const Header = () => {
 
       <header className="sticky top-0 z-50 bg-card border-b border-border/50">
         <div className="section-container">
-          {/* === ROW 1: Logo + Search + Icons (Desktop) / Logo + Icons (Mobile) === */}
-          <div className="flex items-center h-12 sm:h-14 md:h-16 gap-3 md:gap-4">
+          {/* === ROW 1: Logo + Search + Icons === */}
+          <div className="flex items-center h-12 sm:h-14 md:h-16 lg:h-[72px] gap-3 md:gap-5 lg:gap-8">
             {/* Logo */}
             <Link to="/" className="shrink-0 flex items-center">
-            {settingsLoading ? (
-                <div className="h-8 sm:h-9 md:h-10 w-24 sm:w-28 md:w-32 bg-muted rounded animate-pulse" />
+              {settingsLoading ? (
+                <div className="h-8 sm:h-9 md:h-10 lg:h-11 w-24 sm:w-28 md:w-32 lg:w-36 bg-muted rounded animate-pulse" />
               ) : logoUrl ? (
                 <img
                   src={logoUrl}
                   alt={settings.store_name || "Store"}
-                  width={120}
-                  height={40}
+                  width={140}
+                  height={48}
                   decoding="async"
                   fetchPriority="high"
-                  className="h-8 sm:h-9 md:h-10 w-[96px] sm:w-[108px] md:w-[120px] object-contain"
+                  className="h-8 sm:h-9 md:h-10 lg:h-11 w-[96px] sm:w-[108px] md:w-[120px] lg:w-[140px] object-contain"
                 />
               ) : (
-                <span className="text-lg sm:text-xl md:text-2xl font-display font-bold">
+                <span className="text-lg sm:text-xl md:text-2xl lg:text-[28px] font-display font-bold">
                   <span className="text-foreground">Pikooly</span>
                   <span className="text-primary">Flora</span>
                 </span>
@@ -168,38 +163,38 @@ const Header = () => {
             </Link>
 
             {/* Desktop Search - centered, grows to fill space */}
-            <div className="hidden md:block flex-1 max-w-xl mx-auto relative" ref={searchRef}>
+            <div className="hidden md:block flex-1 max-w-lg lg:max-w-2xl mx-auto relative" ref={searchRef}>
               <form onSubmit={handleSearch} className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={17} />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => { setSearchQuery(e.target.value); setShowSuggestions(true); }}
                   onFocus={() => setShowSuggestions(true)}
-                placeholder={t("search_placeholder")}
-                  className="w-full pl-11 pr-10 py-2.5 rounded-lg bg-muted border border-border focus:border-primary outline-none text-sm"
+                  placeholder={t("search_placeholder")}
+                  className="w-full pl-12 pr-12 py-2.5 lg:py-3 rounded-full bg-muted border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm lg:text-base transition-all"
                 />
                 {searchQuery && (
-                  <button type="button" onClick={() => { setSearchQuery(""); setShowSuggestions(false); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                  <button type="button" onClick={() => { setSearchQuery(""); setShowSuggestions(false); }} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                     <X size={16} />
                   </button>
                 )}
               </form>
 
               {showSuggestions && suggestions.length > 0 && (
-                <div className="absolute left-0 right-0 top-full mt-1 z-[100] bg-card border border-border rounded-xl shadow-lg overflow-hidden">
+                <div className="absolute left-0 right-0 top-full mt-2 z-[100] bg-card border border-border rounded-2xl shadow-2xl overflow-hidden">
                   {suggestions.map((p) => (
                     <button
                       key={p.id}
                       onClick={() => handleSelect(p.slug)}
-                      className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-muted transition-colors text-left"
+                      className="flex items-center gap-3 w-full px-5 py-3 hover:bg-muted transition-colors text-left"
                     >
                       {p.image_url && (
-                        <img src={p.image_url} alt={p.name} width={40} height={40} className="w-10 h-10 rounded-lg object-cover shrink-0" loading="lazy" decoding="async" />
+                        <img src={p.image_url} alt={p.name} width={44} height={44} className="w-11 h-11 rounded-xl object-cover shrink-0" loading="lazy" decoding="async" />
                       )}
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-foreground truncate">{p.name}</p>
-                        <p className="text-xs text-primary font-semibold">
+                        <p className="text-xs text-primary font-semibold mt-0.5">
                           {formatPrice(p.price)}
                           {p.original_price && p.original_price > p.price && (
                             <span className="text-muted-foreground line-through ml-1.5">{formatPrice(p.original_price)}</span>
@@ -213,66 +208,69 @@ const Header = () => {
             </div>
 
             {/* Right Icons */}
-            <div className="flex items-center gap-0.5 sm:gap-1 ml-auto">
+            <div className="flex items-center gap-0.5 sm:gap-1 lg:gap-2 ml-auto">
               <button
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="flex flex-col items-center justify-center px-2 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted"
+                className="flex flex-col items-center justify-center px-2 lg:px-3 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted"
                 aria-label="Toggle dark mode"
               >
                 {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-                <span className="hidden md:block text-[9px] font-medium mt-0.5 leading-none">
+                <span className="hidden md:block text-[9px] lg:text-[10px] font-medium mt-0.5 leading-none">
                   {theme === "dark" ? "Light" : "Dark"}
                 </span>
               </button>
-              {/* Language Switcher - only when multi-language enabled */}
+
               {multiLanguageEnabled && languages.length > 1 && (
-              <div className="relative" ref={languageRef}>
-                <button
-                  onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
-                  className="flex flex-col items-center justify-center px-2 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted"
-                  aria-label="Language"
-                >
-                  <Globe size={20} />
-                  <span className="hidden md:flex items-center text-[9px] font-medium mt-0.5 leading-none gap-0.5">
-                    {language.code.toUpperCase()} <ChevronDown size={8} />
-                  </span>
-                </button>
-                {showLanguageDropdown && (
-                  <div className="absolute right-0 top-full mt-1 z-[100] bg-card border border-border rounded-xl shadow-lg overflow-hidden min-w-[180px] max-h-[320px] overflow-y-auto">
-                    {languages.map((lang) => (
-                      <button
-                        key={lang.code}
-                        onClick={() => { setLanguage(lang); setShowLanguageDropdown(false); }}
-                        className={`flex items-center gap-2 w-full px-4 py-2.5 text-left text-sm hover:bg-muted transition-colors ${
-                          language.code === lang.code ? "bg-primary/10 text-primary font-semibold" : "text-foreground"
-                        }`}
-                      >
-                        <span className="w-5 text-center font-semibold text-xs">{lang.code.toUpperCase()}</span>
-                        <span>{lang.nativeName}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+                <div className="relative" ref={languageRef}>
+                  <button
+                    onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
+                    className="flex flex-col items-center justify-center px-2 lg:px-3 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted"
+                    aria-label="Language"
+                  >
+                    <Globe size={20} />
+                    <span className="hidden md:flex items-center text-[9px] lg:text-[10px] font-medium mt-0.5 leading-none gap-0.5">
+                      {language.code.toUpperCase()} <ChevronDown size={8} />
+                    </span>
+                  </button>
+                  {showLanguageDropdown && (
+                    <div className="absolute right-0 top-full mt-1 z-[100] bg-card border border-border rounded-xl shadow-lg overflow-hidden min-w-[180px] max-h-[320px] overflow-y-auto">
+                      {languages.map((lang) => (
+                        <button
+                          key={lang.code}
+                          onClick={() => { setLanguage(lang); setShowLanguageDropdown(false); }}
+                          className={`flex items-center gap-2 w-full px-4 py-2.5 text-left text-sm hover:bg-muted transition-colors ${
+                            language.code === lang.code ? "bg-primary/10 text-primary font-semibold" : "text-foreground"
+                          }`}
+                        >
+                          <span className="w-5 text-center font-semibold text-xs">{lang.code.toUpperCase()}</span>
+                          <span>{lang.nativeName}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               )}
-              <Link to="/product-category/same-day" className="hidden md:flex flex-col items-center justify-center px-2 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted" aria-label="Same Day Delivery">
+
+              <Link to="/product-category/same-day" className="hidden md:flex flex-col items-center justify-center px-2 lg:px-3 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted" aria-label="Same Day Delivery">
                 <Truck size={20} />
-                <span className="text-[9px] font-medium mt-0.5 leading-none">{t("same_day")}</span>
+                <span className="text-[9px] lg:text-[10px] font-medium mt-0.5 leading-none">{t("same_day")}</span>
               </Link>
-              <Link to="/track-order" className="flex flex-col items-center justify-center px-2 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted" aria-label="Track Order">
+
+              <Link to="/track-order" className="flex flex-col items-center justify-center px-2 lg:px-3 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted" aria-label="Track Order">
                 <MapPinCheck size={20} />
-                <span className="hidden md:block text-[9px] font-medium mt-0.5 leading-none">{t("track")}</span>
+                <span className="hidden md:block text-[9px] lg:text-[10px] font-medium mt-0.5 leading-none">{t("track")}</span>
               </Link>
+
               <div className="relative" ref={currencyRef}>
                 <button
                   onClick={() => setShowCurrencyDropdown(!showCurrencyDropdown)}
-                  className="flex flex-col items-center justify-center px-2 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted"
+                  className="flex flex-col items-center justify-center px-2 lg:px-3 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted"
                   aria-label="Currency"
                 >
                   <span className="font-semibold w-5 h-5 flex items-center justify-center border border-foreground/30 rounded-full text-[11px]">
                     {selectedCurrency?.symbol || "$"}
                   </span>
-                  <span className="hidden md:flex items-center text-[9px] font-medium mt-0.5 leading-none gap-0.5">
+                  <span className="hidden md:flex items-center text-[9px] lg:text-[10px] font-medium mt-0.5 leading-none gap-0.5">
                     {selectedCurrency?.code || "USD"} <ChevronDown size={8} />
                   </span>
                 </button>
@@ -293,22 +291,24 @@ const Header = () => {
                   </div>
                 )}
               </div>
-              <button onClick={() => setIsOpen(true)} className="relative flex flex-col items-center justify-center px-2 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted" aria-label="Cart">
+
+              <button onClick={() => setIsOpen(true)} className="relative flex flex-col items-center justify-center px-2 lg:px-3 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted" aria-label="Cart">
                 <ShoppingCart size={20} />
                 {totalItems > 0 && (
                   <span className="absolute top-0 right-0.5 bg-primary text-primary-foreground text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
                     {totalItems}
                   </span>
                 )}
-                <span className="hidden md:block text-[9px] font-medium mt-0.5 leading-none">{t("cart")}</span>
+                <span className="hidden md:block text-[9px] lg:text-[10px] font-medium mt-0.5 leading-none">{t("cart")}</span>
               </button>
+
               <Link
                 to={user ? "/account" : "/auth"}
-                className="hidden sm:flex flex-col items-center justify-center px-2 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted"
+                className="hidden sm:flex flex-col items-center justify-center px-2 lg:px-3 py-1 text-foreground hover:text-primary transition-colors rounded-lg hover:bg-muted"
                 aria-label="Account"
               >
                 <User size={20} />
-                <span className="hidden md:block text-[9px] font-medium mt-0.5 leading-none truncate max-w-[60px]">
+                <span className="hidden md:block text-[9px] lg:text-[10px] font-medium mt-0.5 leading-none truncate max-w-[60px]">
                   {user ? t("account") : t("sign_in")}
                 </span>
               </Link>
@@ -360,8 +360,8 @@ const Header = () => {
             )}
           </div>
 
-          {/* === ROW 2: Category Nav Bar (Desktop only) === */}
-          <nav className="hidden md:flex items-center justify-center gap-1 border-t border-border/40">
+          {/* === ROW 2: Mega Nav Bar (Desktop only) === */}
+          <nav className="hidden md:flex items-center justify-center gap-0 border-t border-border/40">
             {categories.map((cat) => {
               const subs = subsByCategory[cat.id] || [];
               const isActive = location.pathname === `/product-category/${cat.slug}`;
@@ -374,7 +374,7 @@ const Header = () => {
                 >
                   <Link
                     to={`/product-category/${cat.slug}`}
-                    className={`flex items-center gap-1 px-3 py-2.5 text-[13px] font-medium whitespace-nowrap transition-colors ${
+                    className={`flex items-center gap-1 px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-colors ${
                       isActive
                         ? "text-primary border-b-2 border-primary"
                         : "text-foreground/70 hover:text-primary"
@@ -384,20 +384,34 @@ const Header = () => {
                     {subs.length > 0 && <ChevronDown size={12} className="text-muted-foreground" />}
                   </Link>
 
+                  {/* Mega Dropdown */}
                   {subs.length > 0 && hoveredCat === cat.id && (
-                    <div className="absolute left-0 top-full z-50 bg-card border border-border rounded-xl shadow-xl py-2 min-w-[200px]">
-                      {subs.map((sub) => (
+                    <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 bg-card border border-border rounded-2xl shadow-2xl py-5 px-6 min-w-[280px] max-w-[600px]">
+                      {/* Header */}
+                      <div className="flex items-center justify-between mb-3 pb-3 border-b border-border/50">
+                        <h3 className="text-sm font-bold text-foreground">{cat.name}</h3>
                         <Link
-                          key={sub.id}
-                          to={`/product-category/${sub.slug}`}
-                          className="flex items-center gap-2.5 px-4 py-2 text-sm text-foreground/80 hover:text-primary hover:bg-muted transition-colors"
+                          to={`/product-category/${cat.slug}`}
+                          className="text-xs text-primary font-medium hover:underline"
                         >
-                          {sub.image_url && (
-                            <img src={sub.image_url} alt={sub.name} width={28} height={28} className="w-7 h-7 rounded-md object-cover" loading="lazy" decoding="async" />
-                          )}
-                          <span>{sub.name}</span>
+                          View All →
                         </Link>
-                      ))}
+                      </div>
+                      {/* Grid of subcategories */}
+                      <div className={`grid gap-1 ${subs.length > 6 ? "grid-cols-2 lg:grid-cols-3" : subs.length > 3 ? "grid-cols-2" : "grid-cols-1"}`}>
+                        {subs.map((sub) => (
+                          <Link
+                            key={sub.id}
+                            to={`/product-category/${sub.slug}`}
+                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-foreground/80 hover:text-primary hover:bg-primary/5 transition-all group"
+                          >
+                            {sub.image_url && (
+                              <img src={sub.image_url} alt={sub.name} width={36} height={36} className="w-9 h-9 rounded-lg object-cover group-hover:scale-105 transition-transform" loading="lazy" decoding="async" />
+                            )}
+                            <span className="font-medium">{sub.name}</span>
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
