@@ -361,7 +361,18 @@ const Header = () => {
           </div>
 
           {/* === ROW 2: Mega Nav Bar (Desktop only) === */}
-          <nav className="hidden md:flex items-center justify-center gap-0 border-t border-border/40">
+          <nav className="hidden md:flex items-center justify-center gap-0 border-t border-border/40 overflow-x-auto scrollbar-hide">
+            {/* Static: Home */}
+            <Link
+              to="/"
+              className={`px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-colors ${
+                location.pathname === "/" ? "text-primary border-b-2 border-primary" : "text-foreground/70 hover:text-primary"
+              }`}
+            >
+              Home
+            </Link>
+
+            {/* Dynamic categories with mega menu */}
             {categories.map((cat) => {
               const subs = subsByCategory[cat.id] || [];
               const isActive = location.pathname === `/product-category/${cat.slug}`;
@@ -387,7 +398,6 @@ const Header = () => {
                   {/* Mega Dropdown */}
                   {subs.length > 0 && hoveredCat === cat.id && (
                     <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 bg-card border border-border/30 rounded-xl shadow-[0_8px_30px_-4px_rgba(0,0,0,0.12)] min-w-[320px] max-w-[480px] overflow-hidden">
-                      {/* Header */}
                       <div className="flex items-center justify-between px-6 pt-5 pb-3">
                         <h3 className="text-base font-bold text-foreground tracking-tight">{cat.name}</h3>
                         <Link
@@ -398,7 +408,6 @@ const Header = () => {
                         </Link>
                       </div>
                       <div className="h-px bg-border/50 mx-5" />
-                      {/* Grid of subcategories */}
                       <div className="grid grid-cols-3 gap-x-2 gap-y-0 px-4 py-3">
                         {subs.map((sub) => (
                           <Link
@@ -415,6 +424,36 @@ const Header = () => {
                 </div>
               );
             })}
+
+            {/* Static: Event Service */}
+            <Link
+              to="/events"
+              className={`px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-colors ${
+                location.pathname.startsWith("/events") ? "text-primary border-b-2 border-primary" : "text-foreground/70 hover:text-primary"
+              }`}
+            >
+              Event Service
+            </Link>
+
+            {/* Static: Custom Bouquet */}
+            <Link
+              to="/custom-bouquet"
+              className={`px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-colors ${
+                location.pathname === "/custom-bouquet" ? "text-primary border-b-2 border-primary" : "text-foreground/70 hover:text-primary"
+              }`}
+            >
+              Custom Bouquet
+            </Link>
+
+            {/* Static: Blog */}
+            <Link
+              to="/blog"
+              className={`px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-colors ${
+                location.pathname.startsWith("/blog") ? "text-primary border-b-2 border-primary" : "text-foreground/70 hover:text-primary"
+              }`}
+            >
+              Blog
+            </Link>
           </nav>
         </div>
       </header>
