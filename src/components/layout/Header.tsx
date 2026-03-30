@@ -99,6 +99,7 @@ const Header = () => {
   }, [subcategories]);
 
   const [hoveredCat, setHoveredCat] = useState<string | null>(null);
+  const [canUseHover, setCanUseHover] = useState(false);
   const megaMenuCloseTimer = useRef<number | null>(null);
 
   const navLinks = staticNavLinks;
@@ -130,6 +131,20 @@ const Header = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const updateHoverCapability = () => setCanUseHover(mediaQuery.matches);
+
+    updateHoverCapability();
+    mediaQuery.addEventListener("change", updateHoverCapability);
+
+    return () => mediaQuery.removeEventListener("change", updateHoverCapability);
+  }, []);
+
+  useEffect(() => {
+    setHoveredCat(null);
+  }, [location.pathname]);
 
   const openMegaMenu = (categoryId: string) => {
     if (megaMenuCloseTimer.current) {
@@ -397,7 +412,7 @@ const Header = () => {
           </div>
 
           {/* === ROW 2: Mega Nav Bar (Desktop only) === */}
-          <nav className="hidden md:flex items-center justify-center gap-0 border-t border-border/40 overflow-visible scrollbar-hide bg-card shadow-sm relative">
+          <nav className="hidden md:flex items-center justify-start xl:justify-center gap-0 border-t border-border/40 overflow-x-auto overflow-y-visible scrollbar-hide bg-card shadow-sm relative px-2 lg:px-4">
             {/* Static: Home */}
             <Link
               to="/"
@@ -412,17 +427,30 @@ const Header = () => {
             {/* Dynamic categories with mega menu */}
             {categories.map((cat) => {
               const subs = subsByCategory[cat.id] || [];
-              const isActive = location.pathname === `/product-category/${cat.slug}`;
+              const isActive = location.pathname.startsWith(`/product-category/${cat.slug}`);
               const isHovered = hoveredCat === cat.id;
               return (
                 <div
                   key={cat.id}
-                  className="relative"
-                  onMouseEnter={() => openMegaMenu(cat.id)}
-                  onMouseLeave={closeMegaMenu}
+                  className="static"
+                  onMouseEnter={() => {
+                    if (canUseHover && subs.length > 0) openMegaMenu(cat.id);
+                  }}
+                  onMouseLeave={() => {
+                    if (canUseHover && subs.length > 0) closeMegaMenu();
+                  }}
                 >
                   <Link
                     to={`/product-category/${cat.slug}`}
+                    onClick={(e) => {
+                      if (!canUseHover && subs.length > 0) {
+                        e.preventDefault();
+                        setHoveredCat((prev) => (prev === cat.id ? null : cat.id));
+                        return;
+                      }
+
+                      setHoveredCat(null);
+                    }}
                     className={`group relative flex items-center gap-1 px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
                       isActive || isHovered
                         ? "text-primary"
@@ -442,32 +470,37 @@ const Header = () => {
                   {/* Mega Dropdown */}
                   {subs.length > 0 && isHovered && (
                     <div
-                      className="absolute left-1/2 top-full z-50 -translate-x-1/2 pt-4 animate-in fade-in-0 slide-in-from-top-2 duration-200"
-                      onMouseEnter={() => openMegaMenu(cat.id)}
-                      onMouseLeave={closeMegaMenu}
+                      className="absolute inset-x-0 top-full z-50 pt-3 animate-in fade-in-0 slide-in-from-top-2 duration-200"
+                      onMouseEnter={() => {
+                        if (canUseHover) openMegaMenu(cat.id);
+                      }}
+                      onMouseLeave={() => {
+                        if (canUseHover) closeMegaMenu();
+                      }}
                     >
-                      <div className="w-[min(92vw,980px)] overflow-hidden rounded-[28px] border border-border/70 bg-card shadow-[0_28px_90px_-24px_hsl(var(--foreground)/0.22)]">
-                        <div className="grid grid-cols-[220px_minmax(0,1fr)]">
-                          <div className="border-r border-border/60 bg-muted/35 px-6 py-6">
+                      <div className="mx-auto w-full max-w-[980px] px-3 md:px-4 xl:px-0">
+                        <div className="overflow-hidden rounded-[28px] border border-border/70 bg-card shadow-[0_28px_90px_-24px_hsl(var(--foreground)/0.22)]">
+                          <div className="grid grid-cols-1 lg:grid-cols-[220px_minmax(0,1fr)]">
+                          <div className="border-b border-border/60 bg-muted/35 px-5 py-5 lg:border-b-0 lg:border-r lg:px-6 lg:py-6">
                             <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
                               <Sparkles size={12} />
                               Featured
                             </div>
-                            <h3 className="mt-4 text-2xl font-display font-semibold text-foreground">{cat.name}</h3>
-                            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                            <h3 className="mt-4 text-xl font-display font-semibold text-foreground lg:text-2xl">{cat.name}</h3>
+                            <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
                               Tailored picks and handpicked subcategories for faster browsing.
                             </p>
                             <Link
                               to={`/product-category/${cat.slug}`}
                               onClick={() => setHoveredCat(null)}
-                              className="mt-6 inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-transform duration-200 hover:scale-[1.02]"
+                              className="mt-5 inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-transform duration-200 hover:scale-[1.02]"
                             >
                               View all in {cat.name}
                             </Link>
                           </div>
 
-                          <div className="bg-card px-5 py-5 lg:px-6 lg:py-6">
-                            <div className="mb-4 flex items-center justify-between border-b border-border/60 pb-3">
+                          <div className="bg-card px-4 py-4 md:px-5 md:py-5 lg:px-6 lg:py-6">
+                            <div className="mb-4 flex flex-col gap-3 border-b border-border/60 pb-3 sm:flex-row sm:items-center sm:justify-between">
                               <div>
                                 <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                                   Popular subcategories
@@ -479,13 +512,13 @@ const Header = () => {
                               </span>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-x-3 gap-y-2 xl:grid-cols-3">
+                            <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3 xl:grid-cols-3">
                               {subs.map((sub) => (
                                 <Link
                                   key={sub.id}
-                                  to={`/product-category/${sub.slug}`}
+                                  to={`/product-category/${cat.slug}/${sub.slug}`}
                                   onClick={() => setHoveredCat(null)}
-                                  className="group/item flex min-h-[56px] items-center justify-between gap-3 rounded-2xl border border-transparent bg-muted/20 px-4 py-3 text-[13px] font-medium text-foreground/85 transition-all duration-200 hover:border-primary/20 hover:bg-primary/5 hover:text-primary"
+                                  className="group/item flex min-h-[54px] items-center justify-between gap-3 rounded-2xl border border-transparent bg-muted/20 px-4 py-3 text-[13px] font-medium text-foreground/85 transition-all duration-200 hover:border-primary/20 hover:bg-primary/5 hover:text-primary"
                                 >
                                   <span className="flex min-w-0 items-center gap-3">
                                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-background text-primary ring-1 ring-border transition-all group-hover/item:bg-primary group-hover/item:text-primary-foreground group-hover/item:ring-primary/30">
@@ -500,6 +533,7 @@ const Header = () => {
                               ))}
                             </div>
                           </div>
+                        </div>
                         </div>
                       </div>
                     </div>
