@@ -386,29 +386,27 @@ const Header = () => {
 
                   {/* Mega Dropdown */}
                   {subs.length > 0 && hoveredCat === cat.id && (
-                    <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 bg-card border border-border rounded-2xl shadow-2xl py-5 px-6 min-w-[280px] max-w-[600px]">
+                    <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 bg-card border border-border/30 rounded-xl shadow-[0_8px_30px_-4px_rgba(0,0,0,0.12)] min-w-[320px] max-w-[480px] overflow-hidden">
                       {/* Header */}
-                      <div className="flex items-center justify-between mb-3 pb-3 border-b border-border/50">
-                        <h3 className="text-sm font-bold text-foreground">{cat.name}</h3>
+                      <div className="flex items-center justify-between px-6 pt-5 pb-3">
+                        <h3 className="text-base font-bold text-foreground tracking-tight">{cat.name}</h3>
                         <Link
                           to={`/product-category/${cat.slug}`}
-                          className="text-xs text-primary font-medium hover:underline"
+                          className="text-xs text-muted-foreground font-medium hover:text-primary transition-colors flex items-center gap-1"
                         >
-                          View All →
+                          View All <span className="text-sm">→</span>
                         </Link>
                       </div>
+                      <div className="h-px bg-border/50 mx-5" />
                       {/* Grid of subcategories */}
-                      <div className={`grid gap-1 ${subs.length > 6 ? "grid-cols-2 lg:grid-cols-3" : subs.length > 3 ? "grid-cols-2" : "grid-cols-1"}`}>
+                      <div className="grid grid-cols-3 gap-x-2 gap-y-0 px-4 py-3">
                         {subs.map((sub) => (
                           <Link
                             key={sub.id}
                             to={`/product-category/${sub.slug}`}
-                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-foreground/80 hover:text-primary hover:bg-primary/5 transition-all group"
+                            className="px-3 py-3 rounded-lg text-[13px] text-foreground/75 hover:text-primary hover:bg-primary/5 transition-all font-medium leading-snug"
                           >
-                            {sub.image_url && (
-                              <img src={sub.image_url} alt={sub.name} width={36} height={36} className="w-9 h-9 rounded-lg object-cover group-hover:scale-105 transition-transform" loading="lazy" decoding="async" />
-                            )}
-                            <span className="font-medium">{sub.name}</span>
+                            {sub.name}
                           </Link>
                         ))}
                       </div>
