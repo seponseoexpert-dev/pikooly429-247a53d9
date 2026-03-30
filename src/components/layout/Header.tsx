@@ -425,35 +425,29 @@ const Header = () => {
               );
             })}
 
-            {/* Static: Event Service */}
-            <Link
-              to="/events"
-              className={`px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-colors ${
-                location.pathname.startsWith("/events") ? "text-primary border-b-2 border-primary" : "text-foreground/70 hover:text-primary"
-              }`}
-            >
-              Event Service
-            </Link>
-
-            {/* Static: Custom Bouquet */}
-            <Link
-              to="/custom-bouquet"
-              className={`px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-colors ${
-                location.pathname === "/custom-bouquet" ? "text-primary border-b-2 border-primary" : "text-foreground/70 hover:text-primary"
-              }`}
-            >
-              Custom Bouquet
-            </Link>
-
-            {/* Static: Blog */}
-            <Link
-              to="/blog"
-              className={`px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-colors ${
-                location.pathname.startsWith("/blog") ? "text-primary border-b-2 border-primary" : "text-foreground/70 hover:text-primary"
-              }`}
-            >
-              Blog
-            </Link>
+            {/* Static links that don't overlap with categories */}
+            {[
+              { label: "Event Service", href: "/events", match: (p: string) => p.startsWith("/events") },
+              { label: "Custom Bouquet", href: "/custom-bouquet", match: (p: string) => p === "/custom-bouquet" },
+              { label: "Blog", href: "/blog", match: (p: string) => p.startsWith("/blog") },
+            ].map((link) => {
+              // Skip if a category with similar name already exists in nav
+              const isDuplicate = categories.some(
+                (cat) => cat.name.toLowerCase().replace(/\s+/g, '') === link.label.toLowerCase().replace(/\s+/g, '')
+              );
+              if (isDuplicate) return null;
+              return (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className={`px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-colors ${
+                    link.match(location.pathname) ? "text-primary border-b-2 border-primary" : "text-foreground/70 hover:text-primary"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
         </div>
       </header>
