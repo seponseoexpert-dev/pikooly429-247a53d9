@@ -362,15 +362,16 @@ const Header = () => {
           </div>
 
           {/* === ROW 2: Mega Nav Bar (Desktop only) === */}
-          <nav className="hidden md:flex items-center justify-center gap-0 border-t border-border/40 overflow-x-auto scrollbar-hide">
+          <nav className="hidden md:flex items-center justify-center gap-0 border-t border-border/40 overflow-x-auto scrollbar-hide bg-gradient-to-b from-background to-background/95">
             {/* Static: Home */}
             <Link
               to="/"
-              className={`px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-colors ${
-                location.pathname === "/" ? "text-primary border-b-2 border-primary" : "text-foreground/70 hover:text-primary"
+              className={`group relative px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
+                location.pathname === "/" ? "text-primary" : "text-foreground/70 hover:text-primary"
               }`}
             >
               Home
+              <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2.5px] rounded-full bg-primary transition-all duration-300 ${location.pathname === "/" ? "w-3/4" : "w-0 group-hover:w-1/2"}`} />
             </Link>
 
             {/* Dynamic categories with mega menu */}
@@ -386,39 +387,55 @@ const Header = () => {
                 >
                   <Link
                     to={`/product-category/${cat.slug}`}
-                    className={`flex items-center gap-1 px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-colors ${
-                      isActive
-                        ? "text-primary border-b-2 border-primary"
+                    className={`group relative flex items-center gap-1 px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
+                      isActive || hoveredCat === cat.id
+                        ? "text-primary"
                         : "text-foreground/70 hover:text-primary"
                     }`}
                   >
                     {cat.name}
-                    {subs.length > 0 && <ChevronDown size={12} className="text-muted-foreground" />}
+                    {subs.length > 0 && (
+                      <ChevronDown 
+                        size={12} 
+                        className={`text-muted-foreground transition-transform duration-200 ${hoveredCat === cat.id ? "rotate-180 text-primary" : ""}`} 
+                      />
+                    )}
+                    <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2.5px] rounded-full bg-primary transition-all duration-300 ${isActive ? "w-3/4" : hoveredCat === cat.id ? "w-1/2" : "w-0"}`} />
                   </Link>
 
                   {/* Mega Dropdown */}
                   {subs.length > 0 && hoveredCat === cat.id && (
-                    <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 bg-card border border-border/30 rounded-xl shadow-[0_8px_30px_-4px_rgba(0,0,0,0.12)] min-w-[320px] max-w-[480px] overflow-hidden">
-                      <div className="flex items-center justify-between px-6 pt-5 pb-3">
-                        <h3 className="text-base font-bold text-foreground tracking-tight">{cat.name}</h3>
-                        <Link
-                          to={`/product-category/${cat.slug}`}
-                          className="text-xs text-muted-foreground font-medium hover:text-primary transition-colors flex items-center gap-1"
-                        >
-                          View All <span className="text-sm">→</span>
-                        </Link>
-                      </div>
-                      <div className="h-px bg-border/50 mx-5" />
-                      <div className="grid grid-cols-3 gap-x-2 gap-y-0 px-4 py-3">
-                        {subs.map((sub) => (
+                    <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 animate-in fade-in-0 slide-in-from-top-2 duration-200">
+                      <div className="mt-1 bg-card border border-border/20 rounded-2xl shadow-[0_12px_40px_-8px_rgba(0,0,0,0.15)] min-w-[360px] max-w-[520px] overflow-hidden backdrop-blur-sm">
+                        {/* Header */}
+                        <div className="flex items-center justify-between px-6 pt-5 pb-3">
+                          <div className="flex items-center gap-2.5">
+                            {cat.image_url && (
+                              <img src={cat.image_url} alt="" className="w-7 h-7 rounded-lg object-cover" />
+                            )}
+                            <h3 className="text-[15px] font-bold text-foreground tracking-tight">{cat.name}</h3>
+                          </div>
                           <Link
-                            key={sub.id}
-                            to={`/product-category/${sub.slug}`}
-                            className="px-3 py-3 rounded-lg text-[13px] text-foreground/75 hover:text-primary hover:bg-primary/5 transition-all font-medium leading-snug"
+                            to={`/product-category/${cat.slug}`}
+                            className="text-xs text-primary/80 font-semibold hover:text-primary transition-colors flex items-center gap-1 bg-primary/5 px-3 py-1.5 rounded-full hover:bg-primary/10"
                           >
-                            {sub.name}
+                            View All <span className="text-sm">→</span>
                           </Link>
-                        ))}
+                        </div>
+                        <div className="h-px bg-gradient-to-r from-transparent via-border/60 to-transparent mx-4" />
+                        {/* Subcategory Grid */}
+                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-0.5 px-3 py-3">
+                          {subs.map((sub) => (
+                            <Link
+                              key={sub.id}
+                              to={`/product-category/${sub.slug}`}
+                              className="group/item flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[13px] text-foreground/75 hover:text-primary hover:bg-primary/5 transition-all duration-150 font-medium leading-snug"
+                            >
+                              <span className="w-1.5 h-1.5 rounded-full bg-primary/30 group-hover/item:bg-primary group-hover/item:scale-125 transition-all duration-150 shrink-0" />
+                              {sub.name}
+                            </Link>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   )}
@@ -432,7 +449,6 @@ const Header = () => {
               { label: "Custom Bouquet", href: "/custom-bouquet", match: (p: string) => p === "/custom-bouquet" },
               { label: "Blog", href: "/blog", match: (p: string) => p.startsWith("/blog") },
             ].map((link) => {
-              // Skip if a category with similar name already exists in nav
               const isDuplicate = categories.some(
                 (cat) => cat.name.toLowerCase().replace(/\s+/g, '') === link.label.toLowerCase().replace(/\s+/g, '')
               );
@@ -441,11 +457,12 @@ const Header = () => {
                 <Link
                   key={link.href}
                   to={link.href}
-                  className={`px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-colors ${
-                    link.match(location.pathname) ? "text-primary border-b-2 border-primary" : "text-foreground/70 hover:text-primary"
+                  className={`group relative px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
+                    link.match(location.pathname) ? "text-primary" : "text-foreground/70 hover:text-primary"
                   }`}
                 >
                   {link.label}
+                  <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2.5px] rounded-full bg-primary transition-all duration-300 ${link.match(location.pathname) ? "w-3/4" : "w-0 group-hover:w-1/2"}`} />
                 </Link>
               );
             })}
