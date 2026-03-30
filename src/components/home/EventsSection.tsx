@@ -23,23 +23,23 @@ const EventsSection = () => {
   if (categories.length === 0) return null;
 
   return (
-    <section className="py-10 bg-gradient-to-br from-primary/5 via-background to-accent/5">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between mb-6">
+    <section className="py-10 lg:py-14 xl:py-16 bg-gradient-to-br from-primary/5 via-background to-accent/5">
+      <div className="container mx-auto px-4 lg:px-8 xl:max-w-7xl">
+        <div className="flex items-center justify-between mb-6 lg:mb-8">
           <div>
-            <span className="inline-flex items-center gap-1.5 text-primary text-xs font-medium mb-1">
-              <Sparkles className="w-3.5 h-3.5" /> Event Management
+            <span className="inline-flex items-center gap-1.5 text-primary text-xs lg:text-sm font-medium mb-1">
+              <Sparkles className="w-3.5 h-3.5 lg:w-4 lg:h-4" /> Event Management
             </span>
-            <h2 className="text-xl md:text-2xl font-bold text-foreground">ইভেন্ট ম্যানেজমেন্ট সার্ভিস</h2>
+            <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground">ইভেন্ট ম্যানেজমেন্ট সার্ভিস</h2>
           </div>
           <Link to="/events">
-            <Button variant="outline" size="sm" className="gap-1.5 text-xs">
+            <Button variant="outline" size="sm" className="gap-1.5 text-xs lg:text-sm">
               সব দেখুন <ArrowRight className="w-3.5 h-3.5" />
             </Button>
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 md:gap-4 lg:gap-5">
           {categories.map((cat: any, i: number) => (
             <motion.div
               key={cat.id}
