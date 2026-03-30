@@ -69,15 +69,23 @@ const Header = () => {
   });
 
   const { data: subcategories = [] } = useQuery({
-    queryKey: ["header-subcategories"],
+    queryKey: ["header-subcategories-with-count"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: subs, error } = await supabase
         .from("subcategories")
         .select("id, name, slug, category_id, image_url")
         .eq("is_active", true)
         .order("display_order");
       if (error) throw error;
-      return data;
+      // Fetch product counts per subcategory
+      const { data: counts } = await supabase
+        .from("product_subcategories")
+        .select("subcategory_id");
+      const countMap: Record<string, number> = {};
+      (counts || []).forEach((c) => {
+        countMap[c.subcategory_id] = (countMap[c.subcategory_id] || 0) + 1;
+      });
+      return (subs || []).map((s) => ({ ...s, product_count: countMap[s.id] || 0 }));
     },
   });
 
@@ -406,32 +414,41 @@ const Header = () => {
                   {/* Mega Dropdown */}
                   {subs.length > 0 && hoveredCat === cat.id && (
                     <div className="absolute left-1/2 top-full z-50 -translate-x-1/2 animate-in fade-in-0 slide-in-from-top-2 duration-200">
-                      <div className="mt-1 min-w-[360px] overflow-hidden rounded-2xl border border-border/40 bg-card shadow-2xl">
-                        <div className="border-b border-border/40 bg-muted/30 px-5 py-4">
-                          <div className="flex items-center justify-between gap-4">
+                      <div className="mt-1 min-w-[420px] max-w-[520px] overflow-hidden rounded-2xl border border-border/30 bg-card shadow-[0_20px_60px_-15px_hsl(var(--foreground)/0.15)]">
+                        {/* Header */}
+                        <div className="border-b border-border/30 bg-gradient-to-r from-primary/5 to-transparent px-6 py-4">
+                          <div className="flex items-center justify-between">
                             <div>
-                              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                                Browse category
+                              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary/60">
+                                Browse
                               </p>
-                              <h3 className="mt-1 text-[15px] font-bold text-foreground">{cat.name}</h3>
+                              <h3 className="mt-0.5 text-base font-bold text-foreground">{cat.name}</h3>
                             </div>
                             <Link
                               to={`/product-category/${cat.slug}`}
-                              className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-primary hover:text-primary"
+                              className="rounded-full bg-primary/10 px-4 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
                             >
-                              View All
+                              View All →
                             </Link>
                           </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-1 p-3 lg:grid-cols-3">
+                        {/* Subcategory Grid */}
+                        <div className="grid grid-cols-2 gap-x-2 gap-y-0.5 p-4 lg:grid-cols-3">
                           {subs.map((sub) => (
                             <Link
                               key={sub.id}
                               to={`/product-category/${sub.slug}`}
-                              className="group/item flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-[13px] font-medium leading-snug text-foreground/75 transition-all duration-150 hover:bg-muted hover:text-primary"
+                              className="group/item flex items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-[13px] font-medium text-foreground/80 transition-all duration-150 hover:bg-primary/5 hover:text-primary"
                             >
-                              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary/30 transition-all duration-150 group-hover/item:scale-125 group-hover/item:bg-primary" />
-                              {sub.name}
+                              <span className="flex items-center gap-2.5">
+                                <span className="flex h-1.5 w-1.5 shrink-0 rounded-full bg-primary/25 transition-all group-hover/item:scale-150 group-hover/item:bg-primary" />
+                                <span className="truncate">{sub.name}</span>
+                              </span>
+                              {sub.product_count > 0 && (
+                                <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-muted-foreground transition-colors group-hover/item:bg-primary/10 group-hover/item:text-primary">
+                                  {sub.product_count}
+                                </span>
+                              )}
                             </Link>
                           ))}
                         </div>
