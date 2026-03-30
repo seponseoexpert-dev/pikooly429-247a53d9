@@ -189,11 +189,11 @@ const ProductGrid = memo(() => {
       )}
 
       {/* ── Tailored For Your Occasions (Categories only) ── */}
-      <div className="mt-8 sm:mt-10 md:mt-12 mb-4 md:mb-6 text-center">
-        <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-1 md:mb-2">
+      <div className="mt-8 sm:mt-10 md:mt-12 lg:mt-16 mb-4 md:mb-6 lg:mb-8 text-center">
+        <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] lg:text-[28px] lg:leading-[40px] font-display font-semibold text-foreground mb-1 md:mb-2">
           Tailored For Your Occasions
         </h2>
-        <p className="text-muted-foreground text-sm sm:text-base md:text-lg">Find the perfect gift for every moment</p>
+        <p className="text-muted-foreground text-sm sm:text-base md:text-lg lg:text-xl">Find the perfect gift for every moment</p>
       </div>
 
       {occasionCategories.length > 0 && (
