@@ -270,10 +270,10 @@ const Shop = () => {
       )}
 
       {!catParam && (
-        <div className="flex gap-2 overflow-x-auto mb-5 md:mb-8 scrollbar-hide">
+        <div className="mb-5 flex gap-2 overflow-x-auto scrollbar-hide md:mb-8">
           <button
             onClick={() => setSelectedCat("")}
-            className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-colors ${!selectedCat ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
+            className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-medium transition-colors sm:text-sm ${!selectedCat ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
           >
             All
           </button>
@@ -281,7 +281,7 @@ const Shop = () => {
             <button
               key={cat.id}
               onClick={() => setSelectedCat(cat.slug)}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-colors ${selectedCat === cat.slug ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
+              className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-medium transition-colors sm:text-sm ${selectedCat === cat.slug ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
             >
               {cat.name}
             </button>
@@ -289,6 +289,31 @@ const Shop = () => {
         </div>
       )}
 
+      {activeCategory && activeSubs.length > 0 && (
+        <div className="mb-5 md:mb-8">
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <h2 className="text-sm font-semibold text-foreground md:text-base">Subcategories</h2>
+            <span className="text-xs text-muted-foreground">{activeSubs.length} options</span>
+          </div>
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
+            <Link
+              to={`/product-category/${activeCategory.slug}`}
+              className={`whitespace-nowrap rounded-full border px-4 py-2 text-xs font-medium transition-colors sm:text-sm ${!selectedSub ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:border-primary hover:text-primary"}`}
+            >
+              All {activeCategory.name}
+            </Link>
+            {activeSubs.map((sub: any) => (
+              <Link
+                key={sub.id}
+                to={`/product-category/${sub.slug}`}
+                className={`whitespace-nowrap rounded-full border px-4 py-2 text-xs font-medium transition-colors sm:text-sm ${selectedSub === sub.slug ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:border-primary hover:text-primary"}`}
+              >
+                {sub.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
         {productsLoading

@@ -405,49 +405,35 @@ const Header = () => {
 
                   {/* Mega Dropdown */}
                   {subs.length > 0 && hoveredCat === cat.id && (
-                    <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 animate-in fade-in-0 slide-in-from-top-2 duration-200">
-                      <div className="mt-1 bg-card border border-border/20 rounded-2xl shadow-[0_12px_40px_-8px_rgba(0,0,0,0.15)] overflow-hidden backdrop-blur-sm flex" style={{ minWidth: cat.image_url ? '560px' : '360px' }}>
-                        {/* Left: Category Image */}
-                        {cat.image_url && (
-                          <div className="relative w-[200px] shrink-0 overflow-hidden rounded-l-2xl">
-                            <img src={cat.image_url} alt={cat.name} className="w-full h-full object-cover" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                            <div className="absolute bottom-0 left-0 right-0 p-4">
-                              <h3 className="text-white font-bold text-base leading-tight">{cat.name}</h3>
-                              <Link
-                                to={`/product-category/${cat.slug}`}
-                                className="inline-flex items-center gap-1 text-xs text-white/90 font-medium mt-2 hover:text-white transition-colors"
-                              >
-                                View All <span>→</span>
-                              </Link>
+                    <div className="absolute left-1/2 top-full z-50 -translate-x-1/2 animate-in fade-in-0 slide-in-from-top-2 duration-200">
+                      <div className="mt-1 min-w-[360px] overflow-hidden rounded-2xl border border-border/40 bg-card shadow-2xl">
+                        <div className="border-b border-border/40 bg-muted/30 px-5 py-4">
+                          <div className="flex items-center justify-between gap-4">
+                            <div>
+                              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                                Browse category
+                              </p>
+                              <h3 className="mt-1 text-[15px] font-bold text-foreground">{cat.name}</h3>
                             </div>
+                            <Link
+                              to={`/product-category/${cat.slug}`}
+                              className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-primary hover:text-primary"
+                            >
+                              View All
+                            </Link>
                           </div>
-                        )}
-                        {/* Right: Subcategories */}
-                        <div className="flex-1 py-4 px-4">
-                          {!cat.image_url && (
-                            <div className="flex items-center justify-between pb-3 mb-2 border-b border-border/40">
-                              <h3 className="text-[15px] font-bold text-foreground">{cat.name}</h3>
-                              <Link
-                                to={`/product-category/${cat.slug}`}
-                                className="text-xs text-primary font-semibold hover:underline flex items-center gap-1"
-                              >
-                                View All →
-                              </Link>
-                            </div>
-                          )}
-                          <div className="grid grid-cols-2 gap-0.5">
-                            {subs.map((sub) => (
-                              <Link
-                                key={sub.id}
-                                to={`/product-category/${sub.slug}`}
-                                className="group/item flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[13px] text-foreground/75 hover:text-primary hover:bg-primary/5 transition-all duration-150 font-medium leading-snug"
-                              >
-                                <span className="w-1.5 h-1.5 rounded-full bg-primary/30 group-hover/item:bg-primary group-hover/item:scale-125 transition-all duration-150 shrink-0" />
-                                {sub.name}
-                              </Link>
-                            ))}
-                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-1 p-3 lg:grid-cols-3">
+                          {subs.map((sub) => (
+                            <Link
+                              key={sub.id}
+                              to={`/product-category/${sub.slug}`}
+                              className="group/item flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-[13px] font-medium leading-snug text-foreground/75 transition-all duration-150 hover:bg-muted hover:text-primary"
+                            >
+                              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary/30 transition-all duration-150 group-hover/item:scale-125 group-hover/item:bg-primary" />
+                              {sub.name}
+                            </Link>
+                          ))}
                         </div>
                       </div>
                     </div>
