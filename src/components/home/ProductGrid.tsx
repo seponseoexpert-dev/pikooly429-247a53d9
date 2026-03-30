@@ -143,7 +143,7 @@ const ProductGrid = memo(() => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`relative flex items-center gap-1.5 px-5 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-300 border ${
+              className={`relative flex items-center gap-1.5 px-5 py-2.5 lg:px-6 lg:py-3 rounded-full text-xs lg:text-sm font-semibold whitespace-nowrap transition-all duration-300 border ${
                 isActive
                   ? "bg-primary text-primary-foreground shadow-md border-primary scale-[1.03]"
                   : "bg-card text-muted-foreground border-border/60 hover:border-primary/40 hover:text-foreground hover:shadow-sm"
