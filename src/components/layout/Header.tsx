@@ -61,6 +61,7 @@ const Header = () => {
         .select("id, name, slug, image_url")
         .eq("is_active", true)
         .eq("show_in_header", true)
+        .neq("category_type", "tailored")
         .order("display_order");
       if (error) throw error;
       return data;
