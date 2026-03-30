@@ -55,7 +55,7 @@ const EventsSection = () => {
                 {cat.image_url ? (
                   <img src={cat.image_url} alt={cat.name} className="w-full h-28 md:h-36 lg:h-44 object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
                 ) : (
-                  <div className="w-full h-28 md:h-36 bg-gradient-to-br from-primary/15 to-accent/15 flex items-center justify-center">
+                  <div className="w-full h-28 md:h-36 lg:h-44 bg-gradient-to-br from-primary/15 to-accent/15 flex items-center justify-center">
                     <Sparkles className="w-8 h-8 text-primary/40" />
                   </div>
                 )}
