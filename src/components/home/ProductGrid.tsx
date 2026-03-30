@@ -246,7 +246,7 @@ const ProductGrid = memo(() => {
           <p className="text-muted-foreground/60 text-xs mt-1">Check back soon for new additions!</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
           {tailoredProducts.slice(0, 10).map((product: any, index: number) => (
             <div key={product.id} className={index >= 6 ? "hidden lg:block" : ""}>
               <ProductCard product={product} />
