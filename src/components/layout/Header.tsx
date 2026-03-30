@@ -406,35 +406,48 @@ const Header = () => {
                   {/* Mega Dropdown */}
                   {subs.length > 0 && hoveredCat === cat.id && (
                     <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 animate-in fade-in-0 slide-in-from-top-2 duration-200">
-                      <div className="mt-1 bg-card border border-border/20 rounded-2xl shadow-[0_12px_40px_-8px_rgba(0,0,0,0.15)] min-w-[360px] max-w-[520px] overflow-hidden backdrop-blur-sm">
-                        {/* Header */}
-                        <div className="flex items-center justify-between px-6 pt-5 pb-3">
-                          <div className="flex items-center gap-2.5">
-                            {cat.image_url && (
-                              <img src={cat.image_url} alt="" className="w-7 h-7 rounded-lg object-cover" />
-                            )}
-                            <h3 className="text-[15px] font-bold text-foreground tracking-tight">{cat.name}</h3>
+                      <div className="mt-1 bg-card border border-border/20 rounded-2xl shadow-[0_12px_40px_-8px_rgba(0,0,0,0.15)] overflow-hidden backdrop-blur-sm flex" style={{ minWidth: cat.image_url ? '560px' : '360px' }}>
+                        {/* Left: Category Image */}
+                        {cat.image_url && (
+                          <div className="relative w-[200px] shrink-0 overflow-hidden rounded-l-2xl">
+                            <img src={cat.image_url} alt={cat.name} className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                            <div className="absolute bottom-0 left-0 right-0 p-4">
+                              <h3 className="text-white font-bold text-base leading-tight">{cat.name}</h3>
+                              <Link
+                                to={`/product-category/${cat.slug}`}
+                                className="inline-flex items-center gap-1 text-xs text-white/90 font-medium mt-2 hover:text-white transition-colors"
+                              >
+                                View All <span>→</span>
+                              </Link>
+                            </div>
                           </div>
-                          <Link
-                            to={`/product-category/${cat.slug}`}
-                            className="text-xs text-primary/80 font-semibold hover:text-primary transition-colors flex items-center gap-1 bg-primary/5 px-3 py-1.5 rounded-full hover:bg-primary/10"
-                          >
-                            View All <span className="text-sm">→</span>
-                          </Link>
-                        </div>
-                        <div className="h-px bg-gradient-to-r from-transparent via-border/60 to-transparent mx-4" />
-                        {/* Subcategory Grid */}
-                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-0.5 px-3 py-3">
-                          {subs.map((sub) => (
-                            <Link
-                              key={sub.id}
-                              to={`/product-category/${sub.slug}`}
-                              className="group/item flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[13px] text-foreground/75 hover:text-primary hover:bg-primary/5 transition-all duration-150 font-medium leading-snug"
-                            >
-                              <span className="w-1.5 h-1.5 rounded-full bg-primary/30 group-hover/item:bg-primary group-hover/item:scale-125 transition-all duration-150 shrink-0" />
-                              {sub.name}
-                            </Link>
-                          ))}
+                        )}
+                        {/* Right: Subcategories */}
+                        <div className="flex-1 py-4 px-4">
+                          {!cat.image_url && (
+                            <div className="flex items-center justify-between pb-3 mb-2 border-b border-border/40">
+                              <h3 className="text-[15px] font-bold text-foreground">{cat.name}</h3>
+                              <Link
+                                to={`/product-category/${cat.slug}`}
+                                className="text-xs text-primary font-semibold hover:underline flex items-center gap-1"
+                              >
+                                View All →
+                              </Link>
+                            </div>
+                          )}
+                          <div className="grid grid-cols-2 gap-0.5">
+                            {subs.map((sub) => (
+                              <Link
+                                key={sub.id}
+                                to={`/product-category/${sub.slug}`}
+                                className="group/item flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[13px] text-foreground/75 hover:text-primary hover:bg-primary/5 transition-all duration-150 font-medium leading-snug"
+                              >
+                                <span className="w-1.5 h-1.5 rounded-full bg-primary/30 group-hover/item:bg-primary group-hover/item:scale-125 transition-all duration-150 shrink-0" />
+                                {sub.name}
+                              </Link>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
