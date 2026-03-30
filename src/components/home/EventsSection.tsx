@@ -53,7 +53,7 @@ const EventsSection = () => {
                 className="group block rounded-2xl overflow-hidden border border-border hover:border-primary/50 transition-all hover:shadow-lg"
               >
                 {cat.image_url ? (
-                  <img src={cat.image_url} alt={cat.name} className="w-full h-28 md:h-36 object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+                  <img src={cat.image_url} alt={cat.name} className="w-full h-28 md:h-36 lg:h-44 object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
                 ) : (
                   <div className="w-full h-28 md:h-36 bg-gradient-to-br from-primary/15 to-accent/15 flex items-center justify-center">
                     <Sparkles className="w-8 h-8 text-primary/40" />
