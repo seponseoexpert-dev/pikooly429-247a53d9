@@ -155,8 +155,8 @@ const Footer = memo(() => {
 
       {/* Main Footer */}
       <div className="bg-[hsl(30,15%,12%)]">
-        <div className="section-container py-8 sm:py-10 md:py-12">
-          <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:gap-12">
+        <div className="section-container py-8 sm:py-10 md:py-12 lg:py-16">
+          <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:gap-12 xl:gap-16">
             {/* Brand Column */}
             <div className="col-span-2 md:col-span-1">
               {(settings.footer_logo || settings.company_logo) ? (
