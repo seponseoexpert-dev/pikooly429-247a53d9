@@ -370,7 +370,7 @@ const Header = () => {
           </div>
 
           {/* === ROW 2: Mega Nav Bar (Desktop only) === */}
-          <nav className="hidden md:flex items-center justify-center gap-0 border-t border-border/40 overflow-x-auto scrollbar-hide bg-gradient-to-b from-background to-background/95">
+          <nav className="hidden md:flex items-center justify-center gap-0 border-t border-border/40 overflow-x-auto scrollbar-hide bg-card shadow-sm relative">
             {/* Static: Home */}
             <Link
               to="/"
@@ -386,6 +386,7 @@ const Header = () => {
             {categories.map((cat) => {
               const subs = subsByCategory[cat.id] || [];
               const isActive = location.pathname === `/product-category/${cat.slug}`;
+              const isHovered = hoveredCat === cat.id;
               return (
                 <div
                   key={cat.id}
@@ -396,7 +397,7 @@ const Header = () => {
                   <Link
                     to={`/product-category/${cat.slug}`}
                     className={`group relative flex items-center gap-1 px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
-                      isActive || hoveredCat === cat.id
+                      isActive || isHovered
                         ? "text-primary"
                         : "text-foreground/70 hover:text-primary"
                     }`}
@@ -405,18 +406,18 @@ const Header = () => {
                     {subs.length > 0 && (
                       <ChevronDown 
                         size={12} 
-                        className={`text-muted-foreground transition-transform duration-200 ${hoveredCat === cat.id ? "rotate-180 text-primary" : ""}`} 
+                        className={`text-muted-foreground transition-transform duration-200 ${isHovered ? "rotate-180 text-primary" : ""}`} 
                       />
                     )}
-                    <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2.5px] rounded-full bg-primary transition-all duration-300 ${isActive ? "w-3/4" : hoveredCat === cat.id ? "w-1/2" : "w-0"}`} />
+                    <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2.5px] rounded-full bg-primary transition-all duration-300 ${isActive ? "w-3/4" : isHovered ? "w-1/2" : "w-0"}`} />
                   </Link>
 
                   {/* Mega Dropdown */}
-                  {subs.length > 0 && hoveredCat === cat.id && (
-                    <div className="absolute left-1/2 top-full z-50 -translate-x-1/2 animate-in fade-in-0 slide-in-from-top-2 duration-200">
-                      <div className="mt-1 min-w-[420px] max-w-[520px] overflow-hidden rounded-2xl border border-border/30 bg-card shadow-[0_20px_60px_-15px_hsl(var(--foreground)/0.15)]">
+                  {subs.length > 0 && isHovered && (
+                    <div className="absolute left-1/2 top-full z-50 -translate-x-1/2 pt-1 animate-in fade-in-0 slide-in-from-top-2 duration-200">
+                      <div className="min-w-[420px] max-w-[520px] overflow-hidden rounded-2xl border border-border bg-card shadow-[0_20px_60px_-15px_hsl(var(--foreground)/0.15)] backdrop-blur-sm">
                         {/* Header */}
-                        <div className="border-b border-border/30 bg-gradient-to-r from-primary/5 to-transparent px-6 py-4">
+                        <div className="border-b border-border bg-muted/50 px-6 py-4">
                           <div className="flex items-center justify-between">
                             <div>
                               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary/60">
@@ -426,6 +427,7 @@ const Header = () => {
                             </div>
                             <Link
                               to={`/product-category/${cat.slug}`}
+                              onClick={() => setHoveredCat(null)}
                               className="rounded-full bg-primary/10 px-4 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
                             >
                               View All →
@@ -438,6 +440,7 @@ const Header = () => {
                             <Link
                               key={sub.id}
                               to={`/product-category/${sub.slug}`}
+                              onClick={() => setHoveredCat(null)}
                               className="group/item flex items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-[13px] font-medium text-foreground/80 transition-all duration-150 hover:bg-primary/5 hover:text-primary"
                             >
                               <span className="flex items-center gap-2.5">
