@@ -134,16 +134,16 @@ const ProductGrid = memo(() => {
     : "View All →";
 
   return (
-    <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Products" style={{ contain: "layout style" }}>
+    <section className="py-4 sm:py-6 md:py-8 lg:py-12 xl:py-14 section-container" aria-label="Products" style={{ contain: "layout style" }}>
       {/* ── Trending Tabs: For You, Best Seller + Subcategories ── */}
-      <div className="flex gap-2 overflow-x-auto pb-4 mb-5 scrollbar-hide">
+      <div className="flex gap-2 lg:gap-3 overflow-x-auto pb-4 mb-5 lg:mb-7 scrollbar-hide lg:justify-center">
         {allTrendingTabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`relative flex items-center gap-1.5 px-5 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-300 border ${
+              className={`relative flex items-center gap-1.5 px-5 py-2.5 lg:px-6 lg:py-3 rounded-full text-xs lg:text-sm font-semibold whitespace-nowrap transition-all duration-300 border ${
                 isActive
                   ? "bg-primary text-primary-foreground shadow-md border-primary scale-[1.03]"
                   : "bg-card text-muted-foreground border-border/60 hover:border-primary/40 hover:text-foreground hover:shadow-sm"
@@ -168,7 +168,7 @@ const ProductGrid = memo(() => {
           <p className="text-muted-foreground/60 text-xs mt-1">Check back soon for new additions!</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
           {trendingProducts.map((product: any, index: number) => (
             <div key={product.id} className={index >= 6 ? "hidden lg:block" : ""}>
               <ProductCard product={product} />
@@ -189,11 +189,11 @@ const ProductGrid = memo(() => {
       )}
 
       {/* ── Tailored For Your Occasions (Categories only) ── */}
-      <div className="mt-8 sm:mt-10 md:mt-12 mb-4 md:mb-6 text-center">
-        <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-1 md:mb-2">
+      <div className="mt-8 sm:mt-10 md:mt-12 lg:mt-16 mb-4 md:mb-6 lg:mb-8 text-center">
+        <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] lg:text-[28px] lg:leading-[40px] font-display font-semibold text-foreground mb-1 md:mb-2">
           Tailored For Your Occasions
         </h2>
-        <p className="text-muted-foreground text-sm sm:text-base md:text-lg">Find the perfect gift for every moment</p>
+        <p className="text-muted-foreground text-sm sm:text-base md:text-lg lg:text-xl">Find the perfect gift for every moment</p>
       </div>
 
       {occasionCategories.length > 0 && (
@@ -246,7 +246,7 @@ const ProductGrid = memo(() => {
           <p className="text-muted-foreground/60 text-xs mt-1">Check back soon for new additions!</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
           {tailoredProducts.slice(0, 10).map((product: any, index: number) => (
             <div key={product.id} className={index >= 6 ? "hidden lg:block" : ""}>
               <ProductCard product={product} />

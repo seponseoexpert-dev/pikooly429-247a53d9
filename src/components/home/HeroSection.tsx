@@ -35,7 +35,6 @@ const HeroSection = memo(() => {
     placeholderData: (prev) => prev,
   });
 
-  // Preload first slide image for LCP
   useEffect(() => {
     if (slides.length > 0 && slides[0]?.image_url) {
       const existing = document.querySelector(`link[href="${slides[0].image_url}"]`);
@@ -81,55 +80,54 @@ const HeroSection = memo(() => {
   const bgColor = slide?.bg_color || "hsl(85 20% 92%)";
 
   return (
-    <section className="section-container py-3 sm:py-4" style={{ contain: "layout style" }}>
+    <section className="section-container py-3 sm:py-4 lg:py-6" style={{ contain: "layout style" }}>
       <div className="relative">
-        {/* Banner - fixed height to prevent CLS */}
         <div
           className="relative overflow-hidden rounded-2xl lg:rounded-3xl transition-colors duration-500"
           style={{ backgroundColor: bgColor }}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
-          <div className="grid grid-cols-2 min-h-[200px] sm:min-h-[240px] md:min-h-[300px] lg:min-h-[380px]">
+          <div className="grid grid-cols-2 min-h-[200px] sm:min-h-[240px] md:min-h-[300px] lg:min-h-[400px] xl:min-h-[440px]">
             {/* Left: Text */}
-            <div className="flex flex-col justify-center pl-4 sm:pl-8 md:pl-12 lg:pl-16 py-5 sm:py-8 md:py-10 lg:py-12">
+            <div className="flex flex-col justify-center pl-4 sm:pl-8 md:pl-12 lg:pl-16 xl:pl-20 py-5 sm:py-8 md:py-10 lg:py-14">
               {slide?.subtitle && (
-                <p className="text-[9px] sm:text-[11px] md:text-xs font-medium text-muted-foreground/70 mb-0.5 sm:mb-1 tracking-widest uppercase italic">
+                <p className="text-[9px] sm:text-[11px] md:text-xs lg:text-sm font-medium text-muted-foreground/70 mb-0.5 sm:mb-1 lg:mb-2 tracking-widest uppercase italic">
                   {slide.subtitle}
                 </p>
               )}
-              <h2 className="font-display text-base sm:text-xl md:text-2xl lg:text-4xl font-bold text-foreground leading-snug sm:leading-tight">
+              <h2 className="font-display text-base sm:text-xl md:text-2xl lg:text-4xl xl:text-5xl font-bold text-foreground leading-snug sm:leading-tight lg:leading-[1.15]">
                 {slide?.title || "\u00A0"}
               </h2>
 
               {slide?.link && (
-                <div className="mt-2.5 sm:mt-3 md:mt-4">
+                <div className="mt-2.5 sm:mt-3 md:mt-4 lg:mt-6">
                   <Link
                     to={slide.link}
-                    className="group inline-flex items-center gap-1 sm:gap-1.5 bg-primary text-primary-foreground font-sans font-semibold text-[9px] sm:text-[10px] md:text-xs lg:text-sm px-3 sm:px-4 md:px-5 lg:px-6 py-1.5 sm:py-2 md:py-2.5 rounded-full tracking-wider uppercase whitespace-nowrap hover:shadow-lg hover:shadow-primary/25 active:scale-[0.97] transition-all duration-300"
+                    className="group inline-flex items-center gap-1 sm:gap-1.5 lg:gap-2 bg-primary text-primary-foreground font-sans font-semibold text-[9px] sm:text-[10px] md:text-xs lg:text-sm xl:text-base px-3 sm:px-4 md:px-5 lg:px-7 xl:px-8 py-1.5 sm:py-2 md:py-2.5 lg:py-3 xl:py-3.5 rounded-full tracking-wider uppercase whitespace-nowrap hover:shadow-lg hover:shadow-primary/25 active:scale-[0.97] transition-all duration-300"
                   >
                     {slide.cta_text || "SHOP NOW"}
-                    <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                    <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4 group-hover:translate-x-0.5 transition-transform" />
                   </Link>
                 </div>
               )}
             </div>
 
             {/* Right: Image */}
-            <div className="flex items-center justify-center pr-3 sm:pr-5 md:pr-8 lg:pr-14 py-4 sm:py-6 md:py-8">
+            <div className="flex items-center justify-center pr-3 sm:pr-5 md:pr-8 lg:pr-14 xl:pr-20 py-4 sm:py-6 md:py-8">
               {slide?.image_url ? (
                 <img
                   src={slide.image_url}
                   alt={slide.title}
-                  width={320}
-                  height={320}
+                  width={400}
+                  height={400}
                   fetchPriority="high"
                   decoding="async"
-                  className="w-full max-w-[160px] sm:max-w-[200px] md:max-w-[260px] lg:max-w-[320px] aspect-square object-cover rounded-xl sm:rounded-2xl shadow-lg"
-                  sizes="(max-width: 640px) 160px, (max-width: 768px) 200px, (max-width: 1024px) 260px, 320px"
+                  className="w-full max-w-[160px] sm:max-w-[200px] md:max-w-[260px] lg:max-w-[340px] xl:max-w-[400px] aspect-square object-cover rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-lg lg:shadow-2xl"
+                  sizes="(max-width: 640px) 160px, (max-width: 768px) 200px, (max-width: 1024px) 260px, (max-width: 1280px) 340px, 400px"
                 />
               ) : (
-                <div className="w-full max-w-[160px] sm:max-w-[200px] md:max-w-[260px] lg:max-w-[320px] aspect-square rounded-xl sm:rounded-2xl bg-muted/50" />
+                <div className="w-full max-w-[160px] sm:max-w-[200px] md:max-w-[260px] lg:max-w-[340px] xl:max-w-[400px] aspect-square rounded-xl sm:rounded-2xl lg:rounded-3xl bg-muted/50" />
               )}
             </div>
           </div>
@@ -140,24 +138,24 @@ const HeroSection = memo(() => {
           <>
             <button
               onClick={prev}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/3 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-card/90 backdrop-blur-sm shadow-md flex items-center justify-center text-foreground hover:bg-muted hover:scale-110 active:scale-95 transition-all duration-200 touch-target"
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/3 z-20 w-9 h-9 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full bg-card/90 backdrop-blur-sm shadow-md flex items-center justify-center text-foreground hover:bg-muted hover:scale-110 active:scale-95 transition-all duration-200 touch-target"
               aria-label="Previous slide"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-5 h-5 lg:w-6 lg:h-6" />
             </button>
             <button
               onClick={next}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/3 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-card/90 backdrop-blur-sm shadow-md flex items-center justify-center text-foreground hover:bg-muted hover:scale-110 active:scale-95 transition-all duration-200 touch-target"
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/3 z-20 w-9 h-9 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full bg-card/90 backdrop-blur-sm shadow-md flex items-center justify-center text-foreground hover:bg-muted hover:scale-110 active:scale-95 transition-all duration-200 touch-target"
               aria-label="Next slide"
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-5 h-5 lg:w-6 lg:h-6" />
             </button>
           </>
         )}
 
         {/* Dots */}
         {slides.length > 1 && (
-          <div className="flex flex-col items-center gap-2 mt-3">
+          <div className="flex flex-col items-center gap-2 mt-3 lg:mt-4">
             <div className="flex items-center gap-1.5">
               <span className="text-xs text-muted-foreground font-sans">
                 {current + 1}/{slides.length}

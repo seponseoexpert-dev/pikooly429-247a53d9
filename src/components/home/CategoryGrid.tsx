@@ -31,11 +31,11 @@ const CategoryGrid = memo(() => {
   if (categories.length === 0) return null;
 
   return (
-    <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Shop by Category" style={{ contain: "layout style" }}>
-      <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-4 md:mb-6 text-center">
+    <section className="py-4 sm:py-6 md:py-8 lg:py-12 xl:py-14 section-container" aria-label="Shop by Category" style={{ contain: "layout style" }}>
+      <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] lg:text-[28px] lg:leading-[40px] font-display font-semibold text-foreground mb-4 md:mb-6 lg:mb-8 text-center">
         Shop by Category
       </h2>
-      <div className="grid grid-cols-4 gap-3 sm:gap-4 md:grid-cols-8 md:gap-4 lg:gap-5 max-w-5xl mx-auto">
+      <div className="grid grid-cols-4 gap-3 sm:gap-4 md:grid-cols-8 md:gap-4 lg:gap-6 xl:gap-7 max-w-6xl mx-auto">
         {categories.map((cat) => (
           <div key={cat.id}>
             <Link
