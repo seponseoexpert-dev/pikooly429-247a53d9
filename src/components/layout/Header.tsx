@@ -23,6 +23,7 @@ const Header = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  const [pinnedMegaMenu, setPinnedMegaMenu] = useState<string | null>(null);
   const { totalItems, setIsOpen } = useCart();
   const { settings, isLoading: settingsLoading } = useSiteSettings();
   const { currencies, selectedCurrency, setSelectedCurrency, formatPrice } = useMultiCurrency();
@@ -34,6 +35,7 @@ const Header = () => {
   const searchRef = useRef<HTMLDivElement>(null);
   const currencyRef = useRef<HTMLDivElement>(null);
   const languageRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLElement>(null);
 
   const logoUrl = settings.company_logo || "";
   const announcementText = settings.announcement_bar_text || "🌸 Same Day Delivery Available in 500+ Cities";
@@ -119,6 +121,10 @@ const Header = () => {
       if (languageRef.current && !languageRef.current.contains(e.target as Node)) {
         setShowLanguageDropdown(false);
       }
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setHoveredCat(null);
+        setPinnedMegaMenu(null);
+      }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -144,6 +150,7 @@ const Header = () => {
 
   useEffect(() => {
     setHoveredCat(null);
+    setPinnedMegaMenu(null);
   }, [location.pathname]);
 
   const openMegaMenu = (categoryId: string) => {
@@ -155,6 +162,7 @@ const Header = () => {
   };
 
   const closeMegaMenu = () => {
+    if (pinnedMegaMenu) return;
     if (megaMenuCloseTimer.current) {
       window.clearTimeout(megaMenuCloseTimer.current);
     }
@@ -412,7 +420,7 @@ const Header = () => {
           </div>
 
           {/* === ROW 2: Mega Nav Bar (Desktop only) === */}
-          <nav className="hidden md:flex items-center justify-start xl:justify-center gap-0 border-t border-border/40 overflow-x-auto overflow-y-visible scrollbar-hide bg-card shadow-sm relative px-2 lg:px-4">
+          <nav ref={navRef} className="hidden md:flex items-center justify-start xl:justify-center gap-0 border-t border-border/40 overflow-x-auto overflow-y-visible scrollbar-hide bg-card shadow-sm relative px-2 lg:px-4">
             {/* Static: Home */}
             <Link
               to="/"
@@ -428,7 +436,7 @@ const Header = () => {
             {categories.map((cat) => {
               const subs = subsByCategory[cat.id] || [];
               const isActive = location.pathname.startsWith(`/product-category/${cat.slug}`);
-              const isHovered = hoveredCat === cat.id;
+              const isHovered = hoveredCat === cat.id || pinnedMegaMenu === cat.id;
               return (
                 <div
                   key={cat.id}
@@ -437,18 +445,22 @@ const Header = () => {
                     if (canUseHover && subs.length > 0) openMegaMenu(cat.id);
                   }}
                   onMouseLeave={() => {
-                    if (canUseHover && subs.length > 0) closeMegaMenu();
+                    if (canUseHover && subs.length > 0 && pinnedMegaMenu !== cat.id) closeMegaMenu();
                   }}
                 >
-                  <Link
-                    to={`/product-category/${cat.slug}`}
-                    onClick={(e) => {
+                  <button
+                    type="button"
+                    aria-expanded={isHovered}
+                    onClick={() => {
                       if (subs.length > 0) {
-                        e.preventDefault();
-                        setHoveredCat((prev) => (prev === cat.id ? null : cat.id));
+                        const nextValue = pinnedMegaMenu === cat.id ? null : cat.id;
+                        setPinnedMegaMenu(nextValue);
+                        setHoveredCat(nextValue ?? null);
                         return;
                       }
+                      setPinnedMegaMenu(null);
                       setHoveredCat(null);
+                      navigate(`/product-category/${cat.slug}`);
                     }}
                     className={`group relative flex items-center gap-1 px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
                       isActive || isHovered
@@ -458,13 +470,13 @@ const Header = () => {
                   >
                     {cat.name}
                     {subs.length > 0 && (
-                      <ChevronDown 
-                        size={12} 
-                        className={`text-muted-foreground transition-transform duration-200 ${isHovered ? "rotate-180 text-primary" : ""}`} 
+                      <ChevronDown
+                        size={12}
+                        className={`text-muted-foreground transition-transform duration-200 ${isHovered ? "rotate-180 text-primary" : ""}`}
                       />
                     )}
                     <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2.5px] rounded-full bg-primary transition-all duration-300 ${isActive ? "w-3/4" : isHovered ? "w-1/2" : "w-0"}`} />
-                  </Link>
+                  </button>
 
                   {/* Mega Dropdown */}
                   {subs.length > 0 && isHovered && (
