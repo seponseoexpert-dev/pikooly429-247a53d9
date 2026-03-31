@@ -518,6 +518,7 @@ const Header = () => {
 
                               {/* Subcategories grid */}
                               <div className="flex-1 bg-card px-3 py-3 md:px-5 md:py-4 xl:px-6 xl:py-6">
+                                <div className="max-h-[50vh] overflow-y-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
                                 <div className="mb-3 flex items-center justify-between border-b border-border/60 pb-2 xl:mb-4 xl:pb-3">
                                   <p className="text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                                     Subcategories
@@ -549,6 +550,7 @@ const Header = () => {
                                       </span>
                                     </Link>
                                   ))}
+                                </div>
                                 </div>
                               </div>
                             </div>
