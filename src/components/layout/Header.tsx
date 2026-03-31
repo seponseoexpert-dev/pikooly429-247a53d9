@@ -445,18 +445,22 @@ const Header = () => {
                     if (canUseHover && subs.length > 0) openMegaMenu(cat.id);
                   }}
                   onMouseLeave={() => {
-                    if (canUseHover && subs.length > 0) closeMegaMenu();
+                    if (canUseHover && subs.length > 0 && pinnedMegaMenu !== cat.id) closeMegaMenu();
                   }}
                 >
-                  <Link
-                    to={`/product-category/${cat.slug}`}
-                    onClick={(e) => {
+                  <button
+                    type="button"
+                    aria-expanded={isHovered}
+                    onClick={() => {
                       if (subs.length > 0) {
-                        e.preventDefault();
-                        setHoveredCat((prev) => (prev === cat.id ? null : cat.id));
+                        const nextValue = pinnedMegaMenu === cat.id ? null : cat.id;
+                        setPinnedMegaMenu(nextValue);
+                        setHoveredCat(nextValue ?? null);
                         return;
                       }
+                      setPinnedMegaMenu(null);
                       setHoveredCat(null);
+                      navigate(`/product-category/${cat.slug}`);
                     }}
                     className={`group relative flex items-center gap-1 px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
                       isActive || isHovered
