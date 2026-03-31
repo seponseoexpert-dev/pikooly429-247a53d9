@@ -152,7 +152,7 @@ const Header = () => {
   };
 
   const closeMegaMenu = () => {
-    if (pinnedMegaMenu) return;
+    if (pinnedMegaMenu && !canUseHover) return;
     if (megaMenuCloseTimer.current) {
       window.clearTimeout(megaMenuCloseTimer.current);
     }
@@ -444,6 +444,17 @@ const Header = () => {
                       aria-expanded={isHovered}
                       onClick={() => {
                         if (subs.length > 0) {
+                           if (canUseHover) {
+                             const nextValue = hoveredCat === cat.id ? null : cat.id;
+                             if (megaMenuCloseTimer.current) {
+                               window.clearTimeout(megaMenuCloseTimer.current);
+                               megaMenuCloseTimer.current = null;
+                             }
+                             setPinnedMegaMenu(null);
+                             setHoveredCat(nextValue);
+                             return;
+                           }
+
                           const nextValue = pinnedMegaMenu === cat.id ? null : cat.id;
                           setPinnedMegaMenu(nextValue);
                           setHoveredCat(nextValue ?? null);
