@@ -443,12 +443,11 @@ const Header = () => {
                   <Link
                     to={`/product-category/${cat.slug}`}
                     onClick={(e) => {
-                      if (!canUseHover && subs.length > 0) {
+                      if (subs.length > 0) {
                         e.preventDefault();
                         setHoveredCat((prev) => (prev === cat.id ? null : cat.id));
                         return;
                       }
-
                       setHoveredCat(null);
                     }}
                     className={`group relative flex items-center gap-1 px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
