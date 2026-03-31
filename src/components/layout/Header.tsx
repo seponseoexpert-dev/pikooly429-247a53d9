@@ -10,14 +10,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-const staticNavLinks = [
-  { label: "Home", href: "/" },
-  { label: "Shop", href: "/shop" },
-  { label: "Events", href: "/events" },
-  { label: "Custom Bouquet", href: "/custom-bouquet" },
-  { label: "Blog", href: "/blog" },
-];
-
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -35,7 +27,7 @@ const Header = () => {
   const searchRef = useRef<HTMLDivElement>(null);
   const currencyRef = useRef<HTMLDivElement>(null);
   const languageRef = useRef<HTMLDivElement>(null);
-  const navRef = useRef<HTMLElement>(null);
+  const navRef = useRef<HTMLDivElement>(null);
 
   const logoUrl = settings.company_logo || "";
   const announcementText = settings.announcement_bar_text || "🌸 Same Day Delivery Available in 500+ Cities";
@@ -103,8 +95,6 @@ const Header = () => {
   const [hoveredCat, setHoveredCat] = useState<string | null>(null);
   const [canUseHover, setCanUseHover] = useState(false);
   const megaMenuCloseTimer = useRef<number | null>(null);
-
-  const navLinks = staticNavLinks;
 
   const suggestions = searchQuery.trim().length > 0
     ? allProducts.filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 6)
