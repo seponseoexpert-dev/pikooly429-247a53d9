@@ -420,7 +420,7 @@ const Header = () => {
           </div>
 
           {/* === ROW 2: Mega Nav Bar (Desktop only) === */}
-          <nav className="hidden md:flex items-center justify-start xl:justify-center gap-0 border-t border-border/40 overflow-x-auto overflow-y-visible scrollbar-hide bg-card shadow-sm relative px-2 lg:px-4">
+          <nav ref={navRef} className="hidden md:flex items-center justify-start xl:justify-center gap-0 border-t border-border/40 overflow-x-auto overflow-y-visible scrollbar-hide bg-card shadow-sm relative px-2 lg:px-4">
             {/* Static: Home */}
             <Link
               to="/"
