@@ -10,14 +10,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-const staticNavLinks = [
-  { label: "Home", href: "/" },
-  { label: "Shop", href: "/shop" },
-  { label: "Events", href: "/events" },
-  { label: "Custom Bouquet", href: "/custom-bouquet" },
-  { label: "Blog", href: "/blog" },
-];
-
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -35,7 +27,7 @@ const Header = () => {
   const searchRef = useRef<HTMLDivElement>(null);
   const currencyRef = useRef<HTMLDivElement>(null);
   const languageRef = useRef<HTMLDivElement>(null);
-  const navRef = useRef<HTMLElement>(null);
+  const navRef = useRef<HTMLDivElement>(null);
 
   const logoUrl = settings.company_logo || "";
   const announcementText = settings.announcement_bar_text || "🌸 Same Day Delivery Available in 500+ Cities";
@@ -103,8 +95,6 @@ const Header = () => {
   const [hoveredCat, setHoveredCat] = useState<string | null>(null);
   const [canUseHover, setCanUseHover] = useState(false);
   const megaMenuCloseTimer = useRef<number | null>(null);
-
-  const navLinks = staticNavLinks;
 
   const suggestions = searchQuery.trim().length > 0
     ? allProducts.filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 6)
@@ -420,163 +410,171 @@ const Header = () => {
           </div>
 
           {/* === ROW 2: Mega Nav Bar (Desktop only) === */}
-          <nav ref={navRef} className="hidden md:flex items-center justify-start xl:justify-center gap-0 border-t border-border/40 overflow-x-auto overflow-y-visible scrollbar-hide bg-card shadow-sm relative px-2 lg:px-4">
-            {/* Static: Home */}
-            <Link
-              to="/"
-              className={`group relative px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
-                location.pathname === "/" ? "text-primary" : "text-foreground/70 hover:text-primary"
-              }`}
-            >
-              Home
-              <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2.5px] rounded-full bg-primary transition-all duration-300 ${location.pathname === "/" ? "w-3/4" : "w-0 group-hover:w-1/2"}`} />
-            </Link>
+          <div ref={navRef} className="relative hidden border-t border-border/40 bg-card shadow-sm md:block">
+            <nav className="flex items-center justify-start gap-0 overflow-x-auto scrollbar-hide px-2 lg:px-4 xl:justify-center">
+              {/* Static: Home */}
+              <Link
+                to="/"
+                className={`group relative px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
+                  location.pathname === "/" ? "text-primary" : "text-foreground/70 hover:text-primary"
+                }`}
+              >
+                Home
+                <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2.5px] rounded-full bg-primary transition-all duration-300 ${location.pathname === "/" ? "w-3/4" : "w-0 group-hover:w-1/2"}`} />
+              </Link>
 
-            {/* Dynamic categories with mega menu */}
-            {categories.map((cat) => {
-              const subs = subsByCategory[cat.id] || [];
-              const isActive = location.pathname.startsWith(`/product-category/${cat.slug}`);
-              const isHovered = hoveredCat === cat.id || pinnedMegaMenu === cat.id;
-              return (
-                <div
-                  key={cat.id}
-                  className="static"
-                  onMouseEnter={() => {
-                    if (canUseHover && subs.length > 0) openMegaMenu(cat.id);
-                  }}
-                  onMouseLeave={() => {
-                    if (canUseHover && subs.length > 0 && pinnedMegaMenu !== cat.id) closeMegaMenu();
-                  }}
-                >
-                  <button
-                    type="button"
-                    aria-expanded={isHovered}
-                    onClick={() => {
-                      if (subs.length > 0) {
-                        const nextValue = pinnedMegaMenu === cat.id ? null : cat.id;
-                        setPinnedMegaMenu(nextValue);
-                        setHoveredCat(nextValue ?? null);
-                        return;
-                      }
-                      setPinnedMegaMenu(null);
-                      setHoveredCat(null);
-                      navigate(`/product-category/${cat.slug}`);
+              {/* Dynamic categories with mega menu */}
+              {categories.map((cat) => {
+                const subs = subsByCategory[cat.id] || [];
+                const isActive = location.pathname.startsWith(`/product-category/${cat.slug}`);
+                const isHovered = hoveredCat === cat.id || pinnedMegaMenu === cat.id;
+                return (
+                  <div
+                    key={cat.id}
+                    className="static"
+                    onMouseEnter={() => {
+                      if (canUseHover && subs.length > 0) openMegaMenu(cat.id);
                     }}
-                    className={`group relative flex items-center gap-1 px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
-                      isActive || isHovered
-                        ? "text-primary"
-                        : "text-foreground/70 hover:text-primary"
-                    }`}
+                    onMouseLeave={() => {
+                      if (canUseHover && subs.length > 0 && pinnedMegaMenu !== cat.id) closeMegaMenu();
+                    }}
                   >
-                    {cat.name}
-                    {subs.length > 0 && (
-                      <ChevronDown
-                        size={12}
-                        className={`text-muted-foreground transition-transform duration-200 ${isHovered ? "rotate-180 text-primary" : ""}`}
-                      />
-                    )}
-                    <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2.5px] rounded-full bg-primary transition-all duration-300 ${isActive ? "w-3/4" : isHovered ? "w-1/2" : "w-0"}`} />
-                  </button>
-
-                  {/* Mega Dropdown */}
-                  {subs.length > 0 && isHovered && (
-                    <div
-                      className="absolute inset-x-0 top-full z-50 pt-3 animate-in fade-in-0 slide-in-from-top-2 duration-200"
-                      onMouseEnter={() => {
-                        if (canUseHover) openMegaMenu(cat.id);
+                    <button
+                      type="button"
+                      aria-expanded={isHovered}
+                      onClick={() => {
+                        if (subs.length > 0) {
+                          const nextValue = pinnedMegaMenu === cat.id ? null : cat.id;
+                          setPinnedMegaMenu(nextValue);
+                          setHoveredCat(nextValue ?? null);
+                          return;
+                        }
+                        setPinnedMegaMenu(null);
+                        setHoveredCat(null);
+                        navigate(`/product-category/${cat.slug}`);
                       }}
-                      onMouseLeave={() => {
-                        if (canUseHover) closeMegaMenu();
-                      }}
+                      className={`group relative flex items-center gap-1 px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
+                        isActive || isHovered
+                          ? "text-primary"
+                          : "text-foreground/70 hover:text-primary"
+                      }`}
                     >
-                      <div className="mx-auto w-full max-w-[980px] px-3 md:px-4 xl:px-0">
-                        <div className="overflow-hidden rounded-[28px] border border-border/70 bg-card shadow-[0_28px_90px_-24px_hsl(var(--foreground)/0.22)]">
-                          <div className="grid grid-cols-1 lg:grid-cols-[220px_minmax(0,1fr)]">
-                          <div className="border-b border-border/60 bg-muted/35 px-5 py-5 lg:border-b-0 lg:border-r lg:px-6 lg:py-6">
-                            <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
-                              <Sparkles size={12} />
-                              Featured
-                            </div>
-                            <h3 className="mt-4 text-xl font-display font-semibold text-foreground lg:text-2xl">{cat.name}</h3>
-                            <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
-                              Tailored picks and handpicked subcategories for faster browsing.
-                            </p>
-                            <Link
-                              to={`/product-category/${cat.slug}`}
-                              onClick={() => setHoveredCat(null)}
-                              className="mt-5 inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-transform duration-200 hover:scale-[1.02]"
-                            >
-                              View all in {cat.name}
-                            </Link>
-                          </div>
+                      {cat.name}
+                      {subs.length > 0 && (
+                        <ChevronDown
+                          size={12}
+                          className={`text-muted-foreground transition-transform duration-200 ${isHovered ? "rotate-180 text-primary" : ""}`}
+                        />
+                      )}
+                      <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2.5px] rounded-full bg-primary transition-all duration-300 ${isActive ? "w-3/4" : isHovered ? "w-1/2" : "w-0"}`} />
+                    </button>
 
-                          <div className="bg-card px-4 py-4 md:px-5 md:py-5 lg:px-6 lg:py-6">
-                            <div className="mb-4 flex flex-col gap-3 border-b border-border/60 pb-3 sm:flex-row sm:items-center sm:justify-between">
-                              <div>
-                                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                                  Popular subcategories
+                    {/* Mega Dropdown */}
+                    {subs.length > 0 && isHovered && (
+                      <div
+                        className="absolute inset-x-0 top-full z-50 pt-3 animate-in fade-in-0 slide-in-from-top-2 duration-200"
+                        onMouseEnter={() => {
+                          if (canUseHover) openMegaMenu(cat.id);
+                        }}
+                        onMouseLeave={() => {
+                          if (canUseHover) closeMegaMenu();
+                        }}
+                      >
+                        <div className="mx-auto w-full max-w-[980px] px-3 md:px-4 xl:px-0">
+                          <div className="overflow-hidden rounded-[28px] border border-border/70 bg-card shadow-[0_28px_90px_-24px_hsl(var(--foreground)/0.22)]">
+                            <div className="grid grid-cols-1 lg:grid-cols-[220px_minmax(0,1fr)]">
+                              <div className="border-b border-border/60 bg-muted/35 px-5 py-5 lg:border-b-0 lg:border-r lg:px-6 lg:py-6">
+                                <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
+                                  <Sparkles size={12} />
+                                  Featured
+                                </div>
+                                <h3 className="mt-4 text-xl font-display font-semibold text-foreground lg:text-2xl">{cat.name}</h3>
+                                <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
+                                  Tailored picks and handpicked subcategories for faster browsing.
                                 </p>
-                                <p className="mt-1 text-sm text-foreground/80">Choose a collection and jump directly in.</p>
-                              </div>
-                              <span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
-                                {subs.length} items
-                              </span>
-                            </div>
-
-                            <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3 xl:grid-cols-3">
-                              {subs.map((sub) => (
                                 <Link
-                                  key={sub.id}
-                                  to={`/product-category/${cat.slug}/${sub.slug}`}
-                                  onClick={() => setHoveredCat(null)}
-                                  className="group/item flex min-h-[54px] items-center justify-between gap-3 rounded-2xl border border-transparent bg-muted/20 px-4 py-3 text-[13px] font-medium text-foreground/85 transition-all duration-200 hover:border-primary/20 hover:bg-primary/5 hover:text-primary"
+                                  to={`/product-category/${cat.slug}`}
+                                  onClick={() => {
+                                    setHoveredCat(null);
+                                    setPinnedMegaMenu(null);
+                                  }}
+                                  className="mt-5 inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-transform duration-200 hover:scale-[1.02]"
                                 >
-                                  <span className="flex min-w-0 items-center gap-3">
-                                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-background text-primary ring-1 ring-border transition-all group-hover/item:bg-primary group-hover/item:text-primary-foreground group-hover/item:ring-primary/30">
-                                      <span className="h-1.5 w-1.5 rounded-full bg-current" />
-                                    </span>
-                                    <span className="truncate leading-5">{sub.name}</span>
-                                  </span>
-                                  <span className="shrink-0 rounded-full bg-background px-2 py-1 text-[10px] font-semibold tabular-nums text-muted-foreground ring-1 ring-border transition-colors group-hover/item:bg-primary/10 group-hover/item:text-primary">
-                                    {sub.product_count}
-                                  </span>
+                                  View all in {cat.name}
                                 </Link>
-                              ))}
+                              </div>
+
+                              <div className="bg-card px-4 py-4 md:px-5 md:py-5 lg:px-6 lg:py-6">
+                                <div className="mb-4 flex flex-col gap-3 border-b border-border/60 pb-3 sm:flex-row sm:items-center sm:justify-between">
+                                  <div>
+                                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                                      Popular subcategories
+                                    </p>
+                                    <p className="mt-1 text-sm text-foreground/80">Choose a collection and jump directly in.</p>
+                                  </div>
+                                  <span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
+                                    {subs.length} items
+                                  </span>
+                                </div>
+
+                                <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3 xl:grid-cols-3">
+                                  {subs.map((sub) => (
+                                    <Link
+                                      key={sub.id}
+                                      to={`/product-category/${cat.slug}/${sub.slug}`}
+                                      onClick={() => {
+                                        setHoveredCat(null);
+                                        setPinnedMegaMenu(null);
+                                      }}
+                                      className="group/item flex min-h-[54px] items-center justify-between gap-3 rounded-2xl border border-transparent bg-muted/20 px-4 py-3 text-[13px] font-medium text-foreground/85 transition-all duration-200 hover:border-primary/20 hover:bg-primary/5 hover:text-primary"
+                                    >
+                                      <span className="flex min-w-0 items-center gap-3">
+                                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-background text-primary ring-1 ring-border transition-all group-hover/item:bg-primary group-hover/item:text-primary-foreground group-hover/item:ring-primary/30">
+                                          <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                                        </span>
+                                        <span className="truncate leading-5">{sub.name}</span>
+                                      </span>
+                                      <span className="shrink-0 rounded-full bg-background px-2 py-1 text-[10px] font-semibold tabular-nums text-muted-foreground ring-1 ring-border transition-colors group-hover/item:bg-primary/10 group-hover/item:text-primary">
+                                        {sub.product_count}
+                                      </span>
+                                    </Link>
+                                  ))}
+                                </div>
+                              </div>
                             </div>
                           </div>
-                        </div>
                         </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+                    )}
+                  </div>
+                );
+              })}
 
-            {/* Static links that don't overlap with categories */}
-            {[
-              { label: "Event Service", href: "/events", match: (p: string) => p.startsWith("/events") },
-              { label: "Custom Bouquet", href: "/custom-bouquet", match: (p: string) => p === "/custom-bouquet" },
-              { label: "Blog", href: "/blog", match: (p: string) => p.startsWith("/blog") },
-            ].map((link) => {
-              const isDuplicate = categories.some(
-                (cat) => cat.name.toLowerCase().replace(/\s+/g, '') === link.label.toLowerCase().replace(/\s+/g, '')
-              );
-              if (isDuplicate) return null;
-              return (
-                <Link
-                  key={link.href}
-                  to={link.href}
-                  className={`group relative px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
-                    link.match(location.pathname) ? "text-primary" : "text-foreground/70 hover:text-primary"
-                  }`}
-                >
-                  {link.label}
-                  <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2.5px] rounded-full bg-primary transition-all duration-300 ${link.match(location.pathname) ? "w-3/4" : "w-0 group-hover:w-1/2"}`} />
-                </Link>
-              );
-            })}
-          </nav>
+              {/* Static links that don't overlap with categories */}
+              {[
+                { label: "Event Service", href: "/events", match: (p: string) => p.startsWith("/events") },
+                { label: "Custom Bouquet", href: "/custom-bouquet", match: (p: string) => p === "/custom-bouquet" },
+                { label: "Blog", href: "/blog", match: (p: string) => p.startsWith("/blog") },
+              ].map((link) => {
+                const isDuplicate = categories.some(
+                  (cat) => cat.name.toLowerCase().replace(/\s+/g, '') === link.label.toLowerCase().replace(/\s+/g, '')
+                );
+                if (isDuplicate) return null;
+                return (
+                  <Link
+                    key={link.href}
+                    to={link.href}
+                    className={`group relative px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
+                      link.match(location.pathname) ? "text-primary" : "text-foreground/70 hover:text-primary"
+                    }`}
+                  >
+                    {link.label}
+                    <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2.5px] rounded-full bg-primary transition-all duration-300 ${link.match(location.pathname) ? "w-3/4" : "w-0 group-hover:w-1/2"}`} />
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
         </div>
       </header>
     </>
