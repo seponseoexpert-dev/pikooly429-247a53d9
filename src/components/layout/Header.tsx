@@ -480,16 +480,17 @@ const Header = () => {
                           if (canUseHover) closeMegaMenu();
                         }}
                       >
-                        <div className="mx-auto w-full max-w-[980px] px-3 md:px-4 xl:px-0">
-                          <div className="overflow-hidden rounded-[28px] border border-border/70 bg-card shadow-[0_28px_90px_-24px_hsl(var(--foreground)/0.22)]">
-                            <div className="grid grid-cols-1 lg:grid-cols-[220px_minmax(0,1fr)]">
-                              <div className="border-b border-border/60 bg-muted/35 px-5 py-5 lg:border-b-0 lg:border-r lg:px-6 lg:py-6">
-                                <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
+                        <div className="mx-auto w-full max-w-[980px] px-2 md:px-4 xl:px-0">
+                          <div className="overflow-hidden rounded-2xl md:rounded-[28px] border border-border/70 bg-card shadow-[0_20px_60px_-16px_hsl(var(--foreground)/0.18)] md:shadow-[0_28px_90px_-24px_hsl(var(--foreground)/0.22)]">
+                            <div className="flex flex-col xl:flex-row xl:items-stretch">
+                              {/* Featured sidebar - compact on md, full on xl */}
+                              <div className="flex items-center gap-4 border-b border-border/60 bg-muted/35 px-4 py-3 xl:w-[220px] xl:flex-col xl:items-start xl:gap-0 xl:border-b-0 xl:border-r xl:px-6 xl:py-6">
+                                <div className="hidden xl:inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
                                   <Sparkles size={12} />
                                   Featured
                                 </div>
-                                <h3 className="mt-4 text-xl font-display font-semibold text-foreground lg:text-2xl">{cat.name}</h3>
-                                <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
+                                <h3 className="text-base font-display font-semibold text-foreground xl:mt-4 xl:text-2xl">{cat.name}</h3>
+                                <p className="hidden xl:block mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
                                   Tailored picks and handpicked subcategories for faster browsing.
                                 </p>
                                 <Link
@@ -498,26 +499,24 @@ const Header = () => {
                                     setHoveredCat(null);
                                     setPinnedMegaMenu(null);
                                   }}
-                                  className="mt-5 inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-transform duration-200 hover:scale-[1.02]"
+                                  className="ml-auto shrink-0 inline-flex items-center rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground transition-transform duration-200 hover:scale-[1.02] xl:ml-0 xl:mt-5 xl:px-5 xl:py-2.5 xl:text-sm"
                                 >
-                                  View all in {cat.name}
+                                  View all
                                 </Link>
                               </div>
 
-                              <div className="bg-card px-4 py-4 md:px-5 md:py-5 lg:px-6 lg:py-6">
-                                <div className="mb-4 flex flex-col gap-3 border-b border-border/60 pb-3 sm:flex-row sm:items-center sm:justify-between">
-                                  <div>
-                                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                                      Popular subcategories
-                                    </p>
-                                    <p className="mt-1 text-sm text-foreground/80">Choose a collection and jump directly in.</p>
-                                  </div>
-                                  <span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
+                              {/* Subcategories grid */}
+                              <div className="flex-1 bg-card px-3 py-3 md:px-5 md:py-4 xl:px-6 xl:py-6">
+                                <div className="mb-3 flex items-center justify-between border-b border-border/60 pb-2 xl:mb-4 xl:pb-3">
+                                  <p className="text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                                    Subcategories
+                                  </p>
+                                  <span className="rounded-full bg-muted px-2.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
                                     {subs.length} items
                                   </span>
                                 </div>
 
-                                <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3 xl:grid-cols-3">
+                                <div className="grid grid-cols-2 gap-1.5 md:gap-2 xl:grid-cols-3 xl:gap-3">
                                   {subs.map((sub) => (
                                     <Link
                                       key={sub.id}
@@ -526,15 +525,15 @@ const Header = () => {
                                         setHoveredCat(null);
                                         setPinnedMegaMenu(null);
                                       }}
-                                      className="group/item flex min-h-[54px] items-center justify-between gap-3 rounded-2xl border border-transparent bg-muted/20 px-4 py-3 text-[13px] font-medium text-foreground/85 transition-all duration-200 hover:border-primary/20 hover:bg-primary/5 hover:text-primary"
+                                      className="group/item flex items-center justify-between gap-2 rounded-xl border border-transparent bg-muted/20 px-3 py-2.5 text-[12px] md:text-[13px] font-medium text-foreground/85 transition-all duration-200 hover:border-primary/20 hover:bg-primary/5 hover:text-primary xl:min-h-[54px] xl:rounded-2xl xl:px-4 xl:py-3"
                                     >
-                                      <span className="flex min-w-0 items-center gap-3">
-                                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-background text-primary ring-1 ring-border transition-all group-hover/item:bg-primary group-hover/item:text-primary-foreground group-hover/item:ring-primary/30">
-                                          <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                                      <span className="flex min-w-0 items-center gap-2 xl:gap-3">
+                                        <span className="flex h-6 w-6 xl:h-8 xl:w-8 shrink-0 items-center justify-center rounded-full bg-background text-primary ring-1 ring-border transition-all group-hover/item:bg-primary group-hover/item:text-primary-foreground group-hover/item:ring-primary/30">
+                                          <span className="h-1 w-1 xl:h-1.5 xl:w-1.5 rounded-full bg-current" />
                                         </span>
                                         <span className="truncate leading-5">{sub.name}</span>
                                       </span>
-                                      <span className="shrink-0 rounded-full bg-background px-2 py-1 text-[10px] font-semibold tabular-nums text-muted-foreground ring-1 ring-border transition-colors group-hover/item:bg-primary/10 group-hover/item:text-primary">
+                                      <span className="shrink-0 rounded-full bg-background px-1.5 py-0.5 text-[9px] xl:px-2 xl:py-1 xl:text-[10px] font-semibold tabular-nums text-muted-foreground ring-1 ring-border transition-colors group-hover/item:bg-primary/10 group-hover/item:text-primary">
                                         {sub.product_count}
                                       </span>
                                     </Link>
