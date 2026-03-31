@@ -470,13 +470,13 @@ const Header = () => {
                   >
                     {cat.name}
                     {subs.length > 0 && (
-                      <ChevronDown 
-                        size={12} 
-                        className={`text-muted-foreground transition-transform duration-200 ${isHovered ? "rotate-180 text-primary" : ""}`} 
+                      <ChevronDown
+                        size={12}
+                        className={`text-muted-foreground transition-transform duration-200 ${isHovered ? "rotate-180 text-primary" : ""}`}
                       />
                     )}
                     <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2.5px] rounded-full bg-primary transition-all duration-300 ${isActive ? "w-3/4" : isHovered ? "w-1/2" : "w-0"}`} />
-                  </Link>
+                  </button>
 
                   {/* Mega Dropdown */}
                   {subs.length > 0 && isHovered && (
