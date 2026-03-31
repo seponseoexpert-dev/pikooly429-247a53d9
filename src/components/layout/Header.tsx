@@ -150,6 +150,7 @@ const Header = () => {
 
   useEffect(() => {
     setHoveredCat(null);
+    setPinnedMegaMenu(null);
   }, [location.pathname]);
 
   const openMegaMenu = (categoryId: string) => {
@@ -161,6 +162,7 @@ const Header = () => {
   };
 
   const closeMegaMenu = () => {
+    if (pinnedMegaMenu) return;
     if (megaMenuCloseTimer.current) {
       window.clearTimeout(megaMenuCloseTimer.current);
     }
