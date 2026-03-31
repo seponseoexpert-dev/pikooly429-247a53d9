@@ -121,6 +121,10 @@ const Header = () => {
       if (languageRef.current && !languageRef.current.contains(e.target as Node)) {
         setShowLanguageDropdown(false);
       }
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setHoveredCat(null);
+        setPinnedMegaMenu(null);
+      }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
