@@ -436,7 +436,7 @@ const Header = () => {
             {categories.map((cat) => {
               const subs = subsByCategory[cat.id] || [];
               const isActive = location.pathname.startsWith(`/product-category/${cat.slug}`);
-              const isHovered = hoveredCat === cat.id;
+              const isHovered = hoveredCat === cat.id || pinnedMegaMenu === cat.id;
               return (
                 <div
                   key={cat.id}
