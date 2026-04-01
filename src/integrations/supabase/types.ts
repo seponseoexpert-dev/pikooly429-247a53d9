@@ -665,6 +665,7 @@ export type Database = {
       offer_banners: {
         Row: {
           bg_color: string | null
+          bg_image_url: string | null
           created_at: string
           cta_text: string | null
           description: string | null
@@ -680,6 +681,7 @@ export type Database = {
         }
         Insert: {
           bg_color?: string | null
+          bg_image_url?: string | null
           created_at?: string
           cta_text?: string | null
           description?: string | null
@@ -695,6 +697,7 @@ export type Database = {
         }
         Update: {
           bg_color?: string | null
+          bg_image_url?: string | null
           created_at?: string
           cta_text?: string | null
           description?: string | null
