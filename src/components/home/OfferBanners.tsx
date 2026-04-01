@@ -50,9 +50,16 @@ const OfferBanners = memo(() => {
                 <div
                   className="relative rounded-2xl overflow-hidden shadow-md border border-border/20"
                   style={{
-                    background: `linear-gradient(135deg, ${bgColor} 0%, ${bgColor}dd 60%, ${bgColor}99 100%)`,
+                    background: b.bg_image_url
+                      ? `url(${b.bg_image_url}) center/cover no-repeat`
+                      : `linear-gradient(135deg, ${bgColor} 0%, ${bgColor}dd 60%, ${bgColor}99 100%)`,
                   }}
                 >
+                  {/* Overlay for readability when bg image is used */}
+                  {b.bg_image_url && (
+                    <div className="absolute inset-0" style={{ background: `${bgColor}88` }} />
+                  )}
+
                   {/* Decorative large watermark */}
                   <div
                     className="absolute -right-4 -bottom-2 text-[120px] sm:text-[140px] font-black leading-none select-none pointer-events-none"
@@ -67,13 +74,18 @@ const OfferBanners = memo(() => {
                   <div className="flex">
                     {/* Main content */}
                     <div className="flex-1 p-5 sm:p-6 pr-20 sm:pr-24 relative z-10">
-                      {b.logo_url && (
-                        <img src={b.logo_url} alt="" width="100" height="24" className="w-[100px] h-[24px] sm:w-[120px] sm:h-[28px] mb-3 object-contain" loading="lazy" decoding="async" />
+                      {/* Logo + subtitle side by side */}
+                      {(b.logo_url || b.subtitle) && (
+                        <div className="flex items-center gap-2 mb-2">
+                          {b.logo_url && (
+                            <img src={b.logo_url} alt="" width="80" height="22" className="w-[80px] h-[22px] sm:w-[100px] sm:h-[26px] object-contain" loading="lazy" decoding="async" />
+                          )}
+                          {b.subtitle && (
+                            <span className="text-[11px] sm:text-xs font-bold text-foreground/70 uppercase tracking-wider">{b.subtitle}</span>
+                          )}
+                        </div>
                       )}
-                      {b.subtitle && (
-                        <p className="text-[11px] sm:text-xs font-bold text-foreground/70 uppercase tracking-wider">{b.subtitle}</p>
-                      )}
-                      <h3 className="text-2xl sm:text-3xl md:text-[34px] font-display font-extrabold text-foreground mt-1 leading-tight">{b.title}</h3>
+                      <h3 className="text-2xl sm:text-3xl md:text-[34px] font-display font-extrabold text-foreground leading-tight">{b.title}</h3>
                       {b.description && (
                         <p className="text-[9px] sm:text-[10px] text-foreground/50 mt-2 font-medium">{b.description}</p>
                       )}
