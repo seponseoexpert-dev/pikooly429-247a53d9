@@ -149,6 +149,32 @@ const CrudSection = ({ table, queryKey, fields, defaultValues, title }: CrudSect
                       className="flex-1"
                     />
                   </div>
+                ) : fd.type === "image" ? (
+                  <div className="mt-1.5 space-y-2">
+                    {form[fd.key] && (
+                      <img src={form[fd.key]} alt="" className="w-20 h-20 rounded-lg object-cover border border-border" />
+                    )}
+                    <div className="flex gap-2">
+                      <Input
+                        value={form[fd.key] || ""}
+                        onChange={(e) => setForm({ ...form, [fd.key]: e.target.value })}
+                        placeholder={fd.placeholder}
+                        className="flex-1"
+                      />
+                      <label className="cursor-pointer inline-flex items-center px-3 py-2 text-xs font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90">
+                        {uploading === fd.key ? "..." : "Upload"}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleImageUpload(file, fd);
+                          }}
+                        />
+                      </label>
+                    </div>
+                  </div>
                 ) : (
                   <Input
                     type={fd.type}
