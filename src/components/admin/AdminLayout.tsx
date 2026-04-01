@@ -9,23 +9,48 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-const navItems = [
-  { label: "Dashboard", icon: LayoutDashboard, path: "/admin" },
-  { label: "Products", icon: Package, path: "/admin/products" },
-  { label: "Categories", icon: Tag, path: "/admin/categories" },
-  { label: "Orders", icon: ShoppingCart, path: "/admin/orders" },
-  { label: "Customers", icon: Users, path: "/admin/customers" },
-  { label: "Reviews", icon: Star, path: "/admin/reviews" },
-  { label: "Blog", icon: FileText, path: "/admin/blog" },
-  { label: "Coupons", icon: Ticket, path: "/admin/coupons" },
-  { label: "Shipping", icon: Truck, path: "/admin/shipping" },
-  { label: "Currencies", icon: Coins, path: "/admin/currencies" },
-  { label: "Subscribers", icon: Mail, path: "/admin/subscribers" },
-  { label: "Bouquet", icon: Flower2, path: "/admin/bouquet" },
-  { label: "Events", icon: CalendarCheck, path: "/admin/events" },
-  { label: "Homepage", icon: LayoutDashboard, path: "/admin/homepage-content" },
-  { label: "Settings", icon: Settings, path: "/admin/settings" },
-  { label: "WP Migrate", icon: Download, path: "/admin/migrate" },
+const navGroups = [
+  {
+    title: "Overview",
+    items: [
+      { label: "Dashboard", icon: LayoutDashboard, path: "/admin" },
+    ],
+  },
+  {
+    title: "Catalog",
+    items: [
+      { label: "Products", icon: Package, path: "/admin/products" },
+      { label: "Categories", icon: Tag, path: "/admin/categories" },
+      { label: "Bouquet", icon: Flower2, path: "/admin/bouquet" },
+    ],
+  },
+  {
+    title: "Sales",
+    items: [
+      { label: "Orders", icon: ShoppingCart, path: "/admin/orders" },
+      { label: "Customers", icon: Users, path: "/admin/customers" },
+      { label: "Coupons", icon: Ticket, path: "/admin/coupons" },
+      { label: "Shipping", icon: Truck, path: "/admin/shipping" },
+      { label: "Currencies", icon: Coins, path: "/admin/currencies" },
+    ],
+  },
+  {
+    title: "Content",
+    items: [
+      { label: "Blog", icon: FileText, path: "/admin/blog" },
+      { label: "Reviews", icon: Star, path: "/admin/reviews" },
+      { label: "Events", icon: CalendarCheck, path: "/admin/events" },
+      { label: "Homepage", icon: LayoutDashboard, path: "/admin/homepage-content" },
+    ],
+  },
+  {
+    title: "System",
+    items: [
+      { label: "Subscribers", icon: Mail, path: "/admin/subscribers" },
+      { label: "Settings", icon: Settings, path: "/admin/settings" },
+      { label: "WP Migrate", icon: Download, path: "/admin/migrate" },
+    ],
+  },
 ];
 
 const AdminLayout = ({ children }: { children: ReactNode }) => {
