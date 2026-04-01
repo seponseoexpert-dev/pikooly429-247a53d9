@@ -273,7 +273,7 @@ const AdminHomepageContent = () => {
             table="offer_banners"
             queryKey="admin-offer-banners"
             title="Exclusive Offers"
-            defaultValues={{ title: "", subtitle: "", description: "", logo_url: "", image_url: "", link: "", bg_color: "#f5f0d0", cta_text: "Shop Now", display_order: 0, is_active: true }}
+            defaultValues={{ title: "", subtitle: "", description: "", logo_url: "", image_url: "", bg_image_url: "", link: "", bg_color: "#f5f0d0", cta_text: "Shop Now", display_order: 0, is_active: true }}
             fields={[
               { key: "title", label: "Title *", type: "text", placeholder: "₹200 Cashback" },
               { key: "subtitle", label: "Subtitle", type: "text", placeholder: "ENJOY UPTO" },
@@ -281,6 +281,7 @@ const AdminHomepageContent = () => {
               { key: "cta_text", label: "CTA Button Text", type: "text", placeholder: "Shop Now" },
               { key: "logo_url", label: "Logo", type: "image", placeholder: "https://...", bucket: "images" },
               { key: "image_url", label: "Banner Image", type: "image", placeholder: "https://...", bucket: "images" },
+              { key: "bg_image_url", label: "Background Image", type: "image", placeholder: "https://...", bucket: "images" },
               { key: "link", label: "Link", type: "url", placeholder: "/shop" },
               { key: "bg_color", label: "Background Color", type: "color", placeholder: "#f5f0d0" },
             ]}
