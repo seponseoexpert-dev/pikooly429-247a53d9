@@ -13,8 +13,9 @@ import { Plus, Pencil, Trash2, Save, X, Gift, Heart, PlayCircle, Calendar } from
 interface Field {
   key: string;
   label: string;
-  type: "text" | "number" | "url" | "color" | "switch";
+  type: "text" | "number" | "url" | "color" | "switch" | "image";
   placeholder?: string;
+  bucket?: string;
 }
 
 interface CrudSectionProps {
@@ -30,6 +31,7 @@ const CrudSection = ({ table, queryKey, fields, defaultValues, title }: CrudSect
   const qc = useQueryClient();
   const [editing, setEditing] = useState<any>(null);
   const [form, setForm] = useState<Record<string, any>>(defaultValues);
+  const [uploading, setUploading] = useState<string | null>(null);
 
   const { data: items = [], isLoading } = useQuery({
     queryKey: [queryKey],
@@ -39,6 +41,22 @@ const CrudSection = ({ table, queryKey, fields, defaultValues, title }: CrudSect
       return data;
     },
   });
+
+  const handleImageUpload = async (file: File, field: Field) => {
+    const bucket = field.bucket || "images";
+    const ext = file.name.split(".").pop();
+    const path = `${table}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    setUploading(field.key);
+    const { error } = await supabase.storage.from(bucket).upload(path, file);
+    if (error) {
+      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+      setUploading(null);
+      return;
+    }
+    const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(path);
+    setForm((prev) => ({ ...prev, [field.key]: urlData.publicUrl }));
+    setUploading(null);
+  };
 
   const saveMutation = useMutation({
     mutationFn: async (values: any) => {
@@ -130,6 +148,32 @@ const CrudSection = ({ table, queryKey, fields, defaultValues, title }: CrudSect
                       placeholder={fd.placeholder}
                       className="flex-1"
                     />
+                  </div>
+                ) : fd.type === "image" ? (
+                  <div className="mt-1.5 space-y-2">
+                    {form[fd.key] && (
+                      <img src={form[fd.key]} alt="" className="w-20 h-20 rounded-lg object-cover border border-border" />
+                    )}
+                    <div className="flex gap-2">
+                      <Input
+                        value={form[fd.key] || ""}
+                        onChange={(e) => setForm({ ...form, [fd.key]: e.target.value })}
+                        placeholder={fd.placeholder}
+                        className="flex-1"
+                      />
+                      <label className="cursor-pointer inline-flex items-center px-3 py-2 text-xs font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90">
+                        {uploading === fd.key ? "..." : "Upload"}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleImageUpload(file, fd);
+                          }}
+                        />
+                      </label>
+                    </div>
                   </div>
                 ) : (
                   <Input
@@ -229,12 +273,14 @@ const AdminHomepageContent = () => {
             table="offer_banners"
             queryKey="admin-offer-banners"
             title="Exclusive Offers"
-            defaultValues={{ title: "", subtitle: "", description: "", logo_url: "", link: "", bg_color: "#f5f0d0", display_order: 0, is_active: true }}
+            defaultValues={{ title: "", subtitle: "", description: "", logo_url: "", image_url: "", link: "", bg_color: "#f5f0d0", cta_text: "Shop Now", display_order: 0, is_active: true }}
             fields={[
               { key: "title", label: "Title *", type: "text", placeholder: "₹200 Cashback" },
               { key: "subtitle", label: "Subtitle", type: "text", placeholder: "ENJOY UPTO" },
               { key: "description", label: "Description", type: "text", placeholder: "T&C Apply | Across 2 orders" },
-              { key: "logo_url", label: "Logo URL", type: "url", placeholder: "https://..." },
+              { key: "cta_text", label: "CTA Button Text", type: "text", placeholder: "Shop Now" },
+              { key: "logo_url", label: "Logo", type: "image", placeholder: "https://...", bucket: "images" },
+              { key: "image_url", label: "Banner Image", type: "image", placeholder: "https://...", bucket: "images" },
               { key: "link", label: "Link", type: "url", placeholder: "/shop" },
               { key: "bg_color", label: "Background Color", type: "color", placeholder: "#f5f0d0" },
             ]}
