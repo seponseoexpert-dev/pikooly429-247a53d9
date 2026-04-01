@@ -9,23 +9,48 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-const navItems = [
-  { label: "Dashboard", icon: LayoutDashboard, path: "/admin" },
-  { label: "Products", icon: Package, path: "/admin/products" },
-  { label: "Categories", icon: Tag, path: "/admin/categories" },
-  { label: "Orders", icon: ShoppingCart, path: "/admin/orders" },
-  { label: "Customers", icon: Users, path: "/admin/customers" },
-  { label: "Reviews", icon: Star, path: "/admin/reviews" },
-  { label: "Blog", icon: FileText, path: "/admin/blog" },
-  { label: "Coupons", icon: Ticket, path: "/admin/coupons" },
-  { label: "Shipping", icon: Truck, path: "/admin/shipping" },
-  { label: "Currencies", icon: Coins, path: "/admin/currencies" },
-  { label: "Subscribers", icon: Mail, path: "/admin/subscribers" },
-  { label: "Bouquet", icon: Flower2, path: "/admin/bouquet" },
-  { label: "Events", icon: CalendarCheck, path: "/admin/events" },
-  { label: "Homepage", icon: LayoutDashboard, path: "/admin/homepage-content" },
-  { label: "Settings", icon: Settings, path: "/admin/settings" },
-  { label: "WP Migrate", icon: Download, path: "/admin/migrate" },
+const navGroups = [
+  {
+    title: "Overview",
+    items: [
+      { label: "Dashboard", icon: LayoutDashboard, path: "/admin" },
+    ],
+  },
+  {
+    title: "Catalog",
+    items: [
+      { label: "Products", icon: Package, path: "/admin/products" },
+      { label: "Categories", icon: Tag, path: "/admin/categories" },
+      { label: "Bouquet", icon: Flower2, path: "/admin/bouquet" },
+    ],
+  },
+  {
+    title: "Sales",
+    items: [
+      { label: "Orders", icon: ShoppingCart, path: "/admin/orders" },
+      { label: "Customers", icon: Users, path: "/admin/customers" },
+      { label: "Coupons", icon: Ticket, path: "/admin/coupons" },
+      { label: "Shipping", icon: Truck, path: "/admin/shipping" },
+      { label: "Currencies", icon: Coins, path: "/admin/currencies" },
+    ],
+  },
+  {
+    title: "Content",
+    items: [
+      { label: "Blog", icon: FileText, path: "/admin/blog" },
+      { label: "Reviews", icon: Star, path: "/admin/reviews" },
+      { label: "Events", icon: CalendarCheck, path: "/admin/events" },
+      { label: "Homepage", icon: LayoutDashboard, path: "/admin/homepage-content" },
+    ],
+  },
+  {
+    title: "System",
+    items: [
+      { label: "Subscribers", icon: Mail, path: "/admin/subscribers" },
+      { label: "Settings", icon: Settings, path: "/admin/settings" },
+      { label: "WP Migrate", icon: Download, path: "/admin/migrate" },
+    ],
+  },
 ];
 
 const AdminLayout = ({ children }: { children: ReactNode }) => {
@@ -71,26 +96,35 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
           </Button>
         </div>
 
-        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-          {navItems.map((item) => {
-            const active = location.pathname === item.path;
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={() => setSidebarOpen(false)}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-                  active
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                )}
-              >
-                <item.icon className="h-4 w-4" />
-                {item.label}
-              </Link>
-            );
-          })}
+        <nav className="flex-1 p-3 space-y-3 overflow-y-auto">
+          {navGroups.map((group) => (
+            <div key={group.title}>
+              <h4 className="px-3 mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+                {group.title}
+              </h4>
+              <div className="space-y-0.5">
+                {group.items.map((item) => {
+                  const active = location.pathname === item.path;
+                  return (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      onClick={() => setSidebarOpen(false)}
+                      className={cn(
+                        "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                        active
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      )}
+                    >
+                      <item.icon className="h-4 w-4" />
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </nav>
 
         <div className="p-3 border-t border-border">
