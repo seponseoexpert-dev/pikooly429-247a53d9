@@ -666,6 +666,7 @@ export type Database = {
         Row: {
           bg_color: string | null
           created_at: string
+          cta_text: string | null
           description: string | null
           display_order: number
           id: string
@@ -680,6 +681,7 @@ export type Database = {
         Insert: {
           bg_color?: string | null
           created_at?: string
+          cta_text?: string | null
           description?: string | null
           display_order?: number
           id?: string
@@ -694,6 +696,7 @@ export type Database = {
         Update: {
           bg_color?: string | null
           created_at?: string
+          cta_text?: string | null
           description?: string | null
           display_order?: number
           id?: string
