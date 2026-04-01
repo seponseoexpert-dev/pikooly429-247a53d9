@@ -31,6 +31,7 @@ const CrudSection = ({ table, queryKey, fields, defaultValues, title }: CrudSect
   const qc = useQueryClient();
   const [editing, setEditing] = useState<any>(null);
   const [form, setForm] = useState<Record<string, any>>(defaultValues);
+  const [uploading, setUploading] = useState<string | null>(null);
 
   const { data: items = [], isLoading } = useQuery({
     queryKey: [queryKey],
@@ -40,6 +41,22 @@ const CrudSection = ({ table, queryKey, fields, defaultValues, title }: CrudSect
       return data;
     },
   });
+
+  const handleImageUpload = async (file: File, field: Field) => {
+    const bucket = field.bucket || "images";
+    const ext = file.name.split(".").pop();
+    const path = `${table}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    setUploading(field.key);
+    const { error } = await supabase.storage.from(bucket).upload(path, file);
+    if (error) {
+      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+      setUploading(null);
+      return;
+    }
+    const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(path);
+    setForm((prev) => ({ ...prev, [field.key]: urlData.publicUrl }));
+    setUploading(null);
+  };
 
   const saveMutation = useMutation({
     mutationFn: async (values: any) => {
