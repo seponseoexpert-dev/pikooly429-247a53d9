@@ -71,7 +71,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
           </Button>
         </div>
 
-        <nav className="flex-1 p-3 space-y-1">
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
             const active = location.pathname === item.path;
             return (
