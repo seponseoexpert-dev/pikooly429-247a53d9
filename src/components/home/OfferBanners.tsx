@@ -68,39 +68,27 @@ const OfferBanners = memo(() => {
                     {/* Main content */}
                     <div className="flex-1 p-5 sm:p-6 pr-20 sm:pr-24 relative z-10">
                       {b.logo_url && (
-                        <img
-                          src={b.logo_url}
-                          alt=""
-                          width="100"
-                          height="24"
-                          className="w-[100px] h-[24px] sm:w-[120px] sm:h-[28px] mb-3 object-contain"
-                          loading="lazy"
-                          decoding="async"
-                        />
+                        <img src={b.logo_url} alt="" width="100" height="24" className="w-[100px] h-[24px] sm:w-[120px] sm:h-[28px] mb-3 object-contain" loading="lazy" decoding="async" />
                       )}
                       {b.subtitle && (
-                        <p className="text-[11px] sm:text-xs font-bold text-foreground/70 uppercase tracking-wider">
-                          {b.subtitle}
-                        </p>
+                        <p className="text-[11px] sm:text-xs font-bold text-foreground/70 uppercase tracking-wider">{b.subtitle}</p>
                       )}
-                      <h3 className="text-2xl sm:text-3xl md:text-[34px] font-display font-extrabold text-foreground mt-1 leading-tight">
-                        {b.title}
-                      </h3>
+                      <h3 className="text-2xl sm:text-3xl md:text-[34px] font-display font-extrabold text-foreground mt-1 leading-tight">{b.title}</h3>
                       {b.description && (
-                        <p className="text-[9px] sm:text-[10px] text-foreground/50 mt-2.5 font-medium">
-                          {b.description}
-                        </p>
+                        <p className="text-[9px] sm:text-[10px] text-foreground/50 mt-2 font-medium">{b.description}</p>
+                      )}
+                      {b.cta_text && (
+                        <span className="inline-block mt-3 px-4 py-1.5 text-[11px] sm:text-xs font-bold rounded-full bg-foreground/90 text-background tracking-wide">{b.cta_text}</span>
                       )}
                     </div>
 
-                    {/* Right ticket stub */}
-                    <div className="w-[72px] sm:w-[80px] flex items-center justify-center relative">
-                      <span
-                        className="text-3xl sm:text-4xl font-black rotate-[-90deg] select-none whitespace-nowrap"
-                        style={{ color: "rgba(0,0,0,0.08)" }}
-                      >
-                        OFF
-                      </span>
+                    {/* Right ticket stub with image or watermark */}
+                    <div className="w-[72px] sm:w-[80px] flex items-center justify-center relative overflow-hidden">
+                      {b.image_url ? (
+                        <img src={b.image_url} alt="" className="w-full h-full object-cover absolute inset-0" loading="lazy" decoding="async" />
+                      ) : (
+                        <span className="text-3xl sm:text-4xl font-black rotate-[-90deg] select-none whitespace-nowrap" style={{ color: "rgba(0,0,0,0.08)" }}>OFF</span>
+                      )}
                     </div>
                   </div>
 

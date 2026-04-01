@@ -13,8 +13,9 @@ import { Plus, Pencil, Trash2, Save, X, Gift, Heart, PlayCircle, Calendar } from
 interface Field {
   key: string;
   label: string;
-  type: "text" | "number" | "url" | "color" | "switch";
+  type: "text" | "number" | "url" | "color" | "switch" | "image";
   placeholder?: string;
+  bucket?: string;
 }
 
 interface CrudSectionProps {
