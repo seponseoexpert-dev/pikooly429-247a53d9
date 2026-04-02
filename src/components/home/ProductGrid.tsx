@@ -80,6 +80,7 @@ const ProductGrid = memo(() => {
       id: `sub-${s.slug}`,
       label: s.name,
       icon: null,
+      imageUrl: s.image_url || null,
       type: "sub" as const,
       subId: s.id,
       slug: s.slug,
