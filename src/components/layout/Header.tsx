@@ -415,7 +415,7 @@ const Header = () => {
               {/* Static: Home */}
               <Link
                 to="/"
-                className={`group relative px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
+                className={`group relative px-2 md:px-2.5 lg:px-4 xl:px-5 py-2.5 md:py-3 text-[12px] md:text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
                   location.pathname === "/" ? "text-primary" : "text-foreground/70 hover:text-primary"
                 }`}
               >
