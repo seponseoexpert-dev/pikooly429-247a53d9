@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Gift, Heart, Zap, Flower2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const ProductGrid = memo(() => {
   const [activeTab, setActiveTab] = useState("for-you");
