@@ -975,6 +975,7 @@ const SlidersSection = () => {
             title: s.title,
             subtitle: s.subtitle,
             image_url: s.image_url,
+            bg_image_url: s.bg_image_url || null,
             link: s.link,
             bg_color: s.bg_color,
             cta_text: s.cta_text,
