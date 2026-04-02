@@ -152,6 +152,9 @@ const ProductGrid = memo(() => {
                 }`}
               >
                 {tab.icon && <tab.icon size={14} className={isActive ? "text-primary" : ""} />}
+                {"imageUrl" in tab && tab.imageUrl ? (
+                  <img src={tab.imageUrl} alt="" className="w-4 h-4 rounded-sm object-cover" loading="lazy" />
+                ) : (!tab.icon && <Flower2 size={14} className={isActive ? "text-primary" : ""} />)}
                 {tab.label}
               </button>
             );
