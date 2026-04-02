@@ -97,7 +97,7 @@ const HeroSection = memo(() => {
             /* Full background image — image only, no text overlay */
             <Link
               to={slide?.link || "/shop"}
-              className="block relative min-h-[180px] sm:min-h-[240px] md:min-h-[300px] lg:min-h-[400px] xl:min-h-[440px] cursor-pointer"
+              className="block relative aspect-[16/7] sm:aspect-[16/6] md:aspect-[16/5.5] lg:aspect-[16/5] cursor-pointer"
               aria-label={slide?.title || "Banner"}
             />
           ) : (
