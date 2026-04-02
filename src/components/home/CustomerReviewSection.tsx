@@ -49,7 +49,7 @@ const ReviewCard = ({ review }: { review: Review }) => {
   const avatarColor = getAvatarColor(review.customer_name);
 
   return (
-    <div className="w-[calc(100vw-48px)] min-w-[calc(100vw-48px)] sm:w-[300px] sm:min-w-[300px] md:w-auto md:min-w-0 snap-center flex-shrink-0 md:flex-shrink bg-card border border-border/30 rounded-2xl p-4 sm:p-6 flex flex-col gap-3 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+    <div className="w-[calc(100vw-48px)] min-w-[calc(100vw-48px)] sm:w-[280px] sm:min-w-[280px] md:w-auto md:min-w-0 snap-center flex-shrink-0 md:flex-shrink bg-card border border-border/30 rounded-xl sm:rounded-2xl p-3 sm:p-5 md:p-6 flex flex-col gap-2.5 sm:gap-3 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
       <div className="flex items-center gap-3">
         <div
           className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0"

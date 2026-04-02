@@ -27,7 +27,7 @@ const BlogSection = () => {
   return (
     <section className="py-8 md:py-12 section-container" style={{ contain: "layout style" }}>
       <div className="flex items-center justify-between mb-5">
-        <h2 className="text-xl md:text-2xl font-display font-semibold">Latest from Blog</h2>
+        <h2 className="section-heading font-display font-semibold text-foreground">Latest from Blog</h2>
         <Link to="/blog" className="text-sm text-primary font-medium hover:underline inline-flex items-center gap-1">
           View All <ArrowRight size={14} />
         </Link>

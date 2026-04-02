@@ -70,7 +70,7 @@ const GiftingStories = memo(() => {
       <div className="relative">
         <div
           ref={scrollRef}
-          className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-2"
+          className="flex gap-2.5 sm:gap-3 md:gap-4 overflow-x-auto scrollbar-hide scroll-smooth-ios pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory"
         >
           {stories.map((s: any) => {
             const isActive = activeId === s.id;
