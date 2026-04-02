@@ -158,43 +158,41 @@ const HeroSection = memo(() => {
           <>
             <button
               onClick={prev}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/3 z-20 w-9 h-9 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full bg-card/90 backdrop-blur-sm shadow-md flex items-center justify-center text-foreground hover:bg-muted hover:scale-110 active:scale-95 transition-all duration-200 touch-target"
+              className="absolute left-1.5 sm:left-2 lg:-left-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 lg:w-11 lg:h-11 rounded-full bg-card/80 backdrop-blur-md shadow-lg border border-border/30 flex items-center justify-center text-foreground/70 hover:text-foreground hover:bg-card hover:scale-105 active:scale-95 transition-all duration-200"
               aria-label="Previous slide"
             >
-              <ChevronLeft className="w-5 h-5 lg:w-6 lg:h-6" />
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 lg:w-5 lg:h-5" />
             </button>
             <button
               onClick={next}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/3 z-20 w-9 h-9 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full bg-card/90 backdrop-blur-sm shadow-md flex items-center justify-center text-foreground hover:bg-muted hover:scale-110 active:scale-95 transition-all duration-200 touch-target"
+              className="absolute right-1.5 sm:right-2 lg:-right-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 lg:w-11 lg:h-11 rounded-full bg-card/80 backdrop-blur-md shadow-lg border border-border/30 flex items-center justify-center text-foreground/70 hover:text-foreground hover:bg-card hover:scale-105 active:scale-95 transition-all duration-200"
               aria-label="Next slide"
             >
-              <ChevronRight className="w-5 h-5 lg:w-6 lg:h-6" />
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 lg:w-5 lg:h-5" />
             </button>
           </>
         )}
 
         {/* Dots */}
         {slides.length > 1 && (
-          <div className="flex flex-col items-center gap-2 mt-3 lg:mt-4">
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs text-muted-foreground font-sans">
-                {current + 1}/{slides.length}
-              </span>
-              <div className="flex gap-1.5">
-                {slides.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCurrent(i)}
-                    className={cn(
-                      "h-2 rounded-full transition-all duration-300",
-                      i === current
-                        ? "bg-primary w-7"
-                        : "bg-muted-foreground/25 w-2 hover:bg-muted-foreground/40"
-                    )}
-                    aria-label={`Go to slide ${i + 1}`}
-                  />
-                ))}
-              </div>
+          <div className="flex items-center justify-center gap-2.5 mt-2.5 sm:mt-3 lg:mt-4">
+            <span className="text-[10px] sm:text-xs text-muted-foreground/60 font-medium font-sans tabular-nums">
+              {current + 1}/{slides.length}
+            </span>
+            <div className="flex items-center gap-1">
+              {slides.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrent(i)}
+                  className={cn(
+                    "h-1.5 sm:h-2 rounded-full transition-all duration-300",
+                    i === current
+                      ? "bg-primary w-6 sm:w-7"
+                      : "bg-muted-foreground/20 w-1.5 sm:w-2 hover:bg-muted-foreground/40"
+                  )}
+                  aria-label={`Go to slide ${i + 1}`}
+                />
+              ))}
             </div>
           </div>
         )}
