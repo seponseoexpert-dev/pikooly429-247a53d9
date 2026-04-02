@@ -556,7 +556,6 @@ const Header = () => {
               {[
                 { label: "Event Service", href: "/events", match: (p: string) => p.startsWith("/events") },
                 { label: "Custom Bouquet", href: "/custom-bouquet", match: (p: string) => p === "/custom-bouquet" },
-                { label: "Blog", href: "/blog", match: (p: string) => p.startsWith("/blog") },
               ].map((link) => {
                 const isDuplicate = categories.some(
                   (cat) => cat.name.toLowerCase().replace(/\s+/g, '') === link.label.toLowerCase().replace(/\s+/g, '')
