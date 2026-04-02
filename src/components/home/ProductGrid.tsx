@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, memo } from "react";
 import ProductCard from "@/components/product/ProductCard";
 import { Link } from "react-router-dom";
-import { Gift, Heart, Zap } from "lucide-react";
+import { Gift, Heart, Zap, Flower2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
