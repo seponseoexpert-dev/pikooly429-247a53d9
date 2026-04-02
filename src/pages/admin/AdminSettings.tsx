@@ -51,6 +51,7 @@ const settingSections = [
   { key: "social_login", label: "Social Login", icon: Share2 },
   { key: "license", label: "License", icon: Award },
   { key: "footer", label: "Footer", icon: FileText },
+  { key: "trending_tabs", label: "Trending Tabs", icon: Star },
 ];
 
 type FieldDef = {
