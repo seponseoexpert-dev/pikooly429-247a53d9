@@ -9,6 +9,7 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
 const ProductGrid = memo(() => {
   const [activeTab, setActiveTab] = useState("for-you");
   const [activeTailoredSlug, setActiveTailoredSlug] = useState("");
+  const { settings } = useSiteSettings();
 
   const { data: products = [], isLoading: productsLoading } = useQuery({
     queryKey: ["homepage-products"],
