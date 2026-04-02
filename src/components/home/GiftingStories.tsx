@@ -62,7 +62,7 @@ const GiftingStories = memo(() => {
         <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-primary/10 flex items-center justify-center">
           <Play size={16} className="text-primary fill-primary ml-0.5" />
         </div>
-        <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground">
+        <h2 className="section-heading font-display font-semibold text-foreground">
           Shop Reel
         </h2>
       </div>
