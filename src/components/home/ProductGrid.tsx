@@ -90,7 +90,7 @@ const ProductGrid = memo(() => {
       slug: s.slug,
     }));
     return [...baseTabs, ...subTabs];
-  }, [tailoredSubcategories]);
+  }, [tailoredSubcategories, settings]);
 
   const featured = products.filter((p: any) => p.is_featured);
 
