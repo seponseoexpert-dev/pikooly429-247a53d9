@@ -88,7 +88,6 @@ const HeroSection = memo(() => {
           className="relative overflow-hidden rounded-2xl lg:rounded-3xl transition-colors duration-500"
           style={{
             backgroundColor: bgColor,
-            ...(hasBgImage ? { backgroundImage: `url(${slide.bg_image_url})`, backgroundSize: "cover", backgroundPosition: "center" } : {}),
           }}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
@@ -97,9 +96,17 @@ const HeroSection = memo(() => {
             /* Full background image — image only, no text overlay */
             <Link
               to={slide?.link || "/shop"}
-              className="block relative aspect-[16/7] sm:aspect-[16/6] md:aspect-[16/5.5] lg:aspect-[16/5] cursor-pointer"
+              className="block relative cursor-pointer"
               aria-label={slide?.title || "Banner"}
-            />
+            >
+              <img
+                src={slide.bg_image_url!}
+                alt={slide?.title || "Banner"}
+                className="w-full h-auto object-contain rounded-2xl lg:rounded-3xl"
+                fetchPriority="high"
+                decoding="async"
+              />
+            </Link>
           ) : (
             /* Default split layout mode */
             <div className="grid grid-cols-2 min-h-[200px] sm:min-h-[240px] md:min-h-[300px] lg:min-h-[400px] xl:min-h-[440px]">
