@@ -412,16 +412,6 @@ const Header = () => {
           {/* === ROW 2: Mega Nav Bar (Desktop only) === */}
           <div ref={navRef} className="relative hidden border-t border-border/40 bg-card shadow-sm md:block">
             <nav className="flex items-center justify-start gap-0 overflow-x-auto scrollbar-hide px-1 md:px-2 lg:px-4 xl:justify-center">
-              {/* Static: Home */}
-              <Link
-                to="/"
-                className={`group relative px-2 md:px-2.5 lg:px-4 xl:px-5 py-2.5 md:py-3 text-[12px] md:text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
-                  location.pathname === "/" ? "text-primary" : "text-foreground/70 hover:text-primary"
-                }`}
-              >
-                Home
-                <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2.5px] rounded-full bg-primary transition-all duration-300 ${location.pathname === "/" ? "w-3/4" : "w-0 group-hover:w-1/2"}`} />
-              </Link>
 
               {/* Dynamic categories with mega menu */}
               {categories.map((cat) => {
@@ -566,7 +556,6 @@ const Header = () => {
               {[
                 { label: "Event Service", href: "/events", match: (p: string) => p.startsWith("/events") },
                 { label: "Custom Bouquet", href: "/custom-bouquet", match: (p: string) => p === "/custom-bouquet" },
-                { label: "Blog", href: "/blog", match: (p: string) => p.startsWith("/blog") },
               ].map((link) => {
                 const isDuplicate = categories.some(
                   (cat) => cat.name.toLowerCase().replace(/\s+/g, '') === link.label.toLowerCase().replace(/\s+/g, '')
