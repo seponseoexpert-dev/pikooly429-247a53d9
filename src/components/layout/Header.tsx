@@ -411,11 +411,11 @@ const Header = () => {
 
           {/* === ROW 2: Mega Nav Bar (Desktop only) === */}
           <div ref={navRef} className="relative hidden border-t border-border/40 bg-card shadow-sm md:block">
-            <nav className="flex items-center justify-start gap-0 overflow-x-auto scrollbar-hide px-2 lg:px-4 xl:justify-center">
+            <nav className="flex items-center justify-start gap-0 overflow-x-auto scrollbar-hide px-1 md:px-2 lg:px-4 xl:justify-center">
               {/* Static: Home */}
               <Link
                 to="/"
-                className={`group relative px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
+                className={`group relative px-2 md:px-2.5 lg:px-4 xl:px-5 py-2.5 md:py-3 text-[12px] md:text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
                   location.pathname === "/" ? "text-primary" : "text-foreground/70 hover:text-primary"
                 }`}
               >
@@ -464,7 +464,7 @@ const Header = () => {
                         setHoveredCat(null);
                         navigate(`/product-category/${cat.slug}`);
                       }}
-                      className={`group relative flex items-center gap-1 px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
+                      className={`group relative flex items-center gap-0.5 md:gap-1 px-2 md:px-2.5 lg:px-4 xl:px-5 py-2.5 md:py-3 text-[12px] md:text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
                         isActive || isHovered
                           ? "text-primary"
                           : "text-foreground/70 hover:text-primary"
@@ -576,7 +576,7 @@ const Header = () => {
                   <Link
                     key={link.href}
                     to={link.href}
-                    className={`group relative px-3 lg:px-4 xl:px-5 py-3 text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
+                    className={`group relative px-2 md:px-2.5 lg:px-4 xl:px-5 py-2.5 md:py-3 text-[12px] md:text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
                       link.match(location.pathname) ? "text-primary" : "text-foreground/70 hover:text-primary"
                     }`}
                   >
