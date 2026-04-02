@@ -135,28 +135,27 @@ const ProductGrid = memo(() => {
 
   return (
     <section className="py-4 sm:py-6 md:py-8 lg:py-12 xl:py-14 section-container" aria-label="Products" style={{ contain: "layout style" }}>
-      {/* ── Trending Tabs: For You, Best Seller + Subcategories ── */}
-      <div className="flex gap-2 overflow-x-auto pb-4 mb-5 scrollbar-hide md:flex-wrap md:justify-center md:gap-3 md:overflow-visible lg:mb-7">
-        {allTrendingTabs.map((tab) => {
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`relative flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2.5 text-xs font-semibold whitespace-nowrap transition-all duration-300 md:px-5 md:text-[13px] lg:px-6 lg:py-3 lg:text-sm ${
-                isActive
-                  ? "bg-primary text-primary-foreground shadow-md border-primary scale-[1.03]"
-                  : "bg-card text-muted-foreground border-border/60 hover:border-primary/40 hover:text-foreground hover:shadow-sm"
-              }`}
-            >
-              {tab.icon && <tab.icon size={14} className={isActive ? "fill-primary-foreground" : ""} />}
-              {tab.label}
-              {isActive && (
-                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-[3px] rounded-full bg-primary" />
-              )}
-            </button>
-          );
-        })}
+      {/* ── Trending Tabs ── */}
+      <div className="relative mb-5 lg:mb-7">
+        <div className="flex gap-2 overflow-x-auto pb-3 scrollbar-hide snap-x snap-mandatory md:flex-wrap md:justify-center md:gap-2.5 md:overflow-visible md:snap-none">
+          {allTrendingTabs.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`relative flex shrink-0 snap-start items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all duration-200 md:px-5 md:py-2.5 md:text-[13px] ${
+                  isActive
+                    ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
+                    : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
+                }`}
+              >
+                {tab.icon && <tab.icon size={13} className={isActive ? "fill-primary-foreground" : ""} />}
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {productsLoading ? (
