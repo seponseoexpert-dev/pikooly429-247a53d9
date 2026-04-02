@@ -142,7 +142,7 @@ const ProductGrid = memo(() => {
     <section className="py-4 sm:py-6 md:py-8 lg:py-12 xl:py-14 section-container" aria-label="Products" style={{ contain: "layout style" }}>
       {/* ── Trending Tabs ── */}
       <div className="relative mb-6 lg:mb-8">
-        <div className="flex w-full overflow-x-auto scrollbar-hide snap-x snap-mandatory border-b border-border/40 gap-0 md:justify-center">
+        <div className="flex w-full overflow-x-auto scrollbar-hide snap-x snap-mandatory border-b border-border/40 gap-0 justify-start">
           {allTrendingTabs.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
