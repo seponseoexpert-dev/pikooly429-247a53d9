@@ -79,7 +79,7 @@ const GiftingStories = memo(() => {
             return (
               <div
                 key={s.id}
-                className="relative min-w-[160px] w-[160px] sm:min-w-[180px] sm:w-[180px] md:min-w-[200px] md:w-[200px] aspect-[3/4] rounded-2xl overflow-hidden flex-shrink-0 shadow-md"
+                className="relative min-w-[130px] w-[35vw] max-w-[200px] sm:min-w-[160px] md:min-w-[180px] md:w-[180px] aspect-[3/4] rounded-xl sm:rounded-2xl overflow-hidden flex-shrink-0 shadow-md snap-start"
               >
                 {isActive && embedUrl ? (
                   <>
