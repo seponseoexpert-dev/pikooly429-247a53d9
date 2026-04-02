@@ -22,18 +22,18 @@ const RelationshipGrid = memo(() => {
 
   return (
     <section className="py-4 sm:py-6 md:py-8 section-container" style={{ contain: "layout style" }}>
-      <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground mb-4 md:mb-6">
+      <h2 className="section-heading font-display font-semibold text-foreground mb-3 sm:mb-4 md:mb-6">
         For Every Relationship
       </h2>
 
-      <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 sm:gap-4 md:gap-5">
+      <div className="grid grid-cols-4 gap-2.5 sm:gap-3 md:grid-cols-6 lg:grid-cols-8 md:gap-4 lg:gap-5">
         {items.map((item: any) => (
           <Link
             key={item.id}
             to={item.link || `/product-category/${item.slug}`}
-            className="flex flex-col items-center gap-2 group"
+            className="flex flex-col items-center gap-1.5 sm:gap-2 group"
           >
-            <div className="w-full aspect-square rounded-2xl overflow-hidden bg-secondary border border-border/30 group-hover:border-primary/40 group-hover:shadow-lg transition-all duration-200 group-hover:scale-105">
+            <div className="w-full aspect-square rounded-xl sm:rounded-2xl overflow-hidden bg-secondary border border-border/30 group-hover:border-primary/40 group-hover:shadow-lg transition-all duration-200 group-hover:scale-105 group-active:scale-95">
               <img
                 src={item.image_url || "/placeholder.svg"}
                 alt={item.name}
@@ -42,9 +42,10 @@ const RelationshipGrid = memo(() => {
                 decoding="async"
                 loading="lazy"
                 className="w-full h-full object-cover object-center"
+                sizes="(max-width: 480px) 22vw, (max-width: 768px) 15vw, 12vw"
               />
             </div>
-            <span className="text-xs sm:text-sm font-medium text-foreground/80 group-hover:text-primary transition-colors text-center leading-tight">
+            <span className="text-[10px] sm:text-xs md:text-sm font-medium text-foreground/80 group-hover:text-primary transition-colors text-center leading-tight line-clamp-2">
               {item.name}
             </span>
           </Link>

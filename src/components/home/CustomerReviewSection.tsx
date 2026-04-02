@@ -49,7 +49,7 @@ const ReviewCard = ({ review }: { review: Review }) => {
   const avatarColor = getAvatarColor(review.customer_name);
 
   return (
-    <div className="w-[calc(100vw-48px)] min-w-[calc(100vw-48px)] sm:w-[300px] sm:min-w-[300px] md:w-auto md:min-w-0 snap-center flex-shrink-0 md:flex-shrink bg-card border border-border/30 rounded-2xl p-4 sm:p-6 flex flex-col gap-3 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+    <div className="w-[calc(100vw-48px)] min-w-[calc(100vw-48px)] sm:w-[280px] sm:min-w-[280px] md:w-auto md:min-w-0 snap-center flex-shrink-0 md:flex-shrink bg-card border border-border/30 rounded-xl sm:rounded-2xl p-3 sm:p-5 md:p-6 flex flex-col gap-2.5 sm:gap-3 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
       <div className="flex items-center gap-3">
         <div
           className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
@@ -185,7 +185,7 @@ const CustomerReviewSection = () => {
     <section className="py-6 sm:py-8 md:py-12 section-container" aria-label="Customer Reviews" style={{ contain: "layout style" }}>
       <div className="flex flex-col items-center gap-1.5 mb-5 md:mb-8 md:flex-row md:justify-between">
         <div className="hidden md:block md:flex-1" />
-        <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground text-center">
+        <h2 className="section-heading font-display font-semibold text-foreground text-center">
           Customer Reviews
         </h2>
         <div className="md:flex-1 flex md:justify-end">

@@ -62,7 +62,7 @@ const GiftingStories = memo(() => {
         <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-primary/10 flex items-center justify-center">
           <Play size={16} className="text-primary fill-primary ml-0.5" />
         </div>
-        <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] font-display font-semibold text-foreground">
+        <h2 className="section-heading font-display font-semibold text-foreground">
           Shop Reel
         </h2>
       </div>
@@ -70,7 +70,7 @@ const GiftingStories = memo(() => {
       <div className="relative">
         <div
           ref={scrollRef}
-          className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-2"
+          className="flex gap-2.5 sm:gap-3 md:gap-4 overflow-x-auto scrollbar-hide scroll-smooth-ios pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory"
         >
           {stories.map((s: any) => {
             const isActive = activeId === s.id;
@@ -79,7 +79,7 @@ const GiftingStories = memo(() => {
             return (
               <div
                 key={s.id}
-                className="relative min-w-[160px] w-[160px] sm:min-w-[180px] sm:w-[180px] md:min-w-[200px] md:w-[200px] aspect-[3/4] rounded-2xl overflow-hidden flex-shrink-0 shadow-md"
+                className="relative min-w-[130px] w-[35vw] max-w-[200px] sm:min-w-[160px] md:min-w-[180px] md:w-[180px] aspect-[3/4] rounded-xl sm:rounded-2xl overflow-hidden flex-shrink-0 shadow-md snap-start"
               >
                 {isActive && embedUrl ? (
                   <>
