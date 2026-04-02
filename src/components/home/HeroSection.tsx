@@ -94,31 +94,12 @@ const HeroSection = memo(() => {
           onTouchEnd={handleTouchEnd}
         >
           {hasBgImage ? (
-            /* Full background image mode */
-            <div className="relative min-h-[200px] sm:min-h-[240px] md:min-h-[300px] lg:min-h-[400px] xl:min-h-[440px]">
-              <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-transparent" />
-              <div className="relative z-10 flex flex-col justify-center h-full pl-4 sm:pl-8 md:pl-12 lg:pl-16 xl:pl-20 py-8 sm:py-10 md:py-14 lg:py-16 max-w-[60%] sm:max-w-[55%]">
-                {slide?.subtitle && (
-                  <p className="text-[9px] sm:text-[11px] md:text-xs lg:text-sm font-medium text-white/70 mb-0.5 sm:mb-1 lg:mb-2 tracking-widest uppercase italic">
-                    {slide.subtitle}
-                  </p>
-                )}
-                <h2 className="font-display text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white leading-snug sm:leading-tight lg:leading-[1.15]">
-                  {slide?.title || "\u00A0"}
-                </h2>
-                {slide?.link && (
-                  <div className="mt-3 sm:mt-4 md:mt-5 lg:mt-6">
-                    <Link
-                      to={slide.link}
-                      className="group inline-flex items-center gap-1 sm:gap-1.5 lg:gap-2 bg-primary text-primary-foreground font-sans font-semibold text-[9px] sm:text-[10px] md:text-xs lg:text-sm xl:text-base px-3 sm:px-4 md:px-5 lg:px-7 xl:px-8 py-1.5 sm:py-2 md:py-2.5 lg:py-3 xl:py-3.5 rounded-full tracking-wider uppercase whitespace-nowrap hover:shadow-lg hover:shadow-primary/25 active:scale-[0.97] transition-all duration-300"
-                    >
-                      {slide.cta_text || "SHOP NOW"}
-                      <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4 group-hover:translate-x-0.5 transition-transform" />
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </div>
+            /* Full background image — image only, no text overlay */
+            <Link
+              to={slide?.link || "/shop"}
+              className="block relative min-h-[180px] sm:min-h-[240px] md:min-h-[300px] lg:min-h-[400px] xl:min-h-[440px] cursor-pointer"
+              aria-label={slide?.title || "Banner"}
+            />
           ) : (
             /* Default split layout mode */
             <div className="grid grid-cols-2 min-h-[200px] sm:min-h-[240px] md:min-h-[300px] lg:min-h-[400px] xl:min-h-[440px]">
