@@ -96,13 +96,13 @@ const HeroSection = memo(() => {
             /* Full background image — image only, no text overlay */
             <Link
               to={slide?.link || "/shop"}
-              className="block relative cursor-pointer"
+              className="block relative min-h-[180px] sm:min-h-[240px] md:min-h-[300px] lg:min-h-[400px] xl:min-h-[440px] cursor-pointer"
               aria-label={slide?.title || "Banner"}
             >
               <img
                 src={slide.bg_image_url!}
                 alt={slide?.title || "Banner"}
-                className="w-full h-auto object-contain rounded-2xl lg:rounded-3xl"
+                className="absolute inset-0 h-full w-full object-cover"
                 fetchPriority="high"
                 decoding="async"
               />
