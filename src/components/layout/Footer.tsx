@@ -118,7 +118,7 @@ const Footer = memo(() => {
   ];
 
   return (
-    <footer className="relative pb-20 md:pb-0 overflow-hidden" style={{ contain: "layout style" }}>
+    <footer className="relative pb-[72px] md:pb-0 overflow-hidden" style={{ contain: "layout style" }}>
       {/* Newsletter CTA Band */}
       <div className="bg-primary">
         <div className="section-container py-6 sm:py-8">
