@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, memo } from "react";
 import ProductCard from "@/components/product/ProductCard";
 import { Link } from "react-router-dom";
-import { Gift, Heart, Zap } from "lucide-react";
+import { Gift, Heart, Zap, Flower2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -80,6 +80,7 @@ const ProductGrid = memo(() => {
       id: `sub-${s.slug}`,
       label: s.name,
       icon: null,
+      imageUrl: s.image_url || null,
       type: "sub" as const,
       subId: s.id,
       slug: s.slug,
@@ -151,6 +152,9 @@ const ProductGrid = memo(() => {
                 }`}
               >
                 {tab.icon && <tab.icon size={14} className={isActive ? "text-primary" : ""} />}
+                {"imageUrl" in tab && tab.imageUrl ? (
+                  <img src={tab.imageUrl} alt="" className="w-4 h-4 rounded-sm object-cover" loading="lazy" />
+                ) : (!tab.icon && <Flower2 size={14} className={isActive ? "text-primary" : ""} />)}
                 {tab.label}
               </button>
             );
