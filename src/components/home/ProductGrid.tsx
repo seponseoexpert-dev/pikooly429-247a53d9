@@ -136,7 +136,7 @@ const ProductGrid = memo(() => {
   return (
     <section className="py-4 sm:py-6 md:py-8 lg:py-12 xl:py-14 section-container" aria-label="Products" style={{ contain: "layout style" }}>
       {/* ── Trending Tabs: For You, Best Seller + Subcategories ── */}
-      <div className="flex gap-2 lg:gap-3 overflow-x-auto pb-4 mb-5 lg:mb-7 scrollbar-hide lg:justify-center">
+      <div className="flex gap-2 lg:gap-3 overflow-x-auto pb-4 mb-5 lg:mb-7 scrollbar-hide lg:flex-wrap lg:justify-center">
         {allTrendingTabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
