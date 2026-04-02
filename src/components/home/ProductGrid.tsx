@@ -74,9 +74,11 @@ const ProductGrid = memo(() => {
 
   // ── Trending tabs: For You, Best Seller + subcategory tabs ──
   const allTrendingTabs = useMemo(() => {
+    const forYouIcon = settings.trending_tab_foryou_icon || null;
+    const bestSellerIcon = settings.trending_tab_bestseller_icon || null;
     const baseTabs = [
-      { id: "for-you", label: "For You", icon: Heart, type: "trending" as const },
-      { id: "best", label: "Best Seller", icon: Zap, type: "trending" as const },
+      { id: "for-you", label: settings.trending_tab_foryou_label || "For You", icon: forYouIcon ? null : Heart, imageUrl: forYouIcon, type: "trending" as const },
+      { id: "best", label: settings.trending_tab_bestseller_label || "Best Seller", icon: bestSellerIcon ? null : Zap, imageUrl: bestSellerIcon, type: "trending" as const },
     ];
     const subTabs = tailoredSubcategories.map((s: any) => ({
       id: `sub-${s.slug}`,
