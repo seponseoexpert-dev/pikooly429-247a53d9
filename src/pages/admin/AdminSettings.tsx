@@ -51,6 +51,7 @@ const settingSections = [
   { key: "social_login", label: "Social Login", icon: Share2 },
   { key: "license", label: "License", icon: Award },
   { key: "footer", label: "Footer", icon: FileText },
+  { key: "trending_tabs", label: "Trending Tabs", icon: Star },
 ];
 
 type FieldDef = {
@@ -358,6 +359,12 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "footer_payment_bkash", label: "Show bKash", type: "switch" },
     { key: "footer_payment_nagad", label: "Show Nagad", type: "switch" },
     { key: "footer_payment_cod", label: "Show Cash on Delivery", type: "switch" },
+  ],
+  trending_tabs: [
+    { key: "trending_tab_foryou_label", label: "For You Tab Label", placeholder: "For You" },
+    { key: "trending_tab_foryou_icon", label: "For You Tab Icon", type: "image_upload" as const },
+    { key: "trending_tab_bestseller_label", label: "Best Seller Tab Label", placeholder: "Best Seller" },
+    { key: "trending_tab_bestseller_icon", label: "Best Seller Tab Icon", type: "image_upload" as const },
   ],
 };
 
