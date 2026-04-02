@@ -13,6 +13,7 @@ interface Slide {
   link: string | null;
   cta_text: string | null;
   bg_color: string | null;
+  bg_image_url: string | null;
   display_order: number;
 }
 
