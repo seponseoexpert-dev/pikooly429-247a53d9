@@ -1288,6 +1288,7 @@ export type Database = {
       sliders: {
         Row: {
           bg_color: string | null
+          bg_image_url: string | null
           created_at: string
           cta_text: string | null
           display_order: number
@@ -1301,6 +1302,7 @@ export type Database = {
         }
         Insert: {
           bg_color?: string | null
+          bg_image_url?: string | null
           created_at?: string
           cta_text?: string | null
           display_order?: number
@@ -1314,6 +1316,7 @@ export type Database = {
         }
         Update: {
           bg_color?: string | null
+          bg_image_url?: string | null
           created_at?: string
           cta_text?: string | null
           display_order?: number
