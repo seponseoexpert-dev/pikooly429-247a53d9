@@ -136,21 +136,21 @@ const ProductGrid = memo(() => {
   return (
     <section className="py-4 sm:py-6 md:py-8 lg:py-12 xl:py-14 section-container" aria-label="Products" style={{ contain: "layout style" }}>
       {/* ── Trending Tabs ── */}
-      <div className="relative mb-5 lg:mb-7">
-        <div className="inline-flex w-full overflow-x-auto scrollbar-hide snap-x snap-mandatory border border-border/60 rounded-full bg-card/80 backdrop-blur-sm p-1 md:p-1.5 gap-1 md:justify-center">
+      <div className="relative mb-6 lg:mb-8">
+        <div className="flex w-full overflow-x-auto scrollbar-hide snap-x snap-mandatory border-b border-border/40 gap-0 md:justify-center">
           {allTrendingTabs.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative flex shrink-0 snap-start items-center gap-1.5 rounded-full px-3.5 py-2 text-[11px] font-semibold whitespace-nowrap transition-all duration-200 md:px-5 md:py-2.5 md:text-[13px] ${
+                className={`relative flex shrink-0 snap-start items-center gap-1.5 px-4 py-3 text-xs font-medium whitespace-nowrap transition-all duration-200 md:px-6 md:py-3.5 md:text-sm border-b-2 -mb-[1px] ${
                   isActive
-                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/25"
-                    : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+                    ? "border-primary text-primary font-semibold"
+                    : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
                 }`}
               >
-                {tab.icon && <tab.icon size={13} className={isActive ? "fill-primary-foreground" : ""} />}
+                {tab.icon && <tab.icon size={14} className={isActive ? "text-primary" : ""} />}
                 {tab.label}
               </button>
             );
