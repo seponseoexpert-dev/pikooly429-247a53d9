@@ -9,45 +9,43 @@ const BottomNav = () => {
   const isActive = (href: string) =>
     location.pathname === href || (href !== "/" && location.pathname + location.search === href);
 
-  const iconSize = 22;
+  const iconSize = 20;
   const strokeW = 1.5;
   const activeStrokeW = 1.8;
 
   const itemClass = (active: boolean) =>
-    `flex flex-col items-center justify-center gap-[3px] transition-all duration-200 active:scale-90 ${
+    `flex flex-col items-center justify-center gap-[2px] transition-all duration-200 active:scale-90 min-w-[44px] min-h-[44px] ${
       active ? "text-primary" : "text-muted-foreground"
     }`;
 
   const labelClass = (active: boolean) =>
-    `text-[10px] leading-none tracking-wide ${active ? "font-semibold" : "font-medium"}`;
+    `text-[9px] leading-none tracking-wide ${active ? "font-semibold" : "font-medium"}`;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden safe-area-bottom">
       <div className="relative bg-card/95 backdrop-blur-lg border-t border-border/60 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
-        <div className="grid grid-cols-5 h-[64px]">
-          {/* Home */}
+        <div className="grid grid-cols-5 h-[60px]">
           <Link to="/" className={itemClass(isActive("/"))}>
             <Home size={iconSize} strokeWidth={isActive("/") ? activeStrokeW : strokeW} />
             <span className={labelClass(isActive("/"))}>{t("home")}</span>
           </Link>
 
-          {/* Same Day */}
           <Link to="/product-category/same-day" className={itemClass(isActive("/product-category/same-day"))}>
             <Truck size={iconSize} strokeWidth={isActive("/product-category/same-day") ? activeStrokeW : strokeW} />
             <span className={labelClass(isActive("/product-category/same-day"))}>{t("same_day")}</span>
           </Link>
 
-          {/* Bouquet - elevated center */}
-          <div className="flex flex-col items-center justify-end pb-[7px] relative">
+          {/* Elevated center button */}
+          <div className="flex flex-col items-center justify-end pb-[6px] relative">
             <Link
               to="/custom-bouquet"
-              className={`absolute -top-5 flex items-center justify-center w-[50px] h-[50px] rounded-full shadow-lg transition-all duration-300 active:scale-90 ${
+              className={`absolute -top-4 flex items-center justify-center w-[46px] h-[46px] rounded-full shadow-lg transition-all duration-300 active:scale-90 ${
                 isActive("/custom-bouquet")
                   ? "bg-primary text-primary-foreground shadow-primary/30"
                   : "bg-primary/90 text-primary-foreground shadow-primary/20 hover:bg-primary"
               }`}
             >
-              <Flower2 size={24} strokeWidth={1.8} />
+              <Flower2 size={22} strokeWidth={1.8} />
               <span className="absolute inset-0 rounded-full border-[3px] border-card" />
             </Link>
             <span className={labelClass(isActive("/custom-bouquet"))}>
@@ -55,16 +53,11 @@ const BottomNav = () => {
             </span>
           </div>
 
-          {/* All Gifts */}
-          <Link
-            to="/all-gifts"
-            className={itemClass(isActive("/all-gifts"))}
-          >
+          <Link to="/all-gifts" className={itemClass(isActive("/all-gifts"))}>
             <Gift size={iconSize} strokeWidth={isActive("/all-gifts") ? activeStrokeW : strokeW} />
             <span className={labelClass(isActive("/all-gifts"))}>All Gifts</span>
           </Link>
 
-          {/* Account */}
           <Link to="/account" className={itemClass(isActive("/account"))}>
             <User size={iconSize} strokeWidth={isActive("/account") ? activeStrokeW : strokeW} />
             <span className={labelClass(isActive("/account"))}>{t("account")}</span>

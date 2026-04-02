@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-
 const CategoryGrid = memo(() => {
   const { data: categories = [], isLoading } = useQuery({
     queryKey: ["homepage-categories"],
@@ -32,17 +31,17 @@ const CategoryGrid = memo(() => {
 
   return (
     <section className="py-4 sm:py-6 md:py-8 lg:py-12 xl:py-14 section-container" aria-label="Shop by Category" style={{ contain: "layout style" }}>
-      <h2 className="text-[16px] leading-[24px] md:text-[24px] md:leading-[36px] lg:text-[28px] lg:leading-[40px] font-display font-semibold text-foreground mb-4 md:mb-6 lg:mb-8 text-center">
+      <h2 className="section-heading font-display font-semibold text-foreground mb-3 sm:mb-4 md:mb-6 lg:mb-8 text-center">
         Shop by Category
       </h2>
-      <div className="grid grid-cols-4 gap-3 sm:gap-4 md:grid-cols-8 md:gap-4 lg:gap-6 xl:gap-7 max-w-6xl mx-auto">
-        {categories.map((cat) => (
+      <div className="grid grid-cols-4 gap-2.5 sm:gap-3 md:grid-cols-8 md:gap-4 lg:gap-6 xl:gap-7 max-w-6xl mx-auto">
+        {categories.map((cat, idx) => (
           <div key={cat.id}>
             <Link
               to={`/product-category/${cat.slug}`}
-              className="flex flex-col items-center gap-2 group"
+              className="flex flex-col items-center gap-1.5 sm:gap-2 group"
             >
-              <div className="w-full aspect-square rounded-2xl overflow-hidden bg-secondary border border-border/30 group-hover:border-primary/40 group-hover:shadow-lg transition-all duration-200 group-hover:scale-105">
+              <div className="w-full aspect-square rounded-xl sm:rounded-2xl overflow-hidden bg-secondary border border-border/30 group-hover:border-primary/40 group-hover:shadow-lg transition-all duration-200 group-hover:scale-105 group-active:scale-95">
                 <img
                   src={cat.image_url || "/placeholder.svg"}
                   alt={cat.name}
@@ -50,11 +49,12 @@ const CategoryGrid = memo(() => {
                   height={144}
                   decoding="async"
                   className="w-full h-full object-cover object-center"
-                  loading={categories.indexOf(cat) < 8 ? "eager" : "lazy"}
-                  fetchPriority={categories.indexOf(cat) < 4 ? "high" : undefined}
+                  loading={idx < 8 ? "eager" : "lazy"}
+                  fetchPriority={idx < 4 ? "high" : undefined}
+                  sizes="(max-width: 480px) 20vw, (max-width: 768px) 22vw, 12vw"
                 />
               </div>
-              <span className="text-xs sm:text-sm font-medium text-foreground/80 group-hover:text-primary transition-colors text-center leading-tight">
+              <span className="text-[10px] sm:text-xs md:text-sm font-medium text-foreground/80 group-hover:text-primary transition-colors text-center leading-tight line-clamp-2">
                 {cat.name}
               </span>
             </Link>
