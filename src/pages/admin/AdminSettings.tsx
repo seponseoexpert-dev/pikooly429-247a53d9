@@ -975,6 +975,7 @@ const SlidersSection = () => {
             title: s.title,
             subtitle: s.subtitle,
             image_url: s.image_url,
+            bg_image_url: s.bg_image_url || null,
             link: s.link,
             bg_color: s.bg_color,
             cta_text: s.cta_text,
@@ -1120,6 +1121,53 @@ const SlidersSection = () => {
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">CTA Text</label>
                 <Input value={slider.cta_text || ""} onChange={(e) => updateField(slider.id, "cta_text", e.target.value)} placeholder="ORDER NOW" />
+              </div>
+
+              {/* Background Image */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Background Image (Full Banner)</label>
+                {slider.bg_image_url && (
+                  <div className="relative inline-block">
+                    <img src={slider.bg_image_url} alt="" className="w-32 h-16 object-cover rounded-lg border" />
+                    <button type="button" onClick={() => updateField(slider.id, "bg_image_url", "")}
+                      className="absolute -top-2 -right-2 w-5 h-5 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center">
+                      <X size={12} />
+                    </button>
+                  </div>
+                )}
+                <div>
+                  <Button type="button" variant="outline" size="sm"
+                    onClick={() => {
+                      const input = document.createElement("input");
+                      input.type = "file";
+                      input.accept = "image/*";
+                      input.onchange = async (e) => {
+                        const file = (e.target as HTMLInputElement).files?.[0];
+                        if (!file) return;
+                        setUploading(slider.id + "-bg");
+                        try {
+                          const { convertToWebP } = await import("@/lib/imageUtils");
+                          const webpFile = await convertToWebP(file);
+                          const filePath = `slider-bg-${slider.id}-${Date.now()}.webp`;
+                          const { error: uploadError } = await supabase.storage.from("sliders").upload(filePath, webpFile, { upsert: true, contentType: "image/webp" });
+                          if (uploadError) throw uploadError;
+                          const { data: urlData } = supabase.storage.from("sliders").getPublicUrl(filePath);
+                          setLocalSliders((prev) => prev.map((s) => (s.id === slider.id ? { ...s, bg_image_url: urlData.publicUrl } : s)));
+                          toast({ title: "Background uploaded ✓" });
+                        } catch (err: any) {
+                          toast({ title: "Upload failed", description: err.message, variant: "destructive" });
+                        } finally {
+                          setUploading(null);
+                        }
+                      };
+                      input.click();
+                    }}
+                    disabled={uploading === slider.id + "-bg"}>
+                    <Upload className="h-4 w-4 mr-2" />
+                    {uploading === slider.id + "-bg" ? "Uploading..." : "Upload BG Image"}
+                  </Button>
+                  <p className="text-[10px] text-muted-foreground mt-1">If set, text overlays on the full image (like FnP style)</p>
+                </div>
               </div>
 
               {/* BG Color */}
