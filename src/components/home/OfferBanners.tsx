@@ -40,109 +40,116 @@ const OfferBanners = memo(() => {
         >
           {banners.map((b: any) => {
             const bgColor = b.bg_color || "#f5f0d0";
+            const hasContent = b.title || b.subtitle || b.description || b.cta_text || b.logo_url;
 
             const card = (
               <div
                 key={b.id}
                 className="min-w-[280px] w-[80vw] sm:w-[340px] md:min-w-0 md:w-[calc(33.333%-14px)] flex-shrink-0 snap-start"
               >
-                <div
-                  className="relative rounded-2xl overflow-hidden h-[160px] sm:h-[170px] md:h-[180px] shadow-sm"
-                  style={{
-                    background: b.bg_image_url
-                      ? `url(${b.bg_image_url}) center/cover no-repeat`
-                      : bgColor,
-                  }}
-                >
-                  {/* Overlay if bg image */}
-                  {b.bg_image_url && (
-                    <div className="absolute inset-0" style={{ background: `${bgColor}cc` }} />
-                  )}
+                {/* Full-image mode when only bg_image_url is set with no text content */}
+                {!hasContent && b.bg_image_url ? (
+                  <div className="relative rounded-2xl overflow-hidden h-[160px] sm:h-[170px] md:h-[180px] shadow-sm">
+                    <img
+                      src={b.bg_image_url}
+                      alt=""
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className="relative rounded-2xl overflow-hidden h-[160px] sm:h-[170px] md:h-[180px] shadow-sm"
+                    style={{
+                      background: b.bg_image_url
+                        ? `url(${b.bg_image_url}) center/cover no-repeat`
+                        : bgColor,
+                    }}
+                  >
+                    {b.bg_image_url && (
+                      <div className="absolute inset-0" style={{ background: `${bgColor}cc` }} />
+                    )}
 
-                  {/* Content area - left 65% */}
-                  <div className="absolute inset-0 flex">
-                    <div className="flex-1 p-4 sm:p-5 flex flex-col justify-between relative z-10" style={{ maxWidth: "65%" }}>
-                      {/* Top: Logo + Subtitle */}
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          {b.logo_url && (
-                            <img
-                              src={b.logo_url}
-                              alt=""
-                              className="h-5 sm:h-6 md:h-7 w-auto object-contain max-w-[100px]"
-                              loading="lazy"
-                              decoding="async"
-                            />
-                          )}
-                          {b.subtitle && !b.logo_url && (
-                            <span className="text-[10px] sm:text-xs font-bold text-foreground/60 uppercase tracking-wider">
+                    <div className="absolute inset-0 flex">
+                      <div className="flex-1 p-4 sm:p-5 flex flex-col justify-between relative z-10" style={{ maxWidth: "65%" }}>
+                        <div>
+                          <div className="flex items-center gap-2 mb-1">
+                            {b.logo_url && (
+                              <img
+                                src={b.logo_url}
+                                alt=""
+                                className="h-5 sm:h-6 md:h-7 w-auto object-contain max-w-[100px]"
+                                loading="lazy"
+                                decoding="async"
+                              />
+                            )}
+                            {b.subtitle && !b.logo_url && (
+                              <span className="text-[10px] sm:text-xs font-bold text-foreground/60 uppercase tracking-wider">
+                                {b.subtitle}
+                              </span>
+                            )}
+                          </div>
+                          {b.subtitle && b.logo_url && (
+                            <p className="text-[10px] sm:text-xs font-semibold text-foreground/60 uppercase tracking-wider mt-1.5">
                               {b.subtitle}
+                            </p>
+                          )}
+                          {b.title && (
+                            <h3 className="text-lg sm:text-xl md:text-2xl font-display font-extrabold text-foreground leading-tight mt-1">
+                              {b.title}
+                            </h3>
+                          )}
+                        </div>
+
+                        <div>
+                          {b.description && (
+                            <p className="text-[8px] sm:text-[9px] md:text-[10px] text-foreground/50 font-medium line-clamp-2 mb-1.5">
+                              {b.description}
+                            </p>
+                          )}
+                          {b.cta_text && (
+                            <span className="inline-block px-3 py-1 text-[10px] sm:text-[11px] font-bold rounded-full bg-foreground/90 text-background tracking-wide">
+                              {b.cta_text}
                             </span>
                           )}
                         </div>
-                        {b.subtitle && b.logo_url && (
-                          <p className="text-[10px] sm:text-xs font-semibold text-foreground/60 uppercase tracking-wider mt-1.5">
-                            {b.subtitle}
-                          </p>
-                        )}
-
-                        {/* Main Title */}
-                        <h3 className="text-lg sm:text-xl md:text-2xl font-display font-extrabold text-foreground leading-tight mt-1">
-                          {b.title}
-                        </h3>
                       </div>
 
-                      {/* Bottom: Description + CTA */}
-                      <div>
-                        {b.description && (
-                          <p className="text-[8px] sm:text-[9px] md:text-[10px] text-foreground/50 font-medium line-clamp-2 mb-1.5">
-                            {b.description}
-                          </p>
-                        )}
-                        {b.cta_text && (
-                          <span className="inline-block px-3 py-1 text-[10px] sm:text-[11px] font-bold rounded-full bg-foreground/90 text-background tracking-wide">
-                            {b.cta_text}
+                      <div className="relative flex items-center">
+                        <div className="w-px h-[70%] border-r-2 border-dashed border-foreground/10" />
+                      </div>
+
+                      <div className="relative overflow-hidden flex items-center justify-center" style={{ width: "35%" }}>
+                        {b.image_url ? (
+                          <img
+                            src={b.image_url}
+                            alt=""
+                            className="w-full h-full object-cover absolute inset-0"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        ) : (
+                          <span
+                            className="text-[80px] sm:text-[100px] font-black select-none pointer-events-none leading-none"
+                            style={{ color: "rgba(0,0,0,0.06)" }}
+                          >
+                            %
                           </span>
                         )}
                       </div>
                     </div>
 
-                    {/* Dashed divider */}
-                    <div className="relative flex items-center">
-                      <div className="w-px h-[70%] border-r-2 border-dashed border-foreground/10" />
-                    </div>
-
-                    {/* Right stub - 35% with image or watermark */}
-                    <div className="relative overflow-hidden flex items-center justify-center" style={{ width: "35%" }}>
-                      {b.image_url ? (
-                        <img
-                          src={b.image_url}
-                          alt=""
-                          className="w-full h-full object-cover absolute inset-0"
-                          loading="lazy"
-                          decoding="async"
-                        />
-                      ) : (
-                        <span
-                          className="text-[80px] sm:text-[100px] font-black select-none pointer-events-none leading-none"
-                          style={{ color: "rgba(0,0,0,0.06)" }}
-                        >
-                          %
-                        </span>
-                      )}
-                    </div>
+                    <div
+                      className="absolute -top-3 w-6 h-6 rounded-full bg-background z-20"
+                      style={{ left: "63%" }}
+                    />
+                    <div
+                      className="absolute -bottom-3 w-6 h-6 rounded-full bg-background z-20"
+                      style={{ left: "63%" }}
+                    />
                   </div>
-
-                  {/* Notch circles */}
-                  <div
-                    className="absolute -top-3 w-6 h-6 rounded-full bg-background z-20"
-                    style={{ left: "63%" }}
-                  />
-                  <div
-                    className="absolute -bottom-3 w-6 h-6 rounded-full bg-background z-20"
-                    style={{ left: "63%" }}
-                  />
-                </div>
+                )}
               </div>
             );
 
