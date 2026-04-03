@@ -147,6 +147,7 @@ const AdminProducts = () => {
       is_active: form.is_active, is_featured: form.is_featured, stock: form.stock, tags,
       specifications: specs.length > 0 ? specs : null,
       seo_title: form.seo_title.trim() || null, seo_description: form.seo_description.trim() || null,
+      delivery_time: form.delivery_time.trim() || null,
     };
 
     let productId: string | null = null;
