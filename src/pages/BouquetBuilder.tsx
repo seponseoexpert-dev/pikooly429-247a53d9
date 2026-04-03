@@ -30,6 +30,7 @@ const BouquetBuilder = () => {
   const navigate = useNavigate();
   const { addItem } = useCart();
   const { formatPrice } = useMultiCurrency();
+  const { settings } = useSiteSettings();
   const [step, setStep] = useState(1);
   const [selectedFlowers, setSelectedFlowers] = useState<Record<string, number>>({});
   const [designImages, setDesignImages] = useState<File[]>([]);
