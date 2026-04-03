@@ -40,7 +40,7 @@ const OfferBanners = memo(() => {
         >
           {banners.map((b: any) => {
             const bgColor = b.bg_color || "#f5f0d0";
-            const hasContent = b.title || b.subtitle || b.description || b.cta_text || b.logo_url;
+            const hasContent = (b.title && b.title.trim()) || (b.subtitle && b.subtitle.trim()) || b.logo_url;
 
             const card = (
               <div
