@@ -45,7 +45,7 @@ const AdminProducts = () => {
     name: "", slug: "", short_description: "", description: "", price: 0, original_price: 0,
     image_url: "", category_id: "", category_ids: [] as string[], subcategory_ids: [] as string[], is_active: true, is_featured: false, stock: 0, tags: "",
     specifications: [] as Array<{ item: string; value: string }>,
-    seo_title: "", seo_description: "",
+    seo_title: "", seo_description: "", delivery_time: "",
   };
   const [form, setForm] = useState(defaultForm);
 
