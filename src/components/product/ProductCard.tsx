@@ -36,52 +36,52 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
   const linkTo = `/product/${product.slug || product.id}`;
 
   return (
-    <div className="group bg-card rounded-xl sm:rounded-2xl overflow-hidden border border-border/50 hover:shadow-lg transition-shadow duration-200 flex flex-col">
-      <Link to={linkTo} className="block relative overflow-hidden aspect-square bg-secondary/30">
+    <div className="group bg-card rounded-xl overflow-hidden border border-border/40 hover:border-border hover:shadow-md transition-all duration-300 flex flex-col">
+      <Link to={linkTo} className="block relative overflow-hidden aspect-[4/5] bg-muted/30">
         <img
           src={imgSrc}
           alt={product.name}
           width={300}
-          height={300}
+          height={375}
           decoding="async"
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-out"
           loading="lazy"
           sizes="(max-width: 480px) 44vw, (max-width: 640px) 45vw, (max-width: 768px) 45vw, (max-width: 1024px) 30vw, 20vw"
         />
         {discount > 0 && (
-          <span className="absolute top-1.5 left-1.5 sm:top-2.5 sm:left-2.5 px-1.5 sm:px-2.5 py-0.5 sm:py-1 text-[9px] sm:text-[11px] font-bold bg-primary text-primary-foreground rounded-full">
-            {discount}% off
+          <span className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold bg-primary text-primary-foreground rounded-md">
+            -{discount}%
           </span>
         )}
       </Link>
 
-      <div className="p-2 sm:p-3 md:p-4 flex flex-col flex-1">
+      <div className="p-2.5 sm:p-3.5 flex flex-col flex-1 gap-1">
         <Link to={linkTo}>
-          <h3 className="font-medium text-[11px] sm:text-sm md:text-base text-foreground line-clamp-2 hover:text-primary transition-colors leading-snug min-h-[2.2em] sm:min-h-[2.5em]">
+          <h3 className="font-medium text-[11px] sm:text-[13px] text-foreground line-clamp-2 hover:text-primary transition-colors leading-snug">
             {product.name}
           </h3>
         </Link>
 
         {(product.rating ?? 0) > 0 && (
-          <div className="flex items-center gap-0.5 mt-1">
+          <div className="flex items-center gap-0.5">
             {Array.from({ length: 5 }).map((_, i) => (
               <Star
                 key={i}
-                size={11}
-                className={i < Math.round(product.rating!) ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}
+                size={10}
+                className={i < Math.round(product.rating!) ? "fill-amber-400 text-amber-400" : "text-border"}
               />
             ))}
           </div>
         )}
 
-        <div className="mt-1 sm:mt-2">
-          <span className="font-bold text-primary text-[13px] sm:text-base">{formatPrice(product.price)}</span>
+        <div className="mt-auto pt-1">
+          <span className="font-semibold text-foreground text-[13px] sm:text-[15px]">{formatPrice(product.price)}</span>
           {origPrice && (
-            <span className="text-[9px] sm:text-xs text-muted-foreground line-through ml-1">{formatPrice(origPrice)}</span>
+            <span className="text-[10px] sm:text-xs text-muted-foreground line-through ml-1.5">{formatPrice(origPrice)}</span>
           )}
         </div>
 
-        <div className="mt-2 sm:mt-3 flex gap-1.5 sm:gap-2">
+        <div className="flex gap-1.5 mt-1.5">
           <button
             onClick={(e) => {
               e.preventDefault();
@@ -95,9 +95,9 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
               }, undefined, true);
               navigate("/checkout");
             }}
-            className="flex-1 py-2 sm:py-2.5 rounded-lg bg-primary text-primary-foreground text-[10px] sm:text-xs md:text-sm font-semibold hover:bg-primary/90 active:scale-[0.97] transition-all uppercase tracking-wide text-center min-h-[36px] sm:min-h-[40px]"
+            className="flex-1 py-2 sm:py-2.5 rounded-lg bg-primary text-primary-foreground text-[10px] sm:text-xs font-semibold hover:bg-primary/90 active:scale-[0.97] transition-all text-center min-h-[36px] sm:min-h-[40px]"
           >
-            Shop Now
+            Buy Now
           </button>
           <button
             onClick={(e) => {
@@ -113,10 +113,10 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
               });
               setTimeout(() => setIsAdding(false), 600);
             }}
-            className="px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-lg bg-secondary text-secondary-foreground hover:bg-secondary/80 active:scale-[0.97] transition-all flex items-center justify-center min-w-[36px] sm:min-w-[40px] min-h-[36px] sm:min-h-[40px]"
+            className="px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg border border-border text-foreground/70 hover:border-primary hover:text-primary active:scale-[0.97] transition-all flex items-center justify-center min-w-[36px] sm:min-w-[40px] min-h-[36px] sm:min-h-[40px]"
             aria-label="Add to Cart"
           >
-            <ShoppingCart size={16} className={`sm:w-[18px] sm:h-[18px] ${isAdding ? "animate-bounce" : ""}`} />
+            <ShoppingCart size={15} className={`sm:w-4 sm:h-4 ${isAdding ? "animate-bounce" : ""}`} />
           </button>
         </div>
       </div>
