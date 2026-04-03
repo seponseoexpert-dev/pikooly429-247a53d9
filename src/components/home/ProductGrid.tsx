@@ -26,7 +26,6 @@ const ProductGrid = memo(() => {
     placeholderData: (prev) => prev,
   });
 
-  // Tailored occasion categories (Anniversary, Wedding, etc.)
   const { data: occasionCategories = [] } = useQuery({
     queryKey: ["homepage-occasion-categories"],
     queryFn: async () => {
@@ -44,7 +43,6 @@ const ProductGrid = memo(() => {
     placeholderData: (prev) => prev,
   });
 
-  // Subcategories for trending tabs (Rose Bouquet, Lily Bouquet, etc.)
   const { data: tailoredSubcategories = [] } = useQuery({
     queryKey: ["homepage-subcategories-tailored"],
     queryFn: async () => {
@@ -61,7 +59,6 @@ const ProductGrid = memo(() => {
     placeholderData: (prev) => prev,
   });
 
-  // Set default tailored tab
   useEffect(() => {
     if (!occasionCategories.length) {
       setActiveTailoredSlug("");
@@ -72,7 +69,6 @@ const ProductGrid = memo(() => {
     );
   }, [occasionCategories]);
 
-  // ── Trending tabs: For You, Best Seller + subcategory tabs ──
   const allTrendingTabs = useMemo(() => {
     const forYouIcon = settings.trending_tab_foryou_icon || null;
     const bestSellerIcon = settings.trending_tab_bestseller_icon || null;
@@ -115,7 +111,6 @@ const ProductGrid = memo(() => {
     return products.slice(0, 10);
   }, [products, featured, activeTab, allTrendingTabs]);
 
-  // ── Tailored section products (by occasion category) ──
   const tailoredProducts = useMemo(() => {
     if (!activeTailoredSlug) return products;
     return products.filter((p: any) => {
@@ -127,32 +122,31 @@ const ProductGrid = memo(() => {
 
   const activeTailoredCat = occasionCategories.find((c) => c.slug === activeTailoredSlug);
   const viewAllTailoredLink = activeTailoredCat ? `/shop?cat=${activeTailoredCat.slug}` : "/shop";
-  const viewAllTailoredText = activeTailoredCat ? `View All ${activeTailoredCat.name} →` : "View All Gifts →";
+  const viewAllTailoredText = activeTailoredCat ? `View All ${activeTailoredCat.name}` : "View All Gifts";
 
-  // Trending tab view all link
   const activeTabData = allTrendingTabs.find((t) => t.id === activeTab);
   const trendingViewAllLink = activeTabData?.type === "sub" && "slug" in activeTabData
     ? `/product-category/${activeTabData.slug}`
     : "/shop";
   const trendingViewAllText = activeTabData?.type === "sub"
-    ? `View All ${activeTabData.label} →`
-    : "View All →";
+    ? `View All ${activeTabData.label}`
+    : "View All";
 
   return (
-    <section className="py-4 sm:py-6 md:py-8 lg:py-12 xl:py-14 section-container" aria-label="Products" style={{ contain: "layout style" }}>
-      {/* ── Trending Tabs ── */}
+    <section className="py-6 sm:py-8 md:py-10 lg:py-14 section-container" aria-label="Products" style={{ contain: "layout style" }}>
+      {/* Trending Tabs */}
       <div className="relative mb-6 lg:mb-8">
-        <div className="flex w-full overflow-x-auto scrollbar-hide snap-x snap-mandatory border-b border-border/40 gap-0 justify-start">
+        <div className="flex w-full overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-0 justify-start">
           {allTrendingTabs.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative flex shrink-0 snap-start items-center gap-1.5 px-4 py-3 text-xs font-medium whitespace-nowrap transition-all duration-200 md:px-6 md:py-3.5 md:text-sm border-b-2 -mb-[1px] ${
+                className={`relative flex shrink-0 snap-start items-center gap-1.5 px-4 py-3 text-xs font-medium whitespace-nowrap transition-all duration-200 md:px-5 md:py-3.5 md:text-sm ${
                   isActive
-                    ? "border-primary text-primary font-semibold"
-                    : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+                    ? "text-foreground font-semibold"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {tab.icon && <tab.icon size={14} className={isActive ? "text-primary" : ""} />}
@@ -160,22 +154,25 @@ const ProductGrid = memo(() => {
                   <img src={tab.imageUrl} alt="" className="w-4 h-4 rounded-sm object-cover" loading="lazy" />
                 ) : (!tab.icon && <Flower2 size={14} className={isActive ? "text-primary" : ""} />)}
                 {tab.label}
+                {isActive && (
+                  <span className="absolute bottom-0 left-4 right-4 h-[2px] rounded-full bg-primary" />
+                )}
               </button>
             );
           })}
         </div>
+        <div className="h-px bg-border/50" />
       </div>
 
       {productsLoading ? (
-        <div className="flex items-center justify-center py-10"><div className="w-7 h-7 border-3 border-primary/30 border-t-primary rounded-full animate-spin" /></div>
+        <div className="flex items-center justify-center py-10"><div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>
       ) : trendingProducts.length === 0 ? (
-        <div className="text-center py-12 px-4">
-          <Gift className="w-10 h-10 mx-auto text-muted-foreground/40 mb-3" />
-          <p className="text-muted-foreground text-sm font-medium">No products found in this category</p>
-          <p className="text-muted-foreground/60 text-xs mt-1">Check back soon for new additions!</p>
+        <div className="text-center py-16 px-4">
+          <Gift className="w-10 h-10 mx-auto text-muted-foreground/30 mb-3" />
+          <p className="text-muted-foreground text-sm">No products found in this category</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
           {trendingProducts.map((product: any, index: number) => (
             <div key={product.id} className={index >= 6 ? "hidden lg:block" : ""}>
               <ProductCard product={product} />
@@ -185,58 +182,58 @@ const ProductGrid = memo(() => {
       )}
 
       {trendingProducts.length > 0 && (
-        <div className="text-center mt-6 md:mt-8">
+        <div className="text-center mt-8">
           <Link
             to={trendingViewAllLink}
-            className="inline-block px-8 sm:px-10 py-3 sm:py-3.5 border-2 border-primary text-primary rounded-full text-sm sm:text-base font-semibold hover:bg-primary hover:text-primary-foreground transition-colors"
+            className="inline-block px-8 py-2.5 border border-foreground/20 text-foreground rounded-lg text-sm font-medium hover:bg-foreground hover:text-background transition-all duration-300"
           >
-            {trendingViewAllText}
+            {trendingViewAllText} →
           </Link>
         </div>
       )}
 
-      {/* ── Tailored For Your Occasions (Categories only) ── */}
-      <div className="mt-8 sm:mt-10 md:mt-12 lg:mt-16 mb-4 md:mb-6 lg:mb-8 text-center">
-      <h2 className="section-heading font-display font-semibold text-foreground mb-1 md:mb-2">
+      {/* Tailored For Your Occasions */}
+      <div className="mt-12 sm:mt-14 md:mt-16 lg:mt-20 mb-5 md:mb-8 text-center">
+        <h2 className="section-heading font-display font-semibold text-foreground mb-1.5">
           Tailored For Your Occasions
         </h2>
-        <p className="text-muted-foreground fluid-text">Find the perfect gift for every moment</p>
+        <p className="text-muted-foreground text-sm">Find the perfect gift for every moment</p>
       </div>
 
       {occasionCategories.length > 0 && (
-        <div className="flex gap-6 sm:gap-8 md:gap-10 overflow-x-auto pb-4 mb-5 md:mb-7 scrollbar-hide justify-start sm:justify-center px-2">
+        <div className="flex gap-4 sm:gap-6 md:gap-8 overflow-x-auto pb-4 mb-6 md:mb-8 scrollbar-hide justify-start sm:justify-center px-1">
           {occasionCategories.map((cat) => {
             const isActive = activeTailoredSlug === cat.slug;
             return (
               <button
                 key={cat.slug}
                 onClick={() => setActiveTailoredSlug(cat.slug)}
-                className="flex flex-col items-center gap-2 min-w-[72px] sm:min-w-[85px] group relative"
+                className="flex flex-col items-center gap-2 min-w-[68px] sm:min-w-[80px] group relative"
               >
-                <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center transition-all duration-250 shadow-sm ${
+                <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center transition-all duration-300 ${
                   isActive
-                    ? "bg-primary text-primary-foreground shadow-md scale-105"
-                    : "bg-card border border-border/60 text-muted-foreground group-hover:border-primary/40 group-hover:shadow-md group-hover:scale-[1.03]"
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "bg-muted/50 text-muted-foreground group-hover:bg-muted group-hover:text-foreground"
                 }`}>
                   {cat.image_url ? (
                     <img
                       src={cat.image_url}
                       alt={cat.name}
-                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg object-cover transition-all ${isActive ? "brightness-0 invert" : ""}`}
+                      className={`w-6 h-6 sm:w-7 sm:h-7 rounded-md object-cover transition-all ${isActive ? "brightness-0 invert" : ""}`}
                       loading="lazy"
                       decoding="async"
                     />
                   ) : (
-                    <Gift size={26} className="sm:w-7 sm:h-7" />
+                    <Gift size={22} />
                   )}
                 </div>
-                <span className={`text-[11px] sm:text-xs font-semibold whitespace-nowrap transition-colors ${
-                  isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+                <span className={`text-[10px] sm:text-[11px] font-medium whitespace-nowrap transition-colors ${
+                  isActive ? "text-foreground" : "text-muted-foreground"
                 }`}>
                   {cat.name}
                 </span>
                 {isActive && (
-                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-5 h-[3px] rounded-full bg-primary" />
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full bg-primary" />
                 )}
               </button>
             );
@@ -245,15 +242,14 @@ const ProductGrid = memo(() => {
       )}
 
       {productsLoading ? (
-        <div className="flex items-center justify-center py-10"><div className="w-7 h-7 border-3 border-primary/30 border-t-primary rounded-full animate-spin" /></div>
+        <div className="flex items-center justify-center py-10"><div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>
       ) : tailoredProducts.length === 0 ? (
-        <div className="text-center py-12 px-4">
-          <Gift className="w-10 h-10 mx-auto text-muted-foreground/40 mb-3" />
-          <p className="text-muted-foreground text-sm font-medium">No products found for this occasion</p>
-          <p className="text-muted-foreground/60 text-xs mt-1">Check back soon for new additions!</p>
+        <div className="text-center py-16 px-4">
+          <Gift className="w-10 h-10 mx-auto text-muted-foreground/30 mb-3" />
+          <p className="text-muted-foreground text-sm">No products found for this occasion</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
           {tailoredProducts.slice(0, 10).map((product: any, index: number) => (
             <div key={product.id} className={index >= 6 ? "hidden lg:block" : ""}>
               <ProductCard product={product} />
@@ -263,12 +259,12 @@ const ProductGrid = memo(() => {
       )}
 
       {tailoredProducts.length > 0 && (
-        <div className="text-center mt-6 md:mt-8">
+        <div className="text-center mt-8">
           <Link
             to={viewAllTailoredLink}
-            className="inline-block px-8 sm:px-10 py-3 sm:py-3.5 border-2 border-primary text-primary rounded-full text-sm sm:text-base font-semibold hover:bg-primary hover:text-primary-foreground transition-colors"
+            className="inline-block px-8 py-2.5 border border-foreground/20 text-foreground rounded-lg text-sm font-medium hover:bg-foreground hover:text-background transition-all duration-300"
           >
-            {viewAllTailoredText}
+            {viewAllTailoredText} →
           </Link>
         </div>
       )}
