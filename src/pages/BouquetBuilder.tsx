@@ -5,6 +5,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { useNavigate, Link } from "react-router-dom";
 import { Check, ChevronRight, ChevronLeft, Flower2, Upload, Ruler, MessageSquare, ShoppingCart, ImagePlus, X } from "lucide-react";
+import SEOHead from "@/components/seo/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
