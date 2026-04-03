@@ -41,11 +41,12 @@ const OfferBanners = memo(() => {
           {banners.map((b: any) => {
             const bgColor = b.bg_color || "#f5f0d0";
             const hasContent = (b.title && b.title.trim()) || (b.subtitle && b.subtitle.trim()) || b.logo_url;
+            const itemClassName = "min-w-[280px] w-[80vw] sm:w-[340px] md:min-w-0 md:w-[calc((100%-2.5rem)/3)] flex-shrink-0 snap-start";
 
             const card = (
               <div
                 key={b.id}
-                className="min-w-[280px] w-[80vw] sm:w-[340px] md:min-w-0 md:w-[calc(33.333%-14px)] flex-shrink-0 snap-start"
+                className="w-full"
               >
                 {/* Full-image mode when only bg_image_url is set with no text content */}
                 {!hasContent && b.bg_image_url ? (
@@ -157,12 +158,12 @@ const OfferBanners = memo(() => {
               <Link
                 key={b.id}
                 to={b.link}
-                className="flex-shrink-0 hover:scale-[1.01] active:scale-[0.99] transition-transform duration-200 snap-start"
+                className={`${itemClassName} hover:scale-[1.01] active:scale-[0.99] transition-transform duration-200`}
               >
                 {card}
               </Link>
             ) : (
-              <div key={b.id} className="flex-shrink-0 snap-start">
+              <div key={b.id} className={itemClassName}>
                 {card}
               </div>
             );
