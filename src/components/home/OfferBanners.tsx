@@ -28,9 +28,9 @@ const OfferBanners = memo(() => {
   };
 
   return (
-    <section className="py-4 sm:py-6 md:py-8 section-container" style={{ contain: "layout style" }}>
-      <h2 className="section-heading font-display font-semibold text-foreground mb-3 sm:mb-4 md:mb-6">
-        Get Exclusive Offers from
+    <section className="py-6 sm:py-8 md:py-10 section-container" style={{ contain: "layout style" }}>
+      <h2 className="section-heading font-display font-semibold text-foreground mb-4 sm:mb-5 md:mb-6">
+        Get Exclusive Offers
       </h2>
 
       <div className="relative">
