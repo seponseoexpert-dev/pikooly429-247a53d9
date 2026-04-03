@@ -103,6 +103,7 @@ const AdminProducts = () => {
       tags: (p.tags || []).join(", "),
       specifications: specs,
       seo_title: (p as any).seo_title || "", seo_description: (p as any).seo_description || "",
+      delivery_time: (p as any).delivery_time || "",
     });
     setImageFile(null);
     setDialogOpen(true);
