@@ -245,6 +245,10 @@ const AdminProducts = () => {
                   <Label>Stock</Label>
                   <Input type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: parseInt(e.target.value) || 0 })} />
                 </div>
+                <div className="space-y-2">
+                  <Label>Delivery Time</Label>
+                  <Input value={form.delivery_time} onChange={(e) => setForm({ ...form, delivery_time: e.target.value })} placeholder="e.g. 2 Hour Delivery, Same Day" />
+                </div>
               </div>
 
               {/* Categories with Checkboxes */}

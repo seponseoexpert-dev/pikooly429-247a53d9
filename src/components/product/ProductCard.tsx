@@ -54,6 +54,12 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
             -{discount}%
           </span>
         )}
+        {product.delivery_time && (
+          <span className="absolute bottom-2 left-2 sm:bottom-2.5 sm:left-2.5 px-2 py-0.5 text-[10px] sm:text-[11px] font-medium bg-accent text-accent-foreground rounded-md flex items-center gap-1">
+            <Clock size={10} />
+            {product.delivery_time}
+          </span>
+        )}
       </Link>
 
       <div className="p-2.5 sm:p-3.5 flex flex-col flex-1 gap-1">
