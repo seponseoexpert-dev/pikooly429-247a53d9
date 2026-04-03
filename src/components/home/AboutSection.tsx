@@ -12,12 +12,12 @@ const AboutSection = () => {
   const fullText = settings.about_full_text || "ful gifts in Bangladesh. We believe every occasion deserves something special, and we're here to make gifting effortless and joyful.\n\nWhether it's a birthday celebration, anniversary surprise, or a simple \"I love you\" gesture, our handcrafted bouquets and curated gift collections are designed to bring smiles. With same-day delivery across Dhaka, your love reaches them exactly when it matters.";
 
   return (
-    <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="About PikoolyFlora" style={{ contain: "layout style", minHeight: "180px" }}>
-      <div className="max-w-4xl mx-auto border border-border rounded-xl p-5 sm:p-6 md:p-8 lg:p-10 bg-card" style={{ contain: "content" }}>
-        <h2 className="section-heading font-display font-semibold text-foreground mb-3 md:mb-4 text-center">
+    <section className="py-6 sm:py-8 md:py-10 lg:py-12 section-container" aria-label="About PikoolyFlora" style={{ contain: "layout style", minHeight: "180px" }}>
+      <div className="max-w-3xl mx-auto border border-border/50 rounded-xl p-6 sm:p-8 md:p-10 bg-card" style={{ contain: "content" }}>
+        <h2 className="section-heading font-display font-semibold text-foreground mb-4 text-center">
           {title}
         </h2>
-        <div className="text-xs sm:text-sm md:text-base text-muted-foreground leading-relaxed rich-text-content">
+        <div className="text-xs sm:text-sm md:text-[15px] text-muted-foreground leading-relaxed rich-text-content">
           <div dangerouslySetInnerHTML={{ __html: shortText }} />
           {expanded && <div dangerouslySetInnerHTML={{ __html: fullText }} />}
         </div>
@@ -30,10 +30,9 @@ const AboutSection = () => {
           </button>
         </div>
 
-        {/* Medals */}
-        <div className="flex items-center justify-center gap-4 mt-4 sm:mt-5">
-          <img src={medal1} alt="PikoolyFlora Badge" width="140" height="48" className="w-[140px] h-[48px] sm:w-[163px] sm:h-[56px] md:w-[187px] md:h-[64px] object-contain" loading="lazy" decoding="async" />
-          <img src={medal2} alt="PikoolyFlora Badge" width="140" height="48" className="w-[140px] h-[48px] sm:w-[163px] sm:h-[56px] md:w-[187px] md:h-[64px] object-contain" loading="lazy" decoding="async" />
+        <div className="flex items-center justify-center gap-4 mt-6">
+          <img src={medal1} alt="PikoolyFlora Badge" width="140" height="48" className="w-[130px] h-[44px] sm:w-[150px] sm:h-[52px] md:w-[170px] md:h-[58px] object-contain" loading="lazy" decoding="async" />
+          <img src={medal2} alt="PikoolyFlora Badge" width="140" height="48" className="w-[130px] h-[44px] sm:w-[150px] sm:h-[52px] md:w-[170px] md:h-[58px] object-contain" loading="lazy" decoding="async" />
         </div>
       </div>
     </section>

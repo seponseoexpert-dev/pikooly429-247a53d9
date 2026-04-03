@@ -11,8 +11,8 @@ const getInitials = (name: string) => {
 
 const getAvatarColor = (name: string) => {
   const colors = [
-    "hsl(85 30% 33%)", "hsl(145 20% 45%)", "hsl(38 70% 50%)",
-    "hsl(142 40% 35%)", "hsl(200 40% 40%)", "hsl(280 30% 45%)", "hsl(20 50% 45%)"
+    "hsl(152 32% 36%)", "hsl(200 35% 42%)", "hsl(38 65% 52%)",
+    "hsl(260 25% 48%)", "hsl(340 30% 45%)", "hsl(180 25% 40%)", "hsl(20 40% 45%)"
   ];
   let hash = 0;
   for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
@@ -25,11 +25,11 @@ const timeAgo = (dateStr: string) => {
   const diffMs = now.getTime() - date.getTime();
   const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
   if (days < 1) return "Today";
-  if (days < 30) return `${days} day${days > 1 ? "s" : ""} ago`;
+  if (days < 30) return `${days}d ago`;
   const months = Math.floor(days / 30);
-  if (months < 12) return `${months} month${months > 1 ? "s" : ""} ago`;
+  if (months < 12) return `${months}mo ago`;
   const years = Math.floor(months / 12);
-  return `${years} year${years > 1 ? "s" : ""} ago`;
+  return `${years}y ago`;
 };
 
 type Review = {
@@ -49,30 +49,30 @@ const ReviewCard = ({ review }: { review: Review }) => {
   const avatarColor = getAvatarColor(review.customer_name);
 
   return (
-    <div className="w-[calc(100vw-48px)] min-w-[calc(100vw-48px)] sm:w-[280px] sm:min-w-[280px] md:w-auto md:min-w-0 snap-center flex-shrink-0 md:flex-shrink bg-card border border-border/30 rounded-xl sm:rounded-2xl p-3 sm:p-5 md:p-6 flex flex-col gap-2.5 sm:gap-3 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+    <div className="w-[calc(100vw-48px)] min-w-[calc(100vw-48px)] sm:w-[280px] sm:min-w-[280px] md:w-auto md:min-w-0 snap-center flex-shrink-0 md:flex-shrink bg-card border border-border/30 rounded-xl p-4 sm:p-5 flex flex-col gap-2.5 hover:border-border transition-all duration-300">
       <div className="flex items-center gap-3">
         <div
-          className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
+          className="w-9 h-9 rounded-full flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0"
           style={{ backgroundColor: avatarColor }}
         >
           {initials}
         </div>
         <div className="min-w-0">
           <div className="flex items-center gap-1.5">
-            <span className="text-sm font-semibold text-foreground truncate max-w-[120px]">
+            <span className="text-sm font-medium text-foreground truncate max-w-[120px]">
               {review.customer_name}
             </span>
-            <BadgeCheck size={14} className="text-emerald-500 flex-shrink-0" />
-            <span className="text-[11px] text-muted-foreground flex-shrink-0">
-              • {timeAgo(review.created_at)}
+            <BadgeCheck size={13} className="text-primary flex-shrink-0" />
+            <span className="text-[10px] text-muted-foreground/60 flex-shrink-0">
+              {timeAgo(review.created_at)}
             </span>
           </div>
           <div className="flex items-center gap-0.5 mt-0.5">
             {Array.from({ length: 5 }).map((_, i) => (
               <Star
                 key={i}
-                size={13}
-                className={i < review.rating ? "fill-amber-500 text-amber-500" : "text-muted-foreground/30"}
+                size={12}
+                className={i < review.rating ? "fill-amber-400 text-amber-400" : "text-border"}
               />
             ))}
           </div>
@@ -81,16 +81,11 @@ const ReviewCard = ({ review }: { review: Review }) => {
 
       {comment && (
         <div className="min-w-0">
-          <p
-            className={`text-[13px] text-foreground/80 leading-[1.6] text-left whitespace-normal break-words overflow-hidden ${!expanded && hasLongComment ? "line-clamp-3" : ""}`}
-          >
+          <p className={`text-[13px] text-muted-foreground leading-[1.6] text-left ${!expanded && hasLongComment ? "line-clamp-3" : ""}`}>
             {comment}
           </p>
           {hasLongComment && (
-            <button
-              onClick={() => setExpanded((prev) => !prev)}
-              className="text-xs text-primary font-medium mt-1 hover:underline"
-            >
+            <button onClick={() => setExpanded((prev) => !prev)} className="text-xs text-primary font-medium mt-1 hover:underline">
               {expanded ? "show less" : "read more"}
             </button>
           )}
@@ -100,7 +95,7 @@ const ReviewCard = ({ review }: { review: Review }) => {
       {review.products && (
         <a
           href={`/product/${review.products.slug}`}
-          className="flex items-center gap-2 mt-auto pt-2 border-t border-border/20 group/product"
+          className="flex items-center gap-2 mt-auto pt-2.5 border-t border-border/20 group/product"
         >
           {review.products.image_url && (
             <img
@@ -182,8 +177,8 @@ const CustomerReviewSection = () => {
   if (!isLoading && reviews.length === 0) return null;
 
   return (
-    <section className="py-6 sm:py-8 md:py-12 section-container" aria-label="Customer Reviews" style={{ contain: "layout style" }}>
-      <div className="flex flex-col items-center gap-1.5 mb-5 md:mb-8 md:flex-row md:justify-between">
+    <section className="py-6 sm:py-8 md:py-12 lg:py-14 section-container" aria-label="Customer Reviews" style={{ contain: "layout style" }}>
+      <div className="flex flex-col items-center gap-1.5 mb-6 md:mb-8 md:flex-row md:justify-between">
         <div className="hidden md:block md:flex-1" />
         <h2 className="section-heading font-display font-semibold text-foreground text-center">
           Customer Reviews
@@ -197,13 +192,13 @@ const CustomerReviewSection = () => {
 
       {isLoading ? (
         <div className="flex items-center justify-center py-8 min-h-[200px]">
-          <div className="w-7 h-7 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
+          <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
         </div>
       ) : (
         <>
           <div
             ref={scrollRef}
-            className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-3 -mx-4 px-4 md:hidden"
+            className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-3 -mx-4 px-4 md:hidden"
           >
             {reviews.map((review) => (
               <ReviewCard key={review.id} review={review} />
@@ -221,23 +216,23 @@ const CustomerReviewSection = () => {
               <>
                 <button
                   onClick={goDesktopPrev}
-                  className="absolute -left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-card border border-border shadow-sm flex items-center justify-center hover:bg-accent transition-colors"
+                  className="absolute -left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-card border border-border/50 shadow-sm flex items-center justify-center hover:bg-muted transition-colors"
                   aria-label="Previous reviews"
                 >
-                  <ChevronLeft size={16} className="text-foreground" />
+                  <ChevronLeft size={16} />
                 </button>
                 <button
                   onClick={goDesktopNext}
-                  className="absolute -right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-card border border-border shadow-sm flex items-center justify-center hover:bg-accent transition-colors"
+                  className="absolute -right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-card border border-border/50 shadow-sm flex items-center justify-center hover:bg-muted transition-colors"
                   aria-label="Next reviews"
                 >
-                  <ChevronRight size={16} className="text-foreground" />
+                  <ChevronRight size={16} />
                 </button>
               </>
             )}
 
             {totalDesktopPages > 1 && (
-              <div className="flex items-center justify-center gap-1.5 mt-4">
+              <div className="flex items-center justify-center gap-1.5 mt-5">
                 {Array.from({ length: totalDesktopPages }).map((_, i) => (
                   <button
                     key={i}
