@@ -52,6 +52,7 @@ const settingSections = [
   { key: "license", label: "License", icon: Award },
   { key: "footer", label: "Footer", icon: FileText },
   { key: "trending_tabs", label: "Trending Tabs", icon: Star },
+  { key: "bouquet_seo", label: "Bouquet SEO", icon: FileText },
 ];
 
 type FieldDef = {
@@ -363,6 +364,13 @@ const sectionFields: Record<string, FieldDef[]> = {
   trending_tabs: [
     { key: "trending_tab_foryou_icon", label: "For You Tab Icon", type: "image_upload" as const },
     { key: "trending_tab_bestseller_icon", label: "Best Seller Tab Icon", type: "image_upload" as const },
+  ],
+  bouquet_seo: [
+    { key: "bouquet_seo_title", label: "SEO Title", placeholder: "Custom Flower Bouquet Builder | Design Your Own Bouquet - Pikooly" },
+    { key: "bouquet_seo_description", label: "Meta Description", type: "textarea" as const, placeholder: "Create your perfect custom flower bouquet online...", fullWidth: true },
+    { key: "bouquet_seo_og_image", label: "OG Image", type: "image_upload" as const },
+    { key: "bouquet_seo_jsonld_name", label: "Schema Name", placeholder: "Custom Flower Bouquet Builder - Pikooly" },
+    { key: "bouquet_seo_jsonld_description", label: "Schema Description", type: "textarea" as const, placeholder: "Design your own custom flower bouquet online...", fullWidth: true },
   ],
 };
 

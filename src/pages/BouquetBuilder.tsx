@@ -6,6 +6,7 @@ import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { useNavigate, Link } from "react-router-dom";
 import { Check, ChevronRight, ChevronLeft, Flower2, Upload, Ruler, MessageSquare, ShoppingCart, ImagePlus, X } from "lucide-react";
 import SEOHead from "@/components/seo/SEOHead";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
@@ -29,6 +30,7 @@ const BouquetBuilder = () => {
   const navigate = useNavigate();
   const { addItem } = useCart();
   const { formatPrice } = useMultiCurrency();
+  const { settings } = useSiteSettings();
   const [step, setStep] = useState(1);
   const [selectedFlowers, setSelectedFlowers] = useState<Record<string, number>>({});
   const [designImages, setDesignImages] = useState<File[]>([]);
@@ -142,15 +144,15 @@ const BouquetBuilder = () => {
 
   const progressPercent = ((step - 1) / (STEPS.length - 1)) * 100;
 
+  const seoTitle = settings.bouquet_seo_title || "Custom Flower Bouquet Builder | Design Your Own Bouquet - Pikooly";
+  const seoDescription = settings.bouquet_seo_description || "Create your perfect custom flower bouquet online at Pikooly. Choose from fresh roses, lilies, sunflowers & more. Pick your size, add a personal gift message, and enjoy same-day delivery across Bangladesh.";
+  const seoOgImage = settings.bouquet_seo_og_image || undefined;
   const seoJsonLd = {
     "@context": "https://schema.org",
     "@type": "Service",
-    "name": "Custom Flower Bouquet Builder - Pikooly",
-    "description": "Design your own custom flower bouquet online. Choose from fresh roses, lilies, sunflowers & more. Select size, add a gift message & get same-day delivery in Bangladesh.",
-    "provider": {
-      "@type": "Organization",
-      "name": "Pikooly"
-    },
+    "name": settings.bouquet_seo_jsonld_name || "Custom Flower Bouquet Builder - Pikooly",
+    "description": settings.bouquet_seo_jsonld_description || "Design your own custom flower bouquet online. Choose from fresh roses, lilies, sunflowers & more.",
+    "provider": { "@type": "Organization", "name": settings.store_name || "Pikooly" },
     "areaServed": "Bangladesh",
     "url": `${window.location.origin}/custom-bouquet`
   };
@@ -158,10 +160,11 @@ const BouquetBuilder = () => {
   return (
     <main className="section-container py-4 md:py-8 pb-24 md:pb-10">
       <SEOHead
-        title="Custom Flower Bouquet Builder | Design Your Own Bouquet - Pikooly"
-        description="Create your perfect custom flower bouquet online at Pikooly. Choose from fresh roses, lilies, sunflowers & more. Pick your size, add a personal gift message, and enjoy same-day delivery across Bangladesh."
+        title={seoTitle}
+        description={seoDescription}
         canonical={`${window.location.origin}/custom-bouquet`}
         ogType="product"
+        ogImage={seoOgImage}
         jsonLd={seoJsonLd}
       />
       <nav className="flex items-center gap-1.5 text-sm text-muted-foreground mb-5">
