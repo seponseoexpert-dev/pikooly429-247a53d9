@@ -1,6 +1,6 @@
 import { useCart } from "@/contexts/CartContext";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Star } from "lucide-react";
+import { ShoppingCart, Star, Clock } from "lucide-react";
 import { useState, memo } from "react";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 
@@ -19,6 +19,7 @@ interface ProductCardProps {
     badge?: string;
     inStock?: boolean;
     stock?: number;
+    delivery_time?: string | null;
   };
   index?: number;
 }
@@ -51,6 +52,12 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
         {discount > 0 && (
           <span className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold bg-primary text-primary-foreground rounded-md">
             -{discount}%
+          </span>
+        )}
+        {product.delivery_time && (
+          <span className="absolute bottom-2 left-2 sm:bottom-2.5 sm:left-2.5 px-2 py-0.5 text-[10px] sm:text-[11px] font-medium bg-accent text-accent-foreground rounded-md flex items-center gap-1">
+            <Clock size={10} />
+            {product.delivery_time}
           </span>
         )}
       </Link>

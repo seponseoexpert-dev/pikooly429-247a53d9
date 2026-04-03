@@ -45,7 +45,7 @@ const AdminProducts = () => {
     name: "", slug: "", short_description: "", description: "", price: 0, original_price: 0,
     image_url: "", category_id: "", category_ids: [] as string[], subcategory_ids: [] as string[], is_active: true, is_featured: false, stock: 0, tags: "",
     specifications: [] as Array<{ item: string; value: string }>,
-    seo_title: "", seo_description: "",
+    seo_title: "", seo_description: "", delivery_time: "",
   };
   const [form, setForm] = useState(defaultForm);
 
@@ -103,6 +103,7 @@ const AdminProducts = () => {
       tags: (p.tags || []).join(", "),
       specifications: specs,
       seo_title: (p as any).seo_title || "", seo_description: (p as any).seo_description || "",
+      delivery_time: (p as any).delivery_time || "",
     });
     setImageFile(null);
     setDialogOpen(true);
@@ -146,6 +147,7 @@ const AdminProducts = () => {
       is_active: form.is_active, is_featured: form.is_featured, stock: form.stock, tags,
       specifications: specs.length > 0 ? specs : null,
       seo_title: form.seo_title.trim() || null, seo_description: form.seo_description.trim() || null,
+      delivery_time: form.delivery_time.trim() || null,
     };
 
     let productId: string | null = null;
@@ -242,6 +244,10 @@ const AdminProducts = () => {
                 <div className="space-y-2">
                   <Label>Stock</Label>
                   <Input type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: parseInt(e.target.value) || 0 })} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Delivery Time</Label>
+                  <Input value={form.delivery_time} onChange={(e) => setForm({ ...form, delivery_time: e.target.value })} placeholder="e.g. 2 Hour Delivery, Same Day" />
                 </div>
               </div>
 
