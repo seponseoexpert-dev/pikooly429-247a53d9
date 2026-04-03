@@ -44,7 +44,7 @@ const OfferBanners = memo(() => {
             const card = (
               <div
                 key={b.id}
-                className="min-w-[280px] w-[80vw] sm:w-[340px] md:w-[calc(33.333%-14px)] lg:w-[calc(33.333%-14px)] max-w-[440px] flex-shrink-0 snap-start"
+                className="min-w-[280px] w-[80vw] sm:w-[340px] md:min-w-0 md:w-[calc(33.333%-14px)] flex-shrink-0 snap-start"
               >
                 <div
                   className="relative rounded-2xl overflow-hidden h-[160px] sm:h-[170px] md:h-[180px] shadow-sm"
