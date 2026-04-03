@@ -1,6 +1,6 @@
 import { useCart } from "@/contexts/CartContext";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Star } from "lucide-react";
+import { ShoppingCart, Star, Clock } from "lucide-react";
 import { useState, memo } from "react";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 
