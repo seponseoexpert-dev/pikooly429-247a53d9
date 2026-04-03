@@ -19,6 +19,7 @@ interface ProductCardProps {
     badge?: string;
     inStock?: boolean;
     stock?: number;
+    delivery_time?: string | null;
   };
   index?: number;
 }
