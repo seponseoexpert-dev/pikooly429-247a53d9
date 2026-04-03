@@ -52,6 +52,7 @@ const settingSections = [
   { key: "license", label: "License", icon: Award },
   { key: "footer", label: "Footer", icon: FileText },
   { key: "trending_tabs", label: "Trending Tabs", icon: Star },
+  { key: "bouquet_seo", label: "Bouquet SEO", icon: FileText },
 ];
 
 type FieldDef = {
