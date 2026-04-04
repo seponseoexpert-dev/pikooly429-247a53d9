@@ -148,11 +148,11 @@ const EventCategoryDetail = () => {
       {/* Packages */}
       <section className="py-10 bg-muted/30">
         <div className="container mx-auto px-4">
-          <h2 className="text-xl md:text-2xl font-bold text-center text-foreground mb-2">প্যাকেজ সমূহ</h2>
-          <p className="text-center text-muted-foreground mb-8 text-sm">আপনার বাজেট অনুযায়ী প্যাকেজ বেছে নিন</p>
+          <h2 className="text-xl md:text-2xl font-bold text-center text-foreground mb-2">Our Packages</h2>
+          <p className="text-center text-muted-foreground mb-8 text-sm">Choose a package that fits your budget</p>
 
           {packages.length === 0 ? (
-            <p className="text-center text-muted-foreground py-10">এই ক্যাটাগরিতে এখনো কোনো প্যাকেজ যোগ করা হয়নি</p>
+            <p className="text-center text-muted-foreground py-10">No packages available in this category yet</p>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {packages.map((pkg: any, i: number) => {

@@ -30,11 +30,11 @@ const EventsSection = () => {
             <span className="inline-flex items-center gap-1.5 text-primary text-xs lg:text-sm font-medium mb-1">
               <Sparkles className="w-3.5 h-3.5 lg:w-4 lg:h-4" /> Event Management
             </span>
-            <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground">ইভেন্ট ম্যানেজমেন্ট সার্ভিস</h2>
+            <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground">Event Management Services</h2>
           </div>
           <Link to="/events">
             <Button variant="outline" size="sm" className="gap-1.5 text-xs lg:text-sm">
-              সব দেখুন <ArrowRight className="w-3.5 h-3.5" />
+              View All <ArrowRight className="w-3.5 h-3.5" />
             </Button>
           </Link>
         </div>

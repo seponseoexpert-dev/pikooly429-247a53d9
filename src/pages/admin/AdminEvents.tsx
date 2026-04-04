@@ -310,12 +310,12 @@ const AdminEvents = () => {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-foreground">ইভেন্ট ম্যানেজমেন্ট</h1>
+        <h1 className="text-2xl font-bold text-foreground">Event Management</h1>
         <Tabs defaultValue="categories">
           <TabsList className="grid grid-cols-3 w-full max-w-md">
-            <TabsTrigger value="categories" className="gap-1"><Tag className="w-3.5 h-3.5" /> ক্যাটাগরি</TabsTrigger>
-            <TabsTrigger value="packages" className="gap-1"><Package className="w-3.5 h-3.5" /> প্যাকেজ</TabsTrigger>
-            <TabsTrigger value="bookings" className="gap-1"><CalendarCheck className="w-3.5 h-3.5" /> বুকিং</TabsTrigger>
+            <TabsTrigger value="categories" className="gap-1"><Tag className="w-3.5 h-3.5" /> Categories</TabsTrigger>
+            <TabsTrigger value="packages" className="gap-1"><Package className="w-3.5 h-3.5" /> Packages</TabsTrigger>
+            <TabsTrigger value="bookings" className="gap-1"><CalendarCheck className="w-3.5 h-3.5" /> Bookings</TabsTrigger>
           </TabsList>
           <TabsContent value="categories"><CategoriesTab /></TabsContent>
           <TabsContent value="packages"><PackagesTab /></TabsContent>

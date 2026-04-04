@@ -99,9 +99,9 @@ const AdminMigrate = () => {
               )}
               {results.blogs && (
                 <div className="bg-muted rounded-lg p-4">
-                  <p className="font-semibold">ব্লগ পোস্ট</p>
+                  <p className="font-semibold">Blog Posts</p>
                   <p className="text-sm text-muted-foreground">
-                    মোট: {results.blogs.total} | নতুন: {results.blogs.inserted} | স্কিপড: {results.blogs.skipped}
+                    Total: {results.blogs.total} | New: {results.blogs.inserted} | Skipped: {results.blogs.skipped}
                   </p>
                 </div>
               )}
