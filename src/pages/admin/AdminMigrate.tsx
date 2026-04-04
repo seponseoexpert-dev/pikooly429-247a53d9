@@ -76,7 +76,7 @@ const AdminMigrate = () => {
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
               <CheckCircle className="h-5 w-5 text-green-500" />
-              মাইগ্রেশন রেজাল্ট
+              Migration Results
             </CardTitle>
           </CardHeader>
           <CardContent>
