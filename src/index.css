@@ -175,6 +175,10 @@
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
   @media (pointer: coarse) {
     .touch-target {
       min-height: 44px;
@@ -235,5 +239,9 @@
 @supports (-webkit-touch-callout: none) {
   .safe-area-bottom {
     padding-bottom: max(env(safe-area-inset-bottom, 0px), 20px);
+  }
+
+  .safe-area-top {
+    padding-top: max(env(safe-area-inset-top, 0px), 0px);
   }
 }
