@@ -216,7 +216,7 @@ const PackagesTab = () => {
 
       <Dialog open={showForm} onOpenChange={setShowForm}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>{editItem ? "প্যাকেজ এডিট" : "নতুন প্যাকেজ"}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{editItem ? "Edit Package" : "New Package"}</DialogTitle></DialogHeader>
           <form onSubmit={e => { e.preventDefault(); saveMutation.mutate(form); }} className="space-y-3">
             <select className="w-full border border-border rounded-md p-2 bg-background text-foreground text-sm" value={form.category_id} onChange={e => setForm(p => ({ ...p, category_id: e.target.value }))} required>
               <option value="">ক্যাটাগরি সিলেক্ট করুন</option>
