@@ -1,4 +1,4 @@
-import { Calendar, ArrowRight } from "lucide-react";
+import { Calendar, ArrowRight, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useRef } from "react";
@@ -23,6 +23,12 @@ const BlogSection = () => {
   });
 
   if (!isLoading && posts.length === 0) return null;
+
+  const estimateReadTime = (content: string | null) => {
+    if (!content) return "2 min";
+    const words = content.replace(/<[^>]*>/g, "").split(/\s+/).length;
+    return `${Math.max(1, Math.round(words / 200))} min`;
+  };
 
   return (
     <section className="py-8 md:py-12 section-container" style={{ contain: "layout style" }}>
@@ -51,14 +57,16 @@ const BlogSection = () => {
                   to={`/blog/${post.slug}`}
                   className="w-[44vw] max-w-[200px] snap-start flex-shrink-0 group bg-card rounded-xl overflow-hidden border border-border/50 hover:shadow-lg transition-all"
                 >
-                  <div className="aspect-[4/3] overflow-hidden">
+                  <div className="aspect-[4/3] overflow-hidden relative">
                     <img src={post.image_url || "/placeholder.svg"} alt={post.title} width={200} height={150} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
+                    {post.category && (
+                      <span className="absolute top-2 left-2 bg-background/90 backdrop-blur-sm text-primary text-[9px] px-1.5 py-0.5 rounded font-medium">
+                        {post.category}
+                      </span>
+                    )}
                   </div>
                   <div className="p-2.5">
                     <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mb-1">
-                      {post.category && (
-                        <span className="bg-primary/10 text-primary px-1.5 py-0.5 rounded font-medium text-[10px]">{post.category}</span>
-                      )}
                       <Calendar size={10} />
                       <time>{new Date(post.published_at || post.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</time>
                     </div>
@@ -77,21 +85,32 @@ const BlogSection = () => {
               <Link
                 key={post.id}
                 to={`/blog/${post.slug}`}
-                className="group bg-card rounded-xl overflow-hidden border border-border/50 hover:shadow-lg transition-all flex flex-col"
+                className="group bg-card rounded-xl overflow-hidden border border-border/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col"
               >
-                <div className="aspect-[16/10] overflow-hidden">
+                <div className="aspect-[16/10] overflow-hidden relative">
                   <img src={post.image_url || "/placeholder.svg"} alt={post.title} width={400} height={250} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
+                  {post.category && (
+                    <span className="absolute top-3 left-3 bg-background/90 backdrop-blur-sm text-primary text-[11px] px-2.5 py-1 rounded-full font-medium">
+                      {post.category}
+                    </span>
+                  )}
                 </div>
                 <div className="p-4 flex flex-col flex-1">
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
-                    {post.category && (
-                      <span className="bg-primary/10 text-primary px-2 py-0.5 rounded font-medium text-[11px]">{post.category}</span>
-                    )}
-                    <Calendar size={12} />
-                    <time>{new Date(post.published_at || post.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</time>
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
+                    <span className="flex items-center gap-1">
+                      <Calendar size={12} />
+                      <time>{new Date(post.published_at || post.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</time>
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock size={12} />
+                      {estimateReadTime(post.content)}
+                    </span>
                   </div>
                   <h3 className="font-display text-base font-semibold group-hover:text-primary transition-colors line-clamp-2 leading-snug mb-1.5">{post.title}</h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2">{post.excerpt}</p>
+                  <p className="text-sm text-muted-foreground line-clamp-2 flex-1">{post.excerpt}</p>
+                  <span className="inline-flex items-center gap-1 text-sm text-primary font-medium mt-3 group-hover:gap-2 transition-all">
+                    Read More <ArrowRight size={14} />
+                  </span>
                 </div>
               </Link>
             ))}
