@@ -298,7 +298,7 @@ const BookingsTab = () => {
               </div>
             </div>
           ))}
-          {bookings.length === 0 && <p className="text-center text-muted-foreground py-6">কোনো বুকিং নেই</p>}
+          {bookings.length === 0 && <p className="text-center text-muted-foreground py-6">No bookings yet</p>}
         </div>
       )}
     </div>
