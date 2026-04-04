@@ -27,7 +27,7 @@ const AdminMigrate = () => {
       }
     } catch (err: any) {
       console.error("Migration error:", err);
-      toast.error(err.message || "মাইগ্রেশনে সমস্যা হয়েছে");
+      toast.error(err.message || "Migration failed");
     } finally {
       setLoading(null);
     }
