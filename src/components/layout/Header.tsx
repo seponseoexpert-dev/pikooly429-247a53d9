@@ -166,7 +166,7 @@ const Header = () => {
   };
 
   return (
-    <>
+    <div className="sticky top-0 z-50">
       {/* Announcement Bar */}
       {showAnnouncement && (
         <div className="bg-primary text-primary-foreground text-center text-[10px] sm:text-[11px] md:text-xs py-1.5 sm:py-2 px-4 font-semibold tracking-wide">
@@ -174,7 +174,7 @@ const Header = () => {
         </div>
       )}
 
-      <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-xl border-b border-border/40 shadow-[0_1px_3px_0_hsl(var(--foreground)/0.04)]">
+      <header className="bg-card/95 backdrop-blur-xl border-b border-border/40 shadow-[0_1px_3px_0_hsl(var(--foreground)/0.04)]">
         <div className="section-container">
           {/* === TOP ROW: Logo + Search + Actions === */}
           <div className="flex items-center h-[52px] sm:h-14 md:h-[60px] lg:h-16 gap-2 sm:gap-3 md:gap-4 lg:gap-6">
