@@ -43,10 +43,10 @@ const AdminMigrate = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { type: "categories", label: "ক্যাটেগরি", desc: "WooCommerce প্রোডাক্ট ক্যাটেগরি" },
-          { type: "products", label: "প্রোডাক্ট", desc: "সব WooCommerce প্রোডাক্ট" },
-          { type: "blogs", label: "ব্লগ পোস্ট", desc: "সব WordPress ব্লগ পোস্ট" },
-          { type: "all", label: "সব কিছু", desc: "ক্যাটেগরি + প্রোডাক্ট + ব্লগ" },
+          { type: "categories", label: "Categories", desc: "WooCommerce product categories" },
+          { type: "products", label: "Products", desc: "All WooCommerce products" },
+          { type: "blogs", label: "Blog Posts", desc: "All WordPress blog posts" },
+          { type: "all", label: "Everything", desc: "Categories + Products + Blogs" },
         ].map((item) => (
           <Card key={item.type}>
             <CardHeader className="pb-3">
