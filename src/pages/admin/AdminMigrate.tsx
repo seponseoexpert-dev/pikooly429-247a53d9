@@ -37,8 +37,8 @@ const AdminMigrate = () => {
     <div className="space-y-6">
       <h2 className="text-xl sm:text-2xl font-display font-bold">WordPress Migration</h2>
       <p className="text-muted-foreground">
-        pikooly.com.bd থেকে প্রোডাক্ট, ব্লগ পোস্ট এবং ক্যাটেগরি ইম্পোর্ট করুন। 
-        ডুপ্লিকেট slug থাকলে সেগুলো স্কিপ হবে।
+        Import products, blog posts and categories from pikooly.com.bd. 
+        Duplicate slugs will be skipped automatically.
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
