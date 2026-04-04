@@ -66,8 +66,8 @@ const CategoriesTab = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h3 className="font-semibold text-foreground">ইভেন্ট ক্যাটাগরি</h3>
-        <Button size="sm" onClick={openNew}><Plus className="w-4 h-4 mr-1" /> নতুন যোগ করুন</Button>
+        <h3 className="font-semibold text-foreground">Event Categories</h3>
+        <Button size="sm" onClick={openNew}><Plus className="w-4 h-4 mr-1" /> Add New</Button>
       </div>
       {isLoading ? <p>Loading...</p> : (
         <div className="space-y-2">
