@@ -272,7 +272,7 @@ const BookingsTab = () => {
 
   return (
     <div>
-      <h3 className="font-semibold text-foreground mb-4">ইভেন্ট বুকিং সমূহ</h3>
+      <h3 className="font-semibold text-foreground mb-4">Event Bookings</h3>
       {isLoading ? <p>Loading...</p> : (
         <div className="space-y-3">
           {bookings.map((b: any) => (
