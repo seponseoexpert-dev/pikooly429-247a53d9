@@ -32,6 +32,7 @@ const RelationshipGrid = memo(() => {
             key={item.id}
             to={item.link || `/product-category/${item.slug}`}
             className="flex flex-col items-center gap-1.5 sm:gap-2 group snap-start min-w-[72px] sm:min-w-[90px] md:min-w-[100px]"
+          >
             <div className="w-full aspect-square rounded-xl sm:rounded-2xl overflow-hidden bg-secondary border border-border/30 group-hover:border-primary/40 group-hover:shadow-lg transition-all duration-200 group-hover:scale-105 group-active:scale-95">
               <img
                 src={item.image_url || "/placeholder.svg"}
