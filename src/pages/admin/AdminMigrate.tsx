@@ -61,9 +61,9 @@ const AdminMigrate = () => {
                 variant={item.type === "all" ? "default" : "outline"}
               >
                 {loading === item.type ? (
-                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> চলছে...</>
+                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Running...</>
                 ) : (
-                  <><Download className="mr-2 h-4 w-4" /> ইম্পোর্ট</>
+                  <><Download className="mr-2 h-4 w-4" /> Import</>
                 )}
               </Button>
             </CardContent>
