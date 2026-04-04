@@ -66,8 +66,8 @@ const CategoriesTab = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h3 className="font-semibold text-foreground">ইভেন্ট ক্যাটাগরি</h3>
-        <Button size="sm" onClick={openNew}><Plus className="w-4 h-4 mr-1" /> নতুন যোগ করুন</Button>
+        <h3 className="font-semibold text-foreground">Event Categories</h3>
+        <Button size="sm" onClick={openNew}><Plus className="w-4 h-4 mr-1" /> Add New</Button>
       </div>
       {isLoading ? <p>Loading...</p> : (
         <div className="space-y-2">
@@ -115,7 +115,7 @@ const CategoriesTab = () => {
               <Switch checked={form.is_active} onCheckedChange={v => setForm(p => ({ ...p, is_active: v }))} />
               <span className="text-sm">Active</span>
             </div>
-            <Button type="submit" className="w-full" disabled={saveMutation.isPending}>{saveMutation.isPending ? "সেভ হচ্ছে..." : "সেভ করুন"}</Button>
+            <Button type="submit" className="w-full" disabled={saveMutation.isPending}>{saveMutation.isPending ? "Saving..." : "Save"}</Button>
           </form>
         </DialogContent>
       </Dialog>
@@ -216,10 +216,10 @@ const PackagesTab = () => {
 
       <Dialog open={showForm} onOpenChange={setShowForm}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>{editItem ? "প্যাকেজ এডিট" : "নতুন প্যাকেজ"}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{editItem ? "Edit Package" : "New Package"}</DialogTitle></DialogHeader>
           <form onSubmit={e => { e.preventDefault(); saveMutation.mutate(form); }} className="space-y-3">
             <select className="w-full border border-border rounded-md p-2 bg-background text-foreground text-sm" value={form.category_id} onChange={e => setForm(p => ({ ...p, category_id: e.target.value }))} required>
-              <option value="">ক্যাটাগরি সিলেক্ট করুন</option>
+              <option value="">Select Category</option>
               {categories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
             <Input placeholder="Package Name" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} required />
@@ -229,7 +229,7 @@ const PackagesTab = () => {
               <Input placeholder="Original Price (optional)" value={form.original_price} onChange={e => setForm(p => ({ ...p, original_price: e.target.value }))} />
             </div>
             <div>
-              <label className="text-sm text-muted-foreground mb-1 block">Features (প্রতি লাইনে একটি)</label>
+              <label className="text-sm text-muted-foreground mb-1 block">Features (one per line)</label>
               <Textarea placeholder="Stage Decoration&#10;Flower Setup&#10;Lighting" value={form.features} onChange={e => setForm(p => ({ ...p, features: e.target.value }))} rows={4} />
             </div>
             <Input placeholder="Image URL" value={form.image_url} onChange={e => setForm(p => ({ ...p, image_url: e.target.value }))} />
@@ -240,7 +240,7 @@ const PackagesTab = () => {
               <div className="flex items-center gap-2"><Switch checked={form.is_featured} onCheckedChange={v => setForm(p => ({ ...p, is_featured: v }))} /><span className="text-sm">Featured</span></div>
               <div className="flex items-center gap-2"><Switch checked={form.is_active} onCheckedChange={v => setForm(p => ({ ...p, is_active: v }))} /><span className="text-sm">Active</span></div>
             </div>
-            <Button type="submit" className="w-full" disabled={saveMutation.isPending}>{saveMutation.isPending ? "সেভ হচ্ছে..." : "সেভ করুন"}</Button>
+            <Button type="submit" className="w-full" disabled={saveMutation.isPending}>{saveMutation.isPending ? "Saving..." : "Save"}</Button>
           </form>
         </DialogContent>
       </Dialog>
@@ -265,14 +265,14 @@ const BookingsTab = () => {
       const { error } = await supabase.from("event_bookings").update({ status }).eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["admin-event-bookings"] }); toast.success("আপডেট হয়েছে"); },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["admin-event-bookings"] }); toast.success("Updated successfully"); },
   });
 
   const statusColors: Record<string, string> = { pending: "bg-yellow-100 text-yellow-800", confirmed: "bg-blue-100 text-blue-800", completed: "bg-green-100 text-green-800", cancelled: "bg-red-100 text-red-800" };
 
   return (
     <div>
-      <h3 className="font-semibold text-foreground mb-4">ইভেন্ট বুকিং সমূহ</h3>
+      <h3 className="font-semibold text-foreground mb-4">Event Bookings</h3>
       {isLoading ? <p>Loading...</p> : (
         <div className="space-y-3">
           {bookings.map((b: any) => (
@@ -298,7 +298,7 @@ const BookingsTab = () => {
               </div>
             </div>
           ))}
-          {bookings.length === 0 && <p className="text-center text-muted-foreground py-6">কোনো বুকিং নেই</p>}
+          {bookings.length === 0 && <p className="text-center text-muted-foreground py-6">No bookings yet</p>}
         </div>
       )}
     </div>
@@ -310,12 +310,12 @@ const AdminEvents = () => {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-foreground">ইভেন্ট ম্যানেজমেন্ট</h1>
+        <h1 className="text-2xl font-bold text-foreground">Event Management</h1>
         <Tabs defaultValue="categories">
           <TabsList className="grid grid-cols-3 w-full max-w-md">
-            <TabsTrigger value="categories" className="gap-1"><Tag className="w-3.5 h-3.5" /> ক্যাটাগরি</TabsTrigger>
-            <TabsTrigger value="packages" className="gap-1"><Package className="w-3.5 h-3.5" /> প্যাকেজ</TabsTrigger>
-            <TabsTrigger value="bookings" className="gap-1"><CalendarCheck className="w-3.5 h-3.5" /> বুকিং</TabsTrigger>
+            <TabsTrigger value="categories" className="gap-1"><Tag className="w-3.5 h-3.5" /> Categories</TabsTrigger>
+            <TabsTrigger value="packages" className="gap-1"><Package className="w-3.5 h-3.5" /> Packages</TabsTrigger>
+            <TabsTrigger value="bookings" className="gap-1"><CalendarCheck className="w-3.5 h-3.5" /> Bookings</TabsTrigger>
           </TabsList>
           <TabsContent value="categories"><CategoriesTab /></TabsContent>
           <TabsContent value="packages"><PackagesTab /></TabsContent>

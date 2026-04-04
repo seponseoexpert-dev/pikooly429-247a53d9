@@ -87,8 +87,8 @@ const EventCategoryDetail = () => {
   if (!category) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <p className="text-muted-foreground">ক্যাটাগরি পাওয়া যায়নি</p>
-        <Link to="/events"><Button variant="outline">← সব ইভেন্ট দেখুন</Button></Link>
+        <p className="text-muted-foreground">Category not found</p>
+        <Link to="/events"><Button variant="outline">← View All Events</Button></Link>
       </main>
     );
   }
@@ -107,7 +107,7 @@ const EventCategoryDetail = () => {
       <section className="relative bg-gradient-to-br from-primary/10 via-accent/5 to-secondary/10 py-10 md:py-16">
         <div className="container mx-auto px-4">
           <Link to="/events" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary mb-4">
-            <ArrowLeft className="w-4 h-4" /> সব ইভেন্ট
+            <ArrowLeft className="w-4 h-4" /> All Events
           </Link>
           <div className="flex flex-col md:flex-row gap-6 md:gap-10 items-center">
             {category.image_url && (
@@ -148,11 +148,11 @@ const EventCategoryDetail = () => {
       {/* Packages */}
       <section className="py-10 bg-muted/30">
         <div className="container mx-auto px-4">
-          <h2 className="text-xl md:text-2xl font-bold text-center text-foreground mb-2">প্যাকেজ সমূহ</h2>
-          <p className="text-center text-muted-foreground mb-8 text-sm">আপনার বাজেট অনুযায়ী প্যাকেজ বেছে নিন</p>
+          <h2 className="text-xl md:text-2xl font-bold text-center text-foreground mb-2">Our Packages</h2>
+          <p className="text-center text-muted-foreground mb-8 text-sm">Choose a package that fits your budget</p>
 
           {packages.length === 0 ? (
-            <p className="text-center text-muted-foreground py-10">এই ক্যাটাগরিতে এখনো কোনো প্যাকেজ যোগ করা হয়নি</p>
+            <p className="text-center text-muted-foreground py-10">No packages available in this category yet</p>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {packages.map((pkg: any, i: number) => {
