@@ -87,8 +87,8 @@ const EventCategoryDetail = () => {
   if (!category) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <p className="text-muted-foreground">ক্যাটাগরি পাওয়া যায়নি</p>
-        <Link to="/events"><Button variant="outline">← সব ইভেন্ট দেখুন</Button></Link>
+        <p className="text-muted-foreground">Category not found</p>
+        <Link to="/events"><Button variant="outline">← View All Events</Button></Link>
       </main>
     );
   }
