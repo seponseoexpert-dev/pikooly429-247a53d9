@@ -265,7 +265,7 @@ const BookingsTab = () => {
       const { error } = await supabase.from("event_bookings").update({ status }).eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["admin-event-bookings"] }); toast.success("আপডেট হয়েছে"); },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["admin-event-bookings"] }); toast.success("Updated successfully"); },
   });
 
   const statusColors: Record<string, string> = { pending: "bg-yellow-100 text-yellow-800", confirmed: "bg-blue-100 text-blue-800", completed: "bg-green-100 text-green-800", cancelled: "bg-red-100 text-red-800" };
