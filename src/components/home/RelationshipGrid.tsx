@@ -26,7 +26,7 @@ const RelationshipGrid = memo(() => {
         For Every Relationship
       </h2>
 
-      <div className="grid grid-cols-4 gap-2.5 sm:gap-3 md:grid-cols-6 lg:grid-cols-8 md:gap-4 lg:gap-5">
+      <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory">
         {items.map((item: any) => (
           <Link
             key={item.id}
