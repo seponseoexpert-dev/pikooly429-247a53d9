@@ -229,7 +229,7 @@ const PackagesTab = () => {
               <Input placeholder="Original Price (optional)" value={form.original_price} onChange={e => setForm(p => ({ ...p, original_price: e.target.value }))} />
             </div>
             <div>
-              <label className="text-sm text-muted-foreground mb-1 block">Features (প্রতি লাইনে একটি)</label>
+              <label className="text-sm text-muted-foreground mb-1 block">Features (one per line)</label>
               <Textarea placeholder="Stage Decoration&#10;Flower Setup&#10;Lighting" value={form.features} onChange={e => setForm(p => ({ ...p, features: e.target.value }))} rows={4} />
             </div>
             <Input placeholder="Image URL" value={form.image_url} onChange={e => setForm(p => ({ ...p, image_url: e.target.value }))} />
