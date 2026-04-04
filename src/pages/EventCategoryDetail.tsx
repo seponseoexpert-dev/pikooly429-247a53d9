@@ -107,7 +107,7 @@ const EventCategoryDetail = () => {
       <section className="relative bg-gradient-to-br from-primary/10 via-accent/5 to-secondary/10 py-10 md:py-16">
         <div className="container mx-auto px-4">
           <Link to="/events" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary mb-4">
-            <ArrowLeft className="w-4 h-4" /> সব ইভেন্ট
+            <ArrowLeft className="w-4 h-4" /> All Events
           </Link>
           <div className="flex flex-col md:flex-row gap-6 md:gap-10 items-center">
             {category.image_url && (
