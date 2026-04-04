@@ -166,7 +166,7 @@ const Header = () => {
   };
 
   return (
-    <div className="sticky top-0 z-50">
+    <div className="sticky top-0 z-[60] safe-area-top">
       {/* Announcement Bar */}
       {showAnnouncement && (
         <div className="bg-primary text-primary-foreground text-center text-[10px] sm:text-[11px] md:text-xs py-1.5 sm:py-2 px-4 font-semibold tracking-wide">
