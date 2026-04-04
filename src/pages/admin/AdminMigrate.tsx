@@ -83,9 +83,9 @@ const AdminMigrate = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {results.categories && (
                 <div className="bg-muted rounded-lg p-4">
-                  <p className="font-semibold">ক্যাটেগরি</p>
+                  <p className="font-semibold">Categories</p>
                   <p className="text-sm text-muted-foreground">
-                    মোট: {results.categories.total} | ম্যাপড: {results.categories.mapped}
+                    Total: {results.categories.total} | Mapped: {results.categories.mapped}
                   </p>
                 </div>
               )}
