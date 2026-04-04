@@ -115,7 +115,7 @@ const CategoriesTab = () => {
               <Switch checked={form.is_active} onCheckedChange={v => setForm(p => ({ ...p, is_active: v }))} />
               <span className="text-sm">Active</span>
             </div>
-            <Button type="submit" className="w-full" disabled={saveMutation.isPending}>{saveMutation.isPending ? "সেভ হচ্ছে..." : "সেভ করুন"}</Button>
+            <Button type="submit" className="w-full" disabled={saveMutation.isPending}>{saveMutation.isPending ? "Saving..." : "Save"}</Button>
           </form>
         </DialogContent>
       </Dialog>
