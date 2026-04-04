@@ -16,6 +16,9 @@ const Header = () => {
   const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [pinnedMegaMenu, setPinnedMegaMenu] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileSearchExpanded, setMobileSearchExpanded] = useState(false);
+  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
   const { totalItems, setIsOpen } = useCart();
   const { settings, isLoading: settingsLoading } = useSiteSettings();
   const { currencies, selectedCurrency, setSelectedCurrency, formatPrice } = useMultiCurrency();
@@ -130,6 +133,17 @@ const Header = () => {
     setHoveredCat(null);
     setPinnedMegaMenu(null);
   }, [location.pathname]);
+
+  // Track scroll position for compact mobile header
+  useEffect(() => {
+    const onScroll = () => {
+      const isScrolled = window.scrollY > 60;
+      setScrolled(isScrolled);
+      if (isScrolled) setMobileSearchExpanded(false);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     const root = headerRootRef.current;
@@ -267,6 +281,18 @@ const Header = () => {
 
             {/* Right Actions */}
             <div className="flex items-center gap-0 sm:gap-0.5 ml-auto">
+              {/* Mobile search icon - visible only when scrolled */}
+              <button
+                type="button"
+                onClick={() => { setMobileSearchExpanded(true); setTimeout(() => mobileSearchInputRef.current?.focus(), 100); }}
+                className={`md:hidden relative flex flex-col items-center justify-center gap-0.5 px-1.5 py-1.5 rounded-xl text-foreground/75 hover:text-primary hover:bg-primary/5 active:scale-95 transition-all duration-200 ${
+                  scrolled && !mobileSearchExpanded ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden pointer-events-none"
+                }`}
+                aria-label="Search"
+              >
+                <Search size={19} strokeWidth={1.8} />
+              </button>
+
               <IconBtn
                 icon={theme === "dark" ? Sun : Moon}
                 label={theme === "dark" ? "Light" : "Dark"}
@@ -351,10 +377,17 @@ const Header = () => {
           </div>
 
           {/* === MOBILE SEARCH === */}
-          <div className="md:hidden pb-2 relative" ref={searchRef}>
+          {/* Full search bar - shown when not scrolled OR when expanded */}
+          <div
+            className={`md:hidden relative transition-all duration-300 ease-in-out overflow-hidden ${
+              !scrolled || mobileSearchExpanded ? "max-h-[60px] opacity-100 pb-2" : "max-h-0 opacity-0 pb-0"
+            }`}
+            ref={searchRef}
+          >
             <form onSubmit={handleSearch} className="relative group">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={15} />
               <input
+                ref={mobileSearchInputRef}
                 type="text"
                 value={searchQuery}
                 onChange={(e) => { setSearchQuery(e.target.value); setShowSuggestions(true); }}
@@ -362,8 +395,8 @@ const Header = () => {
                 placeholder={t("search_placeholder")}
                 className="w-full pl-10 pr-9 py-2.5 rounded-full bg-muted/60 border border-border/60 focus:border-primary/50 focus:ring-2 focus:ring-primary/15 outline-none text-[13px] transition-all placeholder:text-muted-foreground/60"
               />
-              {searchQuery && (
-                <button type="button" onClick={() => { setSearchQuery(""); setShowSuggestions(false); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+              {(searchQuery || mobileSearchExpanded) && (
+                <button type="button" onClick={() => { setSearchQuery(""); setShowSuggestions(false); if (mobileSearchExpanded) setMobileSearchExpanded(false); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                   <X size={15} />
                 </button>
               )}
