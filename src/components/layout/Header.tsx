@@ -281,6 +281,18 @@ const Header = () => {
 
             {/* Right Actions */}
             <div className="flex items-center gap-0 sm:gap-0.5 ml-auto">
+              {/* Mobile search icon - visible only when scrolled */}
+              <button
+                type="button"
+                onClick={() => { setMobileSearchExpanded(true); setTimeout(() => mobileSearchInputRef.current?.focus(), 100); }}
+                className={`md:hidden relative flex flex-col items-center justify-center gap-0.5 px-1.5 py-1.5 rounded-xl text-foreground/75 hover:text-primary hover:bg-primary/5 active:scale-95 transition-all duration-200 ${
+                  scrolled && !mobileSearchExpanded ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden pointer-events-none"
+                }`}
+                aria-label="Search"
+              >
+                <Search size={19} strokeWidth={1.8} />
+              </button>
+
               <IconBtn
                 icon={theme === "dark" ? Sun : Moon}
                 label={theme === "dark" ? "Light" : "Dark"}
