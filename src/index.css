@@ -113,6 +113,7 @@
     text-size-adjust: 100%;
     scroll-behavior: smooth;
     overflow-x: hidden;
+    --mobile-header-offset: 0px;
   }
 
   body {
