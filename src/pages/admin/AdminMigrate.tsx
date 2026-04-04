@@ -21,7 +21,7 @@ const AdminMigrate = () => {
 
       if (data.success) {
         setResults(data.results);
-        toast.success(`${type === "all" ? "সব" : type} মাইগ্রেশন সফল হয়েছে!`);
+        toast.success(`${type === "all" ? "All" : type} migration completed successfully!`);
       } else {
         throw new Error(data.error || "Migration failed");
       }
