@@ -28,6 +28,7 @@ const Header = () => {
   const currencyRef = useRef<HTMLDivElement>(null);
   const languageRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
+  const headerRootRef = useRef<HTMLDivElement>(null);
 
   const logoUrl = settings.company_logo || "";
   const announcementText = settings.announcement_bar_text || "🌸 Same Day Delivery Available in 500+ Cities";
@@ -130,6 +131,30 @@ const Header = () => {
     setPinnedMegaMenu(null);
   }, [location.pathname]);
 
+  useEffect(() => {
+    const root = headerRootRef.current;
+    if (!root) return;
+
+    const updateHeaderOffset = () => {
+      const isMobile = window.innerWidth < 768;
+      document.documentElement.style.setProperty(
+        "--mobile-header-offset",
+        isMobile ? `${root.offsetHeight}px` : "0px"
+      );
+    };
+
+    updateHeaderOffset();
+
+    const resizeObserver = new ResizeObserver(updateHeaderOffset);
+    resizeObserver.observe(root);
+    window.addEventListener("resize", updateHeaderOffset);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", updateHeaderOffset);
+    };
+  }, [showAnnouncement, multiLanguageEnabled, languages.length, location.pathname, searchQuery, suggestions.length]);
+
   const openMegaMenu = (id: string) => {
     if (megaMenuCloseTimer.current) { window.clearTimeout(megaMenuCloseTimer.current); megaMenuCloseTimer.current = null; }
     setHoveredCat(id);
@@ -166,7 +191,7 @@ const Header = () => {
   };
 
   return (
-    <div className="sticky top-0 z-[60] safe-area-top">
+    <div ref={headerRootRef} className="fixed inset-x-0 top-0 z-[60] safe-area-top md:sticky md:top-0">
       {/* Announcement Bar */}
       {showAnnouncement && (
         <div className="bg-primary text-primary-foreground text-center text-[10px] sm:text-[11px] md:text-xs py-1.5 sm:py-2 px-4 font-semibold tracking-wide">

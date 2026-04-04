@@ -80,7 +80,9 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => (
   <>
     <Header />
     <CartDrawer />
-    <Suspense fallback={<PageLoader />}>{children}</Suspense>
+    <div className="pt-[var(--mobile-header-offset,0px)] md:pt-0">
+      <Suspense fallback={<PageLoader />}>{children}</Suspense>
+    </div>
     <Suspense fallback={null}>
       <Footer />
     </Suspense>
