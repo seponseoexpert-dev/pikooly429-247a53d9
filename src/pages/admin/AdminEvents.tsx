@@ -219,7 +219,7 @@ const PackagesTab = () => {
           <DialogHeader><DialogTitle>{editItem ? "Edit Package" : "New Package"}</DialogTitle></DialogHeader>
           <form onSubmit={e => { e.preventDefault(); saveMutation.mutate(form); }} className="space-y-3">
             <select className="w-full border border-border rounded-md p-2 bg-background text-foreground text-sm" value={form.category_id} onChange={e => setForm(p => ({ ...p, category_id: e.target.value }))} required>
-              <option value="">ক্যাটাগরি সিলেক্ট করুন</option>
+              <option value="">Select Category</option>
               {categories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
             <Input placeholder="Package Name" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} required />
