@@ -540,6 +540,7 @@ const Header = () => {
               {/* Static links */}
               {[
                 { label: "Event Service", href: "/events", match: (p: string) => p.startsWith("/events") },
+                { label: "Photography", href: "/photography", match: (p: string) => p === "/photography" },
                 { label: "Custom Bouquet", href: "/custom-bouquet", match: (p: string) => p === "/custom-bouquet" },
               ].map((link) => {
                 const isDuplicate = categories.some(
