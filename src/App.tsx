@@ -63,6 +63,8 @@ const Install = lazy(() => import("./pages/Install"));
 const Events = lazy(() => import("./pages/Events"));
 const EventCategoryDetail = lazy(() => import("./pages/EventCategoryDetail"));
 const AdminEvents = lazy(() => import("./pages/admin/AdminEvents"));
+const Photography = lazy(() => import("./pages/Photography"));
+const AdminPhotography = lazy(() => import("./pages/admin/AdminPhotography"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -136,6 +138,7 @@ const App = () => (
               <Route path="/install" element={<PublicLayout><Install /></PublicLayout>} />
               <Route path="/events" element={<PublicLayout><Events /></PublicLayout>} />
               <Route path="/events/:slug" element={<PublicLayout><EventCategoryDetail /></PublicLayout>} />
+              <Route path="/photography" element={<PublicLayout><Photography /></PublicLayout>} />
               <Route path="/auth" element={<PublicLayout><Auth /></PublicLayout>} />
               <Route path="/account" element={<PublicLayout><Account /></PublicLayout>} />
               <Route path="/reset-password" element={<PublicLayout><ResetPassword /></PublicLayout>} />
@@ -157,6 +160,7 @@ const App = () => (
               <Route path="/admin/homepage-content" element={<AdminRoute><AdminHomepageContent /></AdminRoute>} />
               <Route path="/admin/bouquet" element={<AdminRoute><AdminBouquet /></AdminRoute>} />
               <Route path="/admin/events" element={<AdminRoute><AdminEvents /></AdminRoute>} />
+              <Route path="/admin/photography" element={<AdminRoute><AdminPhotography /></AdminRoute>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>
