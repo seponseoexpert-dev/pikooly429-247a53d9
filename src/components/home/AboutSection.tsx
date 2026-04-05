@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import medal1 from "@/assets/medal-1.png";
 import medal2 from "@/assets/medal-2.png";
