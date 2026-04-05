@@ -33,7 +33,14 @@ const CrudSection = ({ table, queryKey, fields, defaultValues, title }: CrudSect
   const [editing, setEditing] = useState<any>(null);
   const [form, setForm] = useState<Record<string, any>>(defaultValues);
 
-
+  const { data: items = [], isLoading } = useQuery({
+    queryKey: [queryKey],
+    queryFn: async () => {
+      const { data, error } = await supabase.from(table as any).select("*").order("display_order");
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const saveMutation = useMutation({
     mutationFn: async (values: any) => {
