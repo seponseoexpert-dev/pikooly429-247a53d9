@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Search, Package } from "lucide-react";
+import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { useCurrency } from "@/hooks/useCurrency";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -127,11 +128,6 @@ const AdminProducts = () => {
     setSaving(true);
 
     let imageUrl = form.image_url;
-    if (imageFile) {
-      const uploaded = await uploadImage(imageFile);
-      if (uploaded) imageUrl = uploaded;
-    }
-
     const slug = form.slug || generateSlug(form.name);
     const tags = form.tags ? form.tags.split(",").map((t) => t.trim()).filter(Boolean) : [];
     const specs = form.specifications.filter(s => s.item.trim() || s.value.trim());
@@ -325,8 +321,12 @@ const AdminProducts = () => {
               </div>
               <div className="space-y-2">
                 <Label>Image</Label>
-                <Input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] || null)} />
-                {form.image_url && <img src={form.image_url} alt="" className="h-16 w-16 object-cover rounded" />}
+                <CloudinaryUpload
+                  value={form.image_url}
+                  onChange={(url) => setForm({ ...form, image_url: url })}
+                  folder="products"
+                  label="Upload Product Image"
+                />
               </div>
               <div className="space-y-2">
                 <Label>Tags (comma separated)</Label>
