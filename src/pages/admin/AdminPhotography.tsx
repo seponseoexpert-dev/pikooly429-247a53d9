@@ -24,7 +24,7 @@ const statusColors: Record<string, string> = {
 
 const AdminPhotography = () => {
   const qc = useQueryClient();
-  const { formatPrice } = useCurrency();
+  const { formatCurrency } = useCurrency();
   const [activeTab, setActiveTab] = useState("bookings");
 
   // Bookings
@@ -153,7 +153,7 @@ const AdminPhotography = () => {
                     </div>
                     <p className="text-xs text-muted-foreground mb-2">{b.photo_services?.title} — {b.photo_packages?.name}</p>
                     <p className="text-xs mb-2">{b.event_date} {b.event_time && `at ${b.event_time}`}</p>
-                    <p className="text-sm font-bold text-primary mb-2">{formatPrice(b.total)}</p>
+                    <p className="text-sm font-bold text-primary mb-2">{formatCurrency(b.total)}</p>
                     <div className="flex gap-1 flex-wrap">
                       {b.status === "pending" && <Button size="sm" variant="default" onClick={() => updateBookingStatus.mutate({ id: b.id, status: "approved" })}>Approve</Button>}
                       {b.status === "approved" && <Button size="sm" variant="default" onClick={() => updateBookingStatus.mutate({ id: b.id, status: "completed" })}>Complete</Button>}
@@ -185,7 +185,7 @@ const AdminPhotography = () => {
                         </TableCell>
                         <TableCell>{b.photo_services?.title}<br /><span className="text-xs text-muted-foreground">{b.photo_packages?.name}</span></TableCell>
                         <TableCell>{b.event_date}</TableCell>
-                        <TableCell className="font-semibold">{formatPrice(b.total)}</TableCell>
+                        <TableCell className="font-semibold">{formatCurrency(b.total)}</TableCell>
                         <TableCell><Badge className={statusColors[b.status]}>{b.status}</Badge></TableCell>
                         <TableCell>
                           <div className="flex gap-1">
@@ -256,7 +256,7 @@ const AdminPhotography = () => {
                             <p className="font-semibold">{pkg.name}</p>
                             <p className="text-sm text-muted-foreground">{pkg.duration}</p>
                           </div>
-                          <span className="text-lg font-bold text-primary">{formatPrice(pkg.price)}</span>
+                          <span className="text-lg font-bold text-primary">{formatCurrency(pkg.price)}</span>
                         </div>
                         <Button size="sm" variant="outline" onClick={() => setEditPkg({ ...pkg })} className="w-full mt-2">
                           <Edit className="h-3 w-3 mr-1" /> Edit Price
@@ -281,7 +281,7 @@ const AdminPhotography = () => {
                       <p className="font-semibold">{t.district}</p>
                       <Badge variant={t.is_available ? "default" : "secondary"}>{t.is_available ? "Active" : "Inactive"}</Badge>
                     </div>
-                    <p className="text-lg font-bold text-primary mb-2">{formatPrice(t.fee)}</p>
+                    <p className="text-lg font-bold text-primary mb-2">{formatCurrency(t.fee)}</p>
                     <p className="text-xs text-muted-foreground mb-2">{t.request_count} requests</p>
                     <Button size="sm" variant="outline" className="w-full" onClick={() => setEditFee({ ...t })}>Edit</Button>
                   </Card>
