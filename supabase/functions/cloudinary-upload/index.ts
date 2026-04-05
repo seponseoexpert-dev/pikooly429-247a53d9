@@ -3,19 +3,35 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const cloudName = Deno.env.get('CLOUDINARY_CLOUD_NAME')
-    const apiKey = Deno.env.get('CLOUDINARY_API_KEY')
-    const apiSecret = Deno.env.get('CLOUDINARY_API_SECRET')
+    // Create admin client to read site_settings
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const adminClient = createClient(supabaseUrl, serviceKey)
+
+    // Read Cloudinary credentials from site_settings
+    const { data: settings } = await adminClient
+      .from('site_settings')
+      .select('key, value')
+      .in('key', ['cloudinary_cloud_name', 'cloudinary_api_key', 'cloudinary_api_secret'])
+
+    const settingsMap: Record<string, string> = {}
+    settings?.forEach((s: any) => { if (s.value) settingsMap[s.key] = s.value })
+
+    const cloudName = settingsMap['cloudinary_cloud_name'] || Deno.env.get('CLOUDINARY_CLOUD_NAME')
+    const apiKey = settingsMap['cloudinary_api_key'] || Deno.env.get('CLOUDINARY_API_KEY')
+    const apiSecret = settingsMap['cloudinary_api_secret'] || Deno.env.get('CLOUDINARY_API_SECRET')
 
     if (!cloudName || !apiKey || !apiSecret) {
       return new Response(
-        JSON.stringify({ error: 'Cloudinary credentials not configured' }),
+        JSON.stringify({ error: 'Cloudinary credentials not configured. Go to Admin Settings → Cloudinary to add them.' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
