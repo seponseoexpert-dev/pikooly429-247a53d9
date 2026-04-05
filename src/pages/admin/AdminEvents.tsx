@@ -104,7 +104,12 @@ const CategoriesTab = () => {
               <label className="text-sm font-medium text-foreground mb-1 block">Long Description (Rich Text)</label>
               <RichTextEditor value={form.long_description} onChange={v => setForm(p => ({ ...p, long_description: v }))} />
             </div>
-            <Input placeholder="Image URL" value={form.image_url} onChange={e => setForm(p => ({ ...p, image_url: e.target.value }))} />
+            <CloudinaryUpload
+              value={form.image_url}
+              onChange={(url) => setForm(p => ({ ...p, image_url: url }))}
+              folder="events"
+              label="Upload Image"
+            />
             <Input placeholder="Icon (optional)" value={form.icon} onChange={e => setForm(p => ({ ...p, icon: e.target.value }))} />
             <Input placeholder="Display Order" type="number" value={form.display_order} onChange={e => setForm(p => ({ ...p, display_order: parseInt(e.target.value) || 0 }))} />
             <Input placeholder="SEO Title (max 55 chars)" value={form.seo_title} onChange={e => setForm(p => ({ ...p, seo_title: e.target.value.slice(0, 55) }))} maxLength={55} />
