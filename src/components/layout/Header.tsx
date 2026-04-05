@@ -10,6 +10,33 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+const normalizeSearchText = (value: string | null | undefined) =>
+  (value || "")
+    .replace(/&amp;|&#38;|&#038;/gi, "&")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/<[^>]*>/g, " ")
+    .toLowerCase()
+    .replace(/[^a-z0-9\u0980-\u09ff&\s-]/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const matchesProductSearch = (product: any, query: string) => {
+  const normalizedQuery = normalizeSearchText(query);
+  if (!normalizedQuery) return true;
+
+  const searchParts = [
+    product.name,
+    product.short_description,
+    product.categories?.name,
+    product.subcategories?.name,
+    ...(Array.isArray(product.tags) ? product.tags : []),
+    ...((product.product_categories || []).map((item: any) => item.categories?.name).filter(Boolean)),
+    ...((product.product_subcategories || []).map((item: any) => item.subcategories?.name).filter(Boolean)),
+  ];
+
+  return normalizeSearchText(searchParts.join(" ")).includes(normalizedQuery);
+};
+
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -42,7 +69,7 @@ const Header = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("id, name, slug, price, original_price, image_url")
+        .select("id, name, slug, price, original_price, image_url, short_description, tags, categories(name), subcategories(name), product_categories(category_id, categories(name)), product_subcategories(subcategory_id, subcategories(name))")
         .eq("is_active", true)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -99,9 +126,10 @@ const Header = () => {
   const [canUseHover, setCanUseHover] = useState(false);
   const megaMenuCloseTimer = useRef<number | null>(null);
 
-  const suggestions = searchQuery.trim().length > 0
-    ? allProducts.filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 6)
-    : [];
+  const suggestions = useMemo(() => {
+    if (searchQuery.trim().length === 0) return [];
+    return allProducts.filter((product) => matchesProductSearch(product, searchQuery)).slice(0, 6);
+  }, [allProducts, searchQuery]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
