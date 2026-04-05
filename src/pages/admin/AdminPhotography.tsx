@@ -90,6 +90,14 @@ const AdminPhotography = () => {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-photo-packages"] }); toast.success("Package updated"); setEditPkg(null); },
   });
 
+  const toggleFeatured = useMutation({
+    mutationFn: async ({ id, is_featured }: { id: string; is_featured: boolean }) => {
+      const { error } = await supabase.from("photo_services").update({ is_featured }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-photo-services"] }); qc.invalidateQueries({ queryKey: ["home-photo-services"] }); toast.success("Featured status updated"); },
+  });
+
   // Portfolio
   const { data: portfolio } = useQuery({
     queryKey: ["admin-photo-portfolio"],
@@ -364,9 +372,18 @@ const AdminPhotography = () => {
             <CardContent className="space-y-6">
               {services?.map((svc: any) => (
                 <div key={svc.id}>
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="h-1 w-1 rounded-full bg-primary" />
-                    <h3 className="font-semibold text-foreground">{svc.title}</h3>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <div className="h-1 w-1 rounded-full bg-primary" />
+                      <h3 className="font-semibold text-foreground">{svc.title}</h3>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-muted-foreground">Featured</span>
+                      <Switch
+                        checked={svc.is_featured}
+                        onCheckedChange={(checked) => toggleFeatured.mutate({ id: svc.id, is_featured: checked })}
+                      />
+                    </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     {packages?.filter((p: any) => p.service_id === svc.id).map((pkg: any) => (
