@@ -1,22 +1,12 @@
 import { useEffect, useRef } from "react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
-import { useLocation } from "react-router-dom";
 
 const DynamicHead = () => {
   const { settings, isLoading } = useSiteSettings();
   const injectedRef = useRef<{ ga?: boolean; pixel?: boolean; gtm?: boolean }>({});
   const prevSettingsRef = useRef<Record<string, string>>({});
 
-  // Track current route to know if we're on homepage
-  let isHomepage = false;
-  try {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const location = useLocation();
-    isHomepage = location.pathname === "/";
-  } catch {
-    // DynamicHead is rendered outside Router, so useLocation may fail
-    isHomepage = window.location.pathname === "/";
-  }
+  const isHomepage = window.location.pathname === "/";
 
   useEffect(() => {
     if (isLoading) return;
