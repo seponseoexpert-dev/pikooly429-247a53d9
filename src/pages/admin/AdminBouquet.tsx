@@ -126,8 +126,13 @@ const AdminBouquet = () => {
                   <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
                 </div>
                 <div>
-                  <Label>Image URL</Label>
-                  <Input value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} placeholder="https://..." />
+                  <Label>Image</Label>
+                  <CloudinaryUpload
+                    value={form.image_url}
+                    onChange={(url) => setForm({ ...form, image_url: url })}
+                    folder={`bouquet-${tab}`}
+                    label="Upload Image"
+                  />
                 </div>
                 {tab === "sizes" ? (
                   <>
