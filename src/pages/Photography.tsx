@@ -522,14 +522,14 @@ const Photography = () => {
                   <span className="text-sm font-semibold text-foreground">Select Date & Time</span>
                 </div>
 
-                <Popover>
+                <Popover modal={false}>
                   <PopoverTrigger asChild>
                     <Button variant="outline" className={cn("w-full justify-start text-left rounded-xl h-11", !eventDate && "text-muted-foreground")}>
                       <Calendar className="h-4 w-4 mr-2" />
                       {eventDate ? format(eventDate, "PPP") : "Pick event date"}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 z-50" align="start" side="bottom" sideOffset={4}>
+                  <PopoverContent className="w-auto p-0 z-[100]" align="start" side="bottom" sideOffset={4}>
                     <CalendarUI mode="single" selected={eventDate} onSelect={(date) => { setEventDate(date); }} disabled={(date) => date < new Date()} initialFocus className="p-3 pointer-events-auto" />
                   </PopoverContent>
                 </Popover>
