@@ -27,7 +27,7 @@ const timeSlots = [
 
 const Photography = () => {
   const { user } = useAuth();
-  const { formatPrice } = useCurrency();
+  const { formatCurrency } = useCurrency();
   const [bookingOpen, setBookingOpen] = useState(false);
   const [step, setStep] = useState(1);
   const [selectedService, setSelectedService] = useState<any>(null);
@@ -216,7 +216,7 @@ const Photography = () => {
                   <CardContent className="pt-0">
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Starting from</span>
-                      <span className="text-xl font-bold text-primary">{formatPrice(service.starting_price)}</span>
+                      <span className="text-xl font-bold text-primary">{formatCurrency(service.starting_price)}</span>
                     </div>
                     <Button className="w-full mt-4" onClick={() => openBooking(service)}>
                       Book Now <ChevronRight className="h-4 w-4 ml-1" />
@@ -323,7 +323,7 @@ const Photography = () => {
                     <SelectContent>
                       {travelFees?.filter((t: any) => t.district !== "Dhaka").map((t: any) => (
                         <SelectItem key={t.id} value={t.district}>
-                          {t.district} {t.fee > 0 && `(+${formatPrice(t.fee)} travel fee)`}
+                          {t.district} {t.fee > 0 && `(+${formatCurrency(t.fee)} travel fee)`}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -393,7 +393,7 @@ const Photography = () => {
                           <h4 className="font-semibold">{pkg.name}</h4>
                           <p className="text-sm text-muted-foreground">{pkg.duration}</p>
                         </div>
-                        <span className="text-lg font-bold text-primary">{formatPrice(pkg.price)}</span>
+                        <span className="text-lg font-bold text-primary">{formatCurrency(pkg.price)}</span>
                       </div>
                       <ul className="text-xs text-muted-foreground space-y-1">
                         {(Array.isArray(pkg.features) ? pkg.features : []).map((f: string, i: number) => (
@@ -437,9 +437,9 @@ const Photography = () => {
                   <div className="flex justify-between"><span>Date:</span><span>{eventDate ? format(eventDate, "PPP") : "-"}</span></div>
                   <div className="flex justify-between"><span>Time:</span><span>{eventTime || "Flexible"}</span></div>
                   <div className="flex justify-between"><span>Location:</span><span>{locationType === "dhaka" ? "Dhaka" : district}</span></div>
-                  {currentTravelFee > 0 && <div className="flex justify-between"><span>Travel Fee:</span><span>{formatPrice(currentTravelFee)}</span></div>}
+                  {currentTravelFee > 0 && <div className="flex justify-between"><span>Travel Fee:</span><span>{formatCurrency(currentTravelFee)}</span></div>}
                   <div className="flex justify-between font-bold text-base border-t border-border pt-2">
-                    <span>Total:</span><span className="text-primary">{formatPrice(totalPrice)}</span>
+                    <span>Total:</span><span className="text-primary">{formatCurrency(totalPrice)}</span>
                   </div>
                 </CardContent>
               </Card>

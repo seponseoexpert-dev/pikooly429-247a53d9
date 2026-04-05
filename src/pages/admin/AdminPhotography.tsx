@@ -306,11 +306,11 @@ const AdminPhotography = () => {
                   </SelectContent>
                 </Select>
                 {newMedia.media_type === "photo" ? (
-                  <CloudinaryUpload folder="photography/portfolio" onUpload={(url) => setNewMedia({ ...newMedia, media_url: url })} currentImage={newMedia.media_url} label="Upload Photo" />
+                  <CloudinaryUpload folder="photography/portfolio" onChange={(url) => setNewMedia({ ...newMedia, media_url: url })} value={newMedia.media_url} label="Upload Photo" />
                 ) : (
                   <>
                     <Input placeholder="Video Embed URL (YouTube/Vimeo)" value={newMedia.video_embed_url} onChange={(e) => setNewMedia({ ...newMedia, video_embed_url: e.target.value, media_url: e.target.value })} />
-                    <CloudinaryUpload folder="photography/thumbnails" onUpload={(url) => setNewMedia({ ...newMedia, thumbnail_url: url })} currentImage={newMedia.thumbnail_url} label="Thumbnail Image" />
+                    <CloudinaryUpload folder="photography/thumbnails" onChange={(url) => setNewMedia({ ...newMedia, thumbnail_url: url })} value={newMedia.thumbnail_url} label="Thumbnail Image" />
                   </>
                 )}
                 <Button onClick={() => addMedia.mutate()} disabled={!newMedia.media_url}>
