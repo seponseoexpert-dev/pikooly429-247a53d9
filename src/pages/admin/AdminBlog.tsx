@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Eye, EyeOff, X } from "lucide-react";
+import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 import type { Tables } from "@/integrations/supabase/types";
@@ -235,8 +236,12 @@ const AdminBlog = () => {
               </div>
               <div className="space-y-2">
                 <Label>Cover Image</Label>
-                <Input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] || null)} />
-                {form.image_url && <img src={form.image_url} alt="" className="h-20 w-full object-cover rounded" />}
+                <CloudinaryUpload
+                  value={form.image_url}
+                  onChange={(url) => setForm({ ...form, image_url: url })}
+                  folder="blogs"
+                  label="Upload Cover Image"
+                />
               </div>
               <div className="flex items-center gap-2">
                 <Switch checked={form.is_published} onCheckedChange={(c) => setForm({ ...form, is_published: c })} />

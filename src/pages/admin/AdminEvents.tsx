@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Package, Tag, CalendarCheck } from "lucide-react";
+import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import RichTextEditor from "@/components/admin/RichTextEditor";
@@ -103,7 +104,12 @@ const CategoriesTab = () => {
               <label className="text-sm font-medium text-foreground mb-1 block">Long Description (Rich Text)</label>
               <RichTextEditor value={form.long_description} onChange={v => setForm(p => ({ ...p, long_description: v }))} />
             </div>
-            <Input placeholder="Image URL" value={form.image_url} onChange={e => setForm(p => ({ ...p, image_url: e.target.value }))} />
+            <CloudinaryUpload
+              value={form.image_url}
+              onChange={(url) => setForm(p => ({ ...p, image_url: url }))}
+              folder="events"
+              label="Upload Image"
+            />
             <Input placeholder="Icon (optional)" value={form.icon} onChange={e => setForm(p => ({ ...p, icon: e.target.value }))} />
             <Input placeholder="Display Order" type="number" value={form.display_order} onChange={e => setForm(p => ({ ...p, display_order: parseInt(e.target.value) || 0 }))} />
             <Input placeholder="SEO Title (max 55 chars)" value={form.seo_title} onChange={e => setForm(p => ({ ...p, seo_title: e.target.value.slice(0, 55) }))} maxLength={55} />
@@ -232,7 +238,12 @@ const PackagesTab = () => {
               <label className="text-sm text-muted-foreground mb-1 block">Features (one per line)</label>
               <Textarea placeholder="Stage Decoration&#10;Flower Setup&#10;Lighting" value={form.features} onChange={e => setForm(p => ({ ...p, features: e.target.value }))} rows={4} />
             </div>
-            <Input placeholder="Image URL" value={form.image_url} onChange={e => setForm(p => ({ ...p, image_url: e.target.value }))} />
+            <CloudinaryUpload
+              value={form.image_url}
+              onChange={(url) => setForm(p => ({ ...p, image_url: url }))}
+              folder="event-packages"
+              label="Upload Package Image"
+            />
             <Input placeholder="Display Order" type="number" value={form.display_order} onChange={e => setForm(p => ({ ...p, display_order: parseInt(e.target.value) || 0 }))} />
             <Input placeholder="SEO Title" value={form.seo_title} onChange={e => setForm(p => ({ ...p, seo_title: e.target.value }))} />
             <Textarea placeholder="SEO Description" value={form.seo_description} onChange={e => setForm(p => ({ ...p, seo_description: e.target.value }))} />

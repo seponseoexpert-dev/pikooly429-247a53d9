@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,7 +32,6 @@ const CrudSection = ({ table, queryKey, fields, defaultValues, title }: CrudSect
   const qc = useQueryClient();
   const [editing, setEditing] = useState<any>(null);
   const [form, setForm] = useState<Record<string, any>>(defaultValues);
-  const [uploading, setUploading] = useState<string | null>(null);
 
   const { data: items = [], isLoading } = useQuery({
     queryKey: [queryKey],
@@ -41,22 +41,6 @@ const CrudSection = ({ table, queryKey, fields, defaultValues, title }: CrudSect
       return data;
     },
   });
-
-  const handleImageUpload = async (file: File, field: Field) => {
-    const bucket = field.bucket || "images";
-    const ext = file.name.split(".").pop();
-    const path = `${table}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    setUploading(field.key);
-    const { error } = await supabase.storage.from(bucket).upload(path, file);
-    if (error) {
-      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
-      setUploading(null);
-      return;
-    }
-    const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(path);
-    setForm((prev) => ({ ...prev, [field.key]: urlData.publicUrl }));
-    setUploading(null);
-  };
 
   const saveMutation = useMutation({
     mutationFn: async (values: any) => {
@@ -151,29 +135,12 @@ const CrudSection = ({ table, queryKey, fields, defaultValues, title }: CrudSect
                   </div>
                 ) : fd.type === "image" ? (
                   <div className="mt-1.5 space-y-2">
-                    {form[fd.key] && (
-                      <img src={form[fd.key]} alt="" className="w-20 h-20 rounded-lg object-cover border border-border" />
-                    )}
-                    <div className="flex gap-2">
-                      <Input
-                        value={form[fd.key] || ""}
-                        onChange={(e) => setForm({ ...form, [fd.key]: e.target.value })}
-                        placeholder={fd.placeholder}
-                        className="flex-1"
-                      />
-                      <label className="cursor-pointer inline-flex items-center px-3 py-2 text-xs font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90">
-                        {uploading === fd.key ? "..." : "Upload"}
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) handleImageUpload(file, fd);
-                          }}
-                        />
-                      </label>
-                    </div>
+                    <CloudinaryUpload
+                      value={form[fd.key] || ""}
+                      onChange={(url) => setForm({ ...form, [fd.key]: url })}
+                      folder={table}
+                      label="Upload Image"
+                    />
                   </div>
                 ) : (
                   <Input

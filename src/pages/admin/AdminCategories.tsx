@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, GripVertical, PlusCircle, MinusCircle, ChevronDown, ChevronRight, Tag } from "lucide-react";
+import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import type { Tables } from "@/integrations/supabase/types";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 
@@ -266,8 +267,12 @@ const AdminCategories = () => {
               </div>
               <div className="space-y-2">
                 <Label>Image</Label>
-                <Input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] || null)} />
-                {form.image_url && <img src={form.image_url} alt="" className="h-16 w-16 object-cover rounded" />}
+                <CloudinaryUpload
+                  value={form.image_url}
+                  onChange={(url) => setForm({ ...form, image_url: url })}
+                  folder="categories"
+                  label="Upload Category Image"
+                />
               </div>
               <div className="space-y-2">
                 <Label>Display Order</Label>
@@ -395,8 +400,12 @@ const AdminCategories = () => {
             </div>
             <div className="space-y-2">
               <Label>Image</Label>
-              <Input type="file" accept="image/*" onChange={(e) => setSubImageFile(e.target.files?.[0] || null)} />
-              {subForm.image_url && <img src={subForm.image_url} alt="" className="h-12 w-12 object-cover rounded" />}
+              <CloudinaryUpload
+                value={subForm.image_url}
+                onChange={(url) => setSubForm({ ...subForm, image_url: url })}
+                folder="subcategories"
+                label="Upload Subcategory Image"
+              />
             </div>
             <div className="space-y-2">
               <Label>Display Order</Label>
