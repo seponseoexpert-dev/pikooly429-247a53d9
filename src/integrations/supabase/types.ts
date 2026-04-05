@@ -842,6 +842,245 @@ export type Database = {
         }
         Relationships: []
       }
+      photo_bookings: {
+        Row: {
+          booking_number: string
+          created_at: string
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string
+          district: string | null
+          event_address: string
+          event_date: string
+          event_time: string | null
+          id: string
+          location_type: string
+          notes: string | null
+          package_id: string | null
+          service_id: string | null
+          status: string
+          total: number
+          travel_fee: number
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          booking_number: string
+          created_at?: string
+          customer_email?: string | null
+          customer_name: string
+          customer_phone: string
+          district?: string | null
+          event_address: string
+          event_date: string
+          event_time?: string | null
+          id?: string
+          location_type?: string
+          notes?: string | null
+          package_id?: string | null
+          service_id?: string | null
+          status?: string
+          total?: number
+          travel_fee?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          booking_number?: string
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string
+          district?: string | null
+          event_address?: string
+          event_date?: string
+          event_time?: string | null
+          id?: string
+          location_type?: string
+          notes?: string | null
+          package_id?: string | null
+          service_id?: string | null
+          status?: string
+          total?: number
+          travel_fee?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "photo_bookings_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "photo_packages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "photo_bookings_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "photo_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      photo_packages: {
+        Row: {
+          created_at: string
+          display_order: number
+          duration: string
+          features: Json
+          id: string
+          is_active: boolean
+          name: string
+          price: number
+          service_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          duration: string
+          features?: Json
+          id?: string
+          is_active?: boolean
+          name: string
+          price?: number
+          service_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          duration?: string
+          features?: Json
+          id?: string
+          is_active?: boolean
+          name?: string
+          price?: number
+          service_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "photo_packages_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "photo_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      photo_portfolio: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          media_type: string
+          media_url: string
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          video_embed_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          media_type?: string
+          media_url: string
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          video_embed_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          media_type?: string
+          media_url?: string
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          video_embed_url?: string | null
+        }
+        Relationships: []
+      }
+      photo_services: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          id: string
+          image_url: string | null
+          is_active: boolean
+          is_featured: boolean
+          short_description: string | null
+          starting_price: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          is_featured?: boolean
+          short_description?: string | null
+          starting_price?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          is_featured?: boolean
+          short_description?: string | null
+          starting_price?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      photo_travel_fees: {
+        Row: {
+          created_at: string
+          district: string
+          fee: number
+          id: string
+          is_available: boolean
+          request_count: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          district: string
+          fee?: number
+          id?: string
+          is_available?: boolean
+          request_count?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          district?: string
+          fee?: number
+          id?: string
+          is_available?: boolean
+          request_count?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       product_categories: {
         Row: {
           category_id: string
