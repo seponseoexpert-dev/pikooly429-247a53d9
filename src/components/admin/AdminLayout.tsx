@@ -40,6 +40,7 @@ const navGroups = [
       { label: "Blog", icon: FileText, path: "/admin/blog" },
       { label: "Reviews", icon: Star, path: "/admin/reviews" },
       { label: "Events", icon: CalendarCheck, path: "/admin/events" },
+      { label: "Photography", icon: Camera, path: "/admin/photography" },
       { label: "Homepage", icon: LayoutDashboard, path: "/admin/homepage-content" },
     ],
   },
