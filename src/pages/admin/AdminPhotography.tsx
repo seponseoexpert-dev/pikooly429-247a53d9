@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Camera, MapPin, DollarSign, Image, Trash2, Plus, Edit } from "lucide-react";
-import CloudinaryUpload from "@/components/admin/CloudinaryUpload";
+import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { useCurrency } from "@/hooks/useCurrency";
 
 const statusColors: Record<string, string> = {
