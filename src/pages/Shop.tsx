@@ -7,6 +7,33 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
+const normalizeSearchText = (value: string | null | undefined) =>
+  (value || "")
+    .replace(/&amp;|&#38;|&#038;/gi, "&")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/<[^>]*>/g, " ")
+    .toLowerCase()
+    .replace(/[^a-z0-9\u0980-\u09ff&\s-]/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const matchesProductSearch = (product: any, query: string) => {
+  const normalizedQuery = normalizeSearchText(query);
+  if (!normalizedQuery) return true;
+
+  const searchParts = [
+    product.name,
+    product.short_description,
+    product.description,
+    product.categories?.name,
+    ...(product.product_categories?.map((item: any) => item.categories?.name).filter(Boolean) || []),
+    ...(product.product_subcategories?.map((item: any) => item.subcategories?.name).filter(Boolean) || []),
+    ...(Array.isArray(product.tags) ? product.tags : []),
+  ];
+
+  return normalizeSearchText(searchParts.join(" ")).includes(normalizedQuery);
+};
+
 const Shop = () => {
   const { catSlug, subSlug } = useParams();
   const [searchParams] = useSearchParams();
@@ -27,7 +54,7 @@ const Shop = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("*, categories(name, slug), product_categories(category_id, categories(name, slug)), product_subcategories(subcategory_id)")
+        .select("*, categories(name, slug), subcategories(name, slug), product_categories(category_id, categories(name, slug)), product_subcategories(subcategory_id, subcategories(name, slug))")
         .eq("is_active", true)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -211,8 +238,7 @@ const Shop = () => {
       : products;
 
     if (searchParam) {
-      const q = searchParam.toLowerCase();
-      list = list.filter((p: any) => p.name?.toLowerCase().includes(q));
+      list = list.filter((p: any) => matchesProductSearch(p, searchParam));
     }
 
     if (selectedSub) {
@@ -325,7 +351,9 @@ const Shop = () => {
 
       {!productsLoading && filtered.length === 0 && (
         <div className="text-center py-20 text-muted-foreground">
-          <p className="text-sm sm:text-base md:text-lg">No products found in this category.</p>
+          <p className="text-sm sm:text-base md:text-lg">
+            {searchParam ? `No products found for “${searchParam}”.` : "No products found in this category."}
+          </p>
         </div>
       )}
 
