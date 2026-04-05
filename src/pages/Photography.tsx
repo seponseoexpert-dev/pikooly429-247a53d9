@@ -529,8 +529,8 @@ const Photography = () => {
                       {eventDate ? format(eventDate, "PPP") : "Pick event date"}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <CalendarUI mode="single" selected={eventDate} onSelect={setEventDate} disabled={(date) => date < new Date()} initialFocus className="p-3 pointer-events-auto" />
+                  <PopoverContent className="w-auto p-0 z-50" align="start" side="bottom" sideOffset={4}>
+                    <CalendarUI mode="single" selected={eventDate} onSelect={(date) => { setEventDate(date); }} disabled={(date) => date < new Date()} initialFocus className="p-3 pointer-events-auto" />
                   </PopoverContent>
                 </Popover>
 
