@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   Save, Building2, Globe, Mail, MapPin, KeyRound,
   Bell, BellRing, Share2, Cookie, BarChart3, Palette, Image,
-  Settings, Upload, X, Phone,
+  Settings, Upload, X, Phone, Cloud,
   Store, Gift, Ruler, Receipt, FileText, Shield, Languages,
   MessageSquare, CreditCard, Award, Star,
 } from "lucide-react";
@@ -53,6 +53,7 @@ const settingSections = [
   { key: "footer", label: "Footer", icon: FileText },
   { key: "trending_tabs", label: "Trending Tabs", icon: Star },
   { key: "bouquet_seo", label: "Bouquet SEO", icon: FileText },
+  { key: "cloudinary", label: "Cloudinary", icon: Cloud },
 ];
 
 type FieldDef = {
@@ -371,6 +372,11 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "bouquet_seo_og_image", label: "OG Image", type: "image_upload" as const },
     { key: "bouquet_seo_jsonld_name", label: "Schema Name", placeholder: "Custom Flower Bouquet Builder - Pikooly" },
     { key: "bouquet_seo_jsonld_description", label: "Schema Description", type: "textarea" as const, placeholder: "Design your own custom flower bouquet online...", fullWidth: true },
+  ],
+  cloudinary: [
+    { key: "cloudinary_cloud_name", label: "Cloud Name", placeholder: "Your Cloudinary cloud name" },
+    { key: "cloudinary_api_key", label: "API Key", placeholder: "Your Cloudinary API key" },
+    { key: "cloudinary_api_secret", label: "API Secret", placeholder: "Your Cloudinary API secret" },
   ],
 };
 
