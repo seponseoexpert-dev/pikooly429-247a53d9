@@ -32,7 +32,7 @@ const CrudSection = ({ table, queryKey, fields, defaultValues, title }: CrudSect
   const qc = useQueryClient();
   const [editing, setEditing] = useState<any>(null);
   const [form, setForm] = useState<Record<string, any>>(defaultValues);
-  const [uploading, setUploading] = useState<string | null>(null);
+  const [_uploading, _setUploading] = useState<string | null>(null);
 
   const { data: items = [], isLoading } = useQuery({
     queryKey: [queryKey],
