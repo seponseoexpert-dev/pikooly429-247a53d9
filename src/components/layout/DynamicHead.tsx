@@ -4,10 +4,14 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
 const DynamicHead = () => {
   const { settings, isLoading } = useSiteSettings();
   const injectedRef = useRef<{ ga?: boolean; pixel?: boolean; gtm?: boolean }>({});
+  const prevSettingsRef = useRef<Record<string, string>>({});
+
+  const isHomepage = window.location.pathname === "/";
 
   useEffect(() => {
     if (isLoading) return;
 
+    // Always update favicon
     const faviconUrl = settings.company_favicon;
     if (faviconUrl) {
       let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
@@ -16,31 +20,43 @@ const DynamicHead = () => {
         link.rel = "icon";
         document.head.appendChild(link);
       }
-      link.href = faviconUrl;
+      if (link.href !== faviconUrl) {
+        link.href = faviconUrl;
+      }
     }
 
-    const currentTitle = document.title?.trim();
+    // Update title: always apply site_title on homepage or when no page-specific title is set
     const siteTitle = settings.site_title?.trim();
-    const shouldApplySiteTitle = !currentTitle || currentTitle === "Pikooly";
+    if (siteTitle) {
+      const currentTitle = document.title?.trim();
+      const prevSiteTitle = prevSettingsRef.current.site_title?.trim();
+      const isDefaultTitle = !currentTitle || currentTitle === "Pikooly";
+      const settingsChanged = prevSiteTitle && prevSiteTitle !== siteTitle;
 
-    if (siteTitle && shouldApplySiteTitle) {
-      document.title = siteTitle;
+      if (isDefaultTitle || isHomepage || settingsChanged) {
+        document.title = settings.homepage_seo_title?.trim() || siteTitle;
+      }
     }
 
+    // Update meta description
     const siteDescription = settings.homepage_meta_description?.trim();
     if (siteDescription) {
-      let descriptionMeta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
-      if (!descriptionMeta) {
-        descriptionMeta = document.createElement("meta");
-        descriptionMeta.name = "description";
-        document.head.appendChild(descriptionMeta);
+      let descMeta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
+      if (!descMeta) {
+        descMeta = document.createElement("meta");
+        descMeta.name = "description";
+        document.head.appendChild(descMeta);
       }
-
-      if (!descriptionMeta.content || descriptionMeta.content === "Fresh flowers, gifts, and cakes delivered across Bangladesh.") {
-        descriptionMeta.content = siteDescription.slice(0, 160);
+      const prevDesc = prevSettingsRef.current.homepage_meta_description?.trim();
+      const isDefault = !descMeta.content || descMeta.content === "Fresh flowers, gifts, and cakes delivered across Bangladesh.";
+      if (isDefault || isHomepage || (prevDesc && prevDesc !== siteDescription)) {
+        descMeta.content = siteDescription.slice(0, 160);
       }
     }
-  }, [settings, isLoading]);
+
+    // Store current settings for next comparison
+    prevSettingsRef.current = { ...settings };
+  }, [settings, isLoading, isHomepage]);
 
   useEffect(() => {
     const gaId = settings.google_analytics_id;
