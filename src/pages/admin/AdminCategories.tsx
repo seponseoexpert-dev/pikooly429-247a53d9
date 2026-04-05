@@ -267,8 +267,12 @@ const AdminCategories = () => {
               </div>
               <div className="space-y-2">
                 <Label>Image</Label>
-                <Input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] || null)} />
-                {form.image_url && <img src={form.image_url} alt="" className="h-16 w-16 object-cover rounded" />}
+                <CloudinaryUpload
+                  value={form.image_url}
+                  onChange={(url) => setForm({ ...form, image_url: url })}
+                  folder="categories"
+                  label="Upload Category Image"
+                />
               </div>
               <div className="space-y-2">
                 <Label>Display Order</Label>
