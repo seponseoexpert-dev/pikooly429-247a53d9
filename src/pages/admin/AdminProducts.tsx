@@ -128,11 +128,6 @@ const AdminProducts = () => {
     setSaving(true);
 
     let imageUrl = form.image_url;
-    if (imageFile) {
-      const uploaded = await uploadImage(imageFile);
-      if (uploaded) imageUrl = uploaded;
-    }
-
     const slug = form.slug || generateSlug(form.name);
     const tags = form.tags ? form.tags.split(",").map((t) => t.trim()).filter(Boolean) : [];
     const specs = form.specifications.filter(s => s.item.trim() || s.value.trim());
