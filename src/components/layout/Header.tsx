@@ -284,7 +284,7 @@ const Header = () => {
               {/* Mobile search icon - visible only when scrolled */}
               <button
                 type="button"
-                onClick={() => { setMobileSearchExpanded(true); setTimeout(() => mobileSearchInputRef.current?.focus(), 100); }}
+                onClick={() => { setMobileSearchExpanded(true); setTimeout(() => mobileSearchInputRef.current?.focus(), 50); }}
                 className={`md:hidden relative flex flex-col items-center justify-center gap-0.5 px-1.5 py-1.5 rounded-xl text-foreground/75 hover:text-primary hover:bg-primary/5 active:scale-95 transition-all duration-200 ${
                   scrolled && !mobileSearchExpanded ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden pointer-events-none"
                 }`}
@@ -379,7 +379,7 @@ const Header = () => {
           {/* === MOBILE SEARCH === */}
           {/* Full search bar - shown when not scrolled OR when expanded */}
           <div
-            className={`md:hidden relative transition-all duration-300 ease-in-out overflow-hidden ${
+            className={`md:hidden relative transition-all duration-100 ease-out overflow-hidden ${
               !scrolled || mobileSearchExpanded ? "max-h-[60px] opacity-100 pb-2" : "max-h-0 opacity-0 pb-0"
             }`}
             ref={searchRef}
