@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   Save, Building2, Globe, Mail, MapPin, KeyRound,
   Bell, BellRing, Share2, Cookie, BarChart3, Palette, Image,
-  Settings, Upload, X, Phone,
+  Settings, Upload, X, Phone, Cloud,
   Store, Gift, Ruler, Receipt, FileText, Shield, Languages,
   MessageSquare, CreditCard, Award, Star,
 } from "lucide-react";
