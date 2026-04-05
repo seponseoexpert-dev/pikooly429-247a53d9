@@ -122,41 +122,40 @@ const EventsSection = () => {
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {photoServices.map((svc: any, i: number) => {
                 const fallback = PHOTO_FALLBACKS[i % PHOTO_FALLBACKS.length];
                 return (
                   <motion.div
                     key={svc.id}
-                    initial={{ opacity: 0, y: 12 }}
+                    initial={{ opacity: 0, y: 16 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: i * 0.06, duration: 0.35 }}
+                    transition={{ delay: i * 0.08, duration: 0.4 }}
                   >
                     <Link
                       to="/photography"
-                      className="group block rounded-2xl overflow-hidden border border-border/50 hover:border-primary/40 transition-all duration-300 hover:shadow-md bg-card"
+                      className="group block rounded-2xl overflow-hidden border border-border/40 hover:border-primary/50 transition-all duration-300 hover:shadow-lg bg-card"
                     >
-                      <div className="relative overflow-hidden aspect-[4/3]">
+                      <div className="relative overflow-hidden aspect-square bg-muted/30 p-4 flex items-center justify-center">
                         <img
                           src={svc.image_url || fallback}
                           alt={svc.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          className="w-4/5 h-4/5 object-contain group-hover:scale-110 transition-transform duration-500 drop-shadow-md"
                           loading="lazy"
                           width={400}
-                          height={300}
+                          height={400}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         {svc.starting_price > 0 && (
-                          <span className="absolute top-2 right-2 bg-primary/90 text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm shadow-sm">
+                          <span className="absolute top-3 right-3 bg-primary text-primary-foreground text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md">
                             ৳{svc.starting_price.toLocaleString()}~
                           </span>
                         )}
                       </div>
-                      <div className="p-2.5 text-center">
-                        <p className="text-xs md:text-sm font-semibold text-foreground truncate">{svc.title}</p>
+                      <div className="p-3 text-center border-t border-border/30">
+                        <p className="text-sm font-semibold text-foreground leading-tight">{svc.title}</p>
                         {svc.short_description && (
-                          <p className="text-[10px] text-muted-foreground truncate mt-0.5">{svc.short_description}</p>
+                          <p className="text-[11px] text-muted-foreground mt-1 line-clamp-1">{svc.short_description}</p>
                         )}
                       </div>
                     </Link>
