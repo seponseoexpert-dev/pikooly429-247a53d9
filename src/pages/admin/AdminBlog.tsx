@@ -236,8 +236,12 @@ const AdminBlog = () => {
               </div>
               <div className="space-y-2">
                 <Label>Cover Image</Label>
-                <Input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] || null)} />
-                {form.image_url && <img src={form.image_url} alt="" className="h-20 w-full object-cover rounded" />}
+                <CloudinaryUpload
+                  value={form.image_url}
+                  onChange={(url) => setForm({ ...form, image_url: url })}
+                  folder="blogs"
+                  label="Upload Cover Image"
+                />
               </div>
               <div className="flex items-center gap-2">
                 <Switch checked={form.is_published} onCheckedChange={(c) => setForm({ ...form, is_published: c })} />

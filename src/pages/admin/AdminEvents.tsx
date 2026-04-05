@@ -238,7 +238,12 @@ const PackagesTab = () => {
               <label className="text-sm text-muted-foreground mb-1 block">Features (one per line)</label>
               <Textarea placeholder="Stage Decoration&#10;Flower Setup&#10;Lighting" value={form.features} onChange={e => setForm(p => ({ ...p, features: e.target.value }))} rows={4} />
             </div>
-            <Input placeholder="Image URL" value={form.image_url} onChange={e => setForm(p => ({ ...p, image_url: e.target.value }))} />
+            <CloudinaryUpload
+              value={form.image_url}
+              onChange={(url) => setForm(p => ({ ...p, image_url: url }))}
+              folder="event-packages"
+              label="Upload Package Image"
+            />
             <Input placeholder="Display Order" type="number" value={form.display_order} onChange={e => setForm(p => ({ ...p, display_order: parseInt(e.target.value) || 0 }))} />
             <Input placeholder="SEO Title" value={form.seo_title} onChange={e => setForm(p => ({ ...p, seo_title: e.target.value }))} />
             <Textarea placeholder="SEO Description" value={form.seo_description} onChange={e => setForm(p => ({ ...p, seo_description: e.target.value }))} />
