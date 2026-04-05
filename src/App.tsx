@@ -63,6 +63,8 @@ const Install = lazy(() => import("./pages/Install"));
 const Events = lazy(() => import("./pages/Events"));
 const EventCategoryDetail = lazy(() => import("./pages/EventCategoryDetail"));
 const AdminEvents = lazy(() => import("./pages/admin/AdminEvents"));
+const Photography = lazy(() => import("./pages/Photography"));
+const AdminPhotography = lazy(() => import("./pages/admin/AdminPhotography"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
