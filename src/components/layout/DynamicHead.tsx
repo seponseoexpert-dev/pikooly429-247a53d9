@@ -2,11 +2,12 @@ import { useEffect, useRef } from "react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const DynamicHead = () => {
-  const { settings } = useSiteSettings();
+  const { settings, isLoading } = useSiteSettings();
   const injectedRef = useRef<{ ga?: boolean; pixel?: boolean; gtm?: boolean }>({});
 
   useEffect(() => {
-    // Update favicon
+    if (isLoading) return;
+
     const faviconUrl = settings.company_favicon;
     if (faviconUrl) {
       let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
@@ -18,14 +19,29 @@ const DynamicHead = () => {
       link.href = faviconUrl;
     }
 
-    // Update site title
-    const siteTitle = settings.site_title;
-    if (siteTitle) {
+    const currentTitle = document.title?.trim();
+    const siteTitle = settings.site_title?.trim();
+    const shouldApplySiteTitle = !currentTitle || currentTitle === "Pikooly";
+
+    if (siteTitle && shouldApplySiteTitle) {
       document.title = siteTitle;
     }
-  }, [settings]);
 
-  // Google Analytics (gtag.js)
+    const siteDescription = settings.homepage_meta_description?.trim();
+    if (siteDescription) {
+      let descriptionMeta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
+      if (!descriptionMeta) {
+        descriptionMeta = document.createElement("meta");
+        descriptionMeta.name = "description";
+        document.head.appendChild(descriptionMeta);
+      }
+
+      if (!descriptionMeta.content || descriptionMeta.content === "Fresh flowers, gifts, and cakes delivered across Bangladesh.") {
+        descriptionMeta.content = siteDescription.slice(0, 160);
+      }
+    }
+  }, [settings, isLoading]);
+
   useEffect(() => {
     const gaId = settings.google_analytics_id;
     if (!gaId || injectedRef.current.ga) return;
@@ -46,7 +62,6 @@ const DynamicHead = () => {
     document.head.appendChild(inline);
   }, [settings.google_analytics_id]);
 
-  // Facebook Pixel
   useEffect(() => {
     const pixelId = settings.facebook_pixel_id;
     if (!pixelId || injectedRef.current.pixel) return;
@@ -66,18 +81,8 @@ const DynamicHead = () => {
       fbq('track', 'PageView');
     `;
     document.head.appendChild(inline);
-
-    const noscript = document.createElement("noscript");
-    const img = document.createElement("img");
-    img.height = 1;
-    img.width = 1;
-    img.style.display = "none";
-    img.src = `https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1`;
-    noscript.appendChild(img);
-    document.head.appendChild(noscript);
   }, [settings.facebook_pixel_id]);
 
-  // Google Tag Manager
   useEffect(() => {
     const gtmId = settings.google_tag_manager_id;
     if (!gtmId || injectedRef.current.gtm) return;

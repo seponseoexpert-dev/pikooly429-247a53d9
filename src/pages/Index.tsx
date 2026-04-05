@@ -49,8 +49,8 @@ const Index = () => {
     });
   }, [queryClient]);
 
-  const seoTitle = settings.homepage_seo_title || settings.site_title || "Pikooly — Online Flower, Gift & Cake Shop in Bangladesh";
-  const seoDesc = settings.homepage_meta_description || "Order fresh flowers, beautiful gifts, and delicious cakes online in Bangladesh. Same day delivery in Dhaka.";
+  const seoTitle = settings.homepage_seo_title || settings.site_title || "Pikooly";
+  const seoDesc = settings.homepage_meta_description || "Fresh flowers, gifts, and cakes delivered across Bangladesh.";
   const siteName = settings.store_name || settings.site_title || "Pikooly";
   const siteUrl = window.location.origin;
 
