@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Truck, Gift, User, Flower2 } from "lucide-react";
+import { Home, Truck, Gift, User, Flower2, CalendarHeart } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const BottomNav = () => {
@@ -7,8 +7,9 @@ const BottomNav = () => {
   const { t } = useLanguage();
 
   const isActive = (href: string) =>
-    location.pathname === href || (href !== "/" && location.pathname + location.search === href);
+    location.pathname === href || (href !== "/" && location.pathname.startsWith(href));
 
+  const iconSize = 19;
   const iconSize = 20;
   const strokeW = 1.5;
   const activeStrokeW = 1.8;
