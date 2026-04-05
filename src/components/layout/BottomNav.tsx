@@ -10,17 +10,21 @@ const BottomNav = () => {
     location.pathname === href || (href !== "/" && location.pathname.startsWith(href));
 
   const iconSize = 19;
-  const iconSize = 20;
   const strokeW = 1.5;
   const activeStrokeW = 1.8;
 
   const itemClass = (active: boolean) =>
-    `flex flex-col items-center justify-center gap-[3px] transition-all duration-200 active:scale-90 min-w-[44px] min-h-[44px] ${
+    `flex flex-col items-center justify-center gap-[2px] transition-all duration-200 active:scale-90 min-h-[44px] ${
       active ? "text-primary" : "text-muted-foreground"
     }`;
 
   const labelClass = (active: boolean) =>
-    `text-[9px] leading-none tracking-wide ${active ? "font-semibold" : "font-medium"}`;
+    `text-[8px] leading-none tracking-wide ${active ? "font-semibold" : "font-medium"}`;
+
+  return (
+    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+      <div className="relative safe-area-bottom bg-card/98 backdrop-blur-xl border-t border-border/50">
+        <div className="grid grid-cols-6 h-[58px]">
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
