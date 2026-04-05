@@ -373,6 +373,11 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "bouquet_seo_jsonld_name", label: "Schema Name", placeholder: "Custom Flower Bouquet Builder - Pikooly" },
     { key: "bouquet_seo_jsonld_description", label: "Schema Description", type: "textarea" as const, placeholder: "Design your own custom flower bouquet online...", fullWidth: true },
   ],
+  cloudinary: [
+    { key: "cloudinary_cloud_name", label: "Cloud Name", placeholder: "Your Cloudinary cloud name" },
+    { key: "cloudinary_api_key", label: "API Key", placeholder: "Your Cloudinary API key" },
+    { key: "cloudinary_api_secret", label: "API Secret", placeholder: "Your Cloudinary API secret" },
+  ],
 };
 
 // Notification Alert fields per channel
