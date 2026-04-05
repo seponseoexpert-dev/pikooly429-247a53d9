@@ -79,10 +79,12 @@ const AdminPhotography = () => {
       toast.error("Booking update failed");
     },
     onSuccess: (_data, variables) => {
-      toast.success(variables.status === "completed" ? "Booking marked as completed" : "Booking updated");
+      const normalizedStatus = normalizeBookingStatus(variables.status);
+      toast.success(normalizedStatus === "completed" ? "Booking marked as completed" : "Booking updated");
     },
     onSettled: async () => {
       await qc.invalidateQueries({ queryKey: ["admin-photo-bookings"] });
+      await qc.refetchQueries({ queryKey: ["admin-photo-bookings"] });
     },
   });
 
@@ -183,6 +185,67 @@ const AdminPhotography = () => {
     .filter((b: any) => b.status === "completed")
     .reduce((sum: number, b: any) => sum + Number(b.total || 0), 0);
 
+  const renderBookingActions = (booking: any, compact = false) => {
+    const isUpdatingThisBooking = updateBookingStatus.isPending && updateBookingStatus.variables?.id === booking.id;
+
+    if (booking.status === "completed") {
+      return (
+        <Badge variant="outline" className="h-8 rounded-lg border-primary/20 bg-primary/5 px-3 text-xs text-primary">
+          Completed
+        </Badge>
+      );
+    }
+
+    if (booking.status === "cancelled") {
+      return (
+        <Badge variant="outline" className="h-8 rounded-lg border-destructive/20 bg-destructive/5 px-3 text-xs text-destructive">
+          Cancelled
+        </Badge>
+      );
+    }
+
+    return (
+      <div className={`flex ${compact ? "flex-col items-stretch" : "flex-wrap items-center"} gap-2`}>
+        {booking.status === "pending" && (
+          <Button
+            type="button"
+            size="sm"
+            className="h-8 rounded-lg text-xs"
+            disabled={isUpdatingThisBooking}
+            onClick={() => updateBookingStatus.mutate({ id: booking.id, status: "approved" })}
+          >
+            {isUpdatingThisBooking ? "Updating..." : "Approve"}
+          </Button>
+        )}
+
+        {booking.status === "approved" && (
+          <Button
+            type="button"
+            size="sm"
+            className="h-8 rounded-lg text-xs"
+            disabled={isUpdatingThisBooking}
+            onClick={() => updateBookingStatus.mutate({ id: booking.id, status: "completed" })}
+          >
+            {isUpdatingThisBooking ? "Updating..." : "Mark Complete"}
+          </Button>
+        )}
+
+        {booking.status !== "cancelled" && booking.status !== "completed" && (
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="h-8 rounded-lg border-destructive/20 text-xs text-destructive hover:bg-destructive/10"
+            disabled={isUpdatingThisBooking}
+            onClick={() => updateBookingStatus.mutate({ id: booking.id, status: "cancelled" })}
+          >
+            Cancel Booking
+          </Button>
+        )}
+      </div>
+    );
+  };
+
   const StatusBadge = ({ status }: { status: string }) => {
     const config = statusConfig[status] || statusConfig.pending;
     const Icon = config.icon;
@@ -279,15 +342,7 @@ const AdminPhotography = () => {
                         <p className="text-xs text-muted-foreground">{b.event_date} {b.event_time && `• ${b.event_time}`}</p>
                         <p className="text-lg font-bold text-primary">{formatCurrency(b.total)}</p>
                       </div>
-                      <div className="flex gap-1.5">
-                        {b.status === "pending" && <Button type="button" size="sm" className="h-8 text-xs rounded-lg" onClick={() => updateBookingStatus.mutate({ id: b.id, status: "approved" })}>Approve</Button>}
-                        {b.status === "approved" && <Button type="button" size="sm" className="h-8 text-xs rounded-lg" onClick={() => updateBookingStatus.mutate({ id: b.id, status: "completed" })}>Complete</Button>}
-                        {b.status !== "cancelled" && b.status !== "completed" && (
-                          <Button type="button" size="sm" variant="outline" className="h-8 text-xs rounded-lg text-destructive border-destructive/30 hover:bg-destructive/10" onClick={() => updateBookingStatus.mutate({ id: b.id, status: "cancelled" })}>
-                            <XCircle className="h-3 w-3" />
-                          </Button>
-                        )}
-                      </div>
+                       {renderBookingActions(b, true)}
                     </div>
                   </div>
                 ))}
@@ -322,11 +377,7 @@ const AdminPhotography = () => {
                         <TableCell className="font-semibold text-primary">{formatCurrency(b.total)}</TableCell>
                         <TableCell><StatusBadge status={b.status} /></TableCell>
                         <TableCell>
-                          <div className="flex gap-1.5">
-                            {b.status === "pending" && <Button type="button" size="sm" className="h-7 text-xs rounded-lg" onClick={() => updateBookingStatus.mutate({ id: b.id, status: "approved" })}>Approve</Button>}
-                            {b.status === "approved" && <Button type="button" size="sm" className="h-7 text-xs rounded-lg" onClick={() => updateBookingStatus.mutate({ id: b.id, status: "completed" })}>Complete</Button>}
-                            {b.status !== "cancelled" && b.status !== "completed" && <Button type="button" size="sm" variant="ghost" className="h-7 text-xs text-destructive hover:bg-destructive/10" onClick={() => updateBookingStatus.mutate({ id: b.id, status: "cancelled" })}><XCircle className="h-3.5 w-3.5" /></Button>}
-                          </div>
+                           {renderBookingActions(b)}
                         </TableCell>
                       </TableRow>
                     ))}
