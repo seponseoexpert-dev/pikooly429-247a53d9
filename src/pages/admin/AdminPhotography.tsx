@@ -132,7 +132,7 @@ const AdminPhotography = () => {
   const totalBookings = bookings?.length || 0;
   const pendingCount = bookings?.filter((b: any) => b.status === "pending" || b.status === "approved").length || 0;
   const completedCount = bookings?.filter((b: any) => b.status === "completed").length || 0;
-  const totalRevenue = bookings?.reduce((sum: number, b: any) => sum + (b.total || 0), 0) || 0;
+  const totalRevenue = bookings?.filter((b: any) => b.status !== "cancelled").reduce((sum: number, b: any) => sum + Number(b.total || 0), 0) || 0;
 
   const StatusBadge = ({ status }: { status: string }) => {
     const config = statusConfig[status] || statusConfig.pending;
