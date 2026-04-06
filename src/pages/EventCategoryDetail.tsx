@@ -259,6 +259,77 @@ const EventCategoryDetail = () => {
           )}
         </div>
       </section>
+
+      {/* Booking Form */}
+      {showBookingForm && (
+        <section id="booking-form" className="py-12 bg-background">
+          <div className="container mx-auto px-4 max-w-2xl">
+            <div className="text-center mb-6">
+              <span className="text-primary text-xs font-semibold tracking-wider uppercase">Almost There</span>
+              <h2 className="text-2xl font-bold text-foreground mt-1">Event Booking Form</h2>
+              {selectedPackage && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  Package: {packages.find((p: any) => p.id === selectedPackage)?.name}
+                </p>
+              )}
+            </div>
+            <form onSubmit={handleSubmit} className="bg-card rounded-2xl border border-border p-6 space-y-4 shadow-sm">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-1 block">Your Name *</label>
+                  <Input value={formData.customer_name} onChange={e => setFormData(p => ({ ...p, customer_name: e.target.value }))} placeholder="Full Name" required />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-1 block">Phone Number *</label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input className="pl-9" value={formData.customer_phone} onChange={e => setFormData(p => ({ ...p, customer_phone: e.target.value }))} placeholder="+880XXXXXXXXXX" required />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-1 block">Email</label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input className="pl-9" type="email" value={formData.customer_email} onChange={e => setFormData(p => ({ ...p, customer_email: e.target.value }))} placeholder="email@example.com" />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-1 block">Event Date *</label>
+                  <div className="relative">
+                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input className="pl-9" type="date" value={formData.event_date} onChange={e => setFormData(p => ({ ...p, event_date: e.target.value }))} required />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-1 block">Event Time</label>
+                  <Input type="time" value={formData.event_time} onChange={e => setFormData(p => ({ ...p, event_time: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-1 block">Guest Count</label>
+                  <div className="relative">
+                    <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input className="pl-9" type="number" value={formData.guest_count} onChange={e => setFormData(p => ({ ...p, guest_count: e.target.value }))} placeholder="100" />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-foreground mb-1 block">Venue Address *</label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+                  <Textarea className="pl-9" value={formData.venue_address} onChange={e => setFormData(p => ({ ...p, venue_address: e.target.value }))} placeholder="Event venue address" required />
+                </div>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-foreground mb-1 block">Special Requests</label>
+                <Textarea value={formData.special_requests} onChange={e => setFormData(p => ({ ...p, special_requests: e.target.value }))} placeholder="Any special requirements or requests..." />
+              </div>
+              <Button type="submit" className="w-full" size="lg" disabled={submitting}>
+                {submitting ? "Submitting..." : "Confirm Booking"}
+              </Button>
+            </form>
+          </div>
+        </section>
+      )}
     </main>
   );
 };
