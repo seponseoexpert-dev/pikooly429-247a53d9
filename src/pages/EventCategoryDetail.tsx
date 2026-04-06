@@ -1,12 +1,16 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
+import { useAuth } from "@/contexts/AuthContext";
 import SEOHead from "@/components/seo/SEOHead";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Check, Star, Sparkles, ArrowLeft } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { ArrowRight, Check, Star, Sparkles, ArrowLeft, Phone, Mail, Calendar, Users, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 const EventCategoryDetail = () => {
   const { slug } = useParams<{ slug: string }>();
