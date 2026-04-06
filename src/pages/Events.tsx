@@ -76,6 +76,20 @@ const Events = () => {
     },
   });
 
+  // Auto-open booking form when coming from category detail page
+  useEffect(() => {
+    const bookPkgId = searchParams.get("book");
+    if (bookPkgId && packages.length > 0) {
+      const pkg = packages.find((p: any) => p.id === bookPkgId);
+      if (pkg) {
+        setSelectedPackage(bookPkgId);
+        setSelectedCategory(pkg.category_id);
+        setShowBookingForm(true);
+        setTimeout(() => document.getElementById("booking-form")?.scrollIntoView({ behavior: "smooth" }), 300);
+      }
+    }
+  }, [searchParams, packages]);
+
   const handleBookNow = (pkgId: string) => {
     setSelectedPackage(pkgId);
     setShowBookingForm(true);
