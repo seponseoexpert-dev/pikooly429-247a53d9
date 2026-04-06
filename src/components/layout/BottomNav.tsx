@@ -23,7 +23,7 @@ const BottomNav = () => {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
-      <div className="relative safe-area-bottom bg-card/98 backdrop-blur-xl border-t border-border/50">
+      <div className="relative safe-area-bottom bg-white dark:bg-card border-t border-border/50">
         <div className="grid grid-cols-5 h-[58px]">
           <Link to="/" className={itemClass(isActive("/"))}>
             <Home size={iconSize} strokeWidth={isActive("/") ? activeStrokeW : strokeW} />
