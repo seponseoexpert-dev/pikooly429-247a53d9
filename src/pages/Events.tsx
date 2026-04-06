@@ -237,13 +237,19 @@ const Events = () => {
     ],
   }), []);
 
+  const seoTitle = settings.events_seo_title || "Event Management Services | Wedding, Birthday, Corporate Events | Pikooly";
+  const seoDescription = settings.events_seo_description || "Professional event management services in Bangladesh. Wedding decoration, birthday parties, corporate events & anniversary surprises. Book your dream event today!";
+  const heroTitle = settings.events_hero_title || "Make Your Special Moments <span class='text-primary'>Unforgettable</span>";
+  const heroSubtitle = settings.events_hero_subtitle || "Wedding, birthday, corporate events — complete event management services tailored for you";
+
   return (
     <main>
       <SEOHead
-        title="Event Management Services | Wedding, Birthday, Corporate Events | Pikooly"
-        description="Professional event management services in Bangladesh. Wedding decoration, birthday parties, corporate events & anniversary surprises. Book your dream event today!"
+        title={seoTitle.slice(0, 60)}
+        description={seoDescription.slice(0, 160)}
         canonical={`${window.location.origin}/events`}
         jsonLd={jsonLd}
+        ogImage={settings.events_og_image}
       />
       {faqJsonLd && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
@@ -258,12 +264,8 @@ const Events = () => {
             <span className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-4">
               <Sparkles className="w-4 h-4" /> Event Management
             </span>
-            <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-4 leading-tight">
-              Make Your Special Moments <span className="text-primary">Unforgettable</span>
-            </h1>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Wedding, birthday, corporate events — complete event management services tailored for you
-            </p>
+            <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-4 leading-tight" dangerouslySetInnerHTML={{ __html: heroTitle }} />
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">{heroSubtitle}</p>
           </motion.div>
         </div>
       </section>
