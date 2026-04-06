@@ -218,7 +218,7 @@ const EventsSection = () => {
                     <div className="flex flex-1 flex-col justify-between p-3.5 md:p-4">
                       <div>
                         <div className="mb-2 flex items-start justify-between gap-3">
-                          <p className="text-sm md:text-[15px] font-semibold text-foreground leading-snug">{item.title}</p>
+                          <p className="text-sm md:text-[15px] font-semibold text-foreground leading-snug line-clamp-1">{item.title}</p>
                           {item.imageUrl && (
                             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                               <Icon className="h-4 w-4" />
