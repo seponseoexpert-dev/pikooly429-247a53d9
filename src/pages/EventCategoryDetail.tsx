@@ -241,11 +241,16 @@ const EventCategoryDetail = () => {
                         </ul>
                       )}
 
-                      <Link to={`/events?book=${pkg.id}`}>
-                        <Button className="w-full gap-2 shadow-md hover:shadow-lg transition-shadow">
-                          Book Now <ArrowRight className="w-4 h-4" />
-                        </Button>
-                      </Link>
+                      <Button
+                        onClick={() => {
+                          setSelectedPackage(pkg.id);
+                          setShowBookingForm(true);
+                          setTimeout(() => document.getElementById("booking-form")?.scrollIntoView({ behavior: "smooth" }), 100);
+                        }}
+                        className="w-full gap-2 shadow-md hover:shadow-lg transition-shadow"
+                      >
+                        Book Now <ArrowRight className="w-4 h-4" />
+                      </Button>
                     </div>
                   </motion.div>
                 );
