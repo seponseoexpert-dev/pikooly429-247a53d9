@@ -128,28 +128,45 @@ const Events = () => {
       setBookingSuccess({ name: formData.customer_name, pkgName: pkg?.name || "Event", date: formData.event_date });
       setShowBookingForm(false);
 
-      // Send admin email notification (fire & forget)
-      const adminEmail = settings.admin_notification_email || settings.store_email;
-      if (adminEmail) {
-        const catName = categories.find((c: any) => c.id === (pkg?.category_id || selectedCategory))?.name;
-        import("@/lib/emailTemplates").then(({ buildAdminEventBookingEmail }) => {
-          const html = buildAdminEventBookingEmail({
-            customerName: formData.customer_name,
-            customerPhone: formData.customer_phone,
-            customerEmail: formData.customer_email || undefined,
-            eventDate: formData.event_date,
-            eventTime: formData.event_time || undefined,
-            venueAddress: formData.venue_address,
-            guestCount: formData.guest_count ? parseInt(formData.guest_count) : undefined,
-            specialRequests: formData.special_requests || undefined,
-            packageName: pkg?.name,
-            categoryName: catName,
-            total: pkg?.price || 0,
-          });
+      // Send notifications (fire & forget)
+      const catName = categories.find((c: any) => c.id === (pkg?.category_id || selectedCategory))?.name;
+      const emailData = {
+        customerName: formData.customer_name,
+        customerPhone: formData.customer_phone,
+        customerEmail: formData.customer_email || undefined,
+        eventDate: formData.event_date,
+        eventTime: formData.event_time || undefined,
+        venueAddress: formData.venue_address,
+        guestCount: formData.guest_count ? parseInt(formData.guest_count) : undefined,
+        specialRequests: formData.special_requests || undefined,
+        packageName: pkg?.name,
+        categoryName: catName,
+        total: pkg?.price || 0,
+      };
+
+      import("@/lib/emailTemplates").then(({ buildAdminEventBookingEmail, buildCustomerEventBookingEmail }) => {
+        // Admin email
+        const adminEmail = settings.admin_notification_email || settings.store_email;
+        if (adminEmail) {
           supabase.functions.invoke("send-email", {
-            body: { to: adminEmail, subject: `🎉 New Event Booking - ${pkg?.name || "Event"} | Pikooly`, html },
+            body: { to: adminEmail, subject: `🎉 New Event Booking - ${pkg?.name || "Event"} | Pikooly`, html: buildAdminEventBookingEmail(emailData) },
           }).catch(console.error);
-        });
+        }
+        // Customer confirmation email
+        if (formData.customer_email) {
+          supabase.functions.invoke("send-email", {
+            body: { to: formData.customer_email, subject: `✅ Booking Confirmed - ${pkg?.name || "Event"} | Pikooly`, html: buildCustomerEventBookingEmail(emailData) },
+          }).catch(console.error);
+        }
+      });
+
+      // Admin WhatsApp notification
+      const whatsappNumber = (settings.whatsapp_number || "").replace(/[^0-9]/g, "");
+      if (whatsappNumber) {
+        const waMsg = encodeURIComponent(
+          `🎉 New Event Booking!\n\n👤 ${formData.customer_name}\n📞 ${formData.customer_phone}\n📅 ${formData.event_date}\n📍 ${formData.venue_address}\n📦 ${pkg?.name || "Event"}\n💰 ৳${(pkg?.price || 0).toLocaleString()}`
+        );
+        window.open(`https://wa.me/${whatsappNumber}?text=${waMsg}`, "_blank");
       }
 
       setFormData({ customer_name: "", customer_email: "", customer_phone: "", event_date: "", event_time: "", venue_address: "", guest_count: "", special_requests: "" });
