@@ -469,6 +469,10 @@ const PackagesTab = () => {
 // ─── Event Bookings Tab ───
 const BookingsTab = () => {
   const queryClient = useQueryClient();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedBooking, setSelectedBooking] = useState<any>(null);
+
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ["admin-event-bookings"],
     queryFn: async () => {
@@ -488,19 +492,44 @@ const BookingsTab = () => {
 
   const statusColors: Record<string, string> = { pending: "bg-yellow-100 text-yellow-800", confirmed: "bg-blue-100 text-blue-800", completed: "bg-green-100 text-green-800", cancelled: "bg-red-100 text-red-800" };
 
+  const filtered = bookings.filter((b: any) => {
+    const matchesSearch = !searchTerm || b.customer_name?.toLowerCase().includes(searchTerm.toLowerCase()) || b.booking_number?.toLowerCase().includes(searchTerm.toLowerCase()) || b.customer_phone?.includes(searchTerm);
+    const matchesStatus = statusFilter === "all" || b.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
   return (
     <div>
-      <h3 className="font-semibold text-foreground mb-4">Event Bookings</h3>
+      <div className="flex flex-col sm:flex-row gap-3 mb-4">
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input placeholder="Search by name, phone, booking#..." className="pl-9" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+        </div>
+        <select className="border border-border rounded-md px-3 py-2 bg-background text-foreground text-sm" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+          <option value="all">All Status</option>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+
+      <p className="text-xs text-muted-foreground mb-3">{filtered.length} booking(s) found</p>
+
       {isLoading ? <p>Loading...</p> : (
         <div className="space-y-3">
-          {bookings.map((b: any) => (
-            <div key={b.id} className="bg-card border border-border rounded-lg p-4">
+          {filtered.map((b: any) => (
+            <div key={b.id} className="bg-card border border-border rounded-lg p-4 cursor-pointer hover:border-primary/30 transition-colors" onClick={() => setSelectedBooking(b)}>
               <div className="flex items-start justify-between mb-2">
                 <div>
                   <p className="font-semibold text-foreground text-sm">{b.booking_number}</p>
                   <p className="text-xs text-muted-foreground">{b.customer_name} • {b.customer_phone}</p>
+                  {b.customer_email && <p className="text-xs text-muted-foreground">📧 {b.customer_email}</p>}
                 </div>
-                <span className={`text-xs px-2 py-1 rounded-full font-medium ${statusColors[b.status] || "bg-muted text-foreground"}`}>{b.status}</span>
+                <div className="text-right">
+                  <span className={`text-xs px-2 py-1 rounded-full font-medium ${statusColors[b.status] || "bg-muted text-foreground"}`}>{b.status}</span>
+                  <p className="text-sm font-semibold text-foreground mt-1">৳{b.total?.toLocaleString()}</p>
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground mb-3">
                 <p>📅 {b.event_date}</p>
@@ -511,14 +540,161 @@ const BookingsTab = () => {
               </div>
               <div className="flex gap-2">
                 {["pending", "confirmed", "completed", "cancelled"].map(s => (
-                  <Button key={s} size="sm" variant={b.status === s ? "default" : "outline"} className="text-xs capitalize" onClick={() => updateStatus.mutate({ id: b.id, status: s })}>{s}</Button>
+                  <Button key={s} size="sm" variant={b.status === s ? "default" : "outline"} className="text-xs capitalize" onClick={(e) => { e.stopPropagation(); updateStatus.mutate({ id: b.id, status: s }); }}>{s}</Button>
                 ))}
               </div>
             </div>
           ))}
-          {bookings.length === 0 && <p className="text-center text-muted-foreground py-6">No bookings yet</p>}
+          {filtered.length === 0 && <p className="text-center text-muted-foreground py-6">No bookings found</p>}
         </div>
       )}
+
+      {/* Booking Detail Dialog */}
+      <Dialog open={!!selectedBooking} onOpenChange={() => setSelectedBooking(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader><DialogTitle>Booking Details — {selectedBooking?.booking_number}</DialogTitle></DialogHeader>
+          {selectedBooking && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className={`text-xs px-2 py-1 rounded-full font-medium ${statusColors[selectedBooking.status] || "bg-muted text-foreground"}`}>{selectedBooking.status}</span>
+                <p className="text-lg font-bold text-foreground">৳{selectedBooking.total?.toLocaleString()}</p>
+              </div>
+              <Separator />
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div><p className="text-muted-foreground text-xs">Customer</p><p className="font-medium">{selectedBooking.customer_name}</p></div>
+                <div><p className="text-muted-foreground text-xs">Phone</p><p className="font-medium">{selectedBooking.customer_phone}</p></div>
+                {selectedBooking.customer_email && <div className="col-span-2"><p className="text-muted-foreground text-xs">Email</p><p className="font-medium">{selectedBooking.customer_email}</p></div>}
+                <div><p className="text-muted-foreground text-xs">Event Date</p><p className="font-medium">{selectedBooking.event_date}</p></div>
+                <div><p className="text-muted-foreground text-xs">Event Time</p><p className="font-medium">{selectedBooking.event_time || "N/A"}</p></div>
+                <div className="col-span-2"><p className="text-muted-foreground text-xs">Venue</p><p className="font-medium">{selectedBooking.venue_address}</p></div>
+                <div><p className="text-muted-foreground text-xs">Guest Count</p><p className="font-medium">{selectedBooking.guest_count || "N/A"}</p></div>
+                <div><p className="text-muted-foreground text-xs">Package</p><p className="font-medium">{(selectedBooking as any).event_packages?.name || "N/A"}</p></div>
+                <div><p className="text-muted-foreground text-xs">Category</p><p className="font-medium">{(selectedBooking as any).event_categories?.name || "N/A"}</p></div>
+                <div><p className="text-muted-foreground text-xs">Booked On</p><p className="font-medium">{new Date(selectedBooking.created_at).toLocaleDateString()}</p></div>
+              </div>
+              {selectedBooking.special_requests && (
+                <>
+                  <Separator />
+                  <div><p className="text-muted-foreground text-xs mb-1">Special Requests</p><p className="text-sm">{selectedBooking.special_requests}</p></div>
+                </>
+              )}
+              <Separator />
+              <div className="flex gap-2 flex-wrap">
+                {["pending", "confirmed", "completed", "cancelled"].map(s => (
+                  <Button key={s} size="sm" variant={selectedBooking.status === s ? "default" : "outline"} className="text-xs capitalize" onClick={() => { updateStatus.mutate({ id: selectedBooking.id, status: s }); setSelectedBooking({ ...selectedBooking, status: s }); }}>{s}</Button>
+                ))}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+// ─── Events Page SEO Tab ───
+const PageSEOTab = () => {
+  const queryClient = useQueryClient();
+  const seoKeys = ["events_seo_title", "events_seo_description", "events_hero_title", "events_hero_subtitle", "events_og_image"];
+
+  const { data: seoSettings = {}, isLoading } = useQuery({
+    queryKey: ["events-page-seo"],
+    queryFn: async () => {
+      const { data } = await supabase.from("site_settings").select("key, value").in("key", seoKeys);
+      const map: Record<string, string> = {};
+      data?.forEach((s: any) => { map[s.key] = s.value || ""; });
+      return map;
+    },
+  });
+
+  const [form, setForm] = useState({
+    events_seo_title: "", events_seo_description: "", events_hero_title: "", events_hero_subtitle: "", events_og_image: ""
+  });
+  const [loaded, setLoaded] = useState(false);
+
+  if (!loaded && !isLoading && Object.keys(seoSettings).length >= 0) {
+    setForm({
+      events_seo_title: seoSettings.events_seo_title || "",
+      events_seo_description: seoSettings.events_seo_description || "",
+      events_hero_title: seoSettings.events_hero_title || "",
+      events_hero_subtitle: seoSettings.events_hero_subtitle || "",
+      events_og_image: seoSettings.events_og_image || "",
+    });
+    setLoaded(true);
+  }
+
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      for (const key of seoKeys) {
+        const value = (form as any)[key] || "";
+        const { data: existing } = await supabase.from("site_settings").select("id").eq("key", key).maybeSingle();
+        if (existing) {
+          await supabase.from("site_settings").update({ value }).eq("key", key);
+        } else {
+          await supabase.from("site_settings").insert({ key, value });
+        }
+      }
+      queryClient.invalidateQueries({ queryKey: ["events-page-seo"] });
+      queryClient.invalidateQueries({ queryKey: ["site-settings"] });
+      toast.success("Events page SEO saved!");
+    } catch { toast.error("Failed to save"); }
+    finally { setSaving(false); }
+  };
+
+  return (
+    <div className="max-w-2xl space-y-6">
+      <div>
+        <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1">
+          <Search className="w-3 h-3" /> Events Page SEO
+        </Label>
+        <p className="text-xs text-muted-foreground mt-1">These settings control the main /events/ page SEO for Google ranking</p>
+      </div>
+
+      <SEOPreview title={form.events_seo_title || "Event Management Services | Pikooly"} slug="" description={form.events_seo_description || "Professional event management services..."} basePath="https://pikooly.com.bd/events" />
+
+      <div>
+        <div className="flex justify-between">
+          <Label className="text-sm">SEO Title</Label>
+          <span className="text-xs text-muted-foreground">{form.events_seo_title.length} / 60</span>
+        </div>
+        <Input placeholder="Event Management Services | Pikooly" value={form.events_seo_title} onChange={e => setForm(p => ({ ...p, events_seo_title: e.target.value.slice(0, 60) }))} maxLength={60} />
+      </div>
+
+      <div>
+        <div className="flex justify-between">
+          <Label className="text-sm">Meta Description</Label>
+          <span className="text-xs text-muted-foreground">{form.events_seo_description.length} / 160</span>
+        </div>
+        <Textarea placeholder="Professional event management services in Bangladesh..." value={form.events_seo_description} onChange={e => setForm(p => ({ ...p, events_seo_description: e.target.value.slice(0, 160) }))} maxLength={160} rows={3} />
+      </div>
+
+      <Separator />
+
+      <div>
+        <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Hero Section Content</Label>
+        <div className="mt-2 space-y-3">
+          <div>
+            <Label className="text-sm">Hero Title</Label>
+            <Input placeholder="Make Your Special Moments Unforgettable" value={form.events_hero_title} onChange={e => setForm(p => ({ ...p, events_hero_title: e.target.value }))} />
+          </div>
+          <div>
+            <Label className="text-sm">Hero Subtitle</Label>
+            <Textarea placeholder="Wedding, birthday, corporate events..." value={form.events_hero_subtitle} onChange={e => setForm(p => ({ ...p, events_hero_subtitle: e.target.value }))} rows={2} />
+          </div>
+        </div>
+      </div>
+
+      <Separator />
+
+      <div>
+        <Label className="text-sm">OG Image (for social sharing)</Label>
+        <CloudinaryUpload value={form.events_og_image} onChange={(url) => setForm(p => ({ ...p, events_og_image: url }))} folder="seo" label="Upload OG Image" />
+      </div>
+
+      <Button onClick={handleSave} disabled={saving} className="w-full">{saving ? "Saving..." : "Save SEO Settings"}</Button>
     </div>
   );
 };
@@ -528,14 +704,16 @@ const AdminEvents = () => (
   <div>
     <h2 className="text-2xl font-bold text-foreground mb-6">Event Management</h2>
     <Tabs defaultValue="categories">
-      <TabsList>
+      <TabsList className="flex-wrap">
         <TabsTrigger value="categories"><Tag className="w-4 h-4 mr-1" /> Categories</TabsTrigger>
         <TabsTrigger value="packages"><Package className="w-4 h-4 mr-1" /> Packages</TabsTrigger>
         <TabsTrigger value="bookings"><CalendarCheck className="w-4 h-4 mr-1" /> Bookings</TabsTrigger>
+        <TabsTrigger value="seo"><Search className="w-4 h-4 mr-1" /> Page SEO</TabsTrigger>
       </TabsList>
       <TabsContent value="categories"><CategoriesTab /></TabsContent>
       <TabsContent value="packages"><PackagesTab /></TabsContent>
       <TabsContent value="bookings"><BookingsTab /></TabsContent>
+      <TabsContent value="seo"><PageSEOTab /></TabsContent>
     </Tabs>
   </div>
 );
