@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCurrency } from "@/hooks/useCurrency";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import SEOHead from "@/components/seo/SEOHead";
 import { Camera, Video, Gift, MapPin, Calendar, Package, User, ChevronRight, ChevronLeft, Play, Sparkles, Clock, CheckCircle2, Star, ArrowRight, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
