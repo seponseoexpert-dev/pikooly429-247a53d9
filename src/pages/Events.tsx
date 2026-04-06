@@ -127,6 +127,31 @@ const Events = () => {
       toast.success("Booking confirmed! We will contact you shortly.");
       setBookingSuccess({ name: formData.customer_name, pkgName: pkg?.name || "Event", date: formData.event_date });
       setShowBookingForm(false);
+
+      // Send admin email notification (fire & forget)
+      const adminEmail = settings.admin_notification_email || settings.store_email;
+      if (adminEmail) {
+        const catName = categories.find((c: any) => c.id === (pkg?.category_id || selectedCategory))?.name;
+        import("@/lib/emailTemplates").then(({ buildAdminEventBookingEmail }) => {
+          const html = buildAdminEventBookingEmail({
+            customerName: formData.customer_name,
+            customerPhone: formData.customer_phone,
+            customerEmail: formData.customer_email || undefined,
+            eventDate: formData.event_date,
+            eventTime: formData.event_time || undefined,
+            venueAddress: formData.venue_address,
+            guestCount: formData.guest_count ? parseInt(formData.guest_count) : undefined,
+            specialRequests: formData.special_requests || undefined,
+            packageName: pkg?.name,
+            categoryName: catName,
+            total: pkg?.price || 0,
+          });
+          supabase.functions.invoke("send-email", {
+            body: { to: adminEmail, subject: `🎉 New Event Booking - ${pkg?.name || "Event"} | Pikooly`, html },
+          }).catch(console.error);
+        });
+      }
+
       setFormData({ customer_name: "", customer_email: "", customer_phone: "", event_date: "", event_time: "", venue_address: "", guest_count: "", special_requests: "" });
     } catch (err: any) {
       toast.error("Failed to submit booking. Please try again.");
