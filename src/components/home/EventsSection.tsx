@@ -1,10 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
-import { ArrowRight, Camera, CalendarDays, Gift, PartyPopper, Sparkles, Users2 } from "lucide-react";
+import { ArrowRight, Camera, CalendarDays, Clapperboard, Gift, PartyPopper, Sparkles, Users2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
 
 import photoEventImg from "@/assets/photo-event.png";
 import photoVideoImg from "@/assets/photo-video.png";
@@ -21,6 +20,16 @@ type EventShowcaseItem = {
   badge: string;
   icon: LucideIcon;
   panelClassName: string;
+};
+
+type PhotoShowcaseItem = {
+  id: string;
+  title: string;
+  href: string;
+  imageUrl?: string | null;
+  badge: string;
+  icon: LucideIcon;
+  priceLabel?: string;
 };
 
 const EVENT_CARD_STYLES = [
@@ -73,6 +82,45 @@ const EVENT_SERVICE_FALLBACKS = [
   },
 ] as const;
 
+const PHOTO_SERVICE_FALLBACKS = [
+  {
+    id: "photo-product-showcase",
+    title: "Product Photography",
+    href: "/photography",
+    imageUrl: photoGiftImg,
+    badge: "Brand Ready",
+    icon: Camera,
+    priceLabel: "Studio Setup",
+  },
+  {
+    id: "photo-food-storytelling",
+    title: "Food Photography",
+    href: "/photography",
+    imageUrl: photoEventImg,
+    badge: "Menu Hero",
+    icon: Sparkles,
+    priceLabel: "Styled Shots",
+  },
+  {
+    id: "photo-event-coverage",
+    title: "Event Coverage",
+    href: "/photography",
+    imageUrl: photoVideoImg,
+    badge: "Live Moments",
+    icon: PartyPopper,
+    priceLabel: "On Location",
+  },
+  {
+    id: "photo-video-reels",
+    title: "Video & Reels",
+    href: "/photography",
+    imageUrl: photoVideoImg,
+    badge: "Social Ready",
+    icon: Clapperboard,
+    priceLabel: "Short-form Edit",
+  },
+] as const;
+
 const EventsSection = () => {
   const { data: categories = [] } = useQuery({
     queryKey: ["home-event-categories"],
@@ -86,6 +134,8 @@ const EventsSection = () => {
       if (error) throw error;
       return data;
     },
+    staleTime: 5 * 60 * 1000,
+    placeholderData: (prev) => prev,
   });
 
   const { data: photoServices = [] } = useQuery({
@@ -101,6 +151,8 @@ const EventsSection = () => {
       if (error) throw error;
       return data;
     },
+    staleTime: 5 * 60 * 1000,
+    placeholderData: (prev) => prev,
   });
 
   const eventCards: EventShowcaseItem[] = [
@@ -138,7 +190,20 @@ const EventsSection = () => {
     }),
   ].slice(0, 4);
 
-  if (categories.length === 0 && photoServices.length === 0) return null;
+  const photoCards: PhotoShowcaseItem[] = [
+    ...photoServices.slice(0, 4).map((svc: any, index: number) => ({
+      id: svc.id,
+      title: svc.title,
+      href: "/photography",
+      imageUrl: svc.image_url || PHOTO_SERVICE_FALLBACKS[index]?.imageUrl || PHOTO_FALLBACKS[index % PHOTO_FALLBACKS.length],
+      badge: PHOTO_SERVICE_FALLBACKS[index]?.badge || "Featured",
+      icon: PHOTO_SERVICE_FALLBACKS[index]?.icon || Camera,
+      priceLabel: svc.starting_price > 0 ? `৳${svc.starting_price.toLocaleString()}+` : PHOTO_SERVICE_FALLBACKS[index]?.priceLabel,
+    })),
+    ...PHOTO_SERVICE_FALLBACKS.slice(Math.min(photoServices.length, 4), 4),
+  ].slice(0, 4);
+
+  if (eventCards.length === 0 && photoCards.length === 0) return null;
 
   return (
     <section className="py-8 lg:py-14">
@@ -156,24 +221,24 @@ const EventsSection = () => {
               </Link>
             </div>
 
-            <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-1 -mx-4 px-4">
+            <div className="-mx-4 flex gap-3 overflow-x-auto scroll-smooth-ios scrollbar-hide snap-x snap-mandatory px-4 pb-1">
               {eventCards.map((item, i: number) => {
                 const Icon = item.icon;
 
                 return (
-                <motion.div
+                <div
                   key={item.id}
                   className="snap-start shrink-0 w-[160px] md:w-[220px]"
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.06, duration: 0.35 }}
                 >
                   <Link
                     to={item.href}
-                    className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition-all duration-300 hover:border-primary/30 hover:shadow-lg"
+                    className="group flex h-full flex-col overflow-hidden rounded-[1.4rem] border border-border/60 bg-card shadow-[0_18px_40px_-32px_hsl(var(--foreground)/0.5)] transition-all duration-300 hover:-translate-y-1 hover:border-primary/25 hover:shadow-[0_24px_60px_-34px_hsl(var(--foreground)/0.45)]"
                   >
-                    <div className={`relative h-[120px] md:h-[140px] overflow-hidden bg-gradient-to-br ${item.panelClassName}`}>
+                    <div className={`relative h-[124px] md:h-[148px] overflow-hidden bg-gradient-to-br ${item.panelClassName}`}>
+                      <div className="absolute left-2.5 top-2.5 z-10 inline-flex items-center gap-1 rounded-full border border-background/60 bg-background/90 px-2 py-1 text-[10px] font-semibold text-foreground shadow-sm backdrop-blur-sm">
+                        <Icon className="h-3.5 w-3.5 text-primary" />
+                        <span className="truncate">{item.badge}</span>
+                      </div>
                       {item.imageUrl ? (
                         <>
                           <img
@@ -184,22 +249,24 @@ const EventsSection = () => {
                             width={400}
                             height={300}
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-foreground/25 via-transparent to-transparent" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-foreground/35 via-transparent to-transparent" />
                         </>
                       ) : (
-                        <div className="relative flex h-full items-center justify-center">
-                          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-background/85 text-primary shadow-sm backdrop-blur-sm">
+                        <div className="relative flex h-full items-center justify-center overflow-hidden">
+                          <div className="absolute h-24 w-24 rounded-full bg-primary/10 blur-2xl" />
+                          <span className="relative flex h-14 w-14 items-center justify-center rounded-[1.2rem] border border-background/70 bg-background/90 text-primary shadow-sm backdrop-blur-sm">
                             <Icon className="h-5 w-5" />
                           </span>
                         </div>
                       )}
                     </div>
 
-                    <div className="p-2.5 md:p-3 text-center">
+                    <div className="p-3 text-center">
                       <p className="text-xs md:text-sm font-semibold text-foreground leading-snug line-clamp-1 whitespace-nowrap">{item.title}</p>
+                      <p className="mt-1 text-[11px] text-muted-foreground line-clamp-1">{item.description}</p>
                     </div>
                   </Link>
-                </motion.div>
+                </div>
                 );
               })}
             </div>
@@ -207,7 +274,7 @@ const EventsSection = () => {
         )}
 
         {/* Photography & Videography */}
-        {photoServices.length > 0 && (
+        {photoCards.length > 0 && (
           <div>
             <div className="flex items-center justify-between mb-4 lg:mb-6">
               <h2 className="text-base md:text-lg lg:text-xl font-bold text-foreground leading-tight">Photography</h2>
@@ -218,42 +285,42 @@ const EventsSection = () => {
               </Link>
             </div>
 
-            <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-1 -mx-4 px-4">
-              {photoServices.map((svc: any, i: number) => {
-                const fallback = PHOTO_FALLBACKS[i % PHOTO_FALLBACKS.length];
+            <div className="-mx-4 flex gap-3 overflow-x-auto scroll-smooth-ios scrollbar-hide snap-x snap-mandatory px-4 pb-1">
+              {photoCards.map((svc, i: number) => {
+                const Icon = svc.icon;
                 return (
-                  <motion.div
+                  <div
                     key={svc.id}
                     className="snap-start shrink-0 w-[160px] md:w-[220px]"
-                    initial={{ opacity: 0, x: 20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.08, duration: 0.4 }}
                   >
                     <Link
-                      to="/photography"
-                      className="group block rounded-2xl overflow-hidden border border-border/40 hover:border-primary/50 transition-all duration-300 hover:shadow-lg bg-card"
+                      to={svc.href}
+                      className="group block overflow-hidden rounded-[1.4rem] border border-border/50 bg-card shadow-[0_18px_40px_-32px_hsl(var(--foreground)/0.5)] transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_24px_60px_-34px_hsl(var(--foreground)/0.45)]"
                     >
-                      <div className="relative overflow-hidden aspect-square bg-muted/30 p-3 flex items-center justify-center">
+                      <div className="relative aspect-square overflow-hidden bg-muted/30 p-3 flex items-center justify-center">
+                        <div className="absolute left-2.5 top-2.5 z-10 inline-flex items-center gap-1 rounded-full border border-background/60 bg-background/90 px-2 py-1 text-[10px] font-semibold text-foreground shadow-sm backdrop-blur-sm">
+                          <Icon className="h-3.5 w-3.5 text-primary" />
+                          <span>{svc.badge}</span>
+                        </div>
                         <img
-                          src={svc.image_url || fallback}
+                          src={svc.imageUrl || PHOTO_FALLBACKS[i % PHOTO_FALLBACKS.length]}
                           alt={svc.title}
                           className="w-4/5 h-4/5 object-contain group-hover:scale-110 transition-transform duration-500 drop-shadow-md"
                           loading="lazy"
                           width={400}
                           height={400}
                         />
-                        {svc.starting_price > 0 && (
-                          <span className="absolute top-2 right-2 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md">
-                            ৳{svc.starting_price.toLocaleString()}~
+                        {svc.priceLabel && (
+                          <span className="absolute bottom-2.5 left-2.5 rounded-full bg-primary px-2.5 py-1 text-[10px] font-bold text-primary-foreground shadow-md">
+                            {svc.priceLabel}
                           </span>
                         )}
                       </div>
-                      <div className="p-2.5 text-center border-t border-border/30">
+                      <div className="border-t border-border/30 p-3 text-center">
                         <p className="text-xs md:text-sm font-semibold text-foreground leading-tight line-clamp-1 whitespace-nowrap">{svc.title}</p>
                       </div>
                     </Link>
-                  </motion.div>
+                  </div>
                 );
               })}
             </div>

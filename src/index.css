@@ -190,6 +190,25 @@
   .scroll-smooth-ios {
     -webkit-overflow-scrolling: touch;
   }
+
+  .deferred-section {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 640px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Rich text content from admin editor */
