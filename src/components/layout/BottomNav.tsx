@@ -9,22 +9,22 @@ const BottomNav = () => {
   const isActive = (href: string) =>
     location.pathname === href || (href !== "/" && location.pathname.startsWith(href));
 
-  const iconSize = 20;
+  const iconSize = 22;
   const strokeW = 1.5;
-  const activeStrokeW = 1.8;
+  const activeStrokeW = 2;
 
   const itemClass = (active: boolean) =>
-    `flex flex-col items-center justify-center gap-[3px] transition-all duration-200 active:scale-90 min-w-[44px] min-h-[44px] ${
+    `flex flex-col items-center justify-center gap-[2px] transition-all duration-200 active:scale-90 min-w-[48px] min-h-[48px] ${
       active ? "text-primary" : "text-muted-foreground"
     }`;
 
   const labelClass = (active: boolean) =>
-    `text-[9px] leading-none tracking-wide ${active ? "font-semibold" : "font-medium"}`;
+    `text-[10px] leading-none tracking-wide ${active ? "font-semibold" : "font-medium"}`;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
       <div className="relative safe-area-bottom bg-white dark:bg-card border-t border-border/50">
-        <div className="grid grid-cols-5 h-[58px]">
+        <div className="grid grid-cols-5 h-[62px]">
           <Link to="/" className={itemClass(isActive("/"))}>
             <Home size={iconSize} strokeWidth={isActive("/") ? activeStrokeW : strokeW} />
             <span className={labelClass(isActive("/"))}>{t("home")}</span>
@@ -38,7 +38,7 @@ const BottomNav = () => {
           <div className="flex flex-col items-center justify-end pb-[6px] relative">
             <Link
               to="/custom-bouquet"
-              className={`absolute -top-3.5 flex items-center justify-center w-[44px] h-[44px] rounded-full shadow-lg transition-all duration-300 active:scale-90 ${
+              className={`absolute -top-3.5 flex items-center justify-center w-[46px] h-[46px] rounded-full shadow-lg transition-all duration-300 active:scale-90 ${
                 isActive("/custom-bouquet")
                   ? "bg-primary text-primary-foreground"
                   : "bg-primary/90 text-primary-foreground hover:bg-primary"
