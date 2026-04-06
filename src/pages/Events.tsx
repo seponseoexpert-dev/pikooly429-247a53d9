@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { useState, useMemo, useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -32,6 +32,7 @@ const CATEGORY_BADGES = ["Most Booked", "Elegant Choice", "Corporate Ready", "Pr
 const Events = () => {
   const { user } = useAuth();
   const { formatPrice } = useMultiCurrency();
+  const [searchParams] = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
