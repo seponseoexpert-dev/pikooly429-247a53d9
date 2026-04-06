@@ -60,6 +60,41 @@ const EventCategoryDetail = () => {
     enabled: !!category?.id,
   });
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.customer_name || !formData.customer_phone || !formData.event_date || !formData.venue_address) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const pkg = packages.find((p: any) => p.id === selectedPackage);
+      const { error } = await supabase.from("event_bookings").insert({
+        booking_number: "temp",
+        user_id: user?.id || null,
+        package_id: selectedPackage,
+        category_id: category?.id || null,
+        customer_name: formData.customer_name,
+        customer_email: formData.customer_email || null,
+        customer_phone: formData.customer_phone,
+        event_date: formData.event_date,
+        event_time: formData.event_time || null,
+        venue_address: formData.venue_address,
+        guest_count: formData.guest_count ? parseInt(formData.guest_count) : null,
+        special_requests: formData.special_requests || null,
+        total: pkg?.price || 0,
+      });
+      if (error) throw error;
+      toast.success("Booking confirmed! We will contact you shortly.");
+      setShowBookingForm(false);
+      setFormData({ customer_name: "", customer_email: "", customer_phone: "", event_date: "", event_time: "", venue_address: "", guest_count: "", special_requests: "" });
+    } catch (err: any) {
+      toast.error("Failed to submit booking. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const seoTitle = category?.seo_title || `${category?.name || "Event"} | Pikooly`;
   const seoDesc = category?.seo_description || category?.short_description || `${category?.name} event management services by Pikooly Bangladesh.`;
   const canonical = `${window.location.origin}/events/${slug}`;
