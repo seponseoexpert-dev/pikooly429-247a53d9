@@ -8,18 +8,71 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Package, Tag, CalendarCheck } from "lucide-react";
+import { Plus, Pencil, Trash2, Package, Tag, CalendarCheck, Search, PlusCircle, X } from "lucide-react";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import RichTextEditor from "@/components/admin/RichTextEditor";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+
+// ─── SEO Preview Component ───
+const SEOPreview = ({ title, slug, description, basePath = "https://pikooly.com.bd/events" }: { title: string; slug: string; description: string; basePath?: string }) => (
+  <div className="border border-border rounded-lg p-4 bg-muted/30">
+    <p className="text-xs font-medium text-muted-foreground mb-2">SEO Preview</p>
+    <div className="space-y-0.5">
+      <p className="text-xs text-muted-foreground">{basePath}/{slug || "..."}/</p>
+      <p className="text-base font-medium text-primary truncate">{title || "Page Title"}</p>
+      <p className="text-xs text-muted-foreground line-clamp-2">{description || "Meta description will appear here..."}</p>
+    </div>
+  </div>
+);
+
+// ─── FAQ Manager Component ───
+const FAQManager = ({ faqs, onChange }: { faqs: { question: string; answer: string }[]; onChange: (v: { question: string; answer: string }[]) => void }) => {
+  const addFaq = () => onChange([...faqs, { question: "", answer: "" }]);
+  const removeFaq = (i: number) => onChange(faqs.filter((_, idx) => idx !== i));
+  const updateFaq = (i: number, field: "question" | "answer", value: string) => {
+    const updated = [...faqs];
+    updated[i] = { ...updated[i], [field]: value };
+    onChange(updated);
+  };
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-2">
+        <Label className="text-sm font-semibold">FAQ</Label>
+        <Button type="button" variant="outline" size="sm" onClick={addFaq}>
+          <PlusCircle className="w-4 h-4 mr-1" /> Add FAQ
+        </Button>
+      </div>
+      {faqs.map((faq, i) => (
+        <div key={i} className="border border-border rounded-lg p-3 mb-2 space-y-2 bg-muted/20">
+          <div className="flex justify-between items-start">
+            <Label className="text-xs text-muted-foreground">Question {i + 1}</Label>
+            <Button type="button" variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeFaq(i)}>
+              <X className="w-3 h-3" />
+            </Button>
+          </div>
+          <Input placeholder="Question" value={faq.question} onChange={e => updateFaq(i, "question", e.target.value)} />
+          <Textarea placeholder="Answer" value={faq.answer} onChange={e => updateFaq(i, "answer", e.target.value)} rows={2} />
+        </div>
+      ))}
+      {faqs.length === 0 && <p className="text-xs text-muted-foreground text-center py-3">No FAQs added yet</p>}
+    </div>
+  );
+};
 
 // ─── Event Categories Tab ───
 const CategoriesTab = () => {
   const queryClient = useQueryClient();
   const [editItem, setEditItem] = useState<any>(null);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ name: "", slug: "", description: "", short_description: "", long_description: "", image_url: "", icon: "", display_order: 0, is_active: true, seo_title: "", seo_description: "" });
+  const [form, setForm] = useState({
+    name: "", slug: "", description: "", short_description: "", long_description: "",
+    image_url: "", icon: "", display_order: 0, is_active: true,
+    seo_title: "", seo_description: "", faq: [] as { question: string; answer: string }[]
+  });
 
   const { data: categories = [], isLoading } = useQuery({
     queryKey: ["admin-event-categories"],
@@ -40,8 +93,8 @@ const CategoriesTab = () => {
         if (error) throw error;
       }
     },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["admin-event-categories"] }); setShowForm(false); setEditItem(null); toast.success("সেভ হয়েছে"); },
-    onError: () => toast.error("সমস্যা হয়েছে"),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["admin-event-categories"] }); setShowForm(false); setEditItem(null); toast.success("Saved successfully"); },
+    onError: () => toast.error("Something went wrong"),
   });
 
   const deleteMutation = useMutation({
@@ -49,18 +102,34 @@ const CategoriesTab = () => {
       const { error } = await supabase.from("event_categories").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["admin-event-categories"] }); toast.success("ডিলিট হয়েছে"); },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["admin-event-categories"] }); toast.success("Deleted"); },
   });
+
+  const parseFaq = (faq: any): { question: string; answer: string }[] => {
+    if (!faq) return [];
+    if (Array.isArray(faq)) return faq.map((f: any) => ({ question: f.question || "", answer: f.answer || "" }));
+    return [];
+  };
 
   const openEdit = (item: any) => {
     setEditItem(item);
-    setForm({ name: item.name, slug: item.slug, description: item.description || "", short_description: item.short_description || "", long_description: item.long_description || "", image_url: item.image_url || "", icon: item.icon || "", display_order: item.display_order, is_active: item.is_active, seo_title: item.seo_title || "", seo_description: item.seo_description || "" });
+    setForm({
+      name: item.name, slug: item.slug, description: item.description || "",
+      short_description: item.short_description || "", long_description: item.long_description || "",
+      image_url: item.image_url || "", icon: item.icon || "", display_order: item.display_order,
+      is_active: item.is_active, seo_title: item.seo_title || "", seo_description: item.seo_description || "",
+      faq: parseFaq(item.faq)
+    });
     setShowForm(true);
   };
 
   const openNew = () => {
     setEditItem(null);
-    setForm({ name: "", slug: "", description: "", short_description: "", long_description: "", image_url: "", icon: "", display_order: 0, is_active: true, seo_title: "", seo_description: "" });
+    setForm({
+      name: "", slug: "", description: "", short_description: "", long_description: "",
+      image_url: "", icon: "", display_order: 0, is_active: true,
+      seo_title: "", seo_description: "", faq: []
+    });
     setShowForm(true);
   };
 
@@ -84,44 +153,113 @@ const CategoriesTab = () => {
               <div className="flex items-center gap-2">
                 <Badge variant={cat.is_active ? "default" : "secondary"}>{cat.is_active ? "Active" : "Inactive"}</Badge>
                 <Button variant="ghost" size="icon" onClick={() => openEdit(cat)}><Pencil className="w-4 h-4" /></Button>
-                <Button variant="ghost" size="icon" onClick={() => { if (confirm("ডিলিট করবেন?")) deleteMutation.mutate(cat.id); }}><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                <Button variant="ghost" size="icon" onClick={() => { if (confirm("Delete this category?")) deleteMutation.mutate(cat.id); }}><Trash2 className="w-4 h-4 text-destructive" /></Button>
               </div>
             </div>
           ))}
-          {categories.length === 0 && <p className="text-center text-muted-foreground py-6">কোনো ক্যাটাগরি নেই</p>}
+          {categories.length === 0 && <p className="text-center text-muted-foreground py-6">No categories yet</p>}
         </div>
       )}
 
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>{editItem ? "ক্যাটাগরি এডিট" : "নতুন ক্যাটাগরি"}</DialogTitle></DialogHeader>
-          <form onSubmit={e => { e.preventDefault(); saveMutation.mutate(form); }} className="space-y-3">
-            <Input placeholder="Name" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value, slug: p.slug || e.target.value.toLowerCase().replace(/\s+/g, "-") }))} required />
-            <Input placeholder="Slug" value={form.slug} onChange={e => setForm(p => ({ ...p, slug: e.target.value }))} required />
-            <Textarea placeholder="Description" value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} />
-            <Input placeholder="Short Description" value={form.short_description} onChange={e => setForm(p => ({ ...p, short_description: e.target.value }))} />
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>{editItem ? "Edit Category" : "New Category"}</DialogTitle></DialogHeader>
+          <form onSubmit={e => { e.preventDefault(); saveMutation.mutate(form); }} className="space-y-4">
+            {/* Basic Info */}
             <div>
-              <label className="text-sm font-medium text-foreground mb-1 block">Long Description (Rich Text)</label>
-              <RichTextEditor value={form.long_description} onChange={v => setForm(p => ({ ...p, long_description: v }))} />
+              <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Basic Information</Label>
+              <div className="mt-2 space-y-3">
+                <div>
+                  <Label className="text-sm">Name</Label>
+                  <Input placeholder="Category Name" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value, slug: p.slug || e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+$/, "") }))} required />
+                </div>
+                <div>
+                  <Label className="text-sm">Description</Label>
+                  <Textarea placeholder="Brief description" value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} rows={2} />
+                </div>
+              </div>
             </div>
-            <CloudinaryUpload
-              value={form.image_url}
-              onChange={(url) => setForm(p => ({ ...p, image_url: url }))}
-              folder="events"
-              label="Upload Image"
-            />
-            <Input placeholder="Icon (optional)" value={form.icon} onChange={e => setForm(p => ({ ...p, icon: e.target.value }))} />
-            <Input placeholder="Display Order" type="number" value={form.display_order} onChange={e => setForm(p => ({ ...p, display_order: parseInt(e.target.value) || 0 }))} />
-            <Input placeholder="SEO Title (max 55 chars)" value={form.seo_title} onChange={e => setForm(p => ({ ...p, seo_title: e.target.value.slice(0, 55) }))} maxLength={55} />
+
+            <Separator />
+
+            {/* Short & Long Description */}
             <div>
-              <Textarea placeholder="SEO Description (max 160 chars)" value={form.seo_description} onChange={e => setForm(p => ({ ...p, seo_description: e.target.value.slice(0, 160) }))} maxLength={160} />
-              <p className="text-xs text-muted-foreground mt-1">{form.seo_description.length}/160</p>
+              <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Content</Label>
+              <div className="mt-2 space-y-3">
+                <div>
+                  <Label className="text-sm">Short Description</Label>
+                  <RichTextEditor value={form.short_description} onChange={v => setForm(p => ({ ...p, short_description: v }))} />
+                </div>
+                <div>
+                  <Label className="text-sm">Long Description</Label>
+                  <RichTextEditor value={form.long_description} onChange={v => setForm(p => ({ ...p, long_description: v }))} />
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Switch checked={form.is_active} onCheckedChange={v => setForm(p => ({ ...p, is_active: v }))} />
-              <span className="text-sm">Active</span>
+
+            <Separator />
+
+            {/* SEO Section */}
+            <div>
+              <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1">
+                <Search className="w-3 h-3" /> SEO Settings
+              </Label>
+              <div className="mt-2 space-y-3">
+                <SEOPreview title={form.seo_title || form.name} slug={form.slug} description={form.seo_description || form.description} />
+
+                <div>
+                  <div className="flex justify-between">
+                    <Label className="text-sm">SEO Title</Label>
+                    <span className="text-xs text-muted-foreground">{form.seo_title.length} / 60</span>
+                  </div>
+                  <Input placeholder="SEO title for search results" value={form.seo_title} onChange={e => setForm(p => ({ ...p, seo_title: e.target.value.slice(0, 60) }))} maxLength={60} />
+                </div>
+
+                <div>
+                  <div className="flex justify-between">
+                    <Label className="text-sm">Permalink</Label>
+                    <span className="text-xs text-muted-foreground">{form.slug.length} / 75</span>
+                  </div>
+                  <Input value={form.slug} onChange={e => setForm(p => ({ ...p, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} maxLength={75} required />
+                </div>
+
+                <div>
+                  <div className="flex justify-between">
+                    <Label className="text-sm">Meta Description</Label>
+                    <span className="text-xs text-muted-foreground">{form.seo_description.length} / 160</span>
+                  </div>
+                  <Textarea placeholder="Meta description for SEO" value={form.seo_description} onChange={e => setForm(p => ({ ...p, seo_description: e.target.value.slice(0, 160) }))} maxLength={160} rows={3} />
+                </div>
+              </div>
             </div>
-            <Button type="submit" className="w-full" disabled={saveMutation.isPending}>{saveMutation.isPending ? "Saving..." : "Save"}</Button>
+
+            <Separator />
+
+            {/* Image & Settings */}
+            <div>
+              <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Media & Settings</Label>
+              <div className="mt-2 space-y-3">
+                <div>
+                  <Label className="text-sm">Image</Label>
+                  <CloudinaryUpload value={form.image_url} onChange={(url) => setForm(p => ({ ...p, image_url: url }))} folder="events" label="Upload Category Image" />
+                </div>
+                <div>
+                  <Label className="text-sm">Display Order</Label>
+                  <Input type="number" value={form.display_order} onChange={e => setForm(p => ({ ...p, display_order: parseInt(e.target.value) || 0 }))} />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch checked={form.is_active} onCheckedChange={v => setForm(p => ({ ...p, is_active: v }))} />
+                  <span className="text-sm">Active</span>
+                </div>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* FAQ */}
+            <FAQManager faqs={form.faq} onChange={faq => setForm(p => ({ ...p, faq }))} />
+
+            <Button type="submit" className="w-full" disabled={saveMutation.isPending}>{saveMutation.isPending ? "Saving..." : "Create"}</Button>
           </form>
         </DialogContent>
       </Dialog>
@@ -134,7 +272,11 @@ const PackagesTab = () => {
   const queryClient = useQueryClient();
   const [editItem, setEditItem] = useState<any>(null);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ category_id: "", name: "", description: "", price: 0, original_price: "", features: "", image_url: "", is_featured: false, is_active: true, display_order: 0, seo_title: "", seo_description: "" });
+  const [form, setForm] = useState({
+    category_id: "", name: "", description: "", price: 0, original_price: "",
+    features: "", image_url: "", is_featured: false, is_active: true, display_order: 0,
+    seo_title: "", seo_description: ""
+  });
 
   const { data: categories = [] } = useQuery({
     queryKey: ["admin-event-categories"],
@@ -166,8 +308,8 @@ const PackagesTab = () => {
         if (error) throw error;
       }
     },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["admin-event-packages"] }); setShowForm(false); setEditItem(null); toast.success("সেভ হয়েছে"); },
-    onError: () => toast.error("সমস্যা হয়েছে"),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["admin-event-packages"] }); setShowForm(false); setEditItem(null); toast.success("Saved successfully"); },
+    onError: () => toast.error("Something went wrong"),
   });
 
   const deleteMutation = useMutation({
@@ -175,27 +317,37 @@ const PackagesTab = () => {
       const { error } = await supabase.from("event_packages").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["admin-event-packages"] }); toast.success("ডিলিট হয়েছে"); },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["admin-event-packages"] }); toast.success("Deleted"); },
   });
 
   const openEdit = (item: any) => {
     const featuresText = Array.isArray(item.features) ? item.features.join("\n") : "";
     setEditItem(item);
-    setForm({ category_id: item.category_id, name: item.name, description: item.description || "", price: item.price, original_price: item.original_price?.toString() || "", features: featuresText, image_url: item.image_url || "", is_featured: item.is_featured, is_active: item.is_active, display_order: item.display_order, seo_title: item.seo_title || "", seo_description: item.seo_description || "" });
+    setForm({
+      category_id: item.category_id, name: item.name, description: item.description || "",
+      price: item.price, original_price: item.original_price?.toString() || "",
+      features: featuresText, image_url: item.image_url || "", is_featured: item.is_featured,
+      is_active: item.is_active, display_order: item.display_order,
+      seo_title: item.seo_title || "", seo_description: item.seo_description || ""
+    });
     setShowForm(true);
   };
 
   const openNew = () => {
     setEditItem(null);
-    setForm({ category_id: categories[0]?.id || "", name: "", description: "", price: 0, original_price: "", features: "", image_url: "", is_featured: false, is_active: true, display_order: 0, seo_title: "", seo_description: "" });
+    setForm({
+      category_id: categories[0]?.id || "", name: "", description: "", price: 0, original_price: "",
+      features: "", image_url: "", is_featured: false, is_active: true, display_order: 0,
+      seo_title: "", seo_description: ""
+    });
     setShowForm(true);
   };
 
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h3 className="font-semibold text-foreground">ইভেন্ট প্যাকেজ</h3>
-        <Button size="sm" onClick={openNew}><Plus className="w-4 h-4 mr-1" /> নতুন প্যাকেজ</Button>
+        <h3 className="font-semibold text-foreground">Event Packages</h3>
+        <Button size="sm" onClick={openNew}><Plus className="w-4 h-4 mr-1" /> New Package</Button>
       </div>
       {isLoading ? <p>Loading...</p> : (
         <div className="space-y-2">
@@ -212,45 +364,100 @@ const PackagesTab = () => {
                 {pkg.is_featured && <Badge>Featured</Badge>}
                 <Badge variant={pkg.is_active ? "default" : "secondary"}>{pkg.is_active ? "Active" : "Inactive"}</Badge>
                 <Button variant="ghost" size="icon" onClick={() => openEdit(pkg)}><Pencil className="w-4 h-4" /></Button>
-                <Button variant="ghost" size="icon" onClick={() => { if (confirm("ডিলিট করবেন?")) deleteMutation.mutate(pkg.id); }}><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                <Button variant="ghost" size="icon" onClick={() => { if (confirm("Delete this package?")) deleteMutation.mutate(pkg.id); }}><Trash2 className="w-4 h-4 text-destructive" /></Button>
               </div>
             </div>
           ))}
-          {packages.length === 0 && <p className="text-center text-muted-foreground py-6">কোনো প্যাকেজ নেই</p>}
+          {packages.length === 0 && <p className="text-center text-muted-foreground py-6">No packages yet</p>}
         </div>
       )}
 
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle>{editItem ? "Edit Package" : "New Package"}</DialogTitle></DialogHeader>
-          <form onSubmit={e => { e.preventDefault(); saveMutation.mutate(form); }} className="space-y-3">
-            <select className="w-full border border-border rounded-md p-2 bg-background text-foreground text-sm" value={form.category_id} onChange={e => setForm(p => ({ ...p, category_id: e.target.value }))} required>
-              <option value="">Select Category</option>
-              {categories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </select>
-            <Input placeholder="Package Name" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} required />
-            <Textarea placeholder="Description" value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} />
-            <div className="grid grid-cols-2 gap-3">
-              <Input placeholder="Price" type="number" value={form.price} onChange={e => setForm(p => ({ ...p, price: parseFloat(e.target.value) || 0 }))} required />
-              <Input placeholder="Original Price (optional)" value={form.original_price} onChange={e => setForm(p => ({ ...p, original_price: e.target.value }))} />
-            </div>
+          <form onSubmit={e => { e.preventDefault(); saveMutation.mutate(form); }} className="space-y-4">
+            {/* Basic Info */}
             <div>
-              <label className="text-sm text-muted-foreground mb-1 block">Features (one per line)</label>
-              <Textarea placeholder="Stage Decoration&#10;Flower Setup&#10;Lighting" value={form.features} onChange={e => setForm(p => ({ ...p, features: e.target.value }))} rows={4} />
+              <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Basic Information</Label>
+              <div className="mt-2 space-y-3">
+                <div>
+                  <Label className="text-sm">Category</Label>
+                  <select className="w-full border border-border rounded-md p-2 bg-background text-foreground text-sm" value={form.category_id} onChange={e => setForm(p => ({ ...p, category_id: e.target.value }))} required>
+                    <option value="">Select Category</option>
+                    {categories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <Label className="text-sm">Package Name</Label>
+                  <Input placeholder="Package Name" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} required />
+                </div>
+                <div>
+                  <Label className="text-sm">Description</Label>
+                  <Textarea placeholder="Description" value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} rows={3} />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-sm">Price</Label>
+                    <Input type="number" value={form.price} onChange={e => setForm(p => ({ ...p, price: parseFloat(e.target.value) || 0 }))} required />
+                  </div>
+                  <div>
+                    <Label className="text-sm">Original Price (optional)</Label>
+                    <Input value={form.original_price} onChange={e => setForm(p => ({ ...p, original_price: e.target.value }))} />
+                  </div>
+                </div>
+                <div>
+                  <Label className="text-sm">Features (one per line)</Label>
+                  <Textarea placeholder="Stage Decoration&#10;Flower Setup&#10;Lighting" value={form.features} onChange={e => setForm(p => ({ ...p, features: e.target.value }))} rows={4} />
+                </div>
+              </div>
             </div>
-            <CloudinaryUpload
-              value={form.image_url}
-              onChange={(url) => setForm(p => ({ ...p, image_url: url }))}
-              folder="event-packages"
-              label="Upload Package Image"
-            />
-            <Input placeholder="Display Order" type="number" value={form.display_order} onChange={e => setForm(p => ({ ...p, display_order: parseInt(e.target.value) || 0 }))} />
-            <Input placeholder="SEO Title" value={form.seo_title} onChange={e => setForm(p => ({ ...p, seo_title: e.target.value }))} />
-            <Textarea placeholder="SEO Description" value={form.seo_description} onChange={e => setForm(p => ({ ...p, seo_description: e.target.value }))} />
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2"><Switch checked={form.is_featured} onCheckedChange={v => setForm(p => ({ ...p, is_featured: v }))} /><span className="text-sm">Featured</span></div>
-              <div className="flex items-center gap-2"><Switch checked={form.is_active} onCheckedChange={v => setForm(p => ({ ...p, is_active: v }))} /><span className="text-sm">Active</span></div>
+
+            <Separator />
+
+            {/* SEO Section */}
+            <div>
+              <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1">
+                <Search className="w-3 h-3" /> SEO Settings
+              </Label>
+              <div className="mt-2 space-y-3">
+                <SEOPreview title={form.seo_title || form.name} slug={form.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")} description={form.seo_description || form.description} basePath="https://pikooly.com.bd/events" />
+
+                <div>
+                  <div className="flex justify-between">
+                    <Label className="text-sm">SEO Title</Label>
+                    <span className="text-xs text-muted-foreground">{form.seo_title.length} / 60</span>
+                  </div>
+                  <Input placeholder="SEO title for search results" value={form.seo_title} onChange={e => setForm(p => ({ ...p, seo_title: e.target.value.slice(0, 60) }))} maxLength={60} />
+                </div>
+
+                <div>
+                  <div className="flex justify-between">
+                    <Label className="text-sm">Meta Description</Label>
+                    <span className="text-xs text-muted-foreground">{form.seo_description.length} / 160</span>
+                  </div>
+                  <Textarea placeholder="Meta description for SEO" value={form.seo_description} onChange={e => setForm(p => ({ ...p, seo_description: e.target.value.slice(0, 160) }))} maxLength={160} rows={3} />
+                </div>
+              </div>
             </div>
+
+            <Separator />
+
+            {/* Media & Settings */}
+            <div>
+              <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Media & Settings</Label>
+              <div className="mt-2 space-y-3">
+                <CloudinaryUpload value={form.image_url} onChange={(url) => setForm(p => ({ ...p, image_url: url }))} folder="event-packages" label="Upload Package Image" />
+                <div>
+                  <Label className="text-sm">Display Order</Label>
+                  <Input type="number" value={form.display_order} onChange={e => setForm(p => ({ ...p, display_order: parseInt(e.target.value) || 0 }))} />
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2"><Switch checked={form.is_featured} onCheckedChange={v => setForm(p => ({ ...p, is_featured: v }))} /><span className="text-sm">Featured</span></div>
+                  <div className="flex items-center gap-2"><Switch checked={form.is_active} onCheckedChange={v => setForm(p => ({ ...p, is_active: v }))} /><span className="text-sm">Active</span></div>
+                </div>
+              </div>
+            </div>
+
             <Button type="submit" className="w-full" disabled={saveMutation.isPending}>{saveMutation.isPending ? "Saving..." : "Save"}</Button>
           </form>
         </DialogContent>
@@ -304,7 +511,7 @@ const BookingsTab = () => {
               </div>
               <div className="flex gap-2">
                 {["pending", "confirmed", "completed", "cancelled"].map(s => (
-                  <Button key={s} variant={b.status === s ? "default" : "outline"} size="sm" className="text-xs capitalize" onClick={() => updateStatus.mutate({ id: b.id, status: s })}>{s}</Button>
+                  <Button key={s} size="sm" variant={b.status === s ? "default" : "outline"} className="text-xs capitalize" onClick={() => updateStatus.mutate({ id: b.id, status: s })}>{s}</Button>
                 ))}
               </div>
             </div>
@@ -316,23 +523,21 @@ const BookingsTab = () => {
   );
 };
 
-// ─── Main Admin Events Page ───
-const AdminEvents = () => {
-  return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-foreground">Event Management</h1>
-      <Tabs defaultValue="categories">
-        <TabsList className="grid grid-cols-3 w-full max-w-md">
-          <TabsTrigger value="categories" className="gap-1"><Tag className="w-3.5 h-3.5" /> Categories</TabsTrigger>
-          <TabsTrigger value="packages" className="gap-1"><Package className="w-3.5 h-3.5" /> Packages</TabsTrigger>
-          <TabsTrigger value="bookings" className="gap-1"><CalendarCheck className="w-3.5 h-3.5" /> Bookings</TabsTrigger>
-        </TabsList>
-        <TabsContent value="categories"><CategoriesTab /></TabsContent>
-        <TabsContent value="packages"><PackagesTab /></TabsContent>
-        <TabsContent value="bookings"><BookingsTab /></TabsContent>
-      </Tabs>
-    </div>
-  );
-};
+// ─── Main Page ───
+const AdminEvents = () => (
+  <div>
+    <h2 className="text-2xl font-bold text-foreground mb-6">Event Management</h2>
+    <Tabs defaultValue="categories">
+      <TabsList>
+        <TabsTrigger value="categories"><Tag className="w-4 h-4 mr-1" /> Categories</TabsTrigger>
+        <TabsTrigger value="packages"><Package className="w-4 h-4 mr-1" /> Packages</TabsTrigger>
+        <TabsTrigger value="bookings"><CalendarCheck className="w-4 h-4 mr-1" /> Bookings</TabsTrigger>
+      </TabsList>
+      <TabsContent value="categories"><CategoriesTab /></TabsContent>
+      <TabsContent value="packages"><PackagesTab /></TabsContent>
+      <TabsContent value="bookings"><BookingsTab /></TabsContent>
+    </Tabs>
+  </div>
+);
 
 export default AdminEvents;
