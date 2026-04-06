@@ -592,19 +592,128 @@ const BookingsTab = () => {
   );
 };
 
+// ─── Events Page SEO Tab ───
+const PageSEOTab = () => {
+  const queryClient = useQueryClient();
+  const seoKeys = ["events_seo_title", "events_seo_description", "events_hero_title", "events_hero_subtitle", "events_og_image"];
+
+  const { data: seoSettings = {}, isLoading } = useQuery({
+    queryKey: ["events-page-seo"],
+    queryFn: async () => {
+      const { data } = await supabase.from("site_settings").select("key, value").in("key", seoKeys);
+      const map: Record<string, string> = {};
+      data?.forEach((s: any) => { map[s.key] = s.value || ""; });
+      return map;
+    },
+  });
+
+  const [form, setForm] = useState({
+    events_seo_title: "", events_seo_description: "", events_hero_title: "", events_hero_subtitle: "", events_og_image: ""
+  });
+  const [loaded, setLoaded] = useState(false);
+
+  if (!loaded && !isLoading && Object.keys(seoSettings).length >= 0) {
+    setForm({
+      events_seo_title: seoSettings.events_seo_title || "",
+      events_seo_description: seoSettings.events_seo_description || "",
+      events_hero_title: seoSettings.events_hero_title || "",
+      events_hero_subtitle: seoSettings.events_hero_subtitle || "",
+      events_og_image: seoSettings.events_og_image || "",
+    });
+    setLoaded(true);
+  }
+
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      for (const key of seoKeys) {
+        const value = (form as any)[key] || "";
+        const { data: existing } = await supabase.from("site_settings").select("id").eq("key", key).maybeSingle();
+        if (existing) {
+          await supabase.from("site_settings").update({ value }).eq("key", key);
+        } else {
+          await supabase.from("site_settings").insert({ key, value });
+        }
+      }
+      queryClient.invalidateQueries({ queryKey: ["events-page-seo"] });
+      queryClient.invalidateQueries({ queryKey: ["site-settings"] });
+      toast.success("Events page SEO saved!");
+    } catch { toast.error("Failed to save"); }
+    finally { setSaving(false); }
+  };
+
+  return (
+    <div className="max-w-2xl space-y-6">
+      <div>
+        <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1">
+          <Search className="w-3 h-3" /> Events Page SEO
+        </Label>
+        <p className="text-xs text-muted-foreground mt-1">These settings control the main /events/ page SEO for Google ranking</p>
+      </div>
+
+      <SEOPreview title={form.events_seo_title || "Event Management Services | Pikooly"} slug="" description={form.events_seo_description || "Professional event management services..."} basePath="https://pikooly.com.bd/events" />
+
+      <div>
+        <div className="flex justify-between">
+          <Label className="text-sm">SEO Title</Label>
+          <span className="text-xs text-muted-foreground">{form.events_seo_title.length} / 60</span>
+        </div>
+        <Input placeholder="Event Management Services | Pikooly" value={form.events_seo_title} onChange={e => setForm(p => ({ ...p, events_seo_title: e.target.value.slice(0, 60) }))} maxLength={60} />
+      </div>
+
+      <div>
+        <div className="flex justify-between">
+          <Label className="text-sm">Meta Description</Label>
+          <span className="text-xs text-muted-foreground">{form.events_seo_description.length} / 160</span>
+        </div>
+        <Textarea placeholder="Professional event management services in Bangladesh..." value={form.events_seo_description} onChange={e => setForm(p => ({ ...p, events_seo_description: e.target.value.slice(0, 160) }))} maxLength={160} rows={3} />
+      </div>
+
+      <Separator />
+
+      <div>
+        <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Hero Section Content</Label>
+        <div className="mt-2 space-y-3">
+          <div>
+            <Label className="text-sm">Hero Title</Label>
+            <Input placeholder="Make Your Special Moments Unforgettable" value={form.events_hero_title} onChange={e => setForm(p => ({ ...p, events_hero_title: e.target.value }))} />
+          </div>
+          <div>
+            <Label className="text-sm">Hero Subtitle</Label>
+            <Textarea placeholder="Wedding, birthday, corporate events..." value={form.events_hero_subtitle} onChange={e => setForm(p => ({ ...p, events_hero_subtitle: e.target.value }))} rows={2} />
+          </div>
+        </div>
+      </div>
+
+      <Separator />
+
+      <div>
+        <Label className="text-sm">OG Image (for social sharing)</Label>
+        <CloudinaryUpload value={form.events_og_image} onChange={(url) => setForm(p => ({ ...p, events_og_image: url }))} folder="seo" label="Upload OG Image" />
+      </div>
+
+      <Button onClick={handleSave} disabled={saving} className="w-full">{saving ? "Saving..." : "Save SEO Settings"}</Button>
+    </div>
+  );
+};
+
 // ─── Main Page ───
 const AdminEvents = () => (
   <div>
     <h2 className="text-2xl font-bold text-foreground mb-6">Event Management</h2>
     <Tabs defaultValue="categories">
-      <TabsList>
+      <TabsList className="flex-wrap">
         <TabsTrigger value="categories"><Tag className="w-4 h-4 mr-1" /> Categories</TabsTrigger>
         <TabsTrigger value="packages"><Package className="w-4 h-4 mr-1" /> Packages</TabsTrigger>
         <TabsTrigger value="bookings"><CalendarCheck className="w-4 h-4 mr-1" /> Bookings</TabsTrigger>
+        <TabsTrigger value="seo"><Search className="w-4 h-4 mr-1" /> Page SEO</TabsTrigger>
       </TabsList>
       <TabsContent value="categories"><CategoriesTab /></TabsContent>
       <TabsContent value="packages"><PackagesTab /></TabsContent>
       <TabsContent value="bookings"><BookingsTab /></TabsContent>
+      <TabsContent value="seo"><PageSEOTab /></TabsContent>
     </Tabs>
   </div>
 );
