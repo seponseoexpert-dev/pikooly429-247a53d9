@@ -148,15 +148,7 @@ const EventsSection = () => {
         {eventCards.length > 0 && (
           <div>
             <div className="flex items-center justify-between mb-4 lg:mb-6">
-              <div className="flex items-center gap-2.5">
-                <span className="flex items-center justify-center w-9 h-9 rounded-xl bg-primary/10">
-                  <PartyPopper className="w-[18px] h-[18px] text-primary" />
-                </span>
-                <div className="min-w-0">
-                  <span className="block whitespace-nowrap text-primary text-[10px] lg:text-xs font-semibold tracking-wider uppercase">Event Management</span>
-                  <h2 className="text-base md:text-lg lg:text-xl font-bold text-foreground leading-tight">Event Services</h2>
-                </div>
-              </div>
+              <h2 className="text-base md:text-lg lg:text-xl font-bold text-foreground leading-tight">Event Services</h2>
               <Link to="/events">
                 <Button variant="outline" size="sm" className="gap-1.5 text-xs rounded-full border-primary/30 hover:bg-primary/5 h-8 px-3">
                   View All <ArrowRight className="w-3.5 h-3.5" />
@@ -249,15 +241,7 @@ const EventsSection = () => {
         {photoServices.length > 0 && (
           <div>
             <div className="flex items-center justify-between mb-4 lg:mb-6">
-              <div className="flex items-center gap-2.5">
-                <span className="flex items-center justify-center w-9 h-9 rounded-xl bg-primary/10">
-                  <Camera className="w-[18px] h-[18px] text-primary" />
-                </span>
-                <div className="min-w-0">
-                  <span className="block whitespace-nowrap text-primary text-[10px] lg:text-xs font-semibold tracking-wider uppercase">Photography</span>
-                  <h2 className="text-base md:text-lg lg:text-xl font-bold text-foreground leading-tight">Capture Your Moments</h2>
-                </div>
-              </div>
+              <h2 className="text-base md:text-lg lg:text-xl font-bold text-foreground leading-tight">Photography</h2>
               <Link to="/photography">
                 <Button variant="outline" size="sm" className="gap-1.5 text-xs rounded-full border-primary/30 hover:bg-primary/5 h-8 px-3">
                   View All <ArrowRight className="w-3.5 h-3.5" />
