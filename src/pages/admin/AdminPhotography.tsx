@@ -1,17 +1,18 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Camera, MapPin, DollarSign, Image, Trash2, Plus, Edit, CalendarCheck, Clock, TrendingUp, Users, CheckCircle2, XCircle, Eye, Video } from "lucide-react";
+import { Camera, MapPin, DollarSign, Image, Trash2, Plus, Edit, CalendarCheck, Clock, TrendingUp, Users, CheckCircle2, XCircle, Eye, Video, Search as SearchIcon } from "lucide-react";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { useCurrency } from "@/hooks/useCurrency";
 
@@ -292,13 +293,14 @@ const AdminPhotography = () => {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="h-auto p-1 bg-muted/50 rounded-xl w-full grid grid-cols-3 md:grid-cols-5 gap-1">
+        <TabsList className="h-auto p-1 bg-muted/50 rounded-xl w-full grid grid-cols-3 md:grid-cols-6 gap-1">
           {[
             { value: "bookings", label: "Bookings", icon: CalendarCheck },
             { value: "outside", label: "Outside Dhaka", icon: MapPin },
             { value: "pricing", label: "Pricing", icon: DollarSign },
             { value: "travel", label: "Travel Fees", icon: TrendingUp },
             { value: "portfolio", label: "Portfolio", icon: Image },
+            { value: "seo", label: "Page SEO", icon: SearchIcon },
           ].map((tab) => (
             <TabsTrigger
               key={tab.value}
