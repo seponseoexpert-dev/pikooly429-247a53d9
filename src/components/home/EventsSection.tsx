@@ -156,23 +156,24 @@ const EventsSection = () => {
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-1 -mx-4 px-4">
               {eventCards.map((item, i: number) => {
                 const Icon = item.icon;
 
                 return (
                 <motion.div
                   key={item.id}
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  className="snap-start shrink-0 w-[160px] md:w-[220px]"
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.06, duration: 0.35 }}
                 >
                   <Link
                     to={item.href}
-                    className="group flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-border/60 bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-xl"
+                    className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition-all duration-300 hover:border-primary/30 hover:shadow-lg"
                   >
-                    <div className={`relative min-h-[150px] overflow-hidden bg-gradient-to-br ${item.panelClassName}`}>
+                    <div className={`relative h-[120px] md:h-[140px] overflow-hidden bg-gradient-to-br ${item.panelClassName}`}>
                       {item.imageUrl ? (
                         <>
                           <img
@@ -186,48 +187,16 @@ const EventsSection = () => {
                           <div className="absolute inset-0 bg-gradient-to-t from-foreground/25 via-transparent to-transparent" />
                         </>
                       ) : (
-                        <>
-                          <div className="absolute -right-6 -top-8 h-24 w-24 rounded-full bg-primary/10" />
-                          <div className="absolute -bottom-10 left-[-14px] h-28 w-28 rounded-full bg-accent/10" />
-                          <div className="relative flex h-full min-h-[150px] items-end justify-between p-4">
-                            <span className="rounded-full border border-border/60 bg-background/85 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground backdrop-blur-sm">
-                              {item.badge}
-                            </span>
-                            <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-border/60 bg-background/85 text-primary shadow-sm backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
-                              <Icon className="h-5 w-5" />
-                            </span>
-                          </div>
-                        </>
-                      )}
-
-                      {item.imageUrl && (
-                        <span className="absolute left-3 top-3 rounded-full border border-border/60 bg-background/85 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground backdrop-blur-sm">
-                          {item.badge}
-                        </span>
+                        <div className="relative flex h-full items-center justify-center">
+                          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-background/85 text-primary shadow-sm backdrop-blur-sm">
+                            <Icon className="h-5 w-5" />
+                          </span>
+                        </div>
                       )}
                     </div>
 
-                    <div className="flex flex-1 flex-col justify-between p-3.5 md:p-4">
-                      <div>
-                        <div className="mb-2 flex items-start justify-between gap-3">
-                          <p className="text-sm md:text-[15px] font-semibold text-foreground leading-snug line-clamp-1">{item.title}</p>
-                          {item.imageUrl && (
-                            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                              <Icon className="h-4 w-4" />
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-[11px] md:text-xs leading-relaxed text-muted-foreground line-clamp-2 md:line-clamp-3">
-                          {item.description}
-                        </p>
-                      </div>
-
-                      <div className="mt-4 flex items-center justify-between border-t border-border/40 pt-3">
-                        <span className="text-[11px] font-medium text-muted-foreground">Event planning</span>
-                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-primary">
-                          Explore <ArrowRight className="h-3.5 w-3.5" />
-                        </span>
-                      </div>
+                    <div className="p-2.5 md:p-3 text-center">
+                      <p className="text-xs md:text-sm font-semibold text-foreground leading-snug line-clamp-1 whitespace-nowrap">{item.title}</p>
                     </div>
                   </Link>
                 </motion.div>
