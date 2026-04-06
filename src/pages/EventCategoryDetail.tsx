@@ -89,6 +89,7 @@ const EventCategoryDetail = () => {
       });
       if (error) throw error;
       toast.success("Booking confirmed! We will contact you shortly.");
+      setBookingSuccess({ name: formData.customer_name, pkgName: pkg?.name || "Event", date: formData.event_date });
       setShowBookingForm(false);
       setFormData({ customer_name: "", customer_email: "", customer_phone: "", event_date: "", event_time: "", venue_address: "", guest_count: "", special_requests: "" });
     } catch (err: any) {
