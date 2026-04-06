@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import AdminLayout from "@/components/admin/AdminLayout";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -319,21 +319,19 @@ const BookingsTab = () => {
 // ─── Main Admin Events Page ───
 const AdminEvents = () => {
   return (
-    <AdminLayout>
-      <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-foreground">Event Management</h1>
-        <Tabs defaultValue="categories">
-          <TabsList className="grid grid-cols-3 w-full max-w-md">
-            <TabsTrigger value="categories" className="gap-1"><Tag className="w-3.5 h-3.5" /> Categories</TabsTrigger>
-            <TabsTrigger value="packages" className="gap-1"><Package className="w-3.5 h-3.5" /> Packages</TabsTrigger>
-            <TabsTrigger value="bookings" className="gap-1"><CalendarCheck className="w-3.5 h-3.5" /> Bookings</TabsTrigger>
-          </TabsList>
-          <TabsContent value="categories"><CategoriesTab /></TabsContent>
-          <TabsContent value="packages"><PackagesTab /></TabsContent>
-          <TabsContent value="bookings"><BookingsTab /></TabsContent>
-        </Tabs>
-      </div>
-    </AdminLayout>
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold text-foreground">Event Management</h1>
+      <Tabs defaultValue="categories">
+        <TabsList className="grid grid-cols-3 w-full max-w-md">
+          <TabsTrigger value="categories" className="gap-1"><Tag className="w-3.5 h-3.5" /> Categories</TabsTrigger>
+          <TabsTrigger value="packages" className="gap-1"><Package className="w-3.5 h-3.5" /> Packages</TabsTrigger>
+          <TabsTrigger value="bookings" className="gap-1"><CalendarCheck className="w-3.5 h-3.5" /> Bookings</TabsTrigger>
+        </TabsList>
+        <TabsContent value="categories"><CategoriesTab /></TabsContent>
+        <TabsContent value="packages"><PackagesTab /></TabsContent>
+        <TabsContent value="bookings"><BookingsTab /></TabsContent>
+      </Tabs>
+    </div>
   );
 };
 
