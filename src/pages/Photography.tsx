@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCurrency } from "@/hooks/useCurrency";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import SEOHead from "@/components/seo/SEOHead";
 import { Camera, Video, Gift, MapPin, Calendar, Package, User, ChevronRight, ChevronLeft, Play, Sparkles, Clock, CheckCircle2, Star, ArrowRight, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ const timeSlots = [
 const Photography = () => {
   const { user } = useAuth();
   const { formatCurrency } = useCurrency();
+  const { settings } = useSiteSettings();
   const [bookingOpen, setBookingOpen] = useState(false);
   const [step, setStep] = useState(1);
   const [selectedService, setSelectedService] = useState<any>(null);
@@ -151,15 +153,20 @@ const Photography = () => {
   };
 
   const siteUrl = window.location.origin;
+  const seoTitle = settings.photo_seo_title || "Photography & Videography Services — Pikooly";
+  const seoDescription = settings.photo_seo_description || "Professional photography, cinematic videography, and surprise gift combos in Bangladesh. Book now starting from ৳2,000.";
+  const heroTitle = settings.photo_hero_title || "Capture Your <span class='text-primary'>Moments</span>";
+  const heroSubtitle = settings.photo_hero_subtitle || "Professional photography, cinematic videography & surprise gift combos — starting from ৳2,000";
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "Service",
-        name: "Photography & Videography Services",
+        name: seoTitle,
         provider: { "@type": "LocalBusiness", name: "Pikooly", url: siteUrl },
         areaServed: { "@type": "Country", name: "Bangladesh" },
-        description: "Professional photography and videography services in Bangladesh",
+        description: seoDescription,
       },
       {
         "@type": "LocalBusiness",
@@ -175,10 +182,11 @@ const Photography = () => {
   return (
     <main className="min-h-screen">
       <SEOHead
-        title="Photography & Videography Services — Pikooly"
-        description="Professional photography, cinematic videography, and surprise gift combos in Bangladesh. Book now starting from ৳2,000."
+        title={seoTitle.slice(0, 60)}
+        description={seoDescription.slice(0, 160)}
         canonical={`${siteUrl}/photography`}
         jsonLd={jsonLd}
+        ogImage={settings.photo_og_image}
       />
 
       {/* Hero Section */}
@@ -189,17 +197,9 @@ const Photography = () => {
             <Sparkles className="h-3.5 w-3.5 text-primary" />
             <span className="text-xs font-medium text-primary">Professional Services</span>
           </div>
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 leading-tight font-serif">
-            Capture Your <br className="md:hidden" />
-            <span className="text-primary relative">
-              Moments
-              <svg className="absolute -bottom-1 left-0 w-full h-2 text-primary/30" viewBox="0 0 200 8" fill="none">
-                <path d="M1 5.5C47 2 153 2 199 5.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-              </svg>
-            </span>
-          </h1>
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 leading-tight font-serif" dangerouslySetInnerHTML={{ __html: heroTitle }} />
           <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto mb-8 leading-relaxed">
-            Professional photography & videography for weddings, birthdays, corporate events, and more across Bangladesh.
+            {heroSubtitle}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button size="lg" className="rounded-full px-8 h-12 text-sm font-semibold shadow-lg shadow-primary/20" onClick={() => document.getElementById("services-section")?.scrollIntoView({ behavior: "smooth" })}>
