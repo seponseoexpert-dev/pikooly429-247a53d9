@@ -26,27 +26,31 @@ const Index = () => {
 
   // Prefetch shop data so it's cached when user navigates to Shop page
   useEffect(() => {
-    queryClient.prefetchQuery({
-      queryKey: ["shop-products"],
-      queryFn: async () => {
-        const { data } = await supabase.from("products").select("*, categories(name, slug), product_categories(category_id, categories(name, slug)), product_subcategories(subcategory_id)").eq("is_active", true).order("created_at", { ascending: false });
-        return data;
-      },
-    });
-    queryClient.prefetchQuery({
-      queryKey: ["shop-categories"],
-      queryFn: async () => {
-        const { data } = await supabase.from("categories").select("*").eq("is_active", true).order("display_order");
-        return data;
-      },
-    });
-    queryClient.prefetchQuery({
-      queryKey: ["shop-subcategories"],
-      queryFn: async () => {
-        const { data } = await supabase.from("subcategories").select("*").eq("is_active", true).order("display_order");
-        return data;
-      },
-    });
+    const timer = window.setTimeout(() => {
+      queryClient.prefetchQuery({
+        queryKey: ["shop-products"],
+        queryFn: async () => {
+          const { data } = await supabase.from("products").select("*, categories(name, slug), product_categories(category_id, categories(name, slug)), product_subcategories(subcategory_id)").eq("is_active", true).order("created_at", { ascending: false });
+          return data;
+        },
+      });
+      queryClient.prefetchQuery({
+        queryKey: ["shop-categories"],
+        queryFn: async () => {
+          const { data } = await supabase.from("categories").select("*").eq("is_active", true).order("display_order");
+          return data;
+        },
+      });
+      queryClient.prefetchQuery({
+        queryKey: ["shop-subcategories"],
+        queryFn: async () => {
+          const { data } = await supabase.from("subcategories").select("*").eq("is_active", true).order("display_order");
+          return data;
+        },
+      });
+    }, 1200);
+
+    return () => window.clearTimeout(timer);
   }, [queryClient]);
 
   const seoTitle = settings.homepage_seo_title || settings.site_title || "Pikooly";
@@ -97,34 +101,52 @@ const Index = () => {
       />
       <HeroSection />
       <CategoryGrid />
-      <Suspense fallback={<LazyFallback />}>
-        <OfferBanners />
-      </Suspense>
-      <Suspense fallback={<LazyFallback />}>
-        <RelationshipGrid />
-      </Suspense>
+      <div className="deferred-section">
+        <Suspense fallback={<LazyFallback />}>
+          <OfferBanners />
+        </Suspense>
+      </div>
+      <div className="deferred-section">
+        <Suspense fallback={<LazyFallback />}>
+          <RelationshipGrid />
+        </Suspense>
+      </div>
       <ProductGrid />
-      <Suspense fallback={<LazyFallback />}>
-        <CelebrationsCalendar />
-      </Suspense>
-      <Suspense fallback={<LazyFallback />}>
-        <GiftingStories />
-      </Suspense>
-      <Suspense fallback={<LazyFallback />}>
-        <EventsSection />
-      </Suspense>
-      <Suspense fallback={<LazyFallback />}>
-        <BlogSection />
-      </Suspense>
-      <Suspense fallback={<LazyFallback />}>
-        <CustomerReviewSection />
-      </Suspense>
-      <Suspense fallback={<LazyFallback />}>
-        <AboutSection />
-      </Suspense>
-      <Suspense fallback={<LazyFallback />}>
-        <FAQSection />
-      </Suspense>
+      <div className="deferred-section">
+        <Suspense fallback={<LazyFallback />}>
+          <CelebrationsCalendar />
+        </Suspense>
+      </div>
+      <div className="deferred-section">
+        <Suspense fallback={<LazyFallback />}>
+          <GiftingStories />
+        </Suspense>
+      </div>
+      <div className="deferred-section">
+        <Suspense fallback={<LazyFallback />}>
+          <EventsSection />
+        </Suspense>
+      </div>
+      <div className="deferred-section">
+        <Suspense fallback={<LazyFallback />}>
+          <BlogSection />
+        </Suspense>
+      </div>
+      <div className="deferred-section">
+        <Suspense fallback={<LazyFallback />}>
+          <CustomerReviewSection />
+        </Suspense>
+      </div>
+      <div className="deferred-section">
+        <Suspense fallback={<LazyFallback />}>
+          <AboutSection />
+        </Suspense>
+      </div>
+      <div className="deferred-section">
+        <Suspense fallback={<LazyFallback />}>
+          <FAQSection />
+        </Suspense>
+      </div>
     </main>
   );
 };

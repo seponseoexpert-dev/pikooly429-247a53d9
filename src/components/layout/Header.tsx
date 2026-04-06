@@ -10,32 +10,15 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-const normalizeSearchText = (value: string | null | undefined) =>
-  (value || "")
+const sanitizeSearchTerm = (value: string) =>
+  value
     .replace(/&amp;|&#38;|&#038;/gi, "&")
     .replace(/&nbsp;/gi, " ")
     .replace(/<[^>]*>/g, " ")
-    .toLowerCase()
-    .replace(/[^a-z0-9\u0980-\u09ff&\s-]/gi, " ")
+    .replace(/[,%()']/g, " ")
     .replace(/\s+/g, " ")
-    .trim();
-
-const matchesProductSearch = (product: any, query: string) => {
-  const normalizedQuery = normalizeSearchText(query);
-  if (!normalizedQuery) return true;
-
-  const searchParts = [
-    product.name,
-    product.short_description,
-    product.categories?.name,
-    product.subcategories?.name,
-    ...(Array.isArray(product.tags) ? product.tags : []),
-    ...((product.product_categories || []).map((item: any) => item.categories?.name).filter(Boolean)),
-    ...((product.product_subcategories || []).map((item: any) => item.subcategories?.name).filter(Boolean)),
-  ];
-
-  return normalizeSearchText(searchParts.join(" ")).includes(normalizedQuery);
-};
+    .trim()
+    .slice(0, 60);
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -45,6 +28,7 @@ const Header = () => {
   const [pinnedMegaMenu, setPinnedMegaMenu] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const [mobileSearchExpanded, setMobileSearchExpanded] = useState(false);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const mobileSearchInputRef = useRef<HTMLInputElement>(null);
   const { totalItems, setIsOpen } = useCart();
   const { settings, isLoading: settingsLoading } = useSiteSettings();
@@ -63,19 +47,32 @@ const Header = () => {
   const logoUrl = settings.company_logo || "";
   const announcementText = settings.announcement_bar_text || "🌸 Same Day Delivery Available in 500+ Cities";
   const showAnnouncement = !settingsLoading && settings.announcement_bar_enabled !== "false";
+  const safeSearchQuery = useMemo(() => sanitizeSearchTerm(searchQuery), [searchQuery]);
 
-  const { data: allProducts = [] } = useQuery({
-    queryKey: ["header-search-products"],
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setDebouncedSearch(safeSearchQuery);
+    }, 180);
+
+    return () => window.clearTimeout(timer);
+  }, [safeSearchQuery]);
+
+  const { data: suggestions = [], isFetching: isSearching } = useQuery({
+    queryKey: ["header-search-products", debouncedSearch],
     queryFn: async () => {
+      const term = debouncedSearch;
       const { data, error } = await supabase
         .from("products")
-        .select("id, name, slug, price, original_price, image_url, short_description, tags, categories(name), subcategories(name), product_categories(category_id, categories(name)), product_subcategories(subcategory_id, subcategories(name))")
+        .select("id, name, slug, price, original_price, image_url")
         .eq("is_active", true)
+        .or(`name.ilike.%${term}%,short_description.ilike.%${term}%,slug.ilike.%${term}%`)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data;
+      return (data || []).slice(0, 8);
     },
-    enabled: searchQuery.trim().length > 0,
+    enabled: debouncedSearch.length >= 2,
+    staleTime: 60 * 1000,
+    placeholderData: (prev) => prev,
   });
 
   const { data: categories = [] } = useQuery({
@@ -91,6 +88,8 @@ const Header = () => {
       if (error) throw error;
       return data;
     },
+    staleTime: 10 * 60 * 1000,
+    placeholderData: (prev) => prev,
   });
 
   const { data: subcategories = [] } = useQuery({
@@ -111,6 +110,8 @@ const Header = () => {
       });
       return (subs || []).map((s) => ({ ...s, product_count: countMap[s.id] || 0 }));
     },
+    staleTime: 10 * 60 * 1000,
+    placeholderData: (prev) => prev,
   });
 
   const subsByCategory = useMemo(() => {
@@ -126,10 +127,8 @@ const Header = () => {
   const [canUseHover, setCanUseHover] = useState(false);
   const megaMenuCloseTimer = useRef<number | null>(null);
 
-  const suggestions = useMemo(() => {
-    if (searchQuery.trim().length === 0) return [];
-    return allProducts.filter((product) => matchesProductSearch(product, searchQuery)).slice(0, 6);
-  }, [allProducts, searchQuery]);
+  const shouldShowSearchPanel = showSuggestions && debouncedSearch.length >= 2;
+  const showEmptyResults = shouldShowSearchPanel && !isSearching && suggestions.length === 0;
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -209,7 +208,11 @@ const Header = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) { navigate(`/shop?search=${encodeURIComponent(searchQuery.trim())}`); setSearchQuery(""); setShowSuggestions(false); }
+    if (safeSearchQuery) {
+      navigate(`/shop?search=${encodeURIComponent(safeSearchQuery)}`);
+      setSearchQuery("");
+      setShowSuggestions(false);
+    }
   };
   const handleSelect = (slug: string) => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product/${slug}`); };
 
@@ -218,7 +221,7 @@ const Header = () => {
     icon: React.ElementType; label?: string; onClick?: () => void; href?: string; badge?: number; className?: string;
   }) => {
     const content = (
-      <span className={`relative flex flex-col items-center justify-center gap-0.5 px-1.5 sm:px-2 lg:px-2.5 py-1.5 rounded-xl text-foreground/75 hover:text-primary hover:bg-primary/5 active:scale-95 transition-all duration-200 cursor-pointer ${className}`}>
+      <span className={`touch-target relative flex min-w-[44px] flex-col items-center justify-center gap-0.5 rounded-2xl border border-transparent px-1.5 py-1.5 text-foreground/75 shadow-[0_10px_28px_-24px_hsl(var(--foreground)/0.65)] transition-all duration-200 hover:border-border/70 hover:bg-muted/70 hover:text-primary active:scale-95 ${className}`}>
         <Icon size={19} strokeWidth={1.8} />
         {badge != null && badge > 0 && (
           <span className="absolute -top-0.5 -right-0.5 sm:top-0 sm:right-0 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary text-primary-foreground text-[9px] font-bold px-1 shadow-sm">
@@ -241,7 +244,7 @@ const Header = () => {
         </div>
       )}
 
-      <header className="bg-card/95 backdrop-blur-xl border-b border-border/40 shadow-[0_1px_3px_0_hsl(var(--foreground)/0.04)]">
+      <header className="border-b border-border/50 bg-card/95 backdrop-blur-xl shadow-[0_16px_45px_-38px_hsl(var(--foreground)/0.45)]">
         <div className="section-container">
           {/* === TOP ROW: Logo + Search + Actions === */}
           <div className="flex items-center h-[52px] sm:h-14 md:h-[60px] lg:h-16 gap-2 sm:gap-3 md:gap-4 lg:gap-6">
@@ -273,12 +276,16 @@ const Header = () => {
               <form onSubmit={handleSearch} className="relative group">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={17} />
                 <input
+                  autoComplete="off"
+                  enterKeyHint="search"
+                  inputMode="search"
+                  maxLength={60}
                   type="text"
                   value={searchQuery}
-                  onChange={(e) => { setSearchQuery(e.target.value); setShowSuggestions(true); }}
-                  onFocus={() => setShowSuggestions(true)}
+                  onChange={(e) => { setSearchQuery(e.target.value.slice(0, 60)); setShowSuggestions(true); }}
+                  onFocus={() => setShowSuggestions(sanitizeSearchTerm(searchQuery).length >= 2)}
                   placeholder={t("search_placeholder")}
-                  className="w-full pl-10 pr-10 py-2 lg:py-2.5 rounded-full bg-muted/60 border border-border/60 focus:border-primary/50 focus:ring-2 focus:ring-primary/15 focus:bg-card outline-none text-sm transition-all placeholder:text-muted-foreground/60"
+                  className="w-full rounded-full border border-border/60 bg-muted/50 py-2 pl-10 pr-10 text-sm shadow-[0_20px_40px_-32px_hsl(var(--foreground)/0.45)] outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary/40 focus:bg-card focus:ring-2 focus:ring-primary/15 lg:py-2.5"
                 />
                 {searchQuery && (
                   <button type="button" onClick={() => { setSearchQuery(""); setShowSuggestions(false); }} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
@@ -287,9 +294,13 @@ const Header = () => {
                 )}
               </form>
 
-              {showSuggestions && suggestions.length > 0 && (
+              {shouldShowSearchPanel && (
                 <div className="absolute left-0 right-0 top-full mt-2 z-[100] bg-card border border-border/70 rounded-2xl shadow-[0_12px_40px_-8px_hsl(var(--foreground)/0.12)] overflow-hidden">
-                  {suggestions.map((p) => (
+                  {isSearching && (
+                    <div className="px-4 py-3 text-sm text-muted-foreground">Searching products...</div>
+                  )}
+
+                  {!isSearching && suggestions.map((p) => (
                     <button key={p.id} onClick={() => handleSelect(p.slug)} className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-muted/60 transition-colors text-left">
                       {p.image_url && <img src={p.image_url} alt={p.name} width={40} height={40} className="w-10 h-10 rounded-xl object-cover shrink-0 ring-1 ring-border/50" loading="lazy" decoding="async" />}
                       <div className="min-w-0 flex-1">
@@ -303,6 +314,10 @@ const Header = () => {
                       </div>
                     </button>
                   ))}
+
+                  {showEmptyResults && (
+                    <div className="px-4 py-3 text-sm text-muted-foreground">No matching products found.</div>
+                  )}
                 </div>
               )}
             </div>
@@ -313,7 +328,7 @@ const Header = () => {
               <button
                 type="button"
                 onClick={() => { setMobileSearchExpanded(true); setTimeout(() => mobileSearchInputRef.current?.focus(), 50); }}
-                className={`md:hidden relative flex flex-col items-center justify-center gap-0.5 px-1.5 py-1.5 rounded-xl text-foreground/75 hover:text-primary hover:bg-primary/5 active:scale-95 transition-all duration-200 ${
+                  className={`touch-target md:hidden relative flex flex-col items-center justify-center gap-0.5 rounded-2xl border border-transparent px-1.5 py-1.5 text-foreground/75 shadow-[0_10px_28px_-24px_hsl(var(--foreground)/0.65)] transition-all duration-200 hover:border-border/70 hover:bg-muted/70 hover:text-primary active:scale-95 ${
                   scrolled && !mobileSearchExpanded ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden pointer-events-none"
                 }`}
                 aria-label="Search"
@@ -416,12 +431,16 @@ const Header = () => {
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={15} />
               <input
                 ref={mobileSearchInputRef}
+                autoComplete="off"
+                enterKeyHint="search"
+                inputMode="search"
+                maxLength={60}
                 type="text"
                 value={searchQuery}
-                onChange={(e) => { setSearchQuery(e.target.value); setShowSuggestions(true); }}
-                onFocus={() => setShowSuggestions(true)}
+                onChange={(e) => { setSearchQuery(e.target.value.slice(0, 60)); setShowSuggestions(true); }}
+                onFocus={() => setShowSuggestions(sanitizeSearchTerm(searchQuery).length >= 2)}
                 placeholder={t("search_placeholder")}
-                className="w-full pl-10 pr-9 py-2.5 rounded-full bg-muted/60 border border-border/60 focus:border-primary/50 focus:ring-2 focus:ring-primary/15 outline-none text-[13px] transition-all placeholder:text-muted-foreground/60"
+                className="w-full rounded-full border border-border/60 bg-muted/50 py-2.5 pl-10 pr-9 text-[13px] shadow-[0_20px_40px_-32px_hsl(var(--foreground)/0.45)] outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary/40 focus:ring-2 focus:ring-primary/15"
               />
               {(searchQuery || mobileSearchExpanded) && (
                 <button type="button" onClick={() => { setSearchQuery(""); setShowSuggestions(false); if (mobileSearchExpanded) setMobileSearchExpanded(false); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
@@ -429,9 +448,13 @@ const Header = () => {
                 </button>
               )}
             </form>
-            {showSuggestions && suggestions.length > 0 && (
+            {shouldShowSearchPanel && (
               <div className="absolute left-0 right-0 top-full mt-1 z-[100] bg-card border border-border/70 rounded-xl shadow-lg overflow-hidden">
-                {suggestions.map((p) => (
+                {isSearching && (
+                  <div className="px-4 py-3 text-sm text-muted-foreground">Searching products...</div>
+                )}
+
+                {!isSearching && suggestions.map((p) => (
                   <button key={p.id} onClick={() => handleSelect(p.slug)} className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-muted/60 transition-colors text-left">
                     {p.image_url && <img src={p.image_url} alt={p.name} width={40} height={40} className="w-9 h-9 rounded-lg object-cover shrink-0" loading="lazy" decoding="async" />}
                     <div className="min-w-0 flex-1">
@@ -445,6 +468,10 @@ const Header = () => {
                     </div>
                   </button>
                 ))}
+
+                {showEmptyResults && (
+                  <div className="px-4 py-3 text-sm text-muted-foreground">No matching products found.</div>
+                )}
               </div>
             )}
           </div>
