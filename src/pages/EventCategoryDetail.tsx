@@ -8,7 +8,7 @@ import SEOHead from "@/components/seo/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowRight, Check, Star, Sparkles, ArrowLeft, Phone, Mail, Calendar, Users, MapPin } from "lucide-react";
+import { ArrowRight, Check, Star, Sparkles, ArrowLeft, Phone, Mail, Calendar, Users, MapPin, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
