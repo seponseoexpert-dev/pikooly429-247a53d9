@@ -179,11 +179,15 @@ const Events = () => {
   return (
     <main>
       <SEOHead
-        title="Event Management Services | Pikooly"
-        description="Professional event management services in Bangladesh. Wedding decoration, birthday parties, corporate events. Book your event today with Pikooly."
+        title="Event Management Services | Wedding, Birthday, Corporate Events | Pikooly"
+        description="Professional event management services in Bangladesh. Wedding decoration, birthday parties, corporate events & anniversary surprises. Book your dream event today!"
         canonical={`${window.location.origin}/events`}
         jsonLd={jsonLd}
       />
+      {faqJsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      )}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
 
       {/* Hero */}
       <section className="relative bg-gradient-to-br from-primary/10 via-accent/5 to-secondary/10 py-14 md:py-24 overflow-hidden">
