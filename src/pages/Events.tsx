@@ -270,49 +270,78 @@ const Events = () => {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {packages.map((pkg: any, i: number) => {
                 const features = Array.isArray(pkg.features) ? pkg.features : [];
+                const discount = pkg.original_price ? Math.round(((pkg.original_price - pkg.price) / pkg.original_price) * 100) : 0;
                 return (
                   <motion.div
                     key={pkg.id}
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 24 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: i * 0.08, duration: 0.4 }}
-                    className={`relative bg-card rounded-2xl border overflow-hidden transition-all hover:shadow-xl ${
-                      pkg.is_featured ? "border-primary shadow-lg ring-2 ring-primary/20" : "border-border"
+                    transition={{ delay: i * 0.1, duration: 0.5 }}
+                    className={`group relative bg-card rounded-2xl border overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_50px_-12px_hsl(var(--primary)/0.25)] ${
+                      pkg.is_featured ? "border-primary shadow-lg ring-2 ring-primary/20" : "border-border/60"
                     }`}
                   >
-                    {pkg.is_featured && (
-                      <div className="absolute top-3 right-3 bg-primary text-primary-foreground text-xs px-3 py-1 rounded-full font-medium flex items-center gap-1 z-10">
-                        <Star className="w-3 h-3" /> Popular
+                    {/* Image with gradient overlay */}
+                    <div className="relative h-52 overflow-hidden bg-gradient-to-br from-primary/10 to-accent/10">
+                      {pkg.image_url ? (
+                        <>
+                          <img src={pkg.image_url} alt={pkg.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-foreground/50 via-foreground/10 to-transparent" />
+                        </>
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Sparkles className="h-10 w-10 text-primary/30" />
+                        </div>
+                      )}
+
+                      {/* Badges */}
+                      <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
+                        {pkg.is_featured && (
+                          <span className="inline-flex items-center gap-1 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-lg">
+                            <Star className="w-3 h-3" /> Most Popular
+                          </span>
+                        )}
+                        {discount > 0 && (
+                          <span className="inline-flex items-center bg-destructive text-destructive-foreground text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg">
+                            {discount}% OFF
+                          </span>
+                        )}
                       </div>
-                    )}
-                    {pkg.image_url && (
-                      <img src={pkg.image_url} alt={pkg.name} className="w-full h-48 object-cover" loading="lazy" />
-                    )}
+
+                      {/* Category badge bottom-right */}
+                      <span className="absolute bottom-3 right-3 bg-background/90 backdrop-blur-sm text-foreground text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full border border-border/40 z-10">
+                        {(pkg as any).event_categories?.name}
+                      </span>
+                    </div>
+
                     <div className="p-5">
-                      <p className="text-xs text-muted-foreground mb-1">{(pkg as any).event_categories?.name}</p>
-                      <h3 className="text-lg font-bold text-foreground mb-2">{pkg.name}</h3>
-                      {pkg.description && <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{pkg.description}</p>}
-                      
-                      <div className="flex items-baseline gap-2 mb-4">
+                      <h3 className="text-lg font-bold text-foreground mb-1.5">{pkg.name}</h3>
+                      {pkg.description && <p className="text-sm text-muted-foreground mb-4 line-clamp-2 leading-relaxed">{pkg.description}</p>}
+
+                      {/* Price */}
+                      <div className="flex items-baseline gap-2 mb-4 pb-4 border-b border-border/40">
                         <span className="text-2xl font-bold text-primary">{formatPrice(pkg.price)}</span>
                         {pkg.original_price && (
                           <span className="text-sm text-muted-foreground line-through">{formatPrice(pkg.original_price)}</span>
                         )}
                       </div>
 
+                      {/* Features */}
                       {features.length > 0 && (
-                        <ul className="space-y-2 mb-5">
+                        <ul className="space-y-2.5 mb-5">
                           {features.map((f: any, fi: number) => (
-                            <li key={fi} className="flex items-start gap-2 text-sm text-foreground">
-                              <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                            <li key={fi} className="flex items-start gap-2.5 text-sm text-foreground">
+                              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                                <Check className="w-3 h-3 text-primary" />
+                              </span>
                               <span>{typeof f === "string" ? f : f.text || f.name}</span>
                             </li>
                           ))}
                         </ul>
                       )}
 
-                      <Button onClick={() => handleBookNow(pkg.id)} className="w-full gap-2">
+                      <Button onClick={() => handleBookNow(pkg.id)} className="w-full gap-2 shadow-md hover:shadow-lg transition-shadow">
                         Book Now <ArrowRight className="w-4 h-4" />
                       </Button>
                     </div>
