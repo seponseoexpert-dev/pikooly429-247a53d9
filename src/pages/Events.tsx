@@ -131,10 +131,53 @@ const Events = () => {
     url: `${window.location.origin}/events`,
     areaServed: { "@type": "Country", name: "Bangladesh" },
     serviceType: categories.map((c: any) => c.name),
-  }), [categories]);
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Event Packages",
+      itemListElement: packages.slice(0, 4).map((pkg: any, i: number) => ({
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: pkg.name,
+          description: pkg.description,
+        },
+        price: pkg.price,
+        priceCurrency: "BDT",
+        position: i + 1,
+      })),
+    },
+  }), [categories, packages]);
+
+  const faqJsonLd = useMemo(() => {
+    const allFaqs = categories
+      .filter((c: any) => c.name)
+      .map((c: any) => ({
+        "@type": "Question",
+        name: `What does ${c.name} service include?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: c.short_description || c.description || `Professional ${c.name} event planning with décor, coordination and on-ground execution.`,
+        },
+      }));
+    if (allFaqs.length === 0) return undefined;
+    return {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: allFaqs,
+    };
+  }, [categories]);
+
+  const breadcrumbJsonLd = useMemo(() => ({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: window.location.origin },
+      { "@type": "ListItem", position: 2, name: "Events", item: `${window.location.origin}/events` },
+    ],
+  }), []);
 
   return (
-    <main className="min-h-screen">
+    <main>
       <SEOHead
         title="Event Management Services | Pikooly"
         description="Professional event management services in Bangladesh. Wedding decoration, birthday parties, corporate events. Book your event today with Pikooly."
