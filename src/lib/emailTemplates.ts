@@ -271,3 +271,60 @@ export function buildAdminNewOrderEmail(data: OrderEmailData & { customerPhone?:
 
   return wrap(content, data.storeName);
 }
+
+// ── Event Booking Admin Notification ──
+
+interface EventBookingEmailData {
+  customerName: string;
+  customerPhone: string;
+  customerEmail?: string;
+  eventDate: string;
+  eventTime?: string;
+  venueAddress: string;
+  guestCount?: number;
+  specialRequests?: string;
+  packageName?: string;
+  categoryName?: string;
+  total: number;
+  storeName?: string;
+}
+
+export function buildAdminEventBookingEmail(data: EventBookingEmailData): string {
+  const rows = [
+    ["Customer", data.customerName],
+    ["Phone", data.customerPhone],
+    ...(data.customerEmail ? [["Email", data.customerEmail]] : []),
+    ["Event Date", data.eventDate],
+    ...(data.eventTime ? [["Event Time", data.eventTime]] : []),
+    ["Venue", data.venueAddress],
+    ...(data.guestCount ? [["Guest Count", String(data.guestCount)]] : []),
+    ...(data.categoryName ? [["Category", data.categoryName]] : []),
+    ...(data.packageName ? [["Package", data.packageName]] : []),
+    ["Total", `৳${data.total.toLocaleString()}`],
+    ...(data.specialRequests ? [["Special Requests", data.specialRequests]] : []),
+  ];
+
+  const tableRows = rows
+    .map(
+      ([label, value]) =>
+        `<tr>
+          <td style="padding:10px 12px;font-size:13px;color:${C.light};font-family:${C.font};white-space:nowrap;border-bottom:1px solid ${C.border};vertical-align:top;">${label}</td>
+          <td style="padding:10px 12px;font-size:14px;color:${C.dark};font-family:${C.font};word-break:break-word;border-bottom:1px solid ${C.border};vertical-align:top;">${value}</td>
+        </tr>`
+    )
+    .join("");
+
+  const content = [
+    purpleHeader("🎉 New Event Booking", "A new event booking has been received"),
+    `<tr><td style="padding:24px 30px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid ${C.border};border-radius:8px;overflow:hidden;">
+        ${tableRows}
+      </table>
+    </td></tr>`,
+    `<tr><td style="padding:0 30px 24px;text-align:center;">
+      <a href="${window.location.origin}/admin" style="display:inline-block;padding:12px 28px;background:${C.purple};color:#fff;font-size:14px;font-family:${C.font};text-decoration:none;border-radius:6px;font-weight:600;">View in Admin Panel</a>
+    </td></tr>`,
+  ].join("");
+
+  return wrap(content, data.storeName);
+}
