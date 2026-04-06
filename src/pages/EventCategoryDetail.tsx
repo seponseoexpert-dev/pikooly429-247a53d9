@@ -8,15 +8,18 @@ import SEOHead from "@/components/seo/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowRight, Check, Star, Sparkles, ArrowLeft, Phone, Mail, Calendar, Users, MapPin } from "lucide-react";
+import { ArrowRight, Check, Star, Sparkles, ArrowLeft, Phone, Mail, Calendar, Users, MapPin, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const EventCategoryDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const { formatPrice } = useMultiCurrency();
   const { user } = useAuth();
+  const { settings } = useSiteSettings();
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
+  const [bookingSuccess, setBookingSuccess] = useState<{ name: string; pkgName: string; date: string } | null>(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -86,6 +89,7 @@ const EventCategoryDetail = () => {
       });
       if (error) throw error;
       toast.success("Booking confirmed! We will contact you shortly.");
+      setBookingSuccess({ name: formData.customer_name, pkgName: pkg?.name || "Event", date: formData.event_date });
       setShowBookingForm(false);
       setFormData({ customer_name: "", customer_email: "", customer_phone: "", event_date: "", event_time: "", venue_address: "", guest_count: "", special_requests: "" });
     } catch (err: any) {
@@ -362,6 +366,54 @@ const EventCategoryDetail = () => {
                 {submitting ? "Submitting..." : "Confirm Booking"}
               </Button>
             </form>
+          </div>
+        </section>
+      )}
+
+      {/* Booking Success */}
+      {bookingSuccess && (
+        <section className="py-12 bg-background">
+          <div className="container mx-auto px-4 max-w-lg">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-card rounded-2xl border border-primary/20 p-8 text-center shadow-lg"
+            >
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Check className="w-8 h-8 text-primary" />
+              </div>
+              <h2 className="text-2xl font-bold text-foreground mb-2">Booking Confirmed! 🎉</h2>
+              <p className="text-muted-foreground mb-1">
+                Thank you, <span className="font-semibold text-foreground">{bookingSuccess.name}</span>!
+              </p>
+              <p className="text-sm text-muted-foreground mb-6">
+                Your <span className="font-medium text-foreground">{bookingSuccess.pkgName}</span> booking for{" "}
+                <span className="font-medium text-foreground">{bookingSuccess.date}</span> has been received. We'll contact you shortly.
+              </p>
+              {(() => {
+                const whatsappNumber = (settings.whatsapp_number || "").replace(/[^0-9]/g, "");
+                if (!whatsappNumber) return null;
+                const msg = encodeURIComponent(
+                  `Hi Pikooly! I just booked "${bookingSuccess.pkgName}" for ${bookingSuccess.date}. My name is ${bookingSuccess.name}. Please confirm my booking.`
+                );
+                return (
+                  <a
+                    href={`https://wa.me/${whatsappNumber}?text=${msg}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-[hsl(142,70%,45%)] hover:bg-[hsl(142,70%,40%)] text-white font-medium px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-all"
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                    Confirm via WhatsApp
+                  </a>
+                );
+              })()}
+              <div className="mt-4">
+                <Button variant="outline" onClick={() => setBookingSuccess(null)}>
+                  Close
+                </Button>
+              </div>
+            </motion.div>
           </div>
         </section>
       )}
