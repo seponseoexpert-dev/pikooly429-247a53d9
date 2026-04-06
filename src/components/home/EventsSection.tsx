@@ -218,14 +218,15 @@ const EventsSection = () => {
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-1 -mx-4 px-4">
               {photoServices.map((svc: any, i: number) => {
                 const fallback = PHOTO_FALLBACKS[i % PHOTO_FALLBACKS.length];
                 return (
                   <motion.div
                     key={svc.id}
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                    className="snap-start shrink-0 w-[160px] md:w-[220px]"
+                    initial={{ opacity: 0, x: 20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.08, duration: 0.4 }}
                   >
@@ -233,7 +234,7 @@ const EventsSection = () => {
                       to="/photography"
                       className="group block rounded-2xl overflow-hidden border border-border/40 hover:border-primary/50 transition-all duration-300 hover:shadow-lg bg-card"
                     >
-                      <div className="relative overflow-hidden aspect-square bg-muted/30 p-4 flex items-center justify-center">
+                      <div className="relative overflow-hidden aspect-square bg-muted/30 p-3 flex items-center justify-center">
                         <img
                           src={svc.image_url || fallback}
                           alt={svc.title}
@@ -243,16 +244,13 @@ const EventsSection = () => {
                           height={400}
                         />
                         {svc.starting_price > 0 && (
-                          <span className="absolute top-3 right-3 bg-primary text-primary-foreground text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md">
+                          <span className="absolute top-2 right-2 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md">
                             ৳{svc.starting_price.toLocaleString()}~
                           </span>
                         )}
                       </div>
-                      <div className="p-3 text-center border-t border-border/30">
-                        <p className="text-sm font-semibold text-foreground leading-tight">{svc.title}</p>
-                        {svc.short_description && (
-                          <p className="text-[11px] text-muted-foreground mt-1 line-clamp-1">{svc.short_description}</p>
-                        )}
+                      <div className="p-2.5 text-center border-t border-border/30">
+                        <p className="text-xs md:text-sm font-semibold text-foreground leading-tight line-clamp-1 whitespace-nowrap">{svc.title}</p>
                       </div>
                     </Link>
                   </motion.div>
