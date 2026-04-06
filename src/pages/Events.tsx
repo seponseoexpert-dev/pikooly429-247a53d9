@@ -272,92 +272,40 @@ const Events = () => {
 
       {/* Categories — 4-card premium grid */}
       {categories.length > 0 && (
-        <section className="py-12 md:py-16 bg-background">
+        <section className="py-10 md:py-14 bg-background">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-8 md:mb-10">
-              <span className="text-primary text-xs font-semibold tracking-wider uppercase">What We Offer</span>
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mt-1">Our Services</h2>
-            </div>
+            <h2 className="text-xl md:text-2xl font-bold text-foreground mb-5 md:mb-7">Our Services</h2>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
-              {categories.slice(0, 4).map((cat: any, i: number) => {
-                const Icon = getIconForCategory(cat.slug, i);
-                const gradient = CATEGORY_GRADIENTS[i % CATEGORY_GRADIENTS.length];
+            <div className="flex gap-3 md:gap-4 overflow-x-auto pb-3 snap-x snap-mandatory scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+              {categories.map((cat: any, i: number) => {
                 const badge = CATEGORY_BADGES[i % CATEGORY_BADGES.length];
-                const isSelected = selectedCategory === cat.id;
-
                 return (
-                  <motion.div
+                  <Link
                     key={cat.id}
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.08, duration: 0.4 }}
+                    to={`/events/${cat.slug}`}
+                    className="group flex-shrink-0 snap-start w-[200px] sm:w-[220px] md:w-[calc(25%-12px)] rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
                   >
-                    <div
-                      onClick={() => setSelectedCategory(isSelected ? null : cat.id)}
-                      className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-card shadow-sm cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
-                        isSelected ? "border-primary ring-2 ring-primary/20 shadow-lg" : "border-border/60 hover:border-primary/40"
-                      }`}
-                    >
-                      {/* Image / Gradient Panel */}
-                      <div className={`relative min-h-[140px] md:min-h-[170px] overflow-hidden bg-gradient-to-br ${gradient}`}>
-                        {cat.image_url ? (
-                          <>
-                            <img
-                              src={cat.image_url}
-                              alt={cat.name}
-                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                              loading="lazy"
-                              width={400}
-                              height={300}
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-foreground/30 via-transparent to-transparent" />
-                            <span className="absolute left-3 top-3 rounded-full border border-border/60 bg-background/85 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground backdrop-blur-sm">
-                              {badge}
-                            </span>
-                          </>
-                        ) : (
-                          <>
-                            <div className="absolute -right-6 -top-8 h-24 w-24 rounded-full bg-primary/10" />
-                            <div className="absolute -bottom-10 left-[-14px] h-28 w-28 rounded-full bg-accent/10" />
-                            <div className="relative flex h-full min-h-[140px] md:min-h-[170px] items-end justify-between p-4">
-                              <span className="rounded-full border border-border/60 bg-background/85 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground backdrop-blur-sm">
-                                {badge}
-                              </span>
-                              <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-border/60 bg-background/85 text-primary shadow-sm backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
-                                <Icon className="h-5 w-5" />
-                              </span>
-                            </div>
-                          </>
-                        )}
-                      </div>
-
-                      {/* Content */}
-                      <div className="flex flex-1 flex-col justify-between p-3.5 md:p-4">
-                        <div>
-                          <div className="mb-2 flex items-start justify-between gap-2">
-                            <p className="text-sm md:text-[15px] font-semibold text-foreground leading-snug">{cat.name}</p>
-                            {cat.image_url && (
-                              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                                <Icon className="h-4 w-4" />
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-[11px] md:text-xs leading-relaxed text-muted-foreground line-clamp-2 md:line-clamp-3">
-                            {cat.short_description || cat.description || "Professional event planning with décor, coordination and on-ground execution."}
-                          </p>
-                        </div>
-
-                        <div className="mt-3 flex items-center justify-between border-t border-border/40 pt-3">
-                          <span className="text-[11px] font-medium text-muted-foreground">Event planning</span>
-                          <Link to={`/events/${cat.slug}`} className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline">
-                            Explore <ArrowRight className="h-3.5 w-3.5" />
-                          </Link>
-                        </div>
-                      </div>
+                    <div className="relative aspect-[4/3] overflow-hidden bg-muted/40">
+                      <img
+                        src={cat.image_url || "/placeholder.svg"}
+                        alt={cat.name}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                        width={300}
+                        height={225}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-foreground/30 via-transparent to-transparent" />
+                      <span className="absolute left-2.5 top-2.5 rounded-full bg-background/85 backdrop-blur-sm px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-muted-foreground border border-border/50">
+                        {badge}
+                      </span>
                     </div>
-                  </motion.div>
+                    <div className="p-3">
+                      <p className="text-sm font-semibold text-foreground line-clamp-1">{cat.name}</p>
+                      <p className="text-[11px] text-muted-foreground line-clamp-1 mt-0.5">
+                        {cat.short_description || "Event planning"}
+                      </p>
+                    </div>
+                  </Link>
                 );
               })}
             </div>
