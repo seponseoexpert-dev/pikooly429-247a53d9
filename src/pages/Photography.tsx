@@ -29,6 +29,7 @@ const timeSlots = [
 const Photography = () => {
   const { user } = useAuth();
   const { formatCurrency } = useCurrency();
+  const { settings } = useSiteSettings();
   const [bookingOpen, setBookingOpen] = useState(false);
   const [step, setStep] = useState(1);
   const [selectedService, setSelectedService] = useState<any>(null);
@@ -152,15 +153,20 @@ const Photography = () => {
   };
 
   const siteUrl = window.location.origin;
+  const seoTitle = settings.photo_seo_title || "Photography & Videography Services — Pikooly";
+  const seoDescription = settings.photo_seo_description || "Professional photography, cinematic videography, and surprise gift combos in Bangladesh. Book now starting from ৳2,000.";
+  const heroTitle = settings.photo_hero_title || "Capture Your <span class='text-primary'>Moments</span>";
+  const heroSubtitle = settings.photo_hero_subtitle || "Professional photography, cinematic videography & surprise gift combos — starting from ৳2,000";
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "Service",
-        name: "Photography & Videography Services",
+        name: seoTitle,
         provider: { "@type": "LocalBusiness", name: "Pikooly", url: siteUrl },
         areaServed: { "@type": "Country", name: "Bangladesh" },
-        description: "Professional photography and videography services in Bangladesh",
+        description: seoDescription,
       },
       {
         "@type": "LocalBusiness",
@@ -176,10 +182,11 @@ const Photography = () => {
   return (
     <main className="min-h-screen">
       <SEOHead
-        title="Photography & Videography Services — Pikooly"
-        description="Professional photography, cinematic videography, and surprise gift combos in Bangladesh. Book now starting from ৳2,000."
+        title={seoTitle.slice(0, 60)}
+        description={seoDescription.slice(0, 160)}
         canonical={`${siteUrl}/photography`}
         jsonLd={jsonLd}
+        ogImage={settings.photo_og_image}
       />
 
       {/* Hero Section */}
