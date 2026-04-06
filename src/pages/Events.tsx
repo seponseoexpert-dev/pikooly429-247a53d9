@@ -8,10 +8,11 @@ import SEOHead from "@/components/seo/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar, Users, MapPin, Phone, Mail, Star, Check, ArrowRight, Sparkles, PartyPopper, Heart, Briefcase, Gift, CalendarDays } from "lucide-react";
+import { Calendar, Users, MapPin, Phone, Mail, Star, Check, ArrowRight, Sparkles, PartyPopper, Heart, Briefcase, Gift, CalendarDays, MessageCircle } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const CATEGORY_ICONS: Record<string, LucideIcon> = {
   birthday: PartyPopper,
@@ -36,6 +37,8 @@ const Events = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
+  const [bookingSuccess, setBookingSuccess] = useState<{ name: string; pkgName: string; date: string } | null>(null);
+  const { settings } = useSiteSettings();
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     customer_name: "",
@@ -122,6 +125,7 @@ const Events = () => {
       });
       if (error) throw error;
       toast.success("Booking confirmed! We will contact you shortly.");
+      setBookingSuccess({ name: formData.customer_name, pkgName: pkg?.name || "Event", date: formData.event_date });
       setShowBookingForm(false);
       setFormData({ customer_name: "", customer_email: "", customer_phone: "", event_date: "", event_time: "", venue_address: "", guest_count: "", special_requests: "" });
     } catch (err: any) {
