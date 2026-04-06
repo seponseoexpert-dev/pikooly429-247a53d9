@@ -667,6 +667,11 @@ const AdminPhotography = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Page SEO Tab */}
+      <TabsContent value="seo" className="mt-4">
+        <PageSEOTab />
+      </TabsContent>
+
       {/* Edit Travel Fee Dialog */}
       <Dialog open={!!editFee} onOpenChange={() => setEditFee(null)}>
         <DialogContent className="rounded-2xl">
@@ -694,6 +699,139 @@ const AdminPhotography = () => {
         </DialogContent>
       </Dialog>
     </div>
+  );
+};
+
+/* ─── Page SEO Sub-component ─── */
+const SEO_KEYS = [
+  "photo_seo_title",
+  "photo_seo_description",
+  "photo_hero_title",
+  "photo_hero_subtitle",
+  "photo_og_image",
+] as const;
+
+const PageSEOTab = () => {
+  const [form, setForm] = useState<Record<string, string>>({});
+  const [saving, setSaving] = useState(false);
+
+  const { data: seoSettings } = useQuery({
+    queryKey: ["photo-seo-settings"],
+    queryFn: async () => {
+      const { data } = await supabase.from("site_settings").select("key, value").in("key", [...SEO_KEYS]);
+      const map: Record<string, string> = {};
+      data?.forEach((s) => { map[s.key] = s.value || ""; });
+      return map;
+    },
+  });
+
+  useEffect(() => {
+    if (seoSettings) setForm(seoSettings);
+  }, [seoSettings]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      for (const key of SEO_KEYS) {
+        const val = form[key] || "";
+        const { data: existing } = await supabase.from("site_settings").select("id").eq("key", key).maybeSingle();
+        if (existing) {
+          await supabase.from("site_settings").update({ value: val }).eq("key", key);
+        } else {
+          await supabase.from("site_settings").insert({ key, value: val });
+        }
+      }
+      toast.success("SEO settings saved");
+    } catch {
+      toast.error("Failed to save");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const seoTitle = form.photo_seo_title || "Photography & Videography Services — Pikooly";
+  const seoDesc = form.photo_seo_description || "Professional photography and videography services in Bangladesh.";
+
+  return (
+    <Card className="border-border/50 shadow-sm">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base">Page SEO Settings</CardTitle>
+        <p className="text-xs text-muted-foreground">/photography পেজের SEO ও Hero কনটেন্ট এডিট করুন</p>
+      </CardHeader>
+      <CardContent className="space-y-5">
+        {/* Google Preview */}
+        <div className="rounded-xl border border-border/50 bg-muted/30 p-4">
+          <p className="text-xs text-muted-foreground mb-2 font-medium">Google Search Preview</p>
+          <p className="text-blue-600 text-base font-medium truncate">{seoTitle.slice(0, 60)}</p>
+          <p className="text-green-700 text-xs">pikooly.com/photography</p>
+          <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{seoDesc.slice(0, 160)}</p>
+        </div>
+
+        <div className="grid gap-4">
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
+              SEO Title <span className="text-muted-foreground/60">({(form.photo_seo_title || "").length}/60)</span>
+            </label>
+            <Input
+              value={form.photo_seo_title || ""}
+              onChange={(e) => setForm({ ...form, photo_seo_title: e.target.value })}
+              placeholder="Photography & Videography Services — Pikooly"
+              maxLength={60}
+              className="rounded-lg"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
+              Meta Description <span className="text-muted-foreground/60">({(form.photo_seo_description || "").length}/160)</span>
+            </label>
+            <Textarea
+              value={form.photo_seo_description || ""}
+              onChange={(e) => setForm({ ...form, photo_seo_description: e.target.value })}
+              placeholder="Professional photography and videography services..."
+              maxLength={160}
+              rows={3}
+              className="rounded-lg"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Hero Title</label>
+            <Input
+              value={form.photo_hero_title || ""}
+              onChange={(e) => setForm({ ...form, photo_hero_title: e.target.value })}
+              placeholder="Capture Your Moments"
+              className="rounded-lg"
+            />
+            <p className="text-[10px] text-muted-foreground mt-1">Use &lt;span class='text-primary'&gt;word&lt;/span&gt; for highlight</p>
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Hero Subtitle</label>
+            <Input
+              value={form.photo_hero_subtitle || ""}
+              onChange={(e) => setForm({ ...form, photo_hero_subtitle: e.target.value })}
+              placeholder="Professional photography services..."
+              className="rounded-lg"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">OG Image URL</label>
+            <Input
+              value={form.photo_og_image || ""}
+              onChange={(e) => setForm({ ...form, photo_og_image: e.target.value })}
+              placeholder="https://..."
+              className="rounded-lg"
+            />
+          </div>
+        </div>
+
+        <Button onClick={handleSave} disabled={saving} className="w-full rounded-lg">
+          {saving ? "Saving..." : "Save SEO Settings"}
+        </Button>
+      </CardContent>
+    </Card>
   );
 };
 
