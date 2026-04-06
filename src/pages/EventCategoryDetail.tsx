@@ -15,6 +15,20 @@ import { toast } from "sonner";
 const EventCategoryDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const { formatPrice } = useMultiCurrency();
+  const { user } = useAuth();
+  const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
+  const [showBookingForm, setShowBookingForm] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    customer_name: "",
+    customer_email: "",
+    customer_phone: "",
+    event_date: "",
+    event_time: "",
+    venue_address: "",
+    guest_count: "",
+    special_requests: "",
+  });
 
   const { data: category, isLoading: catLoading } = useQuery({
     queryKey: ["event-category", slug],
