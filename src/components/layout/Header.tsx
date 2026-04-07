@@ -294,7 +294,7 @@ const Header = () => {
                 )}
               </form>
 
-              {shouldSearchPanel && (
+              {shouldShowSearchPanel && (
                 <div className="absolute left-0 right-0 top-full mt-2.5 z-[100] bg-card/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-[0_16px_48px_-12px_hsl(var(--foreground)/0.15)] overflow-hidden animate-fade-in">
                   {isSearching && (
                     <div className="flex items-center gap-3 px-5 py-4 text-sm text-muted-foreground">
