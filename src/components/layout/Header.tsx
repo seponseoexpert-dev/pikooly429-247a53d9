@@ -471,20 +471,23 @@ const Header = () => {
               )}
             </form>
             {shouldShowSearchPanel && (
-              <div className="absolute left-0 right-0 top-full mt-1 z-[100] bg-card border border-border/70 rounded-xl shadow-lg overflow-hidden">
+              <div className="absolute left-0 right-0 top-full mt-1.5 z-[100] bg-card/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-[0_12px_36px_-8px_hsl(var(--foreground)/0.12)] overflow-hidden animate-fade-in">
                 {isSearching && (
-                  <div className="px-4 py-3 text-sm text-muted-foreground">Searching products...</div>
+                  <div className="flex items-center gap-3 px-4 py-3 text-sm text-muted-foreground">
+                    <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                    Searching...
+                  </div>
                 )}
 
                 {!isSearching && suggestions.map((p) => (
-                  <button key={p.id} onClick={() => handleSelect(p.slug)} className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-muted/60 transition-colors text-left">
-                    {p.image_url && <img src={p.image_url} alt={p.name} width={40} height={40} className="w-9 h-9 rounded-lg object-cover shrink-0" loading="lazy" decoding="async" />}
+                  <button key={p.id} onClick={() => handleSelect(p.slug)} className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-primary/5 transition-colors text-left">
+                    {p.image_url && <img src={p.image_url} alt={p.name} width={40} height={40} className="w-10 h-10 rounded-xl object-cover shrink-0 ring-1 ring-border/40" loading="lazy" decoding="async" />}
                     <div className="min-w-0 flex-1">
                       <p className="text-[13px] font-medium text-foreground truncate">{p.name}</p>
-                      <p className="text-xs text-primary font-semibold">
+                      <p className="text-xs text-primary font-semibold mt-0.5">
                         {formatPrice(p.price)}
                         {p.original_price && p.original_price > p.price && (
-                          <span className="text-muted-foreground line-through ml-1.5">{formatPrice(p.original_price)}</span>
+                          <span className="text-muted-foreground line-through ml-1.5 font-normal">{formatPrice(p.original_price)}</span>
                         )}
                       </p>
                     </div>
@@ -492,7 +495,10 @@ const Header = () => {
                 ))}
 
                 {showEmptyResults && (
-                  <div className="px-4 py-3 text-sm text-muted-foreground">No matching products found.</div>
+                  <div className="px-4 py-5 text-center">
+                    <Search size={20} className="mx-auto text-muted-foreground/30 mb-1.5" />
+                    <p className="text-sm text-muted-foreground">No products found</p>
+                  </div>
                 )}
               </div>
             )}
