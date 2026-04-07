@@ -271,10 +271,10 @@ const Header = () => {
               )}
             </Link>
 
-            {/* Desktop Search */}
+            {/* Desktop Search — Premium pill style */}
             <div className="hidden md:block flex-1 max-w-md lg:max-w-xl xl:max-w-2xl mx-auto relative" ref={searchRef}>
               <form onSubmit={handleSearch} className="relative group">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={17} />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors duration-200" size={17} />
                 <input
                   autoComplete="off"
                   enterKeyHint="search"
@@ -285,38 +285,60 @@ const Header = () => {
                   onChange={(e) => { setSearchQuery(e.target.value.slice(0, 60)); setShowSuggestions(true); }}
                   onFocus={() => setShowSuggestions(sanitizeSearchTerm(searchQuery).length >= 2)}
                   placeholder={t("search_placeholder")}
-                  className="w-full rounded-full border border-border/60 bg-muted/50 py-2 pl-10 pr-10 text-sm shadow-[0_20px_40px_-32px_hsl(var(--foreground)/0.45)] outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary/40 focus:bg-card focus:ring-2 focus:ring-primary/15 lg:py-2.5"
+                  className="w-full rounded-full border border-border/50 bg-muted/40 py-2.5 pl-11 pr-10 text-sm shadow-[0_2px_12px_-4px_hsl(var(--foreground)/0.08)] outline-none transition-all duration-300 placeholder:text-muted-foreground/50 focus:border-primary/40 focus:bg-card focus:ring-2 focus:ring-primary/10 focus:shadow-[0_4px_20px_-6px_hsl(var(--primary)/0.15)] lg:py-2.5"
                 />
                 {searchQuery && (
-                  <button type="button" onClick={() => { setSearchQuery(""); setShowSuggestions(false); }} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
+                  <button type="button" onClick={() => { setSearchQuery(""); setShowSuggestions(false); }} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
                     <X size={15} />
                   </button>
                 )}
               </form>
 
-              {shouldShowSearchPanel && (
-                <div className="absolute left-0 right-0 top-full mt-2 z-[100] bg-card border border-border/70 rounded-2xl shadow-[0_12px_40px_-8px_hsl(var(--foreground)/0.12)] overflow-hidden">
+              {shouldSearchPanel && (
+                <div className="absolute left-0 right-0 top-full mt-2.5 z-[100] bg-card/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-[0_16px_48px_-12px_hsl(var(--foreground)/0.15)] overflow-hidden animate-fade-in">
                   {isSearching && (
-                    <div className="px-4 py-3 text-sm text-muted-foreground">Searching products...</div>
+                    <div className="flex items-center gap-3 px-5 py-4 text-sm text-muted-foreground">
+                      <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                      Searching...
+                    </div>
                   )}
 
-                  {!isSearching && suggestions.map((p) => (
-                    <button key={p.id} onClick={() => handleSelect(p.slug)} className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-muted/60 transition-colors text-left">
-                      {p.image_url && <img src={p.image_url} alt={p.name} width={40} height={40} className="w-10 h-10 rounded-xl object-cover shrink-0 ring-1 ring-border/50" loading="lazy" decoding="async" />}
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-foreground truncate">{p.name}</p>
-                        <p className="text-xs text-primary font-semibold mt-0.5">
-                          {formatPrice(p.price)}
-                          {p.original_price && p.original_price > p.price && (
-                            <span className="text-muted-foreground line-through ml-1.5">{formatPrice(p.original_price)}</span>
+                  {!isSearching && suggestions.length > 0 && (
+                    <div className="py-1.5">
+                      <p className="px-5 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Products</p>
+                      {suggestions.map((p) => (
+                        <button key={p.id} onClick={() => handleSelect(p.slug)} className="flex items-center gap-3.5 w-full px-5 py-2.5 hover:bg-primary/5 transition-colors text-left group/item">
+                          {p.image_url && (
+                            <img src={p.image_url} alt={p.name} width={44} height={44} className="w-11 h-11 rounded-xl object-cover shrink-0 ring-1 ring-border/40 group-hover/item:ring-primary/30 transition-all" loading="lazy" decoding="async" />
                           )}
-                        </p>
-                      </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-medium text-foreground truncate group-hover/item:text-primary transition-colors">{p.name}</p>
+                            <p className="text-xs text-primary font-semibold mt-0.5">
+                              {formatPrice(p.price)}
+                              {p.original_price && p.original_price > p.price && (
+                                <span className="text-muted-foreground line-through ml-1.5 font-normal">{formatPrice(p.original_price)}</span>
+                              )}
+                            </p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {!isSearching && suggestions.length > 0 && (
+                    <button
+                      onClick={handleSearch as any}
+                      className="w-full border-t border-border/40 px-5 py-3 text-center text-sm font-medium text-primary hover:bg-primary/5 transition-colors"
+                    >
+                      View all results for "{debouncedSearch}" →
                     </button>
-                  ))}
+                  )}
 
                   {showEmptyResults && (
-                    <div className="px-4 py-3 text-sm text-muted-foreground">No matching products found.</div>
+                    <div className="px-5 py-6 text-center">
+                      <Search size={24} className="mx-auto text-muted-foreground/30 mb-2" />
+                      <p className="text-sm text-muted-foreground">No products found for "{debouncedSearch}"</p>
+                    </div>
                   )}
                 </div>
               )}
