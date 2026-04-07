@@ -1,7 +1,9 @@
 import { useState, useMemo, useEffect, memo } from "react";
 import ProductCard from "@/components/product/ProductCard";
+import ProductCarousel from "@/components/home/ProductCarousel";
+import CategoryTabs from "@/components/home/CategoryTabs";
 import { Link } from "react-router-dom";
-import { Gift, Heart, Zap, Flower2 } from "lucide-react";
+import { Gift, Heart, Zap } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -92,23 +94,23 @@ const ProductGrid = memo(() => {
 
   const trendingProducts = useMemo(() => {
     const tab = allTrendingTabs.find((t) => t.id === activeTab);
-    if (!tab) return featured.length > 0 ? featured.slice(0, 10) : products.slice(0, 10);
+    if (!tab) return featured.length > 0 ? featured.slice(0, 12) : products.slice(0, 12);
 
     if (tab.type === "trending") {
       if (tab.id === "best") {
-        return [...products].sort((a: any, b: any) => (b.review_count || 0) - (a.review_count || 0)).slice(0, 10);
+        return [...products].sort((a: any, b: any) => (b.review_count || 0) - (a.review_count || 0)).slice(0, 12);
       }
-      return featured.length > 0 ? featured.slice(0, 10) : products.slice(0, 10);
+      return featured.length > 0 ? featured.slice(0, 12) : products.slice(0, 12);
     }
 
     if (tab.type === "sub" && "subId" in tab) {
       return products.filter((p: any) =>
         p.subcategory_id === tab.subId ||
         p.product_subcategories?.some((psc: any) => psc.subcategory_id === tab.subId)
-      ).slice(0, 10);
+      ).slice(0, 12);
     }
 
-    return products.slice(0, 10);
+    return products.slice(0, 12);
   }, [products, featured, activeTab, allTrendingTabs]);
 
   const tailoredProducts = useMemo(() => {
@@ -134,58 +136,40 @@ const ProductGrid = memo(() => {
 
   return (
     <section className="py-6 sm:py-8 md:py-10 lg:py-14 section-container" aria-label="Products" style={{ contain: "layout style" }}>
-      {/* Trending Tabs */}
-      <div className="relative mb-6 lg:mb-8">
-        <div className="flex w-full overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-0 justify-start">
-          {allTrendingTabs.map((tab) => {
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`relative flex shrink-0 snap-start items-center gap-1.5 px-4 py-3 text-xs font-medium whitespace-nowrap transition-all duration-200 md:px-5 md:py-3.5 md:text-sm ${
-                  isActive
-                    ? "text-foreground font-semibold"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {tab.icon && <tab.icon size={14} className={isActive ? "text-primary" : ""} />}
-                {"imageUrl" in tab && tab.imageUrl ? (
-                  <img src={tab.imageUrl} alt="" className="w-4 h-4 rounded-sm object-cover" loading="lazy" />
-                ) : (!tab.icon && <Flower2 size={14} className={isActive ? "text-primary" : ""} />)}
-                {tab.label}
-                {isActive && (
-                  <span className="absolute bottom-0 left-4 right-4 h-[2px] rounded-full bg-primary" />
-                )}
-              </button>
-            );
-          })}
-        </div>
-        <div className="h-px bg-border/50" />
-      </div>
+      {/* Trending Tabs - FNP style pill tabs */}
+      <CategoryTabs
+        tabs={allTrendingTabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
 
       {productsLoading ? (
-        <div className="flex items-center justify-center py-10"><div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>
+        <div className="flex items-center justify-center py-10">
+          <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+        </div>
       ) : trendingProducts.length === 0 ? (
         <div className="text-center py-16 px-4">
           <Gift className="w-10 h-10 mx-auto text-muted-foreground/30 mb-3" />
           <p className="text-muted-foreground text-sm">No products found in this category</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
-          {trendingProducts.map((product: any, index: number) => (
-            <div key={product.id} className={index >= 6 ? "hidden lg:block" : ""}>
+        <ProductCarousel>
+          {trendingProducts.map((product: any) => (
+            <div
+              key={product.id}
+              className="flex-shrink-0 snap-start w-[160px] sm:w-[180px] md:w-[200px] lg:w-[220px]"
+            >
               <ProductCard product={product} />
             </div>
           ))}
-        </div>
+        </ProductCarousel>
       )}
 
       {trendingProducts.length > 0 && (
-        <div className="text-center mt-8">
+        <div className="text-center mt-6 sm:mt-8">
           <Link
             to={trendingViewAllLink}
-            className="inline-block px-8 py-2.5 border border-foreground/20 text-foreground rounded-lg text-sm font-medium hover:bg-foreground hover:text-background transition-all duration-300"
+            className="inline-block px-8 py-2.5 border border-foreground/20 text-foreground rounded-full text-sm font-medium hover:bg-foreground hover:text-background transition-all duration-300"
           >
             {trendingViewAllText} →
           </Link>
@@ -242,27 +226,32 @@ const ProductGrid = memo(() => {
       )}
 
       {productsLoading ? (
-        <div className="flex items-center justify-center py-10"><div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>
+        <div className="flex items-center justify-center py-10">
+          <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+        </div>
       ) : tailoredProducts.length === 0 ? (
         <div className="text-center py-16 px-4">
           <Gift className="w-10 h-10 mx-auto text-muted-foreground/30 mb-3" />
           <p className="text-muted-foreground text-sm">No products found for this occasion</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
-          {tailoredProducts.slice(0, 10).map((product: any, index: number) => (
-            <div key={product.id} className={index >= 6 ? "hidden lg:block" : ""}>
+        <ProductCarousel>
+          {tailoredProducts.slice(0, 12).map((product: any) => (
+            <div
+              key={product.id}
+              className="flex-shrink-0 snap-start w-[160px] sm:w-[180px] md:w-[200px] lg:w-[220px]"
+            >
               <ProductCard product={product} />
             </div>
           ))}
-        </div>
+        </ProductCarousel>
       )}
 
       {tailoredProducts.length > 0 && (
-        <div className="text-center mt-8">
+        <div className="text-center mt-6 sm:mt-8">
           <Link
             to={viewAllTailoredLink}
-            className="inline-block px-8 py-2.5 border border-foreground/20 text-foreground rounded-lg text-sm font-medium hover:bg-foreground hover:text-background transition-all duration-300"
+            className="inline-block px-8 py-2.5 border border-foreground/20 text-foreground rounded-full text-sm font-medium hover:bg-foreground hover:text-background transition-all duration-300"
           >
             {viewAllTailoredText} →
           </Link>
