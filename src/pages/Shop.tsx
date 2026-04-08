@@ -45,6 +45,7 @@ const Shop = () => {
   const [selectedSub, setSelectedSub] = useState(subParam);
   const [resolvedAsSub, setResolvedAsSub] = useState(false);
   const [shortDescExpanded, setShortDescExpanded] = useState(false);
+  const [longDescExpanded, setLongDescExpanded] = useState(false);
   const shortDescRef = useRef<HTMLDivElement>(null);
   const [needsTruncation, setNeedsTruncation] = useState(false);
 
@@ -332,7 +333,18 @@ const Shop = () => {
       )}
 
       {activeContent && (activeContent as any).long_description && (
-        <div className="mt-10 prose prose-sm dark:prose-invert max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: (activeContent as any).long_description }} />
+        <div className="mt-10">
+          <div
+            className={`prose prose-sm dark:prose-invert max-w-none text-muted-foreground overflow-hidden transition-all duration-300 ${!longDescExpanded ? "line-clamp-5" : ""}`}
+            dangerouslySetInnerHTML={{ __html: (activeContent as any).long_description }}
+          />
+          <button
+            onClick={() => setLongDescExpanded(!longDescExpanded)}
+            className="text-primary text-sm font-medium mt-2 hover:underline"
+          >
+            {longDescExpanded ? "Read Less" : "Read More..."}
+          </button>
+        </div>
       )}
 
       {activeContent && (() => {
