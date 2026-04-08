@@ -57,23 +57,48 @@ const Header = () => {
     return () => window.clearTimeout(timer);
   }, [safeSearchQuery]);
 
-  const { data: suggestions = [], isFetching: isSearching } = useQuery({
-    queryKey: ["header-search-products", debouncedSearch],
+  const { data: searchResults = { products: [], cats: [], subs: [] }, isFetching: isSearching } = useQuery({
+    queryKey: ["header-search-all", debouncedSearch],
     queryFn: async () => {
       const term = debouncedSearch;
-      const { data, error } = await supabase
-        .from("products")
-        .select("id, name, slug, price, original_price, image_url")
-        .eq("is_active", true)
-        .or(`name.ilike.%${term}%,short_description.ilike.%${term}%,slug.ilike.%${term}%`)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return (data || []).slice(0, 8);
+      const [prodRes, catRes, subRes] = await Promise.all([
+        supabase
+          .from("products")
+          .select("id, name, slug, price, original_price, image_url")
+          .eq("is_active", true)
+          .or(`name.ilike.%${term}%,short_description.ilike.%${term}%,slug.ilike.%${term}%`)
+          .order("created_at", { ascending: false })
+          .limit(6),
+        supabase
+          .from("categories")
+          .select("id, name, slug, image_url")
+          .eq("is_active", true)
+          .ilike("name", `%${term}%`)
+          .order("display_order")
+          .limit(4),
+        supabase
+          .from("subcategories")
+          .select("id, name, slug, image_url, category_id")
+          .eq("is_active", true)
+          .ilike("name", `%${term}%`)
+          .order("display_order")
+          .limit(4),
+      ]);
+      return {
+        products: prodRes.data || [],
+        cats: catRes.data || [],
+        subs: subRes.data || [],
+      };
     },
-    enabled: debouncedSearch.length >= 2,
+    enabled: debouncedSearch.length >= 1,
     staleTime: 60 * 1000,
     placeholderData: (prev) => prev,
   });
+
+  const suggestions = searchResults.products;
+  const searchCats = searchResults.cats;
+  const searchSubs = searchResults.subs;
+  const hasAnyResults = suggestions.length > 0 || searchCats.length > 0 || searchSubs.length > 0;
 
   const { data: categories = [] } = useQuery({
     queryKey: ["header-categories"],
