@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Camera, CalendarDays, Clapperboard, Gift, PartyPopper, Sparkles, Users2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ProductCarousel from "@/components/home/ProductCarousel";
 
 import photoEventImg from "@/assets/photo-event.png";
 import photoVideoImg from "@/assets/photo-video.png";
