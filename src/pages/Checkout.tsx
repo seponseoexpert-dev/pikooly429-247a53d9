@@ -763,9 +763,6 @@ const Checkout = () => {
                     </label>
                   ))}
                 </div>
-                    </label>
-                  ))}
-                </div>
               </section>
             </div>
 
