@@ -731,24 +731,27 @@ const Checkout = () => {
 
               {/* Payment Method */}
               <section className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-border">
-                <h2 className="text-base sm:text-lg font-bold mb-4 sm:mb-6">Payment Method</h2>
-                <div className="space-y-2.5 sm:space-y-3">
+                <h2 className="text-base sm:text-lg font-bold mb-3 sm:mb-4">Payment Method</h2>
+                <div className="grid grid-cols-2 gap-2 sm:gap-3">
                   {enabledPaymentMethods.length === 0 ? (
-                    <p className="text-sm text-muted-foreground text-center py-4">No payment methods available. Please contact support.</p>
+                    <p className="col-span-2 text-sm text-muted-foreground text-center py-4">No payment methods available.</p>
                   ) : enabledPaymentMethods.map((method) => (
                     <label
                       key={method.value}
-                      className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${
+                      className={`relative flex flex-col items-center text-center gap-1.5 p-3 sm:p-4 rounded-xl border cursor-pointer transition-all duration-300 ${
                         form.paymentMethod === method.value
-                          ? "border-primary bg-primary/5 ring-1 ring-primary"
-                          : "border-border hover:border-primary/50"
+                          ? "border-primary bg-primary/5 ring-1 ring-primary shadow-[0_0_12px_hsl(var(--primary)/0.15)]"
+                          : "border-border hover:border-primary/40 hover:bg-muted/30"
                       }`}
                     >
-                      <input type="radio" name="paymentMethod" value={method.value} checked={form.paymentMethod === method.value} onChange={(e) => handleChange("paymentMethod", e.target.value)} className="accent-primary w-4 h-4" />
-                      <div>
-                        <p className="font-semibold text-sm">{method.label}</p>
-                        <p className="text-xs text-muted-foreground">{method.desc}</p>
-                      </div>
+                      <input type="radio" name="paymentMethod" value={method.value} checked={form.paymentMethod === method.value} onChange={(e) => handleChange("paymentMethod", e.target.value)} className="sr-only" />
+                      {form.paymentMethod === method.value && (
+                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                          <Check size={12} className="text-primary-foreground" />
+                        </div>
+                      )}
+                      <p className="font-semibold text-xs sm:text-sm leading-tight">{method.label}</p>
+                      <p className="text-[10px] sm:text-xs text-muted-foreground leading-snug line-clamp-2">{method.desc}</p>
                     </label>
                   ))}
                 </div>
