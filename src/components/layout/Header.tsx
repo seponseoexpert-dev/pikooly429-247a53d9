@@ -152,8 +152,8 @@ const Header = () => {
   const [canUseHover, setCanUseHover] = useState(false);
   const megaMenuCloseTimer = useRef<number | null>(null);
 
-  const shouldShowSearchPanel = showSuggestions && debouncedSearch.length >= 2;
-  const showEmptyResults = shouldShowSearchPanel && !isSearching && suggestions.length === 0;
+  const shouldShowSearchPanel = showSuggestions && debouncedSearch.length >= 1;
+  const showEmptyResults = shouldShowSearchPanel && !isSearching && !hasAnyResults;
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
