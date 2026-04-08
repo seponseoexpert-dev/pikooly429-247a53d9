@@ -9,8 +9,7 @@ const AboutSection = () => {
   const { settings } = useSiteSettings();
 
   const title = settings.about_title || "PikoolyFlora: Online Flower Shop in Bangladesh";
-  const shortText = settings.about_short_text || "Welcome to PikoolyFlora-Online website. This is the best place for fresh flowers and beauti";
-  const fullText = settings.about_full_text || "ful gifts in Bangladesh. We believe every occasion deserves something special, and we're here to make gifting effortless and joyful.\n\nWhether it's a birthday celebration, anniversary surprise, or a simple \"I love you\" gesture, our handcrafted bouquets and curated gift collections are designed to bring smiles. With same-day delivery across Dhaka, your love reaches them exactly when it matters.";
+  const fullContent = (settings.about_short_text || "") + (settings.about_full_text || "");
 
   return (
     <section className="py-6 sm:py-8 md:py-10 lg:py-12 section-container" aria-label="About PikoolyFlora" style={{ contain: "layout style", minHeight: "180px" }}>
@@ -18,10 +17,10 @@ const AboutSection = () => {
         <h2 className="section-heading font-display font-semibold text-foreground mb-4 text-center">
           {title}
         </h2>
-        <div className="text-xs sm:text-sm md:text-[15px] text-muted-foreground leading-relaxed rich-text-content">
-          <div dangerouslySetInnerHTML={{ __html: shortText }} />
-          {expanded && <div dangerouslySetInnerHTML={{ __html: fullText }} />}
-        </div>
+        <div
+          className={`text-xs sm:text-sm md:text-[15px] text-muted-foreground leading-relaxed rich-text-content ${!expanded ? "line-clamp-5" : ""}`}
+          dangerouslySetInnerHTML={{ __html: fullContent }}
+        />
         <div className="text-center mt-3">
           <button
             onClick={() => setExpanded(!expanded)}
