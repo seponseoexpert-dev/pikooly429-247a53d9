@@ -262,7 +262,7 @@ const ProductDetail = () => {
         </div>
 
         <div className="flex flex-col">
-          <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-display font-bold text-foreground mb-2 leading-snug">
+          <h1 className="text-sm sm:text-base md:text-lg lg:text-xl font-display font-bold text-foreground mb-2 leading-snug line-clamp-3">
             {product.name}
           </h1>
 
@@ -352,8 +352,8 @@ const ProductDetail = () => {
       </div>
 
       {/* Tabbed Section */}
-      <div className="mt-8 sm:mt-12 md:mt-14 border border-border/40 rounded-xl sm:rounded-2xl bg-card overflow-hidden shadow-sm">
-        <div className="flex border-b border-border overflow-x-auto scrollbar-hide">
+      <div className="mt-6 sm:mt-10 md:mt-12 border border-border/40 rounded-xl bg-card overflow-hidden">
+        <div className="grid grid-cols-3 border-b border-border">
           {[
             { key: "specification" as const, label: "Specification" },
             { key: "description" as const, label: "Description" },
@@ -362,10 +362,10 @@ const ProductDetail = () => {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-5 sm:px-6 py-3.5 text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
+              className={`py-3 text-[11px] sm:text-xs md:text-sm font-medium text-center transition-all border-b-2 ${
                 activeTab === tab.key
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  ? "border-primary text-primary bg-primary/5"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
               }`}
             >
               {tab.label}
@@ -424,10 +424,14 @@ const ProductDetail = () => {
       </div>
 
       {related.length > 0 && (
-        <section className="mt-8 sm:mt-10 md:mt-14">
-          <h2 className="text-lg sm:text-xl md:text-2xl font-display font-bold mb-4 sm:mb-5">You May Also Like</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
-            {related.map((p: any, i: number) => <ProductCard key={p.id} product={p} index={i} />)}
+        <section className="mt-6 sm:mt-10 md:mt-12">
+          <h2 className="text-base sm:text-lg md:text-xl font-display font-bold mb-3 sm:mb-4">You May Also Like</h2>
+          <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
+            {related.map((p: any, i: number) => (
+              <div key={p.id} className="min-w-[140px] w-[140px] sm:min-w-[170px] sm:w-[170px] md:min-w-[200px] md:w-[200px] lg:min-w-[220px] lg:w-[220px] flex-shrink-0 snap-start">
+                <ProductCard product={p} index={i} />
+              </div>
+            ))}
           </div>
         </section>
       )}
