@@ -736,7 +736,7 @@ const Checkout = () => {
                           className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
                           tabIndex={-1}
                         />
-                      </button>
+                      </label>
                       <div className="relative">
                         <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none z-10">
                           <Clock size={16} className="text-primary" />
