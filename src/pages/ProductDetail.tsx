@@ -206,7 +206,7 @@ const ProductDetail = () => {
   };
 
   const handleBuyNow = () => {
-    for (let i = 0; i < qty; i++) addItem(cartProduct, customImages.length ? customImages : undefined);
+    for (let i = 0; i < qty; i++) addItem(cartProduct, customImages.length ? customImages : undefined, true);
     navigate("/checkout");
   };
 
@@ -241,7 +241,7 @@ const ProductDetail = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 md:gap-8 lg:gap-12">
         {/* Image Gallery */}
         <div>
-          <div className="aspect-[4/5] rounded-xl sm:rounded-2xl overflow-hidden bg-muted/10 border border-border/30 mb-3">
+          <div className="aspect-[4/5] rounded-2xl sm:rounded-3xl overflow-hidden bg-muted/10 border border-border/30 shadow-sm mb-3">
             <img src={currentImg} alt={product.name} className="w-full h-full object-cover" loading="eager" fetchPriority="high" />
           </div>
           {allImages.length > 1 && (
