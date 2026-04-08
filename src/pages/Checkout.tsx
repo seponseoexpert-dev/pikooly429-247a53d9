@@ -335,8 +335,15 @@ const Checkout = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!form.fullName.trim() || !form.phone.trim() || !form.address.trim() || !form.recipientName.trim() || !form.recipientPhone.trim()) {
-      toast.error("Please fill in all required fields");
+    const billingVisible = gatewaySettings.checkout_billing_visible !== "false";
+
+    if (billingVisible && (!form.fullName.trim() || !form.phone.trim())) {
+      toast.error("Please fill in billing details");
+      return;
+    }
+
+    if (!form.address.trim() || !form.recipientName.trim() || !form.recipientPhone.trim()) {
+      toast.error("Please fill in all required delivery fields");
       return;
     }
 
@@ -709,14 +716,9 @@ const Checkout = () => {
                   <div>
                     <Label className="text-sm font-semibold mb-2 block">Select Delivery Date & Time Slot</Label>
                     <div className="grid grid-cols-2 gap-2.5">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          const input = e.currentTarget.querySelector('input');
-                          if (input) { input.showPicker?.(); input.focus(); }
-                        }}
+                      <label
                         className={cn(
-                          "relative flex items-center gap-2 h-11 w-full rounded-md border border-input bg-background px-3 text-sm ring-offset-background transition-colors hover:bg-muted/50 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+                          "relative flex items-center gap-2 h-11 w-full rounded-md border border-input bg-background px-3 text-sm ring-offset-background transition-colors hover:bg-muted/50 cursor-pointer",
                           !form.deliveryDate && "text-muted-foreground"
                         )}
                       >
@@ -734,7 +736,7 @@ const Checkout = () => {
                           className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
                           tabIndex={-1}
                         />
-                      </button>
+                      </label>
                       <div className="relative">
                         <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none z-10">
                           <Clock size={16} className="text-primary" />
