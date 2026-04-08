@@ -334,7 +334,7 @@ const Header = () => {
               </form>
 
               {shouldShowSearchPanel && (
-                <div className="absolute left-0 right-0 top-full mt-2.5 z-[100] bg-card/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-[0_16px_48px_-12px_hsl(var(--foreground)/0.15)] overflow-hidden animate-fade-in">
+                <div className="absolute left-0 right-0 top-full mt-2.5 z-[100] bg-card/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-[0_16px_48px_-12px_hsl(var(--foreground)/0.15)] overflow-hidden animate-fade-in max-h-[70vh] overflow-y-auto">
                   {isSearching && (
                     <div className="flex items-center gap-3 px-5 py-4 text-sm text-muted-foreground">
                       <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
@@ -342,8 +342,32 @@ const Header = () => {
                     </div>
                   )}
 
-                  {!isSearching && suggestions.length > 0 && (
+                  {!isSearching && searchCats.length > 0 && (
                     <div className="py-1.5">
+                      <p className="px-5 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Categories</p>
+                      {searchCats.map((cat) => (
+                        <button key={cat.id} onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${cat.slug}`); }} className="flex items-center gap-3.5 w-full px-5 py-2.5 hover:bg-primary/5 transition-colors text-left group/item">
+                          {cat.image_url && <img src={cat.image_url} alt={cat.name} width={36} height={36} className="w-9 h-9 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
+                          <span className="text-sm font-medium text-foreground group-hover/item:text-primary transition-colors">{cat.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {!isSearching && searchSubs.length > 0 && (
+                    <div className={`py-1.5 ${searchCats.length > 0 ? "border-t border-border/30" : ""}`}>
+                      <p className="px-5 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Subcategories</p>
+                      {searchSubs.map((sub) => (
+                        <button key={sub.id} onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${sub.slug}`); }} className="flex items-center gap-3.5 w-full px-5 py-2.5 hover:bg-primary/5 transition-colors text-left group/item">
+                          {sub.image_url && <img src={sub.image_url} alt={sub.name} width={36} height={36} className="w-9 h-9 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
+                          <span className="text-sm font-medium text-foreground group-hover/item:text-primary transition-colors">{sub.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {!isSearching && suggestions.length > 0 && (
+                    <div className={`py-1.5 ${(searchCats.length > 0 || searchSubs.length > 0) ? "border-t border-border/30" : ""}`}>
                       <p className="px-5 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Products</p>
                       {suggestions.map((p) => (
                         <button key={p.id} onClick={() => handleSelect(p.slug)} className="flex items-center gap-3.5 w-full px-5 py-2.5 hover:bg-primary/5 transition-colors text-left group/item">
@@ -364,7 +388,7 @@ const Header = () => {
                     </div>
                   )}
 
-                  {!isSearching && suggestions.length > 0 && (
+                  {!isSearching && hasAnyResults && (
                     <button
                       onClick={handleSearch as any}
                       className="w-full border-t border-border/40 px-5 py-3 text-center text-sm font-medium text-primary hover:bg-primary/5 transition-colors"
@@ -376,7 +400,7 @@ const Header = () => {
                   {showEmptyResults && (
                     <div className="px-5 py-6 text-center">
                       <Search size={24} className="mx-auto text-muted-foreground/30 mb-2" />
-                      <p className="text-sm text-muted-foreground">No products found for "{debouncedSearch}"</p>
+                      <p className="text-sm text-muted-foreground">No results found for "{debouncedSearch}"</p>
                     </div>
                   )}
                 </div>
