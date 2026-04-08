@@ -709,18 +709,32 @@ const Checkout = () => {
                   <div>
                     <Label className="text-sm font-semibold mb-2 block">Select Delivery Date & Time Slot</Label>
                     <div className="grid grid-cols-2 gap-2.5">
-                      <div className="relative">
-                        <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                          <CalendarDays size={16} className="text-primary" />
-                        </div>
-                        <Input
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          const input = e.currentTarget.querySelector('input');
+                          if (input) { input.showPicker?.(); input.focus(); }
+                        }}
+                        className={cn(
+                          "relative flex items-center gap-2 h-11 w-full rounded-md border border-input bg-background px-3 text-sm ring-offset-background transition-colors hover:bg-muted/50 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+                          !form.deliveryDate && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarDays size={16} className="text-primary shrink-0" />
+                        <span className="flex-1 text-left truncate">
+                          {form.deliveryDate
+                            ? new Date(form.deliveryDate + "T00:00:00").toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })
+                            : "Select date"}
+                        </span>
+                        <input
                           type="date"
                           value={form.deliveryDate}
                           onChange={(e) => handleChange("deliveryDate", e.target.value)}
                           min={new Date().toISOString().split("T")[0]}
-                          className={`h-11 text-sm pl-9 ${!form.deliveryDate ? "text-muted-foreground" : ""}`}
+                          className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                          tabIndex={-1}
                         />
-                      </div>
+                      </button>
                       <div className="relative">
                         <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none z-10">
                           <Clock size={16} className="text-primary" />
