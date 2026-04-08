@@ -158,7 +158,7 @@ const Checkout = () => {
   const { data: gatewaySettings = {} } = useQuery({
     queryKey: ["payment-gateway-settings"],
     queryFn: async () => {
-      const keys = ["cod_enabled", "cod_status", "paypal_status", "stripe_status", "eps_status", "store_email", "admin_notification_email"];
+      const keys = ["cod_enabled", "cod_status", "paypal_status", "stripe_status", "eps_status", "store_email", "admin_notification_email", "checkout_billing_visible"];
       const { data, error } = await supabase
         .from("site_settings")
         .select("key, value")
