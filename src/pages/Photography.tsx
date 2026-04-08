@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCurrency } from "@/hooks/useCurrency";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import SEOHead from "@/components/seo/SEOHead";
-import { Camera, Video, Gift, MapPin, Calendar, Package, User, ChevronRight, ChevronLeft, Play, Sparkles, Clock, CheckCircle2, Star, ArrowRight, Phone } from "lucide-react";
+import { Camera, Video, Gift, MapPin, Calendar, Package, User, ChevronRight, ChevronLeft, Play, Sparkles, Clock, CheckCircle2, Star, ArrowRight, Phone, Heart, Award, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -131,7 +131,7 @@ const Photography = () => {
       toast.success("Booking submitted successfully! We'll contact you shortly.");
       setBookingOpen(false);
       resetForm();
-    } catch (err) {
+    } catch {
       toast.error("Failed to submit booking. Please try again.");
     } finally {
       setSubmitting(false);
@@ -189,87 +189,92 @@ const Photography = () => {
         ogImage={settings.photo_og_image}
       />
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/8 via-background to-primary/5 py-16 md:py-24">
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, hsl(var(--foreground)) 1px, transparent 0)", backgroundSize: "32px 32px" }} />
-        <div className="container mx-auto px-4 text-center relative z-10">
-          <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 mb-6">
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
-            <span className="text-xs font-medium text-primary">Professional Services</span>
+      {/* Hero Section — Cinematic */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-foreground/[0.03] via-background to-background py-12 sm:py-16 md:py-24">
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-primary/5 blur-[120px]" />
+          <div className="absolute bottom-0 right-0 w-[300px] h-[300px] rounded-full bg-primary/3 blur-[80px]" />
+        </div>
+        <div className="section-container text-center relative z-10">
+          <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 mb-5 animate-fade-in">
+            <Camera className="h-3.5 w-3.5 text-primary" />
+            <span className="text-[11px] font-semibold text-primary uppercase tracking-wider">Professional Services</span>
           </div>
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 leading-tight font-serif" dangerouslySetInnerHTML={{ __html: heroTitle }} />
-          <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto mb-8 leading-relaxed">
+          <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-foreground mb-3 sm:mb-4 leading-tight font-display" dangerouslySetInnerHTML={{ __html: heroTitle }} />
+          <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-xl mx-auto mb-6 sm:mb-8 leading-relaxed">
             {heroSubtitle}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Button size="lg" className="rounded-full px-8 h-12 text-sm font-semibold shadow-lg shadow-primary/20" onClick={() => document.getElementById("services-section")?.scrollIntoView({ behavior: "smooth" })}>
+            <Button size="lg" className="rounded-full px-8 h-11 sm:h-12 text-sm font-semibold shadow-lg shadow-primary/25 w-full sm:w-auto" onClick={() => document.getElementById("services-section")?.scrollIntoView({ behavior: "smooth" })}>
               Explore Services <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
-            <Button size="lg" variant="outline" className="rounded-full px-8 h-12 text-sm font-semibold" onClick={() => document.getElementById("portfolio-section")?.scrollIntoView({ behavior: "smooth" })}>
+            <Button size="lg" variant="outline" className="rounded-full px-8 h-11 sm:h-12 text-sm font-semibold w-full sm:w-auto" onClick={() => document.getElementById("portfolio-section")?.scrollIntoView({ behavior: "smooth" })}>
               View Portfolio
             </Button>
           </div>
 
-          {/* Trust Indicators */}
-          <div className="flex items-center justify-center gap-6 md:gap-10 mt-10 pt-8 border-t border-border/30">
+          {/* Trust Indicators — Card Style */}
+          <div className="grid grid-cols-3 gap-3 sm:gap-4 mt-8 sm:mt-12 max-w-md mx-auto">
             {[
-              { value: "500+", label: "Events Covered" },
-              { value: "4.9★", label: "Client Rating" },
-              { value: "50+", label: "Happy Clients" },
+              { icon: Users, value: "500+", label: "Events" },
+              { icon: Star, value: "4.9★", label: "Rating" },
+              { icon: Heart, value: "50+", label: "Happy Clients" },
             ].map((stat) => (
-              <div key={stat.label} className="text-center">
-                <p className="text-lg md:text-xl font-bold text-foreground">{stat.value}</p>
-                <p className="text-[11px] text-muted-foreground">{stat.label}</p>
+              <div key={stat.label} className="bg-card/80 backdrop-blur-sm border border-border/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center">
+                <stat.icon className="h-4 w-4 text-primary mx-auto mb-1.5" />
+                <p className="text-base sm:text-lg font-bold text-foreground">{stat.value}</p>
+                <p className="text-[10px] sm:text-[11px] text-muted-foreground">{stat.label}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Services Section */}
-      <section id="services-section" className="py-12 md:py-20">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-10">
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-2">What We Offer</p>
-            <h2 className="text-2xl md:text-4xl font-bold text-foreground font-serif">Our Services</h2>
+      {/* Services Section — Premium Cards */}
+      <section id="services-section" className="py-10 sm:py-12 md:py-20">
+        <div className="section-container">
+          <div className="text-center mb-8 sm:mb-10">
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-primary mb-1.5">What We Offer</p>
+            <h2 className="text-xl sm:text-2xl md:text-4xl font-bold text-foreground font-display">Our Services</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto">
+
+          {/* Mobile: Horizontal Scroll / Desktop: Grid */}
+          <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2 -mx-4 px-4 md:mx-0 md:px-0 md:grid md:grid-cols-3 md:overflow-visible md:max-w-5xl md:mx-auto">
             {services?.map((service: any, idx: number) => {
               const Icon = serviceIcons[idx] || Camera;
               return (
                 <div
                   key={service.id}
-                  className="group rounded-2xl border border-border/50 bg-card overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 hover:-translate-y-1"
+                  className="min-w-[75vw] sm:min-w-[60vw] md:min-w-0 snap-start group rounded-2xl border border-border/40 bg-card overflow-hidden hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 hover:-translate-y-1"
                 >
-                  {service.image_url && (
-                    <div className="h-48 md:h-52 overflow-hidden relative">
-                      <img src={service.image_url} alt={service.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-foreground/40 to-transparent" />
+                  {service.image_url ? (
+                    <div className="h-44 sm:h-48 md:h-56 overflow-hidden relative">
+                      <img src={service.image_url} alt={service.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-foreground/50 via-foreground/10 to-transparent" />
+                      <Badge className="absolute top-3 left-3 bg-background/90 text-foreground backdrop-blur-sm text-[10px] font-semibold rounded-lg border-0 shadow-sm">
+                        <Icon className="h-3 w-3 mr-1 text-primary" />
+                        {service.title}
+                      </Badge>
+                      <div className="absolute bottom-3 left-3 right-3">
+                        <p className="text-primary-foreground text-lg font-bold drop-shadow-md">
+                          {formatCurrency(service.starting_price)}
+                          <span className="text-xs font-normal ml-1 opacity-80">starting</span>
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="h-40 bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center relative">
+                      <Icon className="h-12 w-12 text-primary/30" />
                       <div className="absolute bottom-3 left-3">
-                        <Badge className="bg-background/90 text-foreground backdrop-blur-sm text-[10px] font-medium rounded-lg border-0">
-                          Starting from {formatCurrency(service.starting_price)}
-                        </Badge>
+                        <p className="text-lg font-bold text-primary">{formatCurrency(service.starting_price)}</p>
                       </div>
                     </div>
                   )}
-                  <div className="p-5">
-                    <div className="flex items-start gap-3 mb-3">
-                      <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                        <Icon className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-foreground text-base">{service.title}</h3>
-                        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{service.short_description}</p>
-                      </div>
-                    </div>
-                    {!service.image_url && (
-                      <div className="flex items-center justify-between mb-4 py-3 px-4 rounded-xl bg-primary/5">
-                        <span className="text-xs text-muted-foreground">Starting from</span>
-                        <span className="text-lg font-bold text-primary">{formatCurrency(service.starting_price)}</span>
-                      </div>
-                    )}
-                    <Button className="w-full rounded-xl h-10 text-sm font-semibold group-hover:shadow-md transition-shadow" onClick={() => openBooking(service)}>
-                      Book Now <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
+                  <div className="p-4 sm:p-5">
+                    <h3 className="font-bold text-foreground text-sm sm:text-base mb-1">{service.title}</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 mb-4">{service.short_description}</p>
+                    <Button className="w-full rounded-xl h-10 text-sm font-semibold" onClick={() => openBooking(service)}>
+                      Book Now <ChevronRight className="h-4 w-4 ml-1" />
                     </Button>
                   </div>
                 </div>
@@ -279,46 +284,46 @@ const Photography = () => {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="py-12 md:py-16 bg-muted/20">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-10">
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-2">Simple Process</p>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground font-serif">How It Works</h2>
+      {/* How It Works — Clean Timeline */}
+      <section className="py-10 sm:py-12 md:py-16 bg-muted/20">
+        <div className="section-container">
+          <div className="text-center mb-8 sm:mb-10">
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-primary mb-1.5">Simple Process</p>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground font-display">How It Works</h2>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto">
             {[
               { icon: MapPin, title: "Choose Location", desc: "Select Dhaka or outside" },
               { icon: Calendar, title: "Pick a Date", desc: "Choose your preferred date" },
               { icon: Package, title: "Select Package", desc: "Basic, Standard or Premium" },
               { icon: CheckCircle2, title: "Confirm Booking", desc: "We'll reach out to you" },
             ].map((item, i) => (
-              <div key={i} className="text-center group">
+              <div key={i} className="text-center group bg-card rounded-2xl border border-border/40 p-4 sm:p-5 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
                 <div className="relative mx-auto mb-3">
-                  <div className="h-14 w-14 md:h-16 md:w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto group-hover:bg-primary/20 transition-colors">
-                    <item.icon className="h-6 w-6 md:h-7 md:w-7 text-primary" />
+                  <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
+                    <item.icon className="h-5 w-5 sm:h-6 sm:w-6 text-primary group-hover:text-primary-foreground transition-colors duration-300" />
                   </div>
-                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">{i + 1}</span>
+                  <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center shadow-sm">{i + 1}</span>
                 </div>
-                <h3 className="font-semibold text-sm text-foreground mb-0.5">{item.title}</h3>
-                <p className="text-[11px] text-muted-foreground">{item.desc}</p>
+                <h3 className="font-semibold text-xs sm:text-sm text-foreground mb-0.5">{item.title}</h3>
+                <p className="text-[10px] sm:text-[11px] text-muted-foreground leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Portfolio Section */}
-      <section id="portfolio-section" className="py-12 md:py-20">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-2">Gallery</p>
-            <h2 className="text-2xl md:text-4xl font-bold text-foreground font-serif mb-3">Our Best Shoots</h2>
-            <p className="text-sm text-muted-foreground max-w-md mx-auto">Browse our portfolio of stunning photography and videography work</p>
+      {/* Portfolio Section — Masonry */}
+      <section id="portfolio-section" className="py-10 sm:py-12 md:py-20">
+        <div className="section-container">
+          <div className="text-center mb-6 sm:mb-8">
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-primary mb-1.5">Gallery</p>
+            <h2 className="text-xl sm:text-2xl md:text-4xl font-bold text-foreground font-display mb-2">Our Best Shoots</h2>
+            <p className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto">Browse our portfolio of stunning photography and videography work</p>
           </div>
 
-          {/* Filters */}
-          <div className="flex justify-center gap-2 mb-8">
+          {/* Filters — Pill Style */}
+          <div className="flex justify-center gap-2 mb-6 sm:mb-8">
             {[
               { key: "all", label: "All", icon: Sparkles },
               { key: "photo", label: "Photos", icon: Camera },
@@ -328,10 +333,10 @@ const Photography = () => {
                 key={f.key}
                 onClick={() => setPortfolioFilter(f.key)}
                 className={cn(
-                  "inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium transition-all",
+                  "inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium transition-all duration-300",
                   portfolioFilter === f.key
-                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
-                    : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/25"
+                    : "bg-card border border-border/50 text-muted-foreground hover:bg-muted/50 hover:border-primary/30"
                 )}
               >
                 <f.icon className="h-3.5 w-3.5" />
@@ -357,7 +362,7 @@ const Photography = () => {
                       )}
                       {item.video_embed_url && (
                         <a href={item.video_embed_url} target="_blank" rel="noopener noreferrer" className="absolute inset-0 flex items-center justify-center bg-foreground/20 group-hover:bg-foreground/30 transition-colors">
-                          <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-primary shadow-xl shadow-primary/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <div className="w-12 h-12 rounded-full bg-primary shadow-xl shadow-primary/30 flex items-center justify-center group-hover:scale-110 transition-transform">
                             <Play className="h-5 w-5 text-primary-foreground ml-0.5" />
                           </div>
                         </a>
@@ -365,43 +370,48 @@ const Photography = () => {
                     </div>
                   )}
                   {item.title && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent p-4 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <p className="text-primary-foreground text-sm font-semibold">{item.title}</p>
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent p-3 sm:p-4 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <p className="text-primary-foreground text-xs sm:text-sm font-semibold">{item.title}</p>
                     </div>
                   )}
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-16">
-              <div className="h-20 w-20 rounded-3xl bg-muted/50 flex items-center justify-center mx-auto mb-4">
-                <Camera className="h-9 w-9 text-muted-foreground opacity-40" />
+            <div className="text-center py-12 sm:py-16">
+              <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-3xl bg-muted/50 flex items-center justify-center mx-auto mb-4">
+                <Camera className="h-8 w-8 text-muted-foreground opacity-40" />
               </div>
-              <p className="text-muted-foreground font-medium">Portfolio coming soon!</p>
+              <p className="text-muted-foreground font-medium text-sm">Portfolio coming soon!</p>
               <p className="text-xs text-muted-foreground mt-1">Stay tuned for our best work</p>
             </div>
           )}
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-12 md:py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto rounded-3xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 p-8 md:p-12 text-center relative overflow-hidden">
-            <div className="absolute top-4 right-4 opacity-10">
-              <Camera className="h-24 w-24 text-primary" />
+      {/* CTA Section — Glass Card */}
+      <section className="py-10 sm:py-12 md:py-16">
+        <div className="section-container">
+          <div className="max-w-3xl mx-auto rounded-2xl sm:rounded-3xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 p-6 sm:p-8 md:p-12 text-center relative overflow-hidden">
+            <div className="absolute top-4 right-4 opacity-[0.06]">
+              <Camera className="h-20 sm:h-24 w-20 sm:w-24 text-primary" />
             </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground font-serif mb-3 relative z-10">
+            <div className="absolute bottom-0 left-0 w-40 h-40 rounded-full bg-primary/5 blur-[60px]" />
+            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-3 py-1 mb-4">
+              <Award className="h-3 w-3 text-primary" />
+              <span className="text-[10px] font-semibold text-primary uppercase tracking-wider">Premium Quality</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground font-display mb-2 sm:mb-3 relative z-10">
               Ready to Book Your Photographer?
             </h2>
-            <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto relative z-10">
+            <p className="text-xs sm:text-sm text-muted-foreground mb-5 sm:mb-6 max-w-md mx-auto relative z-10">
               Get in touch with us today and let's make your special moments unforgettable.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 relative z-10">
-              <Button size="lg" className="rounded-full px-8 h-12 text-sm font-semibold shadow-lg shadow-primary/20" onClick={() => document.getElementById("services-section")?.scrollIntoView({ behavior: "smooth" })}>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3 relative z-10">
+              <Button size="lg" className="rounded-full px-8 h-11 sm:h-12 text-sm font-semibold shadow-lg shadow-primary/25 w-full sm:w-auto" onClick={() => document.getElementById("services-section")?.scrollIntoView({ behavior: "smooth" })}>
                 <Camera className="h-4 w-4 mr-2" /> Book a Session
               </Button>
-              <Button size="lg" variant="outline" className="rounded-full px-8 h-12 text-sm font-semibold" asChild>
+              <Button size="lg" variant="outline" className="rounded-full px-8 h-11 sm:h-12 text-sm font-semibold w-full sm:w-auto" asChild>
                 <a href="https://wa.me/8801234567890" target="_blank" rel="noopener noreferrer">
                   <Phone className="h-4 w-4 mr-2" /> WhatsApp Us
                 </a>
