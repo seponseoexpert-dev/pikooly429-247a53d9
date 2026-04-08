@@ -315,31 +315,7 @@ const Shop = () => {
         </div>
       )}
 
-      {activeCategory && activeSubs.length > 0 && (
-        <div className="mb-5 md:mb-8">
-          <div className="mb-2 flex items-center justify-between gap-3">
-            <h2 className="text-sm font-semibold text-foreground md:text-base">Subcategories</h2>
-            <span className="text-xs text-muted-foreground">{activeSubs.length} options</span>
-          </div>
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
-            <Link
-              to={`/product-category/${activeCategory.slug}`}
-              className={`whitespace-nowrap rounded-full border px-4 py-2 text-xs font-medium transition-colors sm:text-sm ${!selectedSub ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:border-primary hover:text-primary"}`}
-            >
-              All {activeCategory.name}
-            </Link>
-            {activeSubs.map((sub: any) => (
-              <Link
-                key={sub.id}
-                to={`/product-category/${sub.slug}`}
-                className={`whitespace-nowrap rounded-full border px-4 py-2 text-xs font-medium transition-colors sm:text-sm ${selectedSub === sub.slug ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:border-primary hover:text-primary"}`}
-              >
-                {sub.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Subcategories hidden */}
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5 sm:gap-3 md:gap-4 lg:gap-5">
         {productsLoading
