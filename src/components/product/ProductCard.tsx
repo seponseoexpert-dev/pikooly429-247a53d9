@@ -37,7 +37,7 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
   const linkTo = `/product/${product.slug || product.id}`;
 
   return (
-    <div className="group bg-card rounded-xl overflow-hidden border border-border/40 hover:border-border hover:shadow-md transition-all duration-300 flex flex-col">
+    <div className="group bg-card rounded-xl overflow-hidden border border-border/40 shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] hover:border-primary/30 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.2)] active:shadow-[0_0_12px_-2px_hsl(var(--primary)/0.3)] transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:scale-[1.02] active:scale-[0.98] flex flex-col">
       <Link to={linkTo} className="block relative overflow-hidden aspect-[4/5] bg-muted/30">
         <img
           src={imgSrc}
