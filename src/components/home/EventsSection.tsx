@@ -106,64 +106,49 @@ const EventsSection = () => {
 
   if (eventCards.length === 0 && photoCards.length === 0) return null;
 
-  const eventCardWidthClass = "w-[82vw] sm:w-[48vw] md:w-[34vw] lg:w-auto lg:min-w-0";
-  const photoCardWidthClass = "w-[78vw] sm:w-[44vw] md:w-[30vw] lg:w-auto lg:min-w-0";
+  const cardW = "w-[44vw] sm:w-[42vw] md:w-[30vw] lg:w-auto lg:min-w-0";
 
   return (
-    <section className="py-6 sm:py-8 md:py-10 lg:py-12">
-      <div className="section-container space-y-8 md:space-y-10">
+    <section className="py-4 sm:py-6 md:py-8 lg:py-10">
+      <div className="section-container space-y-6 md:space-y-8">
         {eventCards.length > 0 && (
           <div>
-            <div className="mb-3 flex items-center justify-between gap-3 sm:mb-4 md:mb-5">
+            <div className="mb-2.5 flex items-center justify-between sm:mb-3">
               <h2 className="section-heading font-display font-bold text-foreground">Event Services</h2>
               <Link to="/events">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-10 rounded-full border-primary/25 px-4 text-sm font-medium shadow-sm hover:bg-accent/40"
-                >
-                  View All <ArrowRight className="h-4 w-4" />
+                <Button variant="outline" size="sm" className="h-8 gap-1 rounded-full border-border/60 px-3 text-xs font-medium hover:bg-accent/40">
+                  View All <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
               </Link>
             </div>
 
-            <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 scrollbar-hide sm:gap-4 lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-5 lg:overflow-visible lg:px-0">
+            <div className="-mx-4 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-4 pb-2 scrollbar-hide sm:gap-3 lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-4 lg:overflow-visible lg:px-0">
               {eventCards.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.id}
                     to={item.href}
-                    className={`${eventCardWidthClass} group shrink-0 snap-start overflow-hidden rounded-[28px] border border-border/50 bg-card shadow-[0_10px_30px_-18px_hsl(var(--foreground)/0.18)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_-20px_hsl(var(--primary)/0.25)]`}
+                    className={`${cardW} group shrink-0 snap-start overflow-hidden rounded-2xl border border-border/40 bg-card shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md`}
                   >
-                    <div className="relative h-[160px] overflow-hidden sm:h-[170px] md:h-[180px]">
-                      <div className="absolute left-3 top-3 z-10 inline-flex max-w-[calc(100%-24px)] items-center gap-1.5 rounded-full border border-background/70 bg-background/95 px-3 py-1 text-[10px] font-semibold text-foreground shadow-sm backdrop-blur-sm sm:text-xs">
-                        <Icon className="h-3.5 w-3.5 text-primary" />
+                    <div className="relative h-[130px] overflow-hidden sm:h-[140px] md:h-[160px]">
+                      <div className="absolute left-2 top-2 z-10 inline-flex items-center gap-1 rounded-full border border-background/60 bg-background/90 px-2 py-0.5 text-[9px] font-semibold text-foreground shadow-sm backdrop-blur-sm sm:text-[10px]">
+                        <Icon className="h-3 w-3 text-primary" />
                         <span className="truncate">{item.badge}</span>
                       </div>
                       {item.imageUrl ? (
-                        <>
-                          <img
-                            src={item.imageUrl}
-                            alt={item.title}
-                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                            loading="lazy"
-                            width={420}
-                            height={260}
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-foreground/10 via-transparent to-transparent" />
-                        </>
+                        <img src={item.imageUrl} alt={item.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" width={320} height={200} />
                       ) : (
                         <div className={`flex h-full items-center justify-center bg-gradient-to-br ${item.panelClassName}`}>
-                          <span className="flex h-14 w-14 items-center justify-center rounded-2xl border border-background/70 bg-background/90 text-primary shadow-sm backdrop-blur-sm">
-                            <Icon className="h-6 w-6" />
+                          <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-background/70 bg-background/90 text-primary shadow-sm">
+                            <Icon className="h-5 w-5" />
                           </span>
                         </div>
                       )}
                     </div>
-                    <div className="px-4 pb-5 pt-4 text-center">
-                      <p className="text-xl font-semibold leading-tight text-foreground line-clamp-1">{item.title}</p>
-                      <p className="mt-2 text-sm leading-7 text-muted-foreground line-clamp-2">{item.description}</p>
+                    <div className="px-2.5 py-2 text-center sm:px-3 sm:py-2.5">
+                      <p className="text-xs font-semibold leading-tight text-foreground line-clamp-1 sm:text-sm">{item.title}</p>
+                      <p className="mt-0.5 text-[10px] leading-relaxed text-muted-foreground line-clamp-1 sm:text-[11px]">{item.description}</p>
                     </div>
                   </Link>
                 );
@@ -174,51 +159,45 @@ const EventsSection = () => {
 
         {photoCards.length > 0 && (
           <div>
-            <div className="mb-3 flex items-center justify-between gap-3 sm:mb-4 md:mb-5">
+            <div className="mb-2.5 flex items-center justify-between sm:mb-3">
               <h2 className="section-heading font-display font-bold text-foreground">Photography</h2>
               <Link to="/photography">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-10 rounded-full border-primary/25 px-4 text-sm font-medium shadow-sm hover:bg-accent/40"
-                >
-                  View All <ArrowRight className="h-4 w-4" />
+                <Button variant="outline" size="sm" className="h-8 gap-1 rounded-full border-border/60 px-3 text-xs font-medium hover:bg-accent/40">
+                  View All <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
               </Link>
             </div>
 
-            <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 scrollbar-hide sm:gap-4 lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-5 lg:overflow-visible lg:px-0">
+            <div className="-mx-4 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-4 pb-2 scrollbar-hide sm:gap-3 lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-4 lg:overflow-visible lg:px-0">
               {photoCards.map((svc, i) => {
                 const Icon = svc.icon;
                 return (
                   <Link
                     key={svc.id}
                     to={svc.href}
-                    className={`${photoCardWidthClass} group shrink-0 snap-start rounded-[28px] border border-border/50 bg-card px-4 pb-5 pt-4 shadow-[0_10px_30px_-18px_hsl(var(--foreground)/0.18)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_-20px_hsl(var(--primary)/0.22)]`}
+                    className={`${cardW} group shrink-0 snap-start overflow-hidden rounded-2xl border border-border/40 bg-card p-2.5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md sm:p-3`}
                   >
-                    <div className="mb-4 inline-flex max-w-full items-center gap-1.5 rounded-full border border-border/60 bg-background px-3 py-1 text-[10px] font-semibold text-foreground shadow-sm sm:text-xs">
-                      <Icon className="h-3.5 w-3.5 text-primary" />
+                    <div className="mb-2 inline-flex items-center gap-1 rounded-full border border-border/50 bg-background px-2 py-0.5 text-[9px] font-semibold text-foreground sm:text-[10px]">
+                      <Icon className="h-3 w-3 text-primary" />
                       <span className="truncate">{svc.badge}</span>
                     </div>
 
-                    <div className="relative overflow-hidden rounded-2xl border border-border/40 bg-muted/20 shadow-sm">
+                    <div className="relative overflow-hidden rounded-xl bg-muted/20">
                       <img
                         src={svc.imageUrl || PHOTO_FALLBACKS[i % PHOTO_FALLBACKS.length]}
                         alt={svc.title}
-                        className="h-[170px] w-full object-cover transition-transform duration-500 group-hover:scale-105 sm:h-[180px]"
-                        loading="lazy"
-                        width={360}
-                        height={220}
+                        className="h-[120px] w-full object-cover transition-transform duration-500 group-hover:scale-105 sm:h-[130px]"
+                        loading="lazy" width={280} height={180}
                       />
                       {svc.priceLabel && (
-                        <span className="absolute bottom-3 left-3 rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground shadow-md">
+                        <span className="absolute bottom-1.5 left-1.5 rounded-full bg-primary px-2 py-0.5 text-[9px] font-bold text-primary-foreground shadow-sm sm:text-[10px]">
                           {svc.priceLabel}
                         </span>
                       )}
                     </div>
 
-                    <div className="pt-5 text-center">
-                      <p className="text-xl font-semibold leading-tight text-foreground line-clamp-2">{svc.title}</p>
+                    <div className="pt-2 text-center">
+                      <p className="text-xs font-semibold leading-tight text-foreground line-clamp-1 sm:text-sm">{svc.title}</p>
                     </div>
                   </Link>
                 );
