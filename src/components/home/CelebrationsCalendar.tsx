@@ -41,7 +41,7 @@ const CelebrationsCalendar = memo(() => {
           {celebrations.map((c: any) => {
             const card = (
               <div className="min-w-[150px] w-[40vw] max-w-[240px] sm:min-w-[180px] md:min-w-[220px] flex-shrink-0 snap-start group">
-                <div className="relative rounded-xl sm:rounded-2xl overflow-hidden aspect-[4/5] bg-secondary border border-border/30 group-hover:shadow-lg transition-all duration-200">
+                <div className="relative rounded-xl sm:rounded-2xl overflow-hidden aspect-[4/5] bg-background border border-border/40 shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] group-hover:border-primary/30 group-hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.2)] transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.03]">
                   <img
                     src={c.image_url || "/placeholder.svg"}
                     alt={c.name}
