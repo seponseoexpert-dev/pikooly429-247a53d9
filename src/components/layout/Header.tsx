@@ -221,7 +221,7 @@ const Header = () => {
     icon: React.ElementType; label?: string; onClick?: () => void; href?: string; badge?: number; className?: string;
   }) => {
     const content = (
-      <span className={`touch-target relative flex min-w-[44px] flex-col items-center justify-center gap-0.5 rounded-2xl border border-transparent px-1.5 py-1.5 text-foreground/75 shadow-[0_10px_28px_-24px_hsl(var(--foreground)/0.65)] transition-all duration-200 hover:border-border/70 hover:bg-muted/70 hover:text-primary active:scale-95 ${className}`}>
+      <span className={`touch-target relative flex min-w-[44px] flex-col items-center justify-center gap-0.5 rounded-xl px-1.5 py-1.5 text-foreground/70 transition-all duration-200 hover:text-primary hover:bg-muted/50 active:scale-95 ${className}`}>
         <Icon size={19} strokeWidth={1.8} />
         {badge != null && badge > 0 && (
           <span className="absolute -top-0.5 -right-0.5 sm:top-0 sm:right-0 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary text-primary-foreground text-[9px] font-bold px-1 shadow-sm">
@@ -350,7 +350,7 @@ const Header = () => {
               <button
                 type="button"
                 onClick={() => { setMobileSearchExpanded(true); setTimeout(() => mobileSearchInputRef.current?.focus(), 50); }}
-                  className={`touch-target md:hidden relative flex flex-col items-center justify-center gap-0.5 rounded-2xl border border-transparent px-1.5 py-1.5 text-foreground/75 shadow-[0_10px_28px_-24px_hsl(var(--foreground)/0.65)] transition-all duration-200 hover:border-border/70 hover:bg-muted/70 hover:text-primary active:scale-95 ${
+                  className={`touch-target md:hidden relative flex flex-col items-center justify-center gap-0.5 rounded-xl px-1.5 py-1.5 text-foreground/70 transition-all duration-200 hover:text-primary hover:bg-muted/50 active:scale-95 ${
                   scrolled && !mobileSearchExpanded ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden pointer-events-none"
                 }`}
                 aria-label="Search"
