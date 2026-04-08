@@ -706,9 +706,9 @@ const Checkout = () => {
                     <Label htmlFor="giftMessage">Gift Message (Optional)</Label>
                     <Textarea id="giftMessage" placeholder="Write a special message for the recipient..." value={form.giftMessage} onChange={(e) => handleChange("giftMessage", e.target.value)} className="mt-1.5 min-h-[80px]" maxLength={500} />
                   </div>
-                  <div className="grid grid-cols-2 gap-3 p-3 sm:p-4 bg-muted/40 rounded-xl border border-border/50">
-                    <div>
-                      <Label htmlFor="deliveryDate" className="text-xs sm:text-sm">Delivery Date</Label>
+                  <div className="p-3 sm:p-4 bg-muted/40 rounded-xl border border-border/50">
+                    <Label className="text-xs sm:text-sm font-semibold mb-2 block">Select Delivery Date & Time Slot</Label>
+                    <div className="flex gap-2">
                       <Input
                         id="deliveryDate"
                         type="date"
@@ -716,15 +716,12 @@ const Checkout = () => {
                         onChange={(e) => handleChange("deliveryDate", e.target.value)}
                         min={new Date().toISOString().split("T")[0]}
                         className={cn(
-                          "mt-1 h-9 text-xs sm:text-sm",
+                          "flex-1 h-10 text-xs sm:text-sm",
                           !form.deliveryDate && "text-muted-foreground"
                         )}
                       />
-                    </div>
-                    <div>
-                      <Label className="text-xs sm:text-sm">Time Slot</Label>
                       <Select value={form.deliveryTime} onValueChange={(v) => handleChange("deliveryTime", v)}>
-                        <SelectTrigger className="mt-1 h-9 text-xs sm:text-sm"><SelectValue placeholder="Select time" /></SelectTrigger>
+                        <SelectTrigger className="flex-1 h-10 text-xs sm:text-sm"><SelectValue placeholder="Select time" /></SelectTrigger>
                         <SelectContent>
                           {deliveryTimeSlots.map((slot) => (
                             <SelectItem key={slot} value={slot}>{slot}</SelectItem>
