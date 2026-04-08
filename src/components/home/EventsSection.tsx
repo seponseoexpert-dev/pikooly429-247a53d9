@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Camera, CalendarDays, Clapperboard, Gift, PartyPopper, Sparkles, Users2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ProductCarousel from "@/components/home/ProductCarousel";
 
 import photoEventImg from "@/assets/photo-event.png";
 import photoVideoImg from "@/assets/photo-video.png";
@@ -105,6 +106,8 @@ const EventsSection = () => {
 
   if (eventCards.length === 0 && photoCards.length === 0) return null;
 
+  const cardWidthClass = "w-[160px] sm:w-[175px] md:w-[190px] lg:w-[210px] xl:w-[220px]";
+
   return (
     <section className="py-6 sm:py-8 md:py-10 lg:py-12">
       <div className="section-container space-y-8 md:space-y-10">
@@ -113,7 +116,7 @@ const EventsSection = () => {
         {eventCards.length > 0 && (
           <div>
             <div className="flex items-center justify-between mb-3 sm:mb-4 md:mb-5">
-              <h2 className="section-heading font-display font-semibold text-foreground">Event Services</h2>
+              <h2 className="section-heading font-display font-bold text-foreground">Event Services</h2>
               <Link to="/events">
                 <Button variant="outline" size="sm" className="gap-1.5 text-xs rounded-full border-primary/30 hover:bg-primary/5 h-8 px-3">
                   View All <ArrowRight className="w-3.5 h-3.5" />
@@ -121,43 +124,40 @@ const EventsSection = () => {
               </Link>
             </div>
 
-            {/* Single-row horizontal scroll on mobile, grid on desktop */}
-            <div className="-mx-4 flex flex-nowrap gap-3 overflow-x-auto px-4 pb-2 snap-x snap-mandatory scrollbar-hide sm:gap-4 lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-5 lg:overflow-visible lg:px-0">
+            <ProductCarousel>
               {eventCards.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <Link
-                    key={item.id}
-                    to={item.href}
-                    className="group flex w-[82vw] sm:w-[48vw] md:w-[34vw] lg:w-auto lg:min-w-0 shrink-0 flex-col overflow-hidden rounded-xl sm:rounded-2xl border border-border/40 bg-card shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.15)] snap-start"
-                  >
-                    <div className={`relative h-[120px] sm:h-[140px] md:h-[160px] lg:h-[180px] overflow-hidden bg-gradient-to-br ${item.panelClassName}`}>
-                      <div className="absolute left-2 top-2 z-10 inline-flex items-center gap-1 rounded-full border border-background/60 bg-background/90 px-1.5 py-0.5 text-[9px] sm:text-[10px] font-semibold text-foreground shadow-sm backdrop-blur-sm">
-                        <Icon className="h-3 w-3 text-primary" />
-                        <span className="truncate">{item.badge}</span>
-                      </div>
-                      {item.imageUrl ? (
-                        <>
-                          <img src={item.imageUrl} alt={item.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" width={400} height={300} />
-                          <div className="absolute inset-0 bg-gradient-to-t from-foreground/35 via-transparent to-transparent" />
-                        </>
-                      ) : (
-                        <div className="relative flex h-full items-center justify-center overflow-hidden">
-                          <div className="absolute h-24 w-24 rounded-full bg-primary/10 blur-2xl" />
-                          <span className="relative flex h-12 w-12 items-center justify-center rounded-xl border border-background/70 bg-background/90 text-primary shadow-sm backdrop-blur-sm">
-                            <Icon className="h-5 w-5" />
-                          </span>
+                  <div key={item.id} className={`flex-shrink-0 snap-start ${cardWidthClass}`}>
+                    <Link
+                      to={item.href}
+                      className="group block overflow-hidden rounded-xl border border-border/40 bg-card shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_-6px_hsl(var(--primary)/0.18)]"
+                    >
+                      <div className="relative aspect-[4/5] overflow-hidden bg-muted/20">
+                        <div className="absolute left-1.5 top-1.5 z-10 inline-flex items-center gap-1 rounded-full border border-background/60 bg-background/90 px-1.5 py-0.5 text-[9px] sm:text-[10px] font-semibold text-foreground shadow-sm backdrop-blur-sm">
+                          <Icon className="h-3 w-3 text-primary" />
+                          <span className="truncate">{item.badge}</span>
                         </div>
-                      )}
-                    </div>
-                    <div className="p-2.5 sm:p-3 text-center">
-                      <p className="text-[11px] sm:text-xs md:text-sm font-semibold text-foreground leading-snug line-clamp-1">{item.title}</p>
-                      <p className="mt-0.5 text-[10px] sm:text-[11px] text-muted-foreground line-clamp-2">{item.description}</p>
-                    </div>
-                  </Link>
+                        {item.imageUrl ? (
+                          <img src={item.imageUrl} alt={item.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" width={400} height={500} />
+                        ) : (
+                          <div className={`relative flex h-full items-center justify-center bg-gradient-to-br ${item.panelClassName}`}>
+                            <div className="absolute h-24 w-24 rounded-full bg-primary/10 blur-2xl" />
+                            <span className="relative flex h-12 w-12 items-center justify-center rounded-xl border border-background/70 bg-background/90 text-primary shadow-sm backdrop-blur-sm">
+                              <Icon className="h-5 w-5" />
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-2 sm:p-2.5">
+                        <p className="text-[11px] sm:text-xs font-semibold text-foreground leading-snug line-clamp-2">{item.title}</p>
+                        <p className="mt-0.5 text-[9px] sm:text-[10px] text-muted-foreground line-clamp-1">{item.description}</p>
+                      </div>
+                    </Link>
+                  </div>
                 );
               })}
-            </div>
+            </ProductCarousel>
           </div>
         )}
 
@@ -165,7 +165,7 @@ const EventsSection = () => {
         {photoCards.length > 0 && (
           <div>
             <div className="flex items-center justify-between mb-3 sm:mb-4 md:mb-5">
-              <h2 className="section-heading font-display font-semibold text-foreground">Photography</h2>
+              <h2 className="section-heading font-display font-bold text-foreground">Photography</h2>
               <Link to="/photography">
                 <Button variant="outline" size="sm" className="gap-1.5 text-xs rounded-full border-primary/30 hover:bg-primary/5 h-8 px-3">
                   View All <ArrowRight className="w-3.5 h-3.5" />
@@ -173,39 +173,40 @@ const EventsSection = () => {
               </Link>
             </div>
 
-            <div className="-mx-4 flex flex-nowrap gap-3 overflow-x-auto px-4 pb-2 snap-x snap-mandatory scrollbar-hide sm:gap-4 lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-5 lg:overflow-visible lg:px-0">
+            <ProductCarousel>
               {photoCards.map((svc, i) => {
                 const Icon = svc.icon;
                 return (
-                  <Link
-                    key={svc.id}
-                    to={svc.href}
-                    className="group block w-[74vw] sm:w-[44vw] md:w-[30vw] lg:w-auto lg:min-w-0 shrink-0 overflow-hidden rounded-xl sm:rounded-2xl border border-border/40 bg-card shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.15)] snap-start"
-                  >
-                    <div className="relative aspect-square overflow-hidden bg-muted/30 p-3 flex items-center justify-center">
-                      <div className="absolute left-2 top-2 z-10 inline-flex items-center gap-1 rounded-full border border-background/60 bg-background/90 px-1.5 py-0.5 text-[9px] sm:text-[10px] font-semibold text-foreground shadow-sm backdrop-blur-sm">
-                        <Icon className="h-3 w-3 text-primary" />
-                        <span>{svc.badge}</span>
+                  <div key={svc.id} className={`flex-shrink-0 snap-start ${cardWidthClass}`}>
+                    <Link
+                      to={svc.href}
+                      className="group block overflow-hidden rounded-xl border border-border/40 bg-card shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_-6px_hsl(var(--primary)/0.18)]"
+                    >
+                      <div className="relative aspect-[4/5] overflow-hidden bg-muted/20">
+                        <div className="absolute left-1.5 top-1.5 z-10 inline-flex items-center gap-1 rounded-full border border-background/60 bg-background/90 px-1.5 py-0.5 text-[9px] sm:text-[10px] font-semibold text-foreground shadow-sm backdrop-blur-sm">
+                          <Icon className="h-3 w-3 text-primary" />
+                          <span>{svc.badge}</span>
+                        </div>
+                        <img
+                          src={svc.imageUrl || PHOTO_FALLBACKS[i % PHOTO_FALLBACKS.length]}
+                          alt={svc.title}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          loading="lazy" width={400} height={500}
+                        />
+                        {svc.priceLabel && (
+                          <span className="absolute bottom-1.5 left-1.5 rounded-full bg-primary px-2 py-0.5 text-[9px] sm:text-[10px] font-bold text-primary-foreground shadow-md">
+                            {svc.priceLabel}
+                          </span>
+                        )}
                       </div>
-                      <img
-                        src={svc.imageUrl || PHOTO_FALLBACKS[i % PHOTO_FALLBACKS.length]}
-                        alt={svc.title}
-                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        loading="lazy" width={400} height={400}
-                      />
-                      {svc.priceLabel && (
-                        <span className="absolute bottom-2 left-2 rounded-full bg-primary px-2 py-0.5 text-[9px] sm:text-[10px] font-bold text-primary-foreground shadow-md">
-                          {svc.priceLabel}
-                        </span>
-                      )}
-                    </div>
-                    <div className="border-t border-border/30 p-2.5 sm:p-3 text-center">
-                      <p className="text-[11px] sm:text-xs md:text-sm font-semibold text-foreground leading-tight line-clamp-1">{svc.title}</p>
-                    </div>
-                  </Link>
+                      <div className="p-2 sm:p-2.5">
+                        <p className="text-[11px] sm:text-xs font-semibold text-foreground leading-snug line-clamp-2">{svc.title}</p>
+                      </div>
+                    </Link>
+                  </div>
                 );
               })}
-            </div>
+            </ProductCarousel>
           </div>
         )}
       </div>
