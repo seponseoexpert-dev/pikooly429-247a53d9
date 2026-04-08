@@ -732,32 +732,37 @@ const Checkout = () => {
               {/* Payment Method */}
               <section className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-border">
                 <h2 className="text-base sm:text-lg font-bold mb-3 sm:mb-4">Payment Method</h2>
-                <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                <div className="space-y-2.5">
                   {enabledPaymentMethods.length === 0 ? (
-                    <p className="col-span-2 text-sm text-muted-foreground text-center py-4">No payment methods available.</p>
+                    <p className="text-sm text-muted-foreground text-center py-4">No payment methods available.</p>
                   ) : enabledPaymentMethods.map((method) => (
                     <label
                       key={method.value}
-                      className={`relative flex flex-col items-center text-center gap-1.5 p-3 sm:p-4 rounded-xl border cursor-pointer transition-all duration-300 ${
+                      className={`relative flex items-center gap-3 p-3 sm:p-4 rounded-xl border cursor-pointer transition-all duration-300 ${
                         form.paymentMethod === method.value
                           ? "border-primary bg-primary/5 ring-1 ring-primary shadow-[0_0_12px_hsl(var(--primary)/0.15)]"
                           : "border-border hover:border-primary/40 hover:bg-muted/30"
                       }`}
                     >
                       <input type="radio" name="paymentMethod" value={method.value} checked={form.paymentMethod === method.value} onChange={(e) => handleChange("paymentMethod", e.target.value)} className="sr-only" />
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${form.paymentMethod === method.value ? "bg-primary/15" : "bg-muted"}`}>
+                        {method.icon === "Banknote" && <Banknote size={20} className="text-primary" />}
+                        {method.icon === "Wallet" && <Wallet size={20} className="text-primary" />}
+                        {method.icon === "CreditCard" && <CreditCard size={20} className="text-primary" />}
+                        {method.icon === "Smartphone" && <Smartphone size={20} className="text-primary" />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-sm leading-tight">{method.label}</p>
+                        <p className="text-xs text-muted-foreground leading-snug">{method.desc}</p>
+                      </div>
                       {form.paymentMethod === method.value && (
-                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                        <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0">
                           <Check size={12} className="text-primary-foreground" />
                         </div>
                       )}
-                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${form.paymentMethod === method.value ? "bg-primary/15" : "bg-muted"}`}>
-                        {method.icon === "Banknote" && <Banknote size={18} className="text-primary" />}
-                        {method.icon === "Wallet" && <Wallet size={18} className="text-primary" />}
-                        {method.icon === "CreditCard" && <CreditCard size={18} className="text-primary" />}
-                        {method.icon === "Smartphone" && <Smartphone size={18} className="text-primary" />}
-                      </div>
-                      <p className="font-semibold text-xs sm:text-sm leading-tight">{method.label}</p>
-                      <p className="text-[10px] sm:text-xs text-muted-foreground leading-snug line-clamp-2">{method.desc}</p>
+                    </label>
+                  ))}
+                </div>
                     </label>
                   ))}
                 </div>
