@@ -711,7 +711,7 @@ const Checkout = () => {
                     <div className="grid grid-cols-2 gap-2.5">
                       <div className="relative">
                         <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                          <CalendarIcon size={16} className="text-primary" />
+                          <CalendarDays size={16} className="text-primary" />
                         </div>
                         <Input
                           type="date"
