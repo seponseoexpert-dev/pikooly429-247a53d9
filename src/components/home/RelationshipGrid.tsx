@@ -26,14 +26,43 @@ const RelationshipGrid = memo(() => {
         For Every Relationship
       </h2>
 
-      <div className="flex gap-4 sm:gap-5 md:gap-6 lg:gap-8 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory">
+      {/* Mobile/Tablet: 2-row horizontal scroll */}
+      <div className="lg:hidden">
+        <div className="grid grid-rows-2 grid-flow-col gap-x-3 gap-y-3 sm:gap-x-4 sm:gap-y-4 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory auto-cols-[80px] sm:auto-cols-[90px] md:auto-cols-[100px]">
+          {items.map((item: any) => (
+            <Link
+              key={item.id}
+              to={item.link || `/product-category/${item.slug}`}
+              className="flex flex-col items-center gap-1.5 group snap-start"
+            >
+              <div className="w-[76px] h-[76px] sm:w-[86px] sm:h-[86px] md:w-[96px] md:h-[96px] rounded-2xl overflow-hidden bg-card border border-border/40 shadow-sm group-hover:shadow-md group-hover:border-primary/20 transition-all duration-300 p-1.5 sm:p-2">
+                <img
+                  src={item.image_url || "/placeholder.svg"}
+                  alt={item.name}
+                  width={96}
+                  height={96}
+                  decoding="async"
+                  loading="lazy"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <span className="text-[10px] sm:text-[11px] font-medium text-foreground/70 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-1 w-[76px] sm:w-[86px] md:w-[96px]">
+                {item.name}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Desktop: single-row scroll */}
+      <div className="hidden lg:flex gap-6 xl:gap-8 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory">
         {items.map((item: any) => (
           <Link
             key={item.id}
             to={item.link || `/product-category/${item.slug}`}
             className="flex flex-col items-center gap-2 group snap-start shrink-0"
           >
-            <div className="w-[90px] h-[90px] sm:w-[100px] sm:h-[100px] md:w-[110px] md:h-[110px] lg:w-[120px] lg:h-[120px] rounded-2xl overflow-hidden bg-card border border-border/40 shadow-sm group-hover:shadow-md group-hover:border-primary/20 transition-all duration-300 ease-out group-hover:scale-[1.03] p-2 sm:p-2.5">
+            <div className="w-[110px] h-[110px] xl:w-[120px] xl:h-[120px] rounded-2xl overflow-hidden bg-card border border-border/40 shadow-sm group-hover:shadow-md group-hover:border-primary/20 transition-all duration-300 group-hover:scale-[1.03] p-2.5">
               <img
                 src={item.image_url || "/placeholder.svg"}
                 alt={item.name}
@@ -44,7 +73,7 @@ const RelationshipGrid = memo(() => {
                 className="w-full h-full object-contain"
               />
             </div>
-            <span className="text-[11px] sm:text-xs md:text-[13px] font-medium text-foreground/70 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-1 max-w-[80px] sm:max-w-[90px] md:max-w-[100px] lg:max-w-[110px]">
+            <span className="text-xs font-medium text-foreground/70 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-1 max-w-[110px] xl:max-w-[120px]">
               {item.name}
             </span>
           </Link>
