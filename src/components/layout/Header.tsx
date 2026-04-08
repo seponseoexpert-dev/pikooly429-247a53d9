@@ -322,7 +322,7 @@ const Header = () => {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => { setSearchQuery(e.target.value.slice(0, 60)); setShowSuggestions(true); }}
-                  onFocus={() => setShowSuggestions(sanitizeSearchTerm(searchQuery).length >= 2)}
+                  onFocus={() => setShowSuggestions(sanitizeSearchTerm(searchQuery).length >= 1)}
                   placeholder={t("search_placeholder")}
                   className="w-full rounded-full border border-border/40 bg-muted/30 py-2.5 pl-11 pr-10 text-[13px] shadow-none outline-none transition-all duration-200 placeholder:text-muted-foreground/50 focus:border-primary/40 focus:bg-card focus:ring-1 focus:ring-primary/10 focus:shadow-[0_2px_12px_-4px_hsl(var(--primary)/0.1)] lg:py-2.5"
                 />
