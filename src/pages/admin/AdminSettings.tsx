@@ -54,6 +54,7 @@ const settingSections = [
   { key: "trending_tabs", label: "Trending Tabs", icon: Star },
   { key: "bouquet_seo", label: "Bouquet SEO", icon: FileText },
   { key: "cloudinary", label: "Cloudinary", icon: Cloud },
+  { key: "checkout", label: "Checkout", icon: CreditCard },
 ];
 
 type FieldDef = {
