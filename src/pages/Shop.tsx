@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef, useTransition } from "react";
 import { useSearchParams, useParams, Link } from "react-router-dom";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { ShoppingCart } from "lucide-react";
 import ProductCard from "@/components/product/ProductCard";
 import { ProductCardSkeleton } from "@/components/ui/skeletons";
 import { useQuery } from "@tanstack/react-query";
@@ -91,7 +92,6 @@ const Shop = () => {
     placeholderData: (prev) => prev,
   });
 
-  // Resolve catSlug: if it matches a subcategory instead of a category, auto-select parent cat + sub
   useEffect(() => {
     if (catParam && !subParam && categories.length > 0 && subcategories.length > 0) {
       const matchedCat = categories.find((c: any) => c.slug === catParam);
@@ -138,7 +138,6 @@ const Shop = () => {
     return subcategories.find((s: any) => s.slug === selectedSub) || null;
   }, [selectedSub, subcategories]);
 
-  // Use subcategory content if selected, otherwise category
   const activeContent = activeSubcategory || activeCategory;
   const activeCategoryName = activeSubcategory?.name || activeCategory?.name || "All Products";
   const { settings } = useSiteSettings();
@@ -160,13 +159,11 @@ const Shop = () => {
     }
     metaTag.content = metaDesc || `Shop ${contentName || "all products"} at ${siteName}`;
 
-    // Remove existing schemas
     ["faq-schema-jsonld", "breadcrumb-schema-jsonld"].forEach((id) => {
       const el = document.getElementById(id);
       if (el) el.remove();
     });
 
-    // FAQ Schema
     const faqs = (activeContent as any)?.faq;
     if (Array.isArray(faqs) && faqs.length > 0) {
       const schema = {
@@ -185,7 +182,6 @@ const Shop = () => {
       document.head.appendChild(script);
     }
 
-    // BreadcrumbList Schema
     const breadcrumbItems: any[] = [
       { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
     ];
@@ -229,9 +225,7 @@ const Shop = () => {
   const filtered = useMemo(() => {
     let list = selectedCat
       ? products.filter((p: any) => {
-          // Check primary category
           if (p.categories?.slug === selectedCat) return true;
-          // Check junction table categories
           if (p.product_categories?.some((pc: any) => pc.categories?.slug === selectedCat)) return true;
           return false;
         })
@@ -299,10 +293,10 @@ const Shop = () => {
       )}
 
       {!catParam && (
-        <div className="mb-5 flex gap-2 overflow-x-auto scrollbar-hide md:mb-8">
+        <div className="mb-4 sm:mb-6 flex gap-2 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-1">
           <button
             onClick={() => setSelectedCat("")}
-            className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-medium transition-colors sm:text-sm ${!selectedCat ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
+            className={`whitespace-nowrap rounded-full px-3.5 py-2 text-[11px] sm:text-xs md:text-sm font-medium transition-all snap-start ${!selectedCat ? "bg-primary text-primary-foreground shadow-sm" : "bg-muted/60 text-muted-foreground hover:bg-muted"}`}
           >
             All
           </button>
@@ -310,7 +304,7 @@ const Shop = () => {
             <button
               key={cat.id}
               onClick={() => setSelectedCat(cat.slug)}
-              className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-medium transition-colors sm:text-sm ${selectedCat === cat.slug ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
+              className={`whitespace-nowrap rounded-full px-3.5 py-2 text-[11px] sm:text-xs md:text-sm font-medium transition-all snap-start ${selectedCat === cat.slug ? "bg-primary text-primary-foreground shadow-sm" : "bg-muted/60 text-muted-foreground hover:bg-muted"}`}
             >
               {cat.name}
             </button>
@@ -318,9 +312,7 @@ const Shop = () => {
         </div>
       )}
 
-      {/* Subcategories hidden */}
-
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5 sm:gap-3 md:gap-4 lg:gap-5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
         {productsLoading
           ? Array.from({ length: 10 }).map((_, i) => <ProductCardSkeleton key={i} />)
           : filtered.map((product: any) => (
@@ -329,9 +321,12 @@ const Shop = () => {
       </div>
 
       {!productsLoading && filtered.length === 0 && (
-        <div className="text-center py-20 text-muted-foreground">
-          <p className="text-sm sm:text-base md:text-lg">
-            {searchParam ? `No products found for “${searchParam}”.` : "No products found in this category."}
+        <div className="text-center py-16 sm:py-20 flex flex-col items-center gap-3">
+          <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center">
+            <ShoppingCart size={24} className="text-muted-foreground/50" />
+          </div>
+          <p className="text-sm sm:text-base text-muted-foreground">
+            {searchParam ? `No products found for "${searchParam}".` : "No products found in this category."}
           </p>
         </div>
       )}
