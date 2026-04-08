@@ -30,28 +30,27 @@ const CategoryGrid = memo(() => {
   if (categories.length === 0) return null;
 
   return (
-    <section className="py-3 sm:py-4 md:py-6 lg:py-8 section-container" aria-label="Shop by Category" style={{ contain: "layout style" }}>
-      {/* Mobile: 4 cols, Tablet: 5 cols, Desktop: 8 cols — always fills full width */}
-      <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-x-2 gap-y-4 sm:gap-x-3 sm:gap-y-5 md:gap-x-4 md:gap-y-6 lg:gap-x-5 lg:gap-y-6 justify-items-center">
+    <section className="py-4 sm:py-5 md:py-6 lg:py-8 section-container" aria-label="Shop by Category" style={{ contain: "layout style" }}>
+      <div className="flex gap-3 sm:gap-4 md:gap-5 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory">
         {categories.map((cat, idx) => (
           <Link
             key={cat.id}
             to={`/product-category/${cat.slug}`}
-            className="flex flex-col items-center gap-1.5 sm:gap-2 group w-full"
+            className="flex flex-col items-center gap-2 group snap-start shrink-0"
           >
-            <div className="w-16 h-16 sm:w-[72px] sm:h-[72px] md:w-20 md:h-20 lg:w-[90px] lg:h-[90px] xl:w-24 xl:h-24 mx-auto rounded-full overflow-hidden bg-card border border-border/50 group-hover:border-primary/30 group-hover:shadow-[0_4px_16px_-4px_hsl(var(--primary)/0.15)] transition-all duration-300 ease-out group-hover:scale-[1.05] group-active:scale-[0.97]">
+            <div className="w-[90px] h-[90px] sm:w-[100px] sm:h-[100px] md:w-[110px] md:h-[110px] lg:w-[120px] lg:h-[120px] rounded-2xl overflow-hidden bg-card border border-border/40 shadow-sm group-hover:shadow-md group-hover:border-primary/20 transition-all duration-300 ease-out group-hover:scale-[1.03] p-2 sm:p-2.5">
               <img
                 src={cat.image_url || "/placeholder.svg"}
                 alt={cat.name}
-                width={96}
-                height={96}
+                width={120}
+                height={120}
                 decoding="async"
-                className="w-full h-full object-cover object-center"
+                className="w-full h-full object-contain"
                 loading={idx < 8 ? "eager" : "lazy"}
                 fetchPriority={idx < 4 ? "high" : undefined}
               />
             </div>
-            <span className="text-[10px] sm:text-[11px] md:text-xs font-medium text-foreground/80 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-1 w-full px-0.5">
+            <span className="text-[11px] sm:text-xs md:text-[13px] font-medium text-foreground/80 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-1 max-w-[90px] sm:max-w-[100px] md:max-w-[110px] lg:max-w-[120px]">
               {cat.name}
             </span>
           </Link>
