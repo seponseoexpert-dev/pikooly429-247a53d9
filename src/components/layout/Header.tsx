@@ -20,6 +20,64 @@ const sanitizeSearchTerm = (value: string) =>
     .trim()
     .slice(0, 60);
 
+const normalizeSearchText = (value?: string | null) => sanitizeSearchTerm(value || "").toLowerCase();
+
+const scoreSearchText = (candidate: string, term: string) => {
+  const normalizedCandidate = normalizeSearchText(candidate);
+
+  if (!normalizedCandidate || !term) return 0;
+  if (normalizedCandidate === term) return 1000;
+  if (normalizedCandidate.startsWith(term)) return 700;
+
+  const words = normalizedCandidate.split(" ").filter(Boolean);
+
+  if (words.some((word) => word === term)) return 650;
+  if (words.some((word) => word.startsWith(term))) return 550;
+  if (normalizedCandidate.includes(term)) return 300;
+
+  return 0;
+};
+
+const getSearchKeywordBonus = (term: string, haystack: string) => {
+  if (term.length !== 1) return 0;
+
+  const keywordBoosts: Record<string, string[]> = {
+    f: ["flower", "flowers", "floral"],
+    b: ["bouquet", "birthday", "box"],
+    c: ["cake", "combo", "carnation"],
+    r: ["rose", "roses"],
+  };
+
+  return (keywordBoosts[term] || []).some((keyword) => haystack.includes(keyword)) ? 120 : 0;
+};
+
+const rankSearchItems = <T extends { name?: string | null; slug?: string | null; short_description?: string | null }>(
+  items: T[],
+  term: string,
+  limit: number,
+) => {
+  const normalizedTerm = normalizeSearchText(term);
+
+  return items
+    .map((item) => {
+      const name = normalizeSearchText(item.name);
+      const slug = normalizeSearchText((item.slug || "").replace(/-/g, " "));
+      const shortDescription = normalizeSearchText(item.short_description);
+      const haystack = `${name} ${slug} ${shortDescription}`.trim();
+      const score = Math.max(
+        scoreSearchText(name, normalizedTerm),
+        Math.max(scoreSearchText(slug, normalizedTerm) - 40, 0),
+        Math.max(scoreSearchText(shortDescription, normalizedTerm) - 80, 0),
+      ) + getSearchKeywordBonus(normalizedTerm, haystack);
+
+      return { item, score, name };
+    })
+    .filter((entry) => entry.score > 0)
+    .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name))
+    .slice(0, limit)
+    .map(({ item }) => item);
+};
+
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -60,34 +118,37 @@ const Header = () => {
   const { data: searchResults = { products: [], cats: [], subs: [] }, isFetching: isSearching } = useQuery({
     queryKey: ["header-search-all", debouncedSearch],
     queryFn: async () => {
-      const term = debouncedSearch;
+      const term = normalizeSearchText(debouncedSearch);
+
+      if (!term) {
+        return { products: [], cats: [], subs: [] };
+      }
+
       const [prodRes, catRes, subRes] = await Promise.all([
         supabase
           .from("products")
-          .select("id, name, slug, price, original_price, image_url")
+          .select("id, name, slug, price, original_price, image_url, short_description")
           .eq("is_active", true)
           .or(`name.ilike.%${term}%,short_description.ilike.%${term}%,slug.ilike.%${term}%`)
-          .order("created_at", { ascending: false })
-          .limit(6),
+          .limit(24),
         supabase
           .from("categories")
           .select("id, name, slug, image_url")
           .eq("is_active", true)
           .ilike("name", `%${term}%`)
-          .order("display_order")
-          .limit(4),
+          .limit(16),
         supabase
           .from("subcategories")
           .select("id, name, slug, image_url, category_id")
           .eq("is_active", true)
           .ilike("name", `%${term}%`)
-          .order("display_order")
-          .limit(4),
+          .limit(24),
       ]);
+
       return {
-        products: prodRes.data || [],
-        cats: catRes.data || [],
-        subs: subRes.data || [],
+        products: rankSearchItems(prodRes.data || [], term, 8),
+        cats: rankSearchItems(catRes.data || [], term, 6),
+        subs: rankSearchItems(subRes.data || [], term, 8),
       };
     },
     enabled: debouncedSearch.length >= 1,
