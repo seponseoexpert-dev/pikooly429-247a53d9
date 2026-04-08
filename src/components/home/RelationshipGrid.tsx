@@ -33,15 +33,15 @@ const RelationshipGrid = memo(() => {
             to={item.link || `/product-category/${item.slug}`}
             className="flex flex-col items-center gap-2 group snap-start shrink-0"
           >
-            <div className="w-[80px] h-[80px] sm:w-[90px] sm:h-[90px] md:w-[100px] md:h-[100px] lg:w-[110px] lg:h-[110px] rounded-full overflow-hidden bg-card border border-border/40 group-hover:border-primary/30 group-hover:shadow-md transition-all duration-300 ease-out group-hover:scale-[1.05]">
+            <div className="w-[90px] h-[90px] sm:w-[100px] sm:h-[100px] md:w-[110px] md:h-[110px] lg:w-[120px] lg:h-[120px] rounded-2xl overflow-hidden bg-card border border-border/40 shadow-sm group-hover:shadow-md group-hover:border-primary/20 transition-all duration-300 ease-out group-hover:scale-[1.03] p-2 sm:p-2.5">
               <img
                 src={item.image_url || "/placeholder.svg"}
                 alt={item.name}
-                width={110}
-                height={110}
+                width={120}
+                height={120}
                 decoding="async"
                 loading="lazy"
-                className="w-full h-full object-cover object-center"
+                className="w-full h-full object-contain"
               />
             </div>
             <span className="text-[11px] sm:text-xs md:text-[13px] font-medium text-foreground/70 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-1 max-w-[80px] sm:max-w-[90px] md:max-w-[100px] lg:max-w-[110px]">
