@@ -599,8 +599,6 @@ const Checkout = () => {
                   <CreditCard size={20} className="text-primary" />
                   Billing Details
                 </h2>
-                  Billing Details
-                </h2>
                 <div className="space-y-5">
                   <div>
                     <Label htmlFor="fullName">Full Name <span className="text-destructive">*</span></Label>
@@ -679,6 +677,7 @@ const Checkout = () => {
                   </div>
                 </div>
               </section>
+              )}
 
               {/* Delivery Information */}
               <section className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-border">
