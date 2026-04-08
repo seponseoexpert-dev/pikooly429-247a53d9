@@ -122,14 +122,14 @@ const EventsSection = () => {
             </div>
 
             {/* Single-row horizontal scroll on mobile, grid on desktop */}
-            <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory lg:grid lg:grid-cols-4 lg:overflow-visible">
+            <div className="-mx-4 flex flex-nowrap gap-3 overflow-x-auto px-4 pb-2 snap-x snap-mandatory scrollbar-hide sm:gap-4 lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-5 lg:overflow-visible lg:px-0">
               {eventCards.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.id}
                     to={item.href}
-                    className="group flex flex-col overflow-hidden rounded-xl sm:rounded-2xl border border-border/40 bg-card shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.15)] min-w-[42vw] sm:min-w-[35vw] md:min-w-[30vw] lg:min-w-0 snap-start shrink-0 lg:shrink"
+                    className="group flex w-[82vw] sm:w-[48vw] md:w-[34vw] lg:w-auto lg:min-w-0 shrink-0 flex-col overflow-hidden rounded-xl sm:rounded-2xl border border-border/40 bg-card shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.15)] snap-start"
                   >
                     <div className={`relative h-[120px] sm:h-[140px] md:h-[160px] lg:h-[180px] overflow-hidden bg-gradient-to-br ${item.panelClassName}`}>
                       <div className="absolute left-2 top-2 z-10 inline-flex items-center gap-1 rounded-full border border-background/60 bg-background/90 px-1.5 py-0.5 text-[9px] sm:text-[10px] font-semibold text-foreground shadow-sm backdrop-blur-sm">
@@ -152,7 +152,7 @@ const EventsSection = () => {
                     </div>
                     <div className="p-2.5 sm:p-3 text-center">
                       <p className="text-[11px] sm:text-xs md:text-sm font-semibold text-foreground leading-snug line-clamp-1">{item.title}</p>
-                      <p className="mt-0.5 text-[10px] sm:text-[11px] text-muted-foreground line-clamp-1">{item.description}</p>
+                      <p className="mt-0.5 text-[10px] sm:text-[11px] text-muted-foreground line-clamp-2">{item.description}</p>
                     </div>
                   </Link>
                 );
@@ -173,14 +173,14 @@ const EventsSection = () => {
               </Link>
             </div>
 
-            <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory lg:grid lg:grid-cols-4 lg:overflow-visible">
+            <div className="-mx-4 flex flex-nowrap gap-3 overflow-x-auto px-4 pb-2 snap-x snap-mandatory scrollbar-hide sm:gap-4 lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-5 lg:overflow-visible lg:px-0">
               {photoCards.map((svc, i) => {
                 const Icon = svc.icon;
                 return (
                   <Link
                     key={svc.id}
                     to={svc.href}
-                    className="group block overflow-hidden rounded-xl sm:rounded-2xl border border-border/40 bg-card shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.15)] min-w-[42vw] sm:min-w-[35vw] md:min-w-[30vw] lg:min-w-0 snap-start shrink-0 lg:shrink"
+                    className="group block w-[74vw] sm:w-[44vw] md:w-[30vw] lg:w-auto lg:min-w-0 shrink-0 overflow-hidden rounded-xl sm:rounded-2xl border border-border/40 bg-card shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.15)] snap-start"
                   >
                     <div className="relative aspect-square overflow-hidden bg-muted/30 p-3 flex items-center justify-center">
                       <div className="absolute left-2 top-2 z-10 inline-flex items-center gap-1 rounded-full border border-background/60 bg-background/90 px-1.5 py-0.5 text-[9px] sm:text-[10px] font-semibold text-foreground shadow-sm backdrop-blur-sm">
@@ -190,7 +190,7 @@ const EventsSection = () => {
                       <img
                         src={svc.imageUrl || PHOTO_FALLBACKS[i % PHOTO_FALLBACKS.length]}
                         alt={svc.title}
-                        className="w-4/5 h-4/5 object-contain group-hover:scale-110 transition-transform duration-500 drop-shadow-md"
+                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
                         loading="lazy" width={400} height={400}
                       />
                       {svc.priceLabel && (
