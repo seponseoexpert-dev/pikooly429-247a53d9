@@ -57,23 +57,48 @@ const Header = () => {
     return () => window.clearTimeout(timer);
   }, [safeSearchQuery]);
 
-  const { data: suggestions = [], isFetching: isSearching } = useQuery({
-    queryKey: ["header-search-products", debouncedSearch],
+  const { data: searchResults = { products: [], cats: [], subs: [] }, isFetching: isSearching } = useQuery({
+    queryKey: ["header-search-all", debouncedSearch],
     queryFn: async () => {
       const term = debouncedSearch;
-      const { data, error } = await supabase
-        .from("products")
-        .select("id, name, slug, price, original_price, image_url")
-        .eq("is_active", true)
-        .or(`name.ilike.%${term}%,short_description.ilike.%${term}%,slug.ilike.%${term}%`)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return (data || []).slice(0, 8);
+      const [prodRes, catRes, subRes] = await Promise.all([
+        supabase
+          .from("products")
+          .select("id, name, slug, price, original_price, image_url")
+          .eq("is_active", true)
+          .or(`name.ilike.%${term}%,short_description.ilike.%${term}%,slug.ilike.%${term}%`)
+          .order("created_at", { ascending: false })
+          .limit(6),
+        supabase
+          .from("categories")
+          .select("id, name, slug, image_url")
+          .eq("is_active", true)
+          .ilike("name", `%${term}%`)
+          .order("display_order")
+          .limit(4),
+        supabase
+          .from("subcategories")
+          .select("id, name, slug, image_url, category_id")
+          .eq("is_active", true)
+          .ilike("name", `%${term}%`)
+          .order("display_order")
+          .limit(4),
+      ]);
+      return {
+        products: prodRes.data || [],
+        cats: catRes.data || [],
+        subs: subRes.data || [],
+      };
     },
-    enabled: debouncedSearch.length >= 2,
+    enabled: debouncedSearch.length >= 1,
     staleTime: 60 * 1000,
     placeholderData: (prev) => prev,
   });
+
+  const suggestions = searchResults.products;
+  const searchCats = searchResults.cats;
+  const searchSubs = searchResults.subs;
+  const hasAnyResults = suggestions.length > 0 || searchCats.length > 0 || searchSubs.length > 0;
 
   const { data: categories = [] } = useQuery({
     queryKey: ["header-categories"],
@@ -127,8 +152,8 @@ const Header = () => {
   const [canUseHover, setCanUseHover] = useState(false);
   const megaMenuCloseTimer = useRef<number | null>(null);
 
-  const shouldShowSearchPanel = showSuggestions && debouncedSearch.length >= 2;
-  const showEmptyResults = shouldShowSearchPanel && !isSearching && suggestions.length === 0;
+  const shouldShowSearchPanel = showSuggestions && debouncedSearch.length >= 1;
+  const showEmptyResults = shouldShowSearchPanel && !isSearching && !hasAnyResults;
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -297,7 +322,7 @@ const Header = () => {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => { setSearchQuery(e.target.value.slice(0, 60)); setShowSuggestions(true); }}
-                  onFocus={() => setShowSuggestions(sanitizeSearchTerm(searchQuery).length >= 2)}
+                  onFocus={() => setShowSuggestions(sanitizeSearchTerm(searchQuery).length >= 1)}
                   placeholder={t("search_placeholder")}
                   className="w-full rounded-full border border-border/40 bg-muted/30 py-2.5 pl-11 pr-10 text-[13px] shadow-none outline-none transition-all duration-200 placeholder:text-muted-foreground/50 focus:border-primary/40 focus:bg-card focus:ring-1 focus:ring-primary/10 focus:shadow-[0_2px_12px_-4px_hsl(var(--primary)/0.1)] lg:py-2.5"
                 />
@@ -309,7 +334,7 @@ const Header = () => {
               </form>
 
               {shouldShowSearchPanel && (
-                <div className="absolute left-0 right-0 top-full mt-2.5 z-[100] bg-card/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-[0_16px_48px_-12px_hsl(var(--foreground)/0.15)] overflow-hidden animate-fade-in">
+                <div className="absolute left-0 right-0 top-full mt-2.5 z-[100] bg-card/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-[0_16px_48px_-12px_hsl(var(--foreground)/0.15)] overflow-hidden animate-fade-in max-h-[70vh] overflow-y-auto">
                   {isSearching && (
                     <div className="flex items-center gap-3 px-5 py-4 text-sm text-muted-foreground">
                       <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
@@ -317,8 +342,32 @@ const Header = () => {
                     </div>
                   )}
 
-                  {!isSearching && suggestions.length > 0 && (
+                  {!isSearching && searchCats.length > 0 && (
                     <div className="py-1.5">
+                      <p className="px-5 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Categories</p>
+                      {searchCats.map((cat) => (
+                        <button key={cat.id} onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${cat.slug}`); }} className="flex items-center gap-3.5 w-full px-5 py-2.5 hover:bg-primary/5 transition-colors text-left group/item">
+                          {cat.image_url && <img src={cat.image_url} alt={cat.name} width={36} height={36} className="w-9 h-9 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
+                          <span className="text-sm font-medium text-foreground group-hover/item:text-primary transition-colors">{cat.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {!isSearching && searchSubs.length > 0 && (
+                    <div className={`py-1.5 ${searchCats.length > 0 ? "border-t border-border/30" : ""}`}>
+                      <p className="px-5 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Subcategories</p>
+                      {searchSubs.map((sub) => (
+                        <button key={sub.id} onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${sub.slug}`); }} className="flex items-center gap-3.5 w-full px-5 py-2.5 hover:bg-primary/5 transition-colors text-left group/item">
+                          {sub.image_url && <img src={sub.image_url} alt={sub.name} width={36} height={36} className="w-9 h-9 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
+                          <span className="text-sm font-medium text-foreground group-hover/item:text-primary transition-colors">{sub.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {!isSearching && suggestions.length > 0 && (
+                    <div className={`py-1.5 ${(searchCats.length > 0 || searchSubs.length > 0) ? "border-t border-border/30" : ""}`}>
                       <p className="px-5 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Products</p>
                       {suggestions.map((p) => (
                         <button key={p.id} onClick={() => handleSelect(p.slug)} className="flex items-center gap-3.5 w-full px-5 py-2.5 hover:bg-primary/5 transition-colors text-left group/item">
@@ -339,7 +388,7 @@ const Header = () => {
                     </div>
                   )}
 
-                  {!isSearching && suggestions.length > 0 && (
+                  {!isSearching && hasAnyResults && (
                     <button
                       onClick={handleSearch as any}
                       className="w-full border-t border-border/40 px-5 py-3 text-center text-sm font-medium text-primary hover:bg-primary/5 transition-colors"
@@ -351,7 +400,7 @@ const Header = () => {
                   {showEmptyResults && (
                     <div className="px-5 py-6 text-center">
                       <Search size={24} className="mx-auto text-muted-foreground/30 mb-2" />
-                      <p className="text-sm text-muted-foreground">No products found for "{debouncedSearch}"</p>
+                      <p className="text-sm text-muted-foreground">No results found for "{debouncedSearch}"</p>
                     </div>
                   )}
                 </div>
@@ -474,7 +523,7 @@ const Header = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => { setSearchQuery(e.target.value.slice(0, 60)); setShowSuggestions(true); }}
-                onFocus={() => setShowSuggestions(sanitizeSearchTerm(searchQuery).length >= 2)}
+                onFocus={() => setShowSuggestions(sanitizeSearchTerm(searchQuery).length >= 1)}
                 placeholder={t("search_placeholder")}
                 className="w-full rounded-full border border-border/60 bg-muted/50 py-2.5 pl-10 pr-9 text-[13px] shadow-[0_20px_40px_-32px_hsl(var(--foreground)/0.45)] outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary/40 focus:ring-2 focus:ring-primary/15"
               />
@@ -485,7 +534,7 @@ const Header = () => {
               )}
             </form>
             {shouldShowSearchPanel && (
-              <div className="absolute left-0 right-0 top-full mt-1.5 z-[100] bg-card/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-[0_12px_36px_-8px_hsl(var(--foreground)/0.12)] overflow-hidden animate-fade-in">
+              <div className="absolute left-0 right-0 top-full mt-1.5 z-[100] bg-card/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-[0_12px_36px_-8px_hsl(var(--foreground)/0.12)] overflow-hidden animate-fade-in max-h-[60vh] overflow-y-auto">
                 {isSearching && (
                   <div className="flex items-center gap-3 px-4 py-3 text-sm text-muted-foreground">
                     <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
@@ -493,25 +542,54 @@ const Header = () => {
                   </div>
                 )}
 
-                {!isSearching && suggestions.map((p) => (
-                  <button key={p.id} onClick={() => handleSelect(p.slug)} className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-primary/5 transition-colors text-left">
-                    {p.image_url && <img src={p.image_url} alt={p.name} width={40} height={40} className="w-10 h-10 rounded-xl object-cover shrink-0 ring-1 ring-border/40" loading="lazy" decoding="async" />}
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[13px] font-medium text-foreground truncate">{p.name}</p>
-                      <p className="text-xs text-primary font-semibold mt-0.5">
-                        {formatPrice(p.price)}
-                        {p.original_price && p.original_price > p.price && (
-                          <span className="text-muted-foreground line-through ml-1.5 font-normal">{formatPrice(p.original_price)}</span>
-                        )}
-                      </p>
-                    </div>
-                  </button>
-                ))}
+                {!isSearching && searchCats.length > 0 && (
+                  <div className="py-1">
+                    <p className="px-4 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Categories</p>
+                    {searchCats.map((cat) => (
+                      <button key={cat.id} onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${cat.slug}`); }} className="flex items-center gap-3 w-full px-4 py-2 hover:bg-primary/5 transition-colors text-left">
+                        {cat.image_url && <img src={cat.image_url} alt={cat.name} width={32} height={32} className="w-8 h-8 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
+                        <span className="text-[13px] font-medium text-foreground">{cat.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {!isSearching && searchSubs.length > 0 && (
+                  <div className={`py-1 ${searchCats.length > 0 ? "border-t border-border/30" : ""}`}>
+                    <p className="px-4 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Subcategories</p>
+                    {searchSubs.map((sub) => (
+                      <button key={sub.id} onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${sub.slug}`); }} className="flex items-center gap-3 w-full px-4 py-2 hover:bg-primary/5 transition-colors text-left">
+                        {sub.image_url && <img src={sub.image_url} alt={sub.name} width={32} height={32} className="w-8 h-8 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
+                        <span className="text-[13px] font-medium text-foreground">{sub.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {!isSearching && suggestions.length > 0 && (
+                  <div className={`py-1 ${(searchCats.length > 0 || searchSubs.length > 0) ? "border-t border-border/30" : ""}`}>
+                    <p className="px-4 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Products</p>
+                    {suggestions.map((p) => (
+                      <button key={p.id} onClick={() => handleSelect(p.slug)} className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-primary/5 transition-colors text-left">
+                        {p.image_url && <img src={p.image_url} alt={p.name} width={40} height={40} className="w-10 h-10 rounded-xl object-cover shrink-0 ring-1 ring-border/40" loading="lazy" decoding="async" />}
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[13px] font-medium text-foreground truncate">{p.name}</p>
+                          <p className="text-xs text-primary font-semibold mt-0.5">
+                            {formatPrice(p.price)}
+                            {p.original_price && p.original_price > p.price && (
+                              <span className="text-muted-foreground line-through ml-1.5 font-normal">{formatPrice(p.original_price)}</span>
+                            )}
+                          </p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
 
                 {showEmptyResults && (
                   <div className="px-4 py-5 text-center">
                     <Search size={20} className="mx-auto text-muted-foreground/30 mb-1.5" />
-                    <p className="text-sm text-muted-foreground">No products found</p>
+                    <p className="text-sm text-muted-foreground">No results found</p>
                   </div>
                 )}
               </div>
