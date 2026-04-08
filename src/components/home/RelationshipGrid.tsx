@@ -27,8 +27,8 @@ const RelationshipGrid = memo(() => {
       </h2>
 
       {/* Single-row horizontal scroll on mobile/tablet */}
-      <div className="lg:hidden">
-        <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory">
+      <div className="lg:hidden -mx-4 px-4">
+        <div className="flex flex-nowrap gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory">
           {items.map((item: any) => (
             <Link
               key={item.id}
