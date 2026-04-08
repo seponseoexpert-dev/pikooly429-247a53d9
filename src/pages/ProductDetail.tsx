@@ -238,20 +238,20 @@ const ProductDetail = () => {
         )}
       </nav>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 md:gap-8 lg:gap-12">
         {/* Image Gallery */}
         <div>
-          <div className="aspect-square rounded-lg sm:rounded-xl overflow-hidden bg-muted mb-2 sm:mb-3">
+          <div className="aspect-[4/5] rounded-xl sm:rounded-2xl overflow-hidden bg-muted/10 border border-border/30 mb-3">
             <img src={currentImg} alt={product.name} className="w-full h-full object-cover" loading="eager" fetchPriority="high" />
           </div>
           {allImages.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto pb-1">
+            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
               {allImages.map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setSelectedImage(i)}
-                  className={`w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 flex-shrink-0 transition-all ${
-                    selectedImage === i ? "border-primary" : "border-border/50 opacity-70 hover:opacity-100"
+                  className={`w-14 h-14 sm:w-[72px] sm:h-[72px] rounded-lg sm:rounded-xl overflow-hidden border-2 flex-shrink-0 transition-all duration-300 ${
+                    selectedImage === i ? "border-primary shadow-sm" : "border-border/40 opacity-60 hover:opacity-100"
                   }`}
                 >
                   <img src={img} alt={`${product.name} ${i + 1}`} className="w-full h-full object-cover" />
@@ -261,105 +261,98 @@ const ProductDetail = () => {
           )}
         </div>
 
-        {/* Product Info */}
         <div className="flex flex-col">
-          <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-display font-bold text-foreground mb-2">
+          <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-display font-bold text-foreground mb-2 leading-snug">
             {product.name}
           </h1>
 
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-lg sm:text-xl md:text-2xl font-bold text-foreground">{formatPrice(product.price)}</span>
-            <button className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors" aria-label="Add to wishlist">
-              <Heart size={18} />
-            </button>
-          </div>
-
-          {/* Rating */}
-          <div className="flex items-center gap-1 mb-3">
+          <div className="flex items-center gap-1 mb-2">
             {[...Array(5)].map((_, i) => (
               <Star key={i} size={14} className={i < Math.floor(product.rating || 0) ? "fill-amber-400 text-amber-400" : "text-border"} />
             ))}
             <span className="text-xs text-muted-foreground ml-1">({product.review_count || 0} Reviews)</span>
           </div>
 
-          {product.original_price && (
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-sm text-muted-foreground line-through">{formatPrice(product.original_price)}</span>
-              <span className="text-sm text-primary font-medium">
-                {Math.round((1 - product.price / product.original_price) * 100)}% off
-              </span>
-            </div>
-          )}
+          <div className="flex items-center gap-3 mb-3">
+            <span className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground">{formatPrice(product.price)}</span>
+            {product.original_price && product.original_price > product.price && (
+              <>
+                <span className="text-sm sm:text-base text-muted-foreground line-through">{formatPrice(product.original_price)}</span>
+                <span className="text-xs sm:text-sm text-primary font-semibold bg-primary/10 px-2 py-0.5 rounded-full">
+                  {Math.round((1 - product.price / product.original_price) * 100)}% off
+                </span>
+              </>
+            )}
+          </div>
 
           {(product.short_description || product.description) && (
-            <div className="text-sm text-muted-foreground mb-4 leading-relaxed prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: product.short_description || product.description || "" }} />
+            <div className="text-sm text-muted-foreground mb-5 leading-relaxed prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: product.short_description || product.description || "" }} />
           )}
 
-          {/* Custom Image Upload */}
           {allowCustomImage && (
-            <div className="mb-5 p-4 rounded-xl border border-border bg-card">
+            <div className="mb-5 p-4 rounded-xl border border-border/50 bg-muted/20">
               <CustomImageUpload images={customImages} onChange={setCustomImages} maxImages={5} />
             </div>
           )}
 
-          {/* Quantity */}
           <div className="flex items-center gap-3 mb-5">
             <span className="text-sm font-medium">Quantity:</span>
-            <div className="flex items-center border border-border rounded-lg">
-              <button onClick={() => setQty(Math.max(1, qty - 1))} className="px-3 py-2 hover:bg-muted transition-colors rounded-l-lg">
+            <div className="flex items-center border border-border rounded-xl overflow-hidden">
+              <button onClick={() => setQty(Math.max(1, qty - 1))} className="px-3 py-2.5 hover:bg-muted transition-colors">
                 <Minus size={14} />
               </button>
-              <span className="w-10 text-center text-sm font-medium border-x border-border py-2">{qty}</span>
-              <button onClick={() => setQty(qty + 1)} className="px-3 py-2 hover:bg-muted transition-colors rounded-r-lg">
+              <span className="w-12 text-center text-sm font-semibold border-x border-border py-2.5">{qty}</span>
+              <button onClick={() => setQty(qty + 1)} className="px-3 py-2.5 hover:bg-muted transition-colors">
                 <Plus size={14} />
               </button>
             </div>
           </div>
 
-          {/* Add to Cart & Buy Now */}
           <div className="flex gap-3 mb-3">
-            <Button size="lg" className="flex-1 h-12 text-sm font-semibold rounded-lg" onClick={handleAddToCart}>
+            <Button size="lg" className="flex-1 h-12 sm:h-[52px] text-sm font-semibold rounded-xl" onClick={handleAddToCart}>
               <ShoppingBag size={18} /> ADD TO CART
             </Button>
-            <Button size="lg" className="flex-1 h-12 text-sm font-semibold rounded-lg bg-accent hover:bg-accent/90 text-accent-foreground" onClick={handleBuyNow}>
+            <Button size="lg" className="flex-1 h-12 sm:h-[52px] text-sm font-semibold rounded-xl bg-accent hover:bg-accent/90 text-accent-foreground" onClick={handleBuyNow}>
               BUY NOW
             </Button>
           </div>
 
-          {/* WhatsApp Order */}
           {whatsappUrl && (
-            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full h-12 rounded-lg bg-[hsl(142,70%,45%)] hover:bg-[hsl(142,70%,40%)] text-white font-semibold text-sm transition-colors mb-3">
+            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full h-12 sm:h-[52px] rounded-xl bg-[hsl(142,70%,45%)] hover:bg-[hsl(142,70%,40%)] text-white font-semibold text-sm transition-colors mb-3">
               <MessageCircle size={18} /> Order On WhatsApp
             </a>
           )}
 
-          {/* Call For Order */}
           {orderPhone && (
-            <a href={`tel:${orderPhone}`} className="flex items-center justify-center gap-2 w-full h-12 rounded-lg bg-[hsl(240,60%,35%)] hover:bg-[hsl(240,60%,30%)] text-white font-semibold text-sm transition-colors mb-5">
+            <a href={`tel:${orderPhone}`} className="flex items-center justify-center gap-2 w-full h-12 sm:h-[52px] rounded-xl bg-[hsl(240,60%,35%)] hover:bg-[hsl(240,60%,30%)] text-white font-semibold text-sm transition-colors mb-5">
               <Phone size={18} /> Call For Order
             </a>
           )}
 
-          {/* Share */}
-          <div>
-            <span className="text-sm font-medium text-foreground">Share Now :</span>
-            <div className="flex items-center gap-2 mt-2">
-              {[
-                { label: "Facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}` },
-                { label: "Twitter", href: `https://twitter.com/intent/tweet?url=${shareUrl}` },
-                { label: "WhatsApp", href: `https://wa.me/?text=${encodeURIComponent(shareUrl)}` },
-              ].map((s) => (
-                <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors text-xs font-bold" aria-label={`Share on ${s.label}`}>
-                  {s.label[0]}
-                </a>
-              ))}
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="text-sm font-medium text-foreground">Share Now :</span>
+              <div className="flex items-center gap-2 mt-2">
+                {[
+                  { label: "Facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}` },
+                  { label: "Twitter", href: `https://twitter.com/intent/tweet?url=${shareUrl}` },
+                  { label: "WhatsApp", href: `https://wa.me/?text=${encodeURIComponent(shareUrl)}` },
+                ].map((s) => (
+                  <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full border border-border/50 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-all text-xs font-bold" aria-label={`Share on ${s.label}`}>
+                    {s.label[0]}
+                  </a>
+                ))}
+              </div>
             </div>
+            <button className="w-10 h-10 rounded-full border border-border/50 flex items-center justify-center text-muted-foreground hover:text-destructive hover:border-destructive/40 transition-all" aria-label="Add to wishlist">
+              <Heart size={18} />
+            </button>
           </div>
         </div>
       </div>
 
       {/* Tabbed Section */}
-      <div className="mt-10 sm:mt-14 border border-border rounded-xl bg-card overflow-hidden">
+      <div className="mt-8 sm:mt-12 md:mt-14 border border-border/40 rounded-xl sm:rounded-2xl bg-card overflow-hidden shadow-sm">
         <div className="flex border-b border-border overflow-x-auto scrollbar-hide">
           {[
             { key: "specification" as const, label: "Specification" },
@@ -369,10 +362,10 @@ const ProductDetail = () => {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-4 sm:px-6 py-3 text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
+              className={`px-5 sm:px-6 py-3.5 text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
                 activeTab === tab.key
                   ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               }`}
             >
               {tab.label}
@@ -380,7 +373,7 @@ const ProductDetail = () => {
           ))}
         </div>
 
-        <div className="p-4 sm:p-6">
+        <div className="p-4 sm:p-6 md:p-8">
           {activeTab === "specification" && (
             <div>
               <h3 className="text-lg font-bold text-foreground mb-1">Specification</h3>
@@ -432,8 +425,8 @@ const ProductDetail = () => {
 
       {related.length > 0 && (
         <section className="mt-8 sm:mt-10 md:mt-14">
-          <h2 className="text-lg sm:text-xl md:text-2xl font-display font-bold mb-3 sm:mb-4 md:mb-6">You May Also Like</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-3 md:gap-4 lg:gap-5">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-display font-bold mb-4 sm:mb-5">You May Also Like</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
             {related.map((p: any, i: number) => <ProductCard key={p.id} product={p} index={i} />)}
           </div>
         </section>
