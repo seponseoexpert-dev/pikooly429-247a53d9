@@ -427,7 +427,7 @@ const Header = () => {
                       {searchCats.map((cat) => (
                         <button key={cat.id} onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${cat.slug}`); }} className="flex items-center gap-3.5 w-full px-5 py-2.5 hover:bg-primary/5 transition-colors text-left group/item">
                           {cat.image_url && <img src={cat.image_url} alt={cat.name} width={36} height={36} className="w-9 h-9 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
-                          <span className="text-sm font-medium text-foreground group-hover/item:text-primary transition-colors">{cat.name}</span>
+                          <span className="text-sm font-medium text-foreground group-hover/item:text-primary transition-colors"><HighlightMatch text={cat.name} query={debouncedSearch} /></span>
                         </button>
                       ))}
                     </div>
