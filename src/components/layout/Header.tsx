@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, ReactNode } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Search, ShoppingCart, X, User, Truck, ChevronDown, MapPinCheck, Moon, Sun, Globe, Sparkles } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
@@ -76,6 +76,24 @@ const rankSearchItems = <T extends { name?: string | null; slug?: string | null;
     .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name))
     .slice(0, limit)
     .map(({ item }) => item);
+};
+
+const HighlightMatch = ({ text, query }: { text: string; query: string }): ReactNode => {
+  if (!query || query.length < 1) return <>{text}</>;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const regex = new RegExp(`(${escaped})`, "gi");
+  const parts = text.split(regex);
+  return (
+    <>
+      {parts.map((part, i) =>
+        regex.test(part) ? (
+          <span key={i} className="text-primary font-bold">{part}</span>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </>
+  );
 };
 
 const Header = () => {
@@ -409,7 +427,7 @@ const Header = () => {
                       {searchCats.map((cat) => (
                         <button key={cat.id} onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${cat.slug}`); }} className="flex items-center gap-3.5 w-full px-5 py-2.5 hover:bg-primary/5 transition-colors text-left group/item">
                           {cat.image_url && <img src={cat.image_url} alt={cat.name} width={36} height={36} className="w-9 h-9 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
-                          <span className="text-sm font-medium text-foreground group-hover/item:text-primary transition-colors">{cat.name}</span>
+                          <span className="text-sm font-medium text-foreground group-hover/item:text-primary transition-colors"><HighlightMatch text={cat.name} query={debouncedSearch} /></span>
                         </button>
                       ))}
                     </div>
@@ -421,7 +439,7 @@ const Header = () => {
                       {searchSubs.map((sub) => (
                         <button key={sub.id} onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${sub.slug}`); }} className="flex items-center gap-3.5 w-full px-5 py-2.5 hover:bg-primary/5 transition-colors text-left group/item">
                           {sub.image_url && <img src={sub.image_url} alt={sub.name} width={36} height={36} className="w-9 h-9 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
-                          <span className="text-sm font-medium text-foreground group-hover/item:text-primary transition-colors">{sub.name}</span>
+                          <span className="text-sm font-medium text-foreground group-hover/item:text-primary transition-colors"><HighlightMatch text={sub.name} query={debouncedSearch} /></span>
                         </button>
                       ))}
                     </div>
@@ -436,7 +454,7 @@ const Header = () => {
                             <img src={p.image_url} alt={p.name} width={44} height={44} className="w-11 h-11 rounded-xl object-cover shrink-0 ring-1 ring-border/40 group-hover/item:ring-primary/30 transition-all" loading="lazy" decoding="async" />
                           )}
                           <div className="min-w-0 flex-1">
-                            <p className="text-sm font-medium text-foreground truncate group-hover/item:text-primary transition-colors">{p.name}</p>
+                            <p className="text-sm font-medium text-foreground truncate group-hover/item:text-primary transition-colors"><HighlightMatch text={p.name} query={debouncedSearch} /></p>
                             <p className="text-xs text-primary font-semibold mt-0.5">
                               {formatPrice(p.price)}
                               {p.original_price && p.original_price > p.price && (
@@ -609,7 +627,7 @@ const Header = () => {
                     {searchCats.map((cat) => (
                       <button key={cat.id} onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${cat.slug}`); }} className="flex items-center gap-3 w-full px-4 py-2 hover:bg-primary/5 transition-colors text-left">
                         {cat.image_url && <img src={cat.image_url} alt={cat.name} width={32} height={32} className="w-8 h-8 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
-                        <span className="text-[13px] font-medium text-foreground">{cat.name}</span>
+                        <span className="text-[13px] font-medium text-foreground"><HighlightMatch text={cat.name} query={debouncedSearch} /></span>
                       </button>
                     ))}
                   </div>
@@ -621,7 +639,7 @@ const Header = () => {
                     {searchSubs.map((sub) => (
                       <button key={sub.id} onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${sub.slug}`); }} className="flex items-center gap-3 w-full px-4 py-2 hover:bg-primary/5 transition-colors text-left">
                         {sub.image_url && <img src={sub.image_url} alt={sub.name} width={32} height={32} className="w-8 h-8 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
-                        <span className="text-[13px] font-medium text-foreground">{sub.name}</span>
+                        <span className="text-[13px] font-medium text-foreground"><HighlightMatch text={sub.name} query={debouncedSearch} /></span>
                       </button>
                     ))}
                   </div>
@@ -634,7 +652,7 @@ const Header = () => {
                       <button key={p.id} onClick={() => handleSelect(p.slug)} className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-primary/5 transition-colors text-left">
                         {p.image_url && <img src={p.image_url} alt={p.name} width={40} height={40} className="w-10 h-10 rounded-xl object-cover shrink-0 ring-1 ring-border/40" loading="lazy" decoding="async" />}
                         <div className="min-w-0 flex-1">
-                          <p className="text-[13px] font-medium text-foreground truncate">{p.name}</p>
+                          <p className="text-[13px] font-medium text-foreground truncate"><HighlightMatch text={p.name} query={debouncedSearch} /></p>
                           <p className="text-xs text-primary font-semibold mt-0.5">
                             {formatPrice(p.price)}
                             {p.original_price && p.original_price > p.price && (
