@@ -35,27 +35,26 @@ const CategoryGrid = memo(() => {
         Shop by Category
       </h2>
       <div className="overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2">
-        <div className="flex gap-3 sm:gap-4 md:gap-5 w-max min-w-full">
+        <div className="grid grid-rows-2 grid-flow-col auto-cols-[calc(25%-9px)] gap-3 sm:gap-4 w-max min-w-full lg:grid-rows-1 lg:auto-cols-[calc(12.5%-10.5px)]">
           {categories.map((cat, idx) => (
             <Link
               key={cat.id}
               to={`/product-category/${cat.slug}`}
-              className="flex flex-col items-center gap-2 group snap-start shrink-0 w-[calc((100%-36px)/4)] sm:w-[calc((100%-48px)/5)] md:w-[calc((100%-60px)/6)] lg:w-[calc((100%-80px)/8)] xl:w-[calc((100%-90px)/10)]"
-              style={{ minWidth: 0 }}
+              className="flex flex-col items-center gap-1.5 group snap-start"
             >
-              <div className="w-full aspect-square rounded-2xl overflow-hidden bg-muted/30 border border-border/50 shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] group-hover:border-primary/40 group-hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.25)] group-active:border-primary/60 transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.04] group-active:scale-[0.97]">
+              <div className="w-[72px] h-[72px] sm:w-20 sm:h-20 md:w-[90px] md:h-[90px] lg:w-24 lg:h-24 rounded-2xl overflow-hidden bg-muted/30 border border-border/50 shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] group-hover:border-primary/40 group-hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.25)] group-active:border-primary/60 transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.06] group-active:scale-[0.97]">
                 <img
                   src={cat.image_url || "/placeholder.svg"}
                   alt={cat.name}
-                  width={140}
-                  height={140}
+                  width={96}
+                  height={96}
                   decoding="async"
-                  className="w-full h-full object-contain object-center p-2"
+                  className="w-full h-full object-contain object-center p-1.5"
                   loading={idx < 8 ? "eager" : "lazy"}
                   fetchPriority={idx < 4 ? "high" : undefined}
                 />
               </div>
-              <span className="text-[11px] sm:text-xs md:text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors text-center leading-tight line-clamp-2">
+              <span className="text-[10px] sm:text-[11px] md:text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors text-center leading-tight line-clamp-2 max-w-[76px] sm:max-w-[84px] md:max-w-[92px]">
                 {cat.name}
               </span>
             </Link>
