@@ -135,8 +135,8 @@ const ProductGrid = memo(() => {
     : "View All";
 
   return (
-    <section className="py-6 sm:py-8 md:py-10 lg:py-14 section-container" aria-label="Products" style={{ contain: "layout style" }}>
-      {/* Trending Tabs - FNP style pill tabs */}
+    <section className="py-5 sm:py-7 md:py-8 lg:py-10 section-container" aria-label="Products" style={{ contain: "layout style" }}>
+      {/* Trending Tabs */}
       <CategoryTabs
         tabs={allTrendingTabs}
         activeTab={activeTab}
@@ -157,7 +157,7 @@ const ProductGrid = memo(() => {
           {trendingProducts.map((product: any) => (
             <div
               key={product.id}
-              className="flex-shrink-0 snap-start w-[160px] sm:w-[180px] md:w-[200px] lg:w-[220px]"
+              className="flex-shrink-0 snap-start w-[150px] sm:w-[170px] md:w-[195px] lg:w-[210px] xl:w-[220px]"
             >
               <ProductCard product={product} />
             </div>
@@ -166,35 +166,34 @@ const ProductGrid = memo(() => {
       )}
 
       {trendingProducts.length > 0 && (
-        <div className="text-center mt-6 sm:mt-8">
+        <div className="text-center mt-5 sm:mt-7">
           <Link
             to={trendingViewAllLink}
-            className="inline-block px-8 py-2.5 border border-foreground/20 text-foreground rounded-full text-sm font-medium hover:bg-foreground hover:text-background transition-all duration-300"
+            className="inline-block px-7 py-2.5 border border-foreground/15 text-foreground rounded-full text-[13px] font-medium hover:bg-foreground hover:text-background transition-all duration-300"
           >
             {trendingViewAllText} →
           </Link>
         </div>
       )}
 
-      {/* Tailored For Your Occasions */}
-      <div className="mt-12 sm:mt-14 md:mt-16 lg:mt-20 mb-5 md:mb-8 text-center">
-        <h2 className="section-heading font-display font-semibold text-foreground mb-1.5">
+      <div className="mt-10 sm:mt-12 md:mt-14 lg:mt-16 mb-4 md:mb-6 text-center">
+        <h2 className="section-heading font-display font-semibold text-foreground mb-1">
           Tailored For Your Occasions
         </h2>
-        <p className="text-muted-foreground text-sm">Find the perfect gift for every moment</p>
+        <p className="text-muted-foreground text-[13px]">Find the perfect gift for every moment</p>
       </div>
 
       {occasionCategories.length > 0 && (
-        <div className="flex gap-4 sm:gap-6 md:gap-8 overflow-x-auto pb-4 mb-6 md:mb-8 scrollbar-hide justify-start sm:justify-center px-1">
+        <div className="flex gap-3 sm:gap-5 md:gap-6 overflow-x-auto pb-3 mb-5 md:mb-7 scrollbar-hide justify-start sm:justify-center px-1">
           {occasionCategories.map((cat) => {
             const isActive = activeTailoredSlug === cat.slug;
             return (
               <button
                 key={cat.slug}
                 onClick={() => setActiveTailoredSlug(cat.slug)}
-                className="flex flex-col items-center gap-2 min-w-[68px] sm:min-w-[80px] group relative"
+                className="flex flex-col items-center gap-1.5 min-w-[60px] sm:min-w-[72px] group relative"
               >
-                <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
                   isActive
                     ? "bg-primary text-primary-foreground shadow-md"
                     : "bg-muted/50 text-muted-foreground group-hover:bg-muted group-hover:text-foreground"
@@ -203,12 +202,12 @@ const ProductGrid = memo(() => {
                     <img
                       src={cat.image_url}
                       alt={cat.name}
-                      className={`w-6 h-6 sm:w-7 sm:h-7 rounded-md object-cover transition-all ${isActive ? "brightness-0 invert" : ""}`}
+                      className={`w-5 h-5 sm:w-6 sm:h-6 rounded object-cover transition-all ${isActive ? "brightness-0 invert" : ""}`}
                       loading="lazy"
                       decoding="async"
                     />
                   ) : (
-                    <Gift size={22} />
+                    <Gift size={20} />
                   )}
                 </div>
                 <span className={`text-[10px] sm:text-[11px] font-medium whitespace-nowrap transition-colors ${
@@ -239,7 +238,7 @@ const ProductGrid = memo(() => {
           {tailoredProducts.slice(0, 12).map((product: any) => (
             <div
               key={product.id}
-              className="flex-shrink-0 snap-start w-[160px] sm:w-[180px] md:w-[200px] lg:w-[220px]"
+              className="flex-shrink-0 snap-start w-[150px] sm:w-[170px] md:w-[195px] lg:w-[210px] xl:w-[220px]"
             >
               <ProductCard product={product} />
             </div>
@@ -248,10 +247,10 @@ const ProductGrid = memo(() => {
       )}
 
       {tailoredProducts.length > 0 && (
-        <div className="text-center mt-6 sm:mt-8">
+        <div className="text-center mt-5 sm:mt-7">
           <Link
             to={viewAllTailoredLink}
-            className="inline-block px-8 py-2.5 border border-foreground/20 text-foreground rounded-full text-sm font-medium hover:bg-foreground hover:text-background transition-all duration-300"
+            className="inline-block px-7 py-2.5 border border-foreground/15 text-foreground rounded-full text-[13px] font-medium hover:bg-foreground hover:text-background transition-all duration-300"
           >
             {viewAllTailoredText} →
           </Link>
