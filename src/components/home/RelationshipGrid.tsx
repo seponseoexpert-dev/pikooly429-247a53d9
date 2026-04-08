@@ -22,7 +22,7 @@ const RelationshipGrid = memo(() => {
 
   return (
     <section className="py-4 sm:py-6 md:py-8 section-container" style={{ contain: "layout style" }}>
-      <h2 className="section-heading font-display font-semibold text-foreground mb-3 sm:mb-4 md:mb-6">
+      <h2 className="section-heading font-display font-semibold text-foreground mb-4 sm:mb-5 md:mb-6">
         For Every Relationship
       </h2>
 
@@ -31,9 +31,9 @@ const RelationshipGrid = memo(() => {
           <Link
             key={item.id}
             to={item.link || `/product-category/${item.slug}`}
-            className="flex flex-col items-center gap-1.5 sm:gap-2 group snap-start min-w-[72px] sm:min-w-[90px] md:min-w-[100px]"
+            className="flex flex-col items-center gap-2 group snap-start min-w-[80px] sm:min-w-[100px] md:min-w-[110px] lg:min-w-[120px]"
           >
-            <div className="w-full aspect-square rounded-xl sm:rounded-2xl overflow-hidden bg-background border border-border/40 shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] group-hover:border-primary/30 group-hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.2)] group-active:shadow-[0_0_12px_-2px_hsl(var(--primary)/0.3)] transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.06] group-active:scale-95">
+            <div className="w-full aspect-square rounded-xl sm:rounded-2xl overflow-hidden bg-card border border-border/40 group-hover:border-border/60 group-hover:shadow-[0_6px_20px_-6px_hsl(var(--foreground)/0.1)] transition-all duration-300 ease-out group-hover:scale-[1.03]">
               <img
                 src={item.image_url || "/placeholder.svg"}
                 alt={item.name}
@@ -45,7 +45,7 @@ const RelationshipGrid = memo(() => {
                 sizes="(max-width: 480px) 22vw, (max-width: 768px) 15vw, 12vw"
               />
             </div>
-            <span className="text-[10px] sm:text-xs md:text-sm font-medium text-foreground/80 group-hover:text-primary transition-colors text-center leading-tight line-clamp-2">
+            <span className="text-[11px] sm:text-xs md:text-[13px] font-medium text-foreground/70 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-1">
               {item.name}
             </span>
           </Link>

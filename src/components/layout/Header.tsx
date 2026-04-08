@@ -221,7 +221,7 @@ const Header = () => {
     icon: React.ElementType; label?: string; onClick?: () => void; href?: string; badge?: number; className?: string;
   }) => {
     const content = (
-      <span className={`touch-target relative flex min-w-[44px] flex-col items-center justify-center gap-0.5 rounded-2xl border border-transparent px-1.5 py-1.5 text-foreground/75 shadow-[0_10px_28px_-24px_hsl(var(--foreground)/0.65)] transition-all duration-200 hover:border-border/70 hover:bg-muted/70 hover:text-primary active:scale-95 ${className}`}>
+      <span className={`touch-target relative flex min-w-[44px] flex-col items-center justify-center gap-0.5 rounded-xl px-1.5 py-1.5 text-foreground/70 transition-all duration-200 hover:text-primary hover:bg-muted/50 active:scale-95 ${className}`}>
         <Icon size={19} strokeWidth={1.8} />
         {badge != null && badge > 0 && (
           <span className="absolute -top-0.5 -right-0.5 sm:top-0 sm:right-0 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary text-primary-foreground text-[9px] font-bold px-1 shadow-sm">
@@ -239,15 +239,15 @@ const Header = () => {
     <div ref={headerRootRef} className="fixed inset-x-0 top-0 z-[60] safe-area-top md:sticky md:top-0">
       {/* Announcement Bar */}
       {showAnnouncement && (
-        <div className="bg-primary text-primary-foreground text-center text-[10px] sm:text-[11px] md:text-xs py-1.5 sm:py-2 px-4 font-semibold tracking-wide">
+        <div className="bg-primary text-primary-foreground text-center text-[10px] sm:text-[11px] py-1.5 px-4 font-medium tracking-wide">
           {announcementText}
         </div>
       )}
 
-      <header className="border-b border-border/50 bg-card/95 backdrop-blur-xl shadow-[0_16px_45px_-38px_hsl(var(--foreground)/0.45)]">
+      <header className="border-b border-border/40 bg-card/98 backdrop-blur-xl shadow-[0_1px_3px_0_hsl(var(--foreground)/0.04)]">
         <div className="section-container">
           {/* === TOP ROW: Logo + Search + Actions === */}
-          <div className="flex items-center h-[52px] sm:h-14 md:h-[60px] lg:h-16 gap-2 sm:gap-3 md:gap-4 lg:gap-6">
+          <div className="flex items-center h-[50px] sm:h-[54px] md:h-[58px] lg:h-[62px] gap-2 sm:gap-3 md:gap-4 lg:gap-6">
             
             {/* Logo */}
             <Link to="/" className="shrink-0 flex items-center">
@@ -285,7 +285,7 @@ const Header = () => {
                   onChange={(e) => { setSearchQuery(e.target.value.slice(0, 60)); setShowSuggestions(true); }}
                   onFocus={() => setShowSuggestions(sanitizeSearchTerm(searchQuery).length >= 2)}
                   placeholder={t("search_placeholder")}
-                  className="w-full rounded-full border border-border/50 bg-muted/40 py-2.5 pl-11 pr-10 text-sm shadow-[0_2px_12px_-4px_hsl(var(--foreground)/0.08)] outline-none transition-all duration-300 placeholder:text-muted-foreground/50 focus:border-primary/40 focus:bg-card focus:ring-2 focus:ring-primary/10 focus:shadow-[0_4px_20px_-6px_hsl(var(--primary)/0.15)] lg:py-2.5"
+                  className="w-full rounded-full border border-border/40 bg-muted/30 py-2.5 pl-11 pr-10 text-[13px] shadow-none outline-none transition-all duration-200 placeholder:text-muted-foreground/50 focus:border-primary/40 focus:bg-card focus:ring-1 focus:ring-primary/10 focus:shadow-[0_2px_12px_-4px_hsl(var(--primary)/0.1)] lg:py-2.5"
                 />
                 {searchQuery && (
                   <button type="button" onClick={() => { setSearchQuery(""); setShowSuggestions(false); }} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
@@ -350,7 +350,7 @@ const Header = () => {
               <button
                 type="button"
                 onClick={() => { setMobileSearchExpanded(true); setTimeout(() => mobileSearchInputRef.current?.focus(), 50); }}
-                  className={`touch-target md:hidden relative flex flex-col items-center justify-center gap-0.5 rounded-2xl border border-transparent px-1.5 py-1.5 text-foreground/75 shadow-[0_10px_28px_-24px_hsl(var(--foreground)/0.65)] transition-all duration-200 hover:border-border/70 hover:bg-muted/70 hover:text-primary active:scale-95 ${
+                  className={`touch-target md:hidden relative flex flex-col items-center justify-center gap-0.5 rounded-xl px-1.5 py-1.5 text-foreground/70 transition-all duration-200 hover:text-primary hover:bg-muted/50 active:scale-95 ${
                   scrolled && !mobileSearchExpanded ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden pointer-events-none"
                 }`}
                 aria-label="Search"

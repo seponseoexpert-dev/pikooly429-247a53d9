@@ -16,26 +16,26 @@ interface CategoryTabsProps {
 
 const CategoryTabs = memo(({ tabs, activeTab, onTabChange }: CategoryTabsProps) => {
   return (
-    <div className="relative mb-6 lg:mb-8">
-      <div className="flex w-full overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-1 px-0.5">
+    <div className="relative mb-5 lg:mb-7 border-b border-border/50">
+      <div className="flex w-full overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-0">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`relative flex shrink-0 snap-start items-center gap-2 px-4 py-2.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-200 md:px-5 md:py-3 md:text-sm ${
+              className={`relative flex shrink-0 snap-start items-center gap-1.5 px-4 py-3 text-[13px] font-medium whitespace-nowrap transition-all duration-200 md:px-5 md:py-3.5 md:text-sm border-b-2 -mb-[1px] ${
                 isActive
-                  ? "bg-primary/10 text-primary font-semibold shadow-sm ring-1 ring-primary/20"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  ? "border-primary text-primary font-semibold"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
               }`}
             >
               {tab.imageUrl ? (
-                <img src={tab.imageUrl} alt="" className="w-4 h-4 md:w-5 md:h-5 rounded-md object-cover" loading="lazy" />
+                <img src={tab.imageUrl} alt="" className="w-4 h-4 md:w-5 md:h-5 rounded object-cover" loading="lazy" />
               ) : tab.icon ? (
-                <tab.icon size={14} className={isActive ? "text-primary" : ""} />
+                <tab.icon size={14} />
               ) : (
-                <Flower2 size={14} className={isActive ? "text-primary" : ""} />
+                <Flower2 size={14} />
               )}
               {tab.label}
             </button>
