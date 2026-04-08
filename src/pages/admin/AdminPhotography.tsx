@@ -131,6 +131,30 @@ const AdminPhotography = () => {
     },
   });
 
+  // Edit Service
+  const [editService, setEditService] = useState<any>(null);
+  const updateService = useMutation({
+    mutationFn: async (svc: any) => {
+      const { error } = await supabase.from("photo_services").update({
+        title: svc.title,
+        short_description: svc.short_description,
+        description: svc.description,
+        image_url: svc.image_url,
+        starting_price: svc.starting_price,
+        is_active: svc.is_active,
+        is_featured: svc.is_featured,
+      }).eq("id", svc.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-photo-services"] });
+      qc.invalidateQueries({ queryKey: ["photo-services"] });
+      qc.invalidateQueries({ queryKey: ["home-photo-services"] });
+      toast.success("Service updated");
+      setEditService(null);
+    },
+  });
+
   const [editPkg, setEditPkg] = useState<any>(null);
   const updatePkg = useMutation({
     mutationFn: async (pkg: any) => {
