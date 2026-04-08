@@ -20,12 +20,14 @@ const AboutSection = () => {
         className={`text-[13px] sm:text-sm md:text-[15px] lg:text-base text-muted-foreground leading-relaxed sm:leading-[1.8] rich-text-content ${!expanded ? "line-clamp-5" : ""}`}
         dangerouslySetInnerHTML={{ __html: fullContent }}
       />
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="text-primary font-semibold text-xs sm:text-sm mt-2 hover:underline"
-      >
-        {expanded ? "Show less" : "Read more"}
-      </button>
+      <div className="text-center mt-4">
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="text-primary font-semibold text-sm sm:text-base hover:underline underline-offset-4"
+        >
+          {expanded ? "Show Less" : "Read More"}
+        </button>
+      </div>
 
       <div className="flex items-center gap-4 mt-5">
         <img src={medal1} alt="PikoolyFlora Badge" width="140" height="48" className="w-[120px] h-[40px] sm:w-[140px] sm:h-[48px] md:w-[160px] md:h-[54px] object-contain" loading="lazy" decoding="async" />
