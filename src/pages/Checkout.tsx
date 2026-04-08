@@ -716,14 +716,9 @@ const Checkout = () => {
                   <div>
                     <Label className="text-sm font-semibold mb-2 block">Select Delivery Date & Time Slot</Label>
                     <div className="grid grid-cols-2 gap-2.5">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          const input = e.currentTarget.querySelector('input');
-                          if (input) { input.showPicker?.(); input.focus(); }
-                        }}
+                      <label
                         className={cn(
-                          "relative flex items-center gap-2 h-11 w-full rounded-md border border-input bg-background px-3 text-sm ring-offset-background transition-colors hover:bg-muted/50 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+                          "relative flex items-center gap-2 h-11 w-full rounded-md border border-input bg-background px-3 text-sm ring-offset-background transition-colors hover:bg-muted/50 cursor-pointer",
                           !form.deliveryDate && "text-muted-foreground"
                         )}
                       >
