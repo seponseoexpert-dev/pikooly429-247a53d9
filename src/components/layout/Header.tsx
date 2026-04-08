@@ -78,6 +78,24 @@ const rankSearchItems = <T extends { name?: string | null; slug?: string | null;
     .map(({ item }) => item);
 };
 
+const HighlightMatch = ({ text, query }: { text: string; query: string }): ReactNode => {
+  if (!query || query.length < 1) return <>{text}</>;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const regex = new RegExp(`(${escaped})`, "gi");
+  const parts = text.split(regex);
+  return (
+    <>
+      {parts.map((part, i) =>
+        regex.test(part) ? (
+          <span key={i} className="text-primary font-bold">{part}</span>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </>
+  );
+};
+
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
