@@ -13,7 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { toast } from "sonner";
-import { Loader2, ShoppingBag, Truck, CreditCard, Minus, Plus, X, Ticket, Check, ChevronsUpDown } from "lucide-react";
+import { Loader2, ShoppingBag, Truck, CreditCard, Minus, Plus, X, Ticket, Check, ChevronsUpDown, Banknote, Wallet, Smartphone } from "lucide-react";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { cn } from "@/lib/utils";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
