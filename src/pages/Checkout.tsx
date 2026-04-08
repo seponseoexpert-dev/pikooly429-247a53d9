@@ -708,22 +708,32 @@ const Checkout = () => {
                   </div>
                   <div>
                     <Label className="text-sm font-semibold mb-2 block">Select Delivery Date & Time Slot</Label>
-                    <div className="grid grid-cols-[1fr_1fr] gap-2.5">
-                      <Input
-                        type="date"
-                        value={form.deliveryDate}
-                        onChange={(e) => handleChange("deliveryDate", e.target.value)}
-                        min={new Date().toISOString().split("T")[0]}
-                        className="h-11 text-sm"
-                      />
-                      <Select value={form.deliveryTime} onValueChange={(v) => handleChange("deliveryTime", v)}>
-                        <SelectTrigger className="h-11 text-sm"><SelectValue placeholder="Select time" /></SelectTrigger>
-                        <SelectContent>
-                          {deliveryTimeSlots.map((slot) => (
-                            <SelectItem key={slot} value={slot}>{slot}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                    <div className="grid grid-cols-2 gap-2.5">
+                      <div className="relative">
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                          <CalendarIcon size={16} className="text-primary" />
+                        </div>
+                        <Input
+                          type="date"
+                          value={form.deliveryDate}
+                          onChange={(e) => handleChange("deliveryDate", e.target.value)}
+                          min={new Date().toISOString().split("T")[0]}
+                          className={`h-11 text-sm pl-9 ${!form.deliveryDate ? "text-muted-foreground" : ""}`}
+                        />
+                      </div>
+                      <div className="relative">
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none z-10">
+                          <Clock size={16} className="text-primary" />
+                        </div>
+                        <Select value={form.deliveryTime} onValueChange={(v) => handleChange("deliveryTime", v)}>
+                          <SelectTrigger className="h-11 text-sm pl-9"><SelectValue placeholder="Select time" /></SelectTrigger>
+                          <SelectContent>
+                            {deliveryTimeSlots.map((slot) => (
+                              <SelectItem key={slot} value={slot}>{slot}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                   </div>
                 </div>
