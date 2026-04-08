@@ -158,7 +158,7 @@ const Checkout = () => {
   const { data: gatewaySettings = {} } = useQuery({
     queryKey: ["payment-gateway-settings"],
     queryFn: async () => {
-      const keys = ["cod_enabled", "cod_status", "paypal_status", "stripe_status", "eps_status", "store_email", "admin_notification_email"];
+      const keys = ["cod_enabled", "cod_status", "paypal_status", "stripe_status", "eps_status", "store_email", "admin_notification_email", "checkout_billing_visible"];
       const { data, error } = await supabase
         .from("site_settings")
         .select("key, value")
@@ -593,6 +593,7 @@ const Checkout = () => {
             {/* Left - Billing & Delivery */}
             <div className="lg:col-span-2 space-y-5 sm:space-y-8">
               {/* Billing Details */}
+              {gatewaySettings.checkout_billing_visible !== "false" && (
               <section className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-border">
                 <h2 className="text-base sm:text-lg font-bold mb-4 sm:mb-6 flex items-center gap-2">
                   <CreditCard size={20} className="text-primary" />
@@ -676,6 +677,7 @@ const Checkout = () => {
                   </div>
                 </div>
               </section>
+              )}
 
               {/* Delivery Information */}
               <section className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-border">
