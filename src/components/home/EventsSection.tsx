@@ -121,15 +121,15 @@ const EventsSection = () => {
               </Link>
             </div>
 
-            {/* Mobile: 2 cols grid, Tablet: 3 cols, Desktop: 4 cols */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+            {/* Single-row horizontal scroll on mobile, grid on desktop */}
+            <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory lg:grid lg:grid-cols-4 lg:overflow-visible">
               {eventCards.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.id}
                     to={item.href}
-                    className="group flex flex-col overflow-hidden rounded-xl sm:rounded-2xl border border-border/40 bg-card shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.15)]"
+                    className="group flex flex-col overflow-hidden rounded-xl sm:rounded-2xl border border-border/40 bg-card shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.15)] min-w-[42vw] sm:min-w-[35vw] md:min-w-[30vw] lg:min-w-0 snap-start shrink-0 lg:shrink"
                   >
                     <div className={`relative h-[120px] sm:h-[140px] md:h-[160px] lg:h-[180px] overflow-hidden bg-gradient-to-br ${item.panelClassName}`}>
                       <div className="absolute left-2 top-2 z-10 inline-flex items-center gap-1 rounded-full border border-background/60 bg-background/90 px-1.5 py-0.5 text-[9px] sm:text-[10px] font-semibold text-foreground shadow-sm backdrop-blur-sm">
@@ -173,14 +173,14 @@ const EventsSection = () => {
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+            <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory lg:grid lg:grid-cols-4 lg:overflow-visible">
               {photoCards.map((svc, i) => {
                 const Icon = svc.icon;
                 return (
                   <Link
                     key={svc.id}
                     to={svc.href}
-                    className="group block overflow-hidden rounded-xl sm:rounded-2xl border border-border/40 bg-card shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.15)]"
+                    className="group block overflow-hidden rounded-xl sm:rounded-2xl border border-border/40 bg-card shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.15)] min-w-[42vw] sm:min-w-[35vw] md:min-w-[30vw] lg:min-w-0 snap-start shrink-0 lg:shrink"
                   >
                     <div className="relative aspect-square overflow-hidden bg-muted/30 p-3 flex items-center justify-center">
                       <div className="absolute left-2 top-2 z-10 inline-flex items-center gap-1 rounded-full border border-background/60 bg-background/90 px-1.5 py-0.5 text-[9px] sm:text-[10px] font-semibold text-foreground shadow-sm backdrop-blur-sm">
