@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Download, Loader2, CheckCircle, Trash2, Cloud, CloudOff } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,33 +22,95 @@ const AdminMigrate = () => {
   const [loading, setLoading] = useState<string | null>(null);
   const [results, setResults] = useState<any>(null);
   const [uploadToCloud, setUploadToCloud] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [progressStep, setProgressStep] = useState("");
+  const abortRef = useRef<AbortController | null>(null);
 
   const runMigration = async (type: string) => {
     setLoading(type);
     setResults(null);
+    setProgress(0);
+    setProgressStep("Starting...");
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     try {
-      const { data, error } = await supabase.functions.invoke("wp-migrate", {
-        body: { type, uploadToCloud },
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+      const response = await fetch(`${supabaseUrl}/functions/v1/wp-migrate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${supabaseKey}`,
+          "apikey": supabaseKey,
+        },
+        body: JSON.stringify({ type, uploadToCloud, stream: true }),
+        signal: controller.signal,
       });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error || "Migration failed");
+      }
 
-      if (data.success) {
-        setResults(data.results);
-        if (type === "remove_all") {
-          toast.success("All data removed successfully!");
-        } else {
-          toast.success(`${type === "all" ? "All" : type} migration completed!`);
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+
+      if (!reader) throw new Error("No response stream");
+
+      let buffer = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n\n");
+        buffer = lines.pop() || "";
+
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          try {
+            const data = JSON.parse(line.slice(6));
+
+            if (data.type === "progress") {
+              setProgress(data.percent || 0);
+              setProgressStep(data.step || "");
+            } else if (data.type === "done") {
+              setResults(data.results);
+              setProgress(100);
+              setProgressStep("Complete!");
+              if (data.results?.removed) {
+                toast.success("All data removed successfully!");
+              } else {
+                toast.success("Migration completed!");
+              }
+            } else if (data.type === "error") {
+              throw new Error(data.message);
+            }
+          } catch (parseErr: any) {
+            if (parseErr.message && !parseErr.message.includes("JSON")) {
+              throw parseErr;
+            }
+          }
         }
-      } else {
-        throw new Error(data.error || "Migration failed");
       }
     } catch (err: any) {
-      console.error("Migration error:", err);
-      toast.error(err.message || "Migration failed");
+      if (err.name === "AbortError") {
+        toast.info("Migration cancelled");
+      } else {
+        console.error("Migration error:", err);
+        toast.error(err.message || "Migration failed");
+      }
     } finally {
       setLoading(null);
+      abortRef.current = null;
     }
+  };
+
+  const cancelMigration = () => {
+    abortRef.current?.abort();
   };
 
   return (
@@ -58,6 +120,28 @@ const AdminMigrate = () => {
         Import products, blog posts and categories from pikooly.com.bd with full content.
         Duplicate slugs will be skipped automatically.
       </p>
+
+      {/* Progress Bar */}
+      {loading && (
+        <Card className="border-primary/30">
+          <CardContent className="pt-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                <span className="text-sm font-medium">Migration in Progress</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-bold text-primary">{progress}%</span>
+                <Button variant="outline" size="sm" onClick={cancelMigration}>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+            <Progress value={progress} className="h-3" />
+            <p className="text-xs text-muted-foreground truncate">{progressStep}</p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Cloudinary Upload Toggle */}
       <Card>
@@ -78,7 +162,7 @@ const AdminMigrate = () => {
                 </p>
               </div>
             </div>
-            <Switch checked={uploadToCloud} onCheckedChange={setUploadToCloud} />
+            <Switch checked={uploadToCloud} onCheckedChange={setUploadToCloud} disabled={loading !== null} />
           </div>
         </CardContent>
       </Card>
@@ -128,11 +212,7 @@ const AdminMigrate = () => {
         <CardContent>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button
-                variant="destructive"
-                className="w-full"
-                disabled={loading !== null}
-              >
+              <Button variant="destructive" className="w-full" disabled={loading !== null}>
                 {loading === "remove_all" ? (
                   <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Removing...</>
                 ) : (
@@ -145,7 +225,7 @@ const AdminMigrate = () => {
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
                   This will permanently delete ALL categories, products, subcategories, and blog posts.
-                  This action cannot be undone. You can re-import after removal.
+                  This action cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -212,7 +292,7 @@ const AdminMigrate = () => {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              All categories, products, and blog posts have been removed. You can now re-import fresh data.
+              All data has been removed. You can now re-import fresh data.
             </p>
           </CardContent>
         </Card>
