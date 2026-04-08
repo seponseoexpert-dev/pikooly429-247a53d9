@@ -593,9 +593,12 @@ const Checkout = () => {
             {/* Left - Billing & Delivery */}
             <div className="lg:col-span-2 space-y-5 sm:space-y-8">
               {/* Billing Details */}
+              {gatewaySettings.checkout_billing_visible !== "false" && (
               <section className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-border">
                 <h2 className="text-base sm:text-lg font-bold mb-4 sm:mb-6 flex items-center gap-2">
                   <CreditCard size={20} className="text-primary" />
+                  Billing Details
+                </h2>
                   Billing Details
                 </h2>
                 <div className="space-y-5">
