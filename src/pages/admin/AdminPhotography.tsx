@@ -465,7 +465,7 @@ const AdminPhotography = () => {
                           {editService.image_url && (
                             <img src={editService.image_url} alt="" className="w-full h-40 object-cover rounded-lg mb-2" />
                           )}
-                          <CloudinaryUpload onUpload={(url) => setEditService({ ...editService, image_url: url })} />
+                          <CloudinaryUpload value={editService.image_url || ""} onChange={(url) => setEditService({ ...editService, image_url: url })} />
                         </div>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
