@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef, useTransition } from "react";
 import { useSearchParams, useParams, Link } from "react-router-dom";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { ShoppingCart } from "lucide-react";
 import ProductCard from "@/components/product/ProductCard";
 import { ProductCardSkeleton } from "@/components/ui/skeletons";
 import { useQuery } from "@tanstack/react-query";
