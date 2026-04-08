@@ -232,7 +232,7 @@ const EventsSection = () => {
                 >
                   <Link
                     to={item.href}
-                    className="group flex h-full flex-col overflow-hidden rounded-[1.4rem] border border-border/60 bg-card shadow-[0_18px_40px_-32px_hsl(var(--foreground)/0.5)] transition-all duration-300 hover:-translate-y-1 hover:border-primary/25 hover:shadow-[0_24px_60px_-34px_hsl(var(--foreground)/0.45)]"
+                    className="group flex h-full flex-col overflow-hidden rounded-[1.4rem] border border-border/40 bg-card shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.2)]"
                   >
                     <div className={`relative h-[124px] md:h-[148px] overflow-hidden bg-gradient-to-br ${item.panelClassName}`}>
                       <div className="absolute left-2.5 top-2.5 z-10 inline-flex items-center gap-1 rounded-full border border-background/60 bg-background/90 px-2 py-1 text-[10px] font-semibold text-foreground shadow-sm backdrop-blur-sm">
@@ -295,7 +295,7 @@ const EventsSection = () => {
                   >
                     <Link
                       to={svc.href}
-                      className="group block overflow-hidden rounded-[1.4rem] border border-border/50 bg-card shadow-[0_18px_40px_-32px_hsl(var(--foreground)/0.5)] transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_24px_60px_-34px_hsl(var(--foreground)/0.45)]"
+                      className="group block overflow-hidden rounded-[1.4rem] border border-border/40 bg-card shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.2)]"
                     >
                       <div className="relative aspect-square overflow-hidden bg-muted/30 p-3 flex items-center justify-center">
                         <div className="absolute left-2.5 top-2.5 z-10 inline-flex items-center gap-1 rounded-full border border-background/60 bg-background/90 px-2 py-1 text-[10px] font-semibold text-foreground shadow-sm backdrop-blur-sm">

@@ -33,7 +33,7 @@ const RelationshipGrid = memo(() => {
             to={item.link || `/product-category/${item.slug}`}
             className="flex flex-col items-center gap-1.5 sm:gap-2 group snap-start min-w-[72px] sm:min-w-[90px] md:min-w-[100px]"
           >
-            <div className="w-full aspect-square rounded-xl sm:rounded-2xl overflow-hidden bg-secondary border border-border/30 group-hover:border-primary/40 group-hover:shadow-lg transition-all duration-200 group-hover:scale-105 group-active:scale-95">
+            <div className="w-full aspect-square rounded-xl sm:rounded-2xl overflow-hidden bg-background border border-border/40 shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] group-hover:border-primary/30 group-hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.2)] group-active:shadow-[0_0_12px_-2px_hsl(var(--primary)/0.3)] transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.06] group-active:scale-95">
               <img
                 src={item.image_url || "/placeholder.svg"}
                 alt={item.name}

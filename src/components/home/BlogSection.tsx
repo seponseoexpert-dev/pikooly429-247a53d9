@@ -55,7 +55,7 @@ const BlogSection = () => {
                 <Link
                   key={post.id}
                   to={`/blog/${post.slug}`}
-                  className="w-[44vw] max-w-[200px] snap-start flex-shrink-0 group bg-card rounded-xl overflow-hidden border border-border/50 hover:shadow-lg transition-all"
+                  className="w-[44vw] max-w-[200px] snap-start flex-shrink-0 group bg-card rounded-xl overflow-hidden border border-border/40 shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] hover:border-primary/30 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.2)] transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]"
                 >
                   <div className="aspect-[4/3] overflow-hidden relative">
                     <img src={post.image_url || "/placeholder.svg"} alt={post.title} width={200} height={150} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
@@ -85,7 +85,7 @@ const BlogSection = () => {
               <Link
                 key={post.id}
                 to={`/blog/${post.slug}`}
-                className="group bg-card rounded-xl overflow-hidden border border-border/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col"
+                className="group bg-card rounded-xl overflow-hidden border border-border/40 shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] hover:border-primary/30 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.2)] hover:-translate-y-1 transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] flex flex-col"
               >
                 <div className="aspect-[16/10] overflow-hidden relative">
                   <img src={post.image_url || "/placeholder.svg"} alt={post.title} width={400} height={250} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
