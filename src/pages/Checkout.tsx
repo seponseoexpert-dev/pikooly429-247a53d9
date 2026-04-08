@@ -708,46 +708,25 @@ const Checkout = () => {
                   </div>
                   <div>
                     <Label className="text-sm font-semibold mb-2 block">Select Delivery Date & Time Slot</Label>
-                    <div
-                      className="flex items-center gap-3 px-4 py-3 rounded-xl border border-border bg-card cursor-pointer hover:border-primary/50 transition-colors"
-                      onClick={() => {
-                        const el = document.getElementById("deliveryDateHidden");
-                        if (el) (el as HTMLInputElement).showPicker?.();
-                      }}
-                    >
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-border bg-card">
                       <Truck size={20} className="text-primary shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        {form.deliveryDate || form.deliveryTime ? (
-                          <p className="text-sm truncate">
-                            {form.deliveryDate
-                              ? new Date(form.deliveryDate + "T00:00:00").toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short" })
-                              : "Select date"}
-                            {form.deliveryTime ? `, ${form.deliveryTime}` : ""}
-                          </p>
-                        ) : (
-                          <p className="text-sm text-muted-foreground">Choose date & time</p>
-                        )}
+                      <div className="flex-1 min-w-0 flex items-center gap-2">
+                        <Input
+                          type="date"
+                          value={form.deliveryDate}
+                          onChange={(e) => handleChange("deliveryDate", e.target.value)}
+                          min={new Date().toISOString().split("T")[0]}
+                          className="h-8 text-xs border-0 bg-transparent p-0 shadow-none flex-1 min-w-[110px]"
+                        />
+                        <Select value={form.deliveryTime} onValueChange={(v) => handleChange("deliveryTime", v)}>
+                          <SelectTrigger className="h-8 text-xs border-0 bg-transparent shadow-none flex-1 min-w-[130px] p-0"><SelectValue placeholder="Select time" /></SelectTrigger>
+                          <SelectContent>
+                            {deliveryTimeSlots.map((slot) => (
+                              <SelectItem key={slot} value={slot}>{slot}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
-                      <span className="text-xs text-primary font-medium shrink-0">Change</span>
-                    </div>
-                    {/* Hidden pickers */}
-                    <div className="grid grid-cols-2 gap-2 mt-2">
-                      <Input
-                        id="deliveryDateHidden"
-                        type="date"
-                        value={form.deliveryDate}
-                        onChange={(e) => handleChange("deliveryDate", e.target.value)}
-                        min={new Date().toISOString().split("T")[0]}
-                        className="h-9 text-xs"
-                      />
-                      <Select value={form.deliveryTime} onValueChange={(v) => handleChange("deliveryTime", v)}>
-                        <SelectTrigger className="h-9 text-xs"><SelectValue placeholder="Select time" /></SelectTrigger>
-                        <SelectContent>
-                          {deliveryTimeSlots.map((slot) => (
-                            <SelectItem key={slot} value={slot}>{slot}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
                     </div>
                   </div>
                 </div>
