@@ -262,17 +262,21 @@ const Photography = () => {
                         </p>
                       </div>
                     </div>
-                  ) : (
-                    <div className="h-40 bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center relative">
-                      <Icon className="h-12 w-12 text-primary/30" />
-                      <div className="absolute bottom-3 left-3">
-                        <p className="text-lg font-bold text-primary">{formatCurrency(service.starting_price)}</p>
+                  ) : null}
+                  <div className="p-4 sm:p-5">
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                        <Icon className="h-5 w-5 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-foreground text-sm sm:text-base leading-tight">{service.title}</h3>
+                        <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 mt-0.5">{service.short_description}</p>
                       </div>
                     </div>
-                  )}
-                  <div className="p-4 sm:p-5">
-                    <h3 className="font-bold text-foreground text-sm sm:text-base mb-1">{service.title}</h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 mb-4">{service.short_description}</p>
+                    <div className="flex items-center justify-between bg-muted/50 rounded-xl px-3 py-2.5 mb-3">
+                      <span className="text-xs text-muted-foreground">Starting from</span>
+                      <span className="text-base font-bold text-primary">{formatCurrency(service.starting_price)}</span>
+                    </div>
                     <Button className="w-full rounded-xl h-10 text-sm font-semibold" onClick={() => openBooking(service)}>
                       Book Now <ChevronRight className="h-4 w-4 ml-1" />
                     </Button>
