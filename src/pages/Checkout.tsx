@@ -335,8 +335,15 @@ const Checkout = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!form.fullName.trim() || !form.phone.trim() || !form.address.trim() || !form.recipientName.trim() || !form.recipientPhone.trim()) {
-      toast.error("Please fill in all required fields");
+    const billingVisible = gatewaySettings.checkout_billing_visible !== "false";
+
+    if (billingVisible && (!form.fullName.trim() || !form.phone.trim())) {
+      toast.error("Please fill in billing details");
+      return;
+    }
+
+    if (!form.address.trim() || !form.recipientName.trim() || !form.recipientPhone.trim()) {
+      toast.error("Please fill in all required delivery fields");
       return;
     }
 
