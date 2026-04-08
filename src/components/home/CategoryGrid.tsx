@@ -34,8 +34,9 @@ const CategoryGrid = memo(() => {
       <h2 className="section-heading font-display font-semibold text-foreground mb-4 sm:mb-6 md:mb-8 text-center">
         Shop by Category
       </h2>
+      {/* Mobile/Tab: 2 rows x 4 cols, scroll for extras. Desktop: single row of 8, scroll for extras */}
       <div className="overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2">
-        <div className="grid grid-rows-2 grid-flow-col auto-cols-[calc(25%-9px)] gap-3 sm:gap-4 w-max min-w-full md:auto-cols-[calc(12.5%-10.5px)]">
+        <div className="grid grid-rows-2 grid-flow-col auto-cols-[calc(25%-9px)] gap-3 sm:gap-4 w-max min-w-full lg:grid-rows-1 lg:auto-cols-[calc(12.5%-10.5px)]">
           {categories.map((cat, idx) => (
             <Link
               key={cat.id}
