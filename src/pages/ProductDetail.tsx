@@ -216,7 +216,7 @@ const ProductDetail = () => {
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
 
   return (
-    <main className="section-container py-4 md:py-8 pb-24 md:pb-10">
+    <main className="section-container py-3 sm:py-4 md:py-6 lg:py-8 pb-24 md:pb-10">
       <SEOHead
         title={seoTitle}
         description={seoDesc}
@@ -238,11 +238,11 @@ const ProductDetail = () => {
         )}
       </nav>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-10">
         {/* Image Gallery */}
         <div>
-          <div className="aspect-square rounded-xl overflow-hidden bg-muted mb-3">
-            <img src={currentImg} alt={product.name} className="w-full h-full object-cover" />
+          <div className="aspect-square rounded-lg sm:rounded-xl overflow-hidden bg-muted mb-2 sm:mb-3">
+            <img src={currentImg} alt={product.name} className="w-full h-full object-cover" loading="eager" fetchPriority="high" />
           </div>
           {allImages.length > 1 && (
             <div className="flex gap-2 overflow-x-auto pb-1">
@@ -263,12 +263,12 @@ const ProductDetail = () => {
 
         {/* Product Info */}
         <div className="flex flex-col">
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-foreground mb-2">
+          <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-display font-bold text-foreground mb-2">
             {product.name}
           </h1>
 
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xl sm:text-2xl font-bold text-foreground">{formatPrice(product.price)}</span>
+            <span className="text-lg sm:text-xl md:text-2xl font-bold text-foreground">{formatPrice(product.price)}</span>
             <button className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors" aria-label="Add to wishlist">
               <Heart size={18} />
             </button>
@@ -431,9 +431,9 @@ const ProductDetail = () => {
       </div>
 
       {related.length > 0 && (
-        <section className="mt-10 sm:mt-16">
-          <h2 className="text-xl sm:text-2xl font-display font-bold mb-4 sm:mb-6">You May Also Like</h2>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-2.5 sm:gap-3 md:gap-5">
+        <section className="mt-8 sm:mt-10 md:mt-14">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-display font-bold mb-3 sm:mb-4 md:mb-6">You May Also Like</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-3 md:gap-4 lg:gap-5">
             {related.map((p: any, i: number) => <ProductCard key={p.id} product={p} index={i} />)}
           </div>
         </section>

@@ -260,9 +260,9 @@ const Shop = () => {
   }, [selectedCat, selectedSub, searchParam, sortBy, products, subcategories]);
 
   return (
-    <main className="section-container py-4 md:py-8 pb-24 md:pb-10">
-      <div className="flex items-center justify-between mb-5 md:mb-8">
-        <nav className="flex items-center gap-1.5 text-sm text-muted-foreground">
+    <main className="section-container py-3 sm:py-4 md:py-6 lg:py-8 pb-24 md:pb-10">
+      <div className="flex items-center justify-between mb-4 sm:mb-5 md:mb-6">
+        <nav className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
           <Link to="/" className="hover:text-primary transition-colors">Home</Link>
           <span>/</span>
           <span className="font-semibold text-foreground">{activeCategoryName}</span>
@@ -341,7 +341,7 @@ const Shop = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5 sm:gap-3 md:gap-4 lg:gap-5">
         {productsLoading
           ? Array.from({ length: 10 }).map((_, i) => <ProductCardSkeleton key={i} />)
           : filtered.map((product: any) => (
