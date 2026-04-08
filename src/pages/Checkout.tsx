@@ -13,7 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { toast } from "sonner";
-import { Loader2, ShoppingBag, Truck, CreditCard, Minus, Plus, X, Ticket, Check, ChevronsUpDown } from "lucide-react";
+import { Loader2, ShoppingBag, Truck, CreditCard, Minus, Plus, X, Ticket, Check, ChevronsUpDown, Banknote, Wallet, Smartphone } from "lucide-react";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { cn } from "@/lib/utils";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -149,10 +149,10 @@ const Checkout = () => {
     ["enable", "enabled", "true", "1", "yes", "on"].includes((value ?? "").toLowerCase());
 
   const allPaymentMethods = [
-    { value: "cod", label: "Cash on Delivery", desc: "Pay when you receive your order", statusKeys: ["cod_enabled", "cod_status"] },
-    { value: "paypal", label: "PayPal", desc: "Pay securely via PayPal", statusKeys: ["paypal_status"] },
-    { value: "stripe", label: "Stripe", desc: "Pay with credit/debit card via Stripe", statusKeys: ["stripe_status"] },
-    { value: "eps", label: "Online Payment", desc: "Pay with Cards, Bkash, Nagad, Upay, etc.", statusKeys: ["eps_status"] },
+    { value: "cod", label: "Cash on Delivery", desc: "Pay when you receive your order", statusKeys: ["cod_enabled", "cod_status"], icon: "Banknote" as const },
+    { value: "paypal", label: "PayPal", desc: "Pay securely via PayPal", statusKeys: ["paypal_status"], icon: "Wallet" as const },
+    { value: "stripe", label: "Stripe", desc: "Pay with credit/debit card via Stripe", statusKeys: ["stripe_status"], icon: "CreditCard" as const },
+    { value: "eps", label: "Online Payment", desc: "Pay with Cards, Bkash, Nagad, Upay, etc.", statusKeys: ["eps_status"], icon: "Smartphone" as const },
   ];
 
   const { data: gatewaySettings = {} } = useQuery({
@@ -750,6 +750,12 @@ const Checkout = () => {
                           <Check size={12} className="text-primary-foreground" />
                         </div>
                       )}
+                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${form.paymentMethod === method.value ? "bg-primary/15" : "bg-muted"}`}>
+                        {method.icon === "Banknote" && <Banknote size={18} className="text-primary" />}
+                        {method.icon === "Wallet" && <Wallet size={18} className="text-primary" />}
+                        {method.icon === "CreditCard" && <CreditCard size={18} className="text-primary" />}
+                        {method.icon === "Smartphone" && <Smartphone size={18} className="text-primary" />}
+                      </div>
                       <p className="font-semibold text-xs sm:text-sm leading-tight">{method.label}</p>
                       <p className="text-[10px] sm:text-xs text-muted-foreground leading-snug line-clamp-2">{method.desc}</p>
                     </label>
