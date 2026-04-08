@@ -707,26 +707,30 @@ const Checkout = () => {
                     <Textarea id="giftMessage" placeholder="Write a special message for the recipient..." value={form.giftMessage} onChange={(e) => handleChange("giftMessage", e.target.value)} className="mt-1.5 min-h-[80px]" maxLength={500} />
                   </div>
                   <div>
-                    <Label className="text-sm font-semibold mb-2 block">Select Delivery Date & Time Slot</Label>
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-border bg-card">
-                      <Truck size={20} className="text-primary shrink-0" />
-                      <div className="flex-1 min-w-0 flex items-center gap-2">
-                        <Input
-                          type="date"
-                          value={form.deliveryDate}
-                          onChange={(e) => handleChange("deliveryDate", e.target.value)}
-                          min={new Date().toISOString().split("T")[0]}
-                          className="h-8 text-xs border-0 bg-transparent p-0 shadow-none flex-1 min-w-[110px]"
-                        />
-                        <Select value={form.deliveryTime} onValueChange={(v) => handleChange("deliveryTime", v)}>
-                          <SelectTrigger className="h-8 text-xs border-0 bg-transparent shadow-none flex-1 min-w-[130px] p-0"><SelectValue placeholder="Select time" /></SelectTrigger>
-                          <SelectContent>
-                            {deliveryTimeSlots.map((slot) => (
-                              <SelectItem key={slot} value={slot}>{slot}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                    <Label className="text-sm font-semibold mb-3 block">Select Delivery Date & Time Slot</Label>
+                    <div className="rounded-xl border border-border bg-muted/30 p-3 sm:p-4 space-y-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                          <Truck size={18} className="text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <Input
+                            type="date"
+                            value={form.deliveryDate}
+                            onChange={(e) => handleChange("deliveryDate", e.target.value)}
+                            min={new Date().toISOString().split("T")[0]}
+                            className="h-10 text-sm w-full"
+                          />
+                        </div>
                       </div>
+                      <Select value={form.deliveryTime} onValueChange={(v) => handleChange("deliveryTime", v)}>
+                        <SelectTrigger className="h-10 text-sm w-full"><SelectValue placeholder="Select time slot" /></SelectTrigger>
+                        <SelectContent>
+                          {deliveryTimeSlots.map((slot) => (
+                            <SelectItem key={slot} value={slot}>{slot}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                 </div>
