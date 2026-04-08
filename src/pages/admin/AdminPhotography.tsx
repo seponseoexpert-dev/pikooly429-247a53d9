@@ -637,6 +637,11 @@ const AdminPhotography = () => {
             </CardContent>
           </Card>
         </TabsContent>
+
+        {/* Page SEO Tab */}
+        <TabsContent value="seo" className="mt-4">
+          <PageSEOTab />
+        </TabsContent>
       </Tabs>
 
       {/* Edit Package Dialog */}
@@ -666,11 +671,6 @@ const AdminPhotography = () => {
           )}
         </DialogContent>
       </Dialog>
-
-      {/* Page SEO Tab */}
-      <TabsContent value="seo" className="mt-4">
-        <PageSEOTab />
-      </TabsContent>
 
       {/* Edit Travel Fee Dialog */}
       <Dialog open={!!editFee} onOpenChange={() => setEditFee(null)}>
