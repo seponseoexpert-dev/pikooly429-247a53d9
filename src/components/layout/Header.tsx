@@ -176,23 +176,37 @@ const Header = () => {
     const root = headerRootRef.current;
     if (!root) return;
 
+    let frameId: number | null = null;
+    let lastOffset = "";
+
     const updateHeaderOffset = () => {
       const isMobile = window.innerWidth < 768;
-      document.documentElement.style.setProperty(
-        "--mobile-header-offset",
-        isMobile ? `${root.offsetHeight}px` : "0px"
-      );
+      const nextOffset = isMobile ? `${root.offsetHeight}px` : "0px";
+      if (nextOffset === lastOffset) return;
+      lastOffset = nextOffset;
+      document.documentElement.style.setProperty("--mobile-header-offset", nextOffset);
     };
 
-    updateHeaderOffset();
+    const scheduleHeaderOffsetUpdate = () => {
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+      frameId = window.requestAnimationFrame(() => {
+        frameId = null;
+        updateHeaderOffset();
+      });
+    };
 
-    const resizeObserver = new ResizeObserver(updateHeaderOffset);
+    scheduleHeaderOffsetUpdate();
+
+    const resizeObserver = new ResizeObserver(() => {
+      scheduleHeaderOffsetUpdate();
+    });
     resizeObserver.observe(root);
-    window.addEventListener("resize", updateHeaderOffset);
+    window.addEventListener("resize", scheduleHeaderOffsetUpdate);
 
     return () => {
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
       resizeObserver.disconnect();
-      window.removeEventListener("resize", updateHeaderOffset);
+      window.removeEventListener("resize", scheduleHeaderOffsetUpdate);
     };
   }, [showAnnouncement, multiLanguageEnabled, languages.length, location.pathname, searchQuery, suggestions.length]);
 
