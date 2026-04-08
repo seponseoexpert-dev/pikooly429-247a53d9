@@ -12,8 +12,8 @@ const AboutSection = () => {
   const fullContent = (settings.about_short_text || "") + (settings.about_full_text || "");
 
   return (
-    <section className="py-6 sm:py-8 md:py-10 lg:py-12 section-container" aria-label="About PikoolyFlora" style={{ contain: "layout style", minHeight: "180px" }}>
-      <div className="max-w-3xl mx-auto border border-border/50 rounded-xl p-6 sm:p-8 md:p-10 bg-card" style={{ contain: "content" }}>
+    <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="About PikoolyFlora" style={{ contain: "layout style", minHeight: "180px" }}>
+      <div className="max-w-3xl mx-auto border border-border/50 rounded-xl p-4 sm:p-6 md:p-8 bg-card" style={{ contain: "content" }}>
         <h2 className="section-heading font-display font-semibold text-foreground mb-4 text-center">
           {title}
         </h2>
@@ -30,9 +30,9 @@ const AboutSection = () => {
           </button>
         </div>
 
-        <div className="flex items-center justify-center gap-4 mt-6">
-          <img src={medal1} alt="PikoolyFlora Badge" width="140" height="48" className="w-[130px] h-[44px] sm:w-[150px] sm:h-[52px] md:w-[170px] md:h-[58px] object-contain" loading="lazy" decoding="async" />
-          <img src={medal2} alt="PikoolyFlora Badge" width="140" height="48" className="w-[130px] h-[44px] sm:w-[150px] sm:h-[52px] md:w-[170px] md:h-[58px] object-contain" loading="lazy" decoding="async" />
+        <div className="flex items-center justify-center gap-4 mt-4">
+          <img src={medal1} alt="PikoolyFlora Badge" width="140" height="48" className="w-[120px] h-[40px] sm:w-[140px] sm:h-[48px] md:w-[160px] md:h-[54px] object-contain" loading="lazy" decoding="async" />
+          <img src={medal2} alt="PikoolyFlora Badge" width="140" height="48" className="w-[120px] h-[40px] sm:w-[140px] sm:h-[48px] md:w-[160px] md:h-[54px] object-contain" loading="lazy" decoding="async" />
         </div>
       </div>
     </section>
