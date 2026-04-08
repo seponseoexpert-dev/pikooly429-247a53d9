@@ -149,10 +149,10 @@ const Checkout = () => {
     ["enable", "enabled", "true", "1", "yes", "on"].includes((value ?? "").toLowerCase());
 
   const allPaymentMethods = [
-    { value: "cod", label: "Cash on Delivery", desc: "Pay when you receive your order", statusKeys: ["cod_enabled", "cod_status"] },
-    { value: "paypal", label: "PayPal", desc: "Pay securely via PayPal", statusKeys: ["paypal_status"] },
-    { value: "stripe", label: "Stripe", desc: "Pay with credit/debit card via Stripe", statusKeys: ["stripe_status"] },
-    { value: "eps", label: "Online Payment", desc: "Pay with Cards, Bkash, Nagad, Upay, etc.", statusKeys: ["eps_status"] },
+    { value: "cod", label: "Cash on Delivery", desc: "Pay when you receive your order", statusKeys: ["cod_enabled", "cod_status"], icon: "Banknote" as const },
+    { value: "paypal", label: "PayPal", desc: "Pay securely via PayPal", statusKeys: ["paypal_status"], icon: "Wallet" as const },
+    { value: "stripe", label: "Stripe", desc: "Pay with credit/debit card via Stripe", statusKeys: ["stripe_status"], icon: "CreditCard" as const },
+    { value: "eps", label: "Online Payment", desc: "Pay with Cards, Bkash, Nagad, Upay, etc.", statusKeys: ["eps_status"], icon: "Smartphone" as const },
   ];
 
   const { data: gatewaySettings = {} } = useQuery({
