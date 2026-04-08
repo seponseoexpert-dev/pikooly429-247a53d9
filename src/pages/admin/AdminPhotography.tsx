@@ -131,6 +131,30 @@ const AdminPhotography = () => {
     },
   });
 
+  // Edit Service
+  const [editService, setEditService] = useState<any>(null);
+  const updateService = useMutation({
+    mutationFn: async (svc: any) => {
+      const { error } = await supabase.from("photo_services").update({
+        title: svc.title,
+        short_description: svc.short_description,
+        description: svc.description,
+        image_url: svc.image_url,
+        starting_price: svc.starting_price,
+        is_active: svc.is_active,
+        is_featured: svc.is_featured,
+      }).eq("id", svc.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-photo-services"] });
+      qc.invalidateQueries({ queryKey: ["photo-services"] });
+      qc.invalidateQueries({ queryKey: ["home-photo-services"] });
+      toast.success("Service updated");
+      setEditService(null);
+    },
+  });
+
   const [editPkg, setEditPkg] = useState<any>(null);
   const updatePkg = useMutation({
     mutationFn: async (pkg: any) => {
@@ -293,9 +317,10 @@ const AdminPhotography = () => {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="h-auto p-1 bg-muted/50 rounded-xl w-full grid grid-cols-3 md:grid-cols-6 gap-1">
+        <TabsList className="h-auto p-1 bg-muted/50 rounded-xl w-full grid grid-cols-3 md:grid-cols-7 gap-1">
           {[
             { value: "bookings", label: "Bookings", icon: CalendarCheck },
+            { value: "services", label: "Services", icon: Camera },
             { value: "outside", label: "Outside Dhaka", icon: MapPin },
             { value: "pricing", label: "Pricing", icon: DollarSign },
             { value: "travel", label: "Travel Fees", icon: TrendingUp },
@@ -393,6 +418,102 @@ const AdminPhotography = () => {
                   </div>
                   <p className="text-muted-foreground font-medium">No bookings yet</p>
                   <p className="text-xs text-muted-foreground mt-1">Bookings will appear here once customers start booking</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Services Tab */}
+        <TabsContent value="services" className="mt-4">
+          <Card className="border-border/50 shadow-sm">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Camera className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-base md:text-lg">Manage Services</CardTitle>
+                  <p className="text-xs text-muted-foreground">Edit service details, images & pricing</p>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {services?.map((svc: any) => (
+                <div key={svc.id} className="rounded-xl border border-border/50 p-4 space-y-4">
+                  {editService?.id === svc.id ? (
+                    <>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-1 block">Service Title</label>
+                          <Input value={editService.title} onChange={(e) => setEditService({ ...editService, title: e.target.value })} className="rounded-lg" />
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-1 block">Short Description</label>
+                          <Textarea value={editService.short_description || ""} onChange={(e) => setEditService({ ...editService, short_description: e.target.value })} className="rounded-lg min-h-[60px]" />
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-1 block">Full Description</label>
+                          <Textarea value={editService.description || ""} onChange={(e) => setEditService({ ...editService, description: e.target.value })} className="rounded-lg min-h-[80px]" />
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-1 block">Starting Price</label>
+                          <Input type="number" value={editService.starting_price} onChange={(e) => setEditService({ ...editService, starting_price: Number(e.target.value) })} className="rounded-lg" />
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-1 block">Service Image</label>
+                          {editService.image_url && (
+                            <img src={editService.image_url} alt="" className="w-full h-40 object-cover rounded-lg mb-2" />
+                          )}
+                          <CloudinaryUpload value={editService.image_url || ""} onChange={(url) => setEditService({ ...editService, image_url: url })} />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-muted-foreground">Active</span>
+                            <Switch checked={editService.is_active} onCheckedChange={(v) => setEditService({ ...editService, is_active: v })} />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-muted-foreground">Featured</span>
+                            <Switch checked={editService.is_featured} onCheckedChange={(v) => setEditService({ ...editService, is_featured: v })} />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button size="sm" className="flex-1 rounded-lg h-9 text-xs" onClick={() => updateService.mutate(editService)} disabled={updateService.isPending}>
+                          {updateService.isPending ? "Saving..." : "Save Changes"}
+                        </Button>
+                        <Button size="sm" variant="outline" className="rounded-lg h-9 text-xs" onClick={() => setEditService(null)}>Cancel</Button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex gap-4 items-start">
+                      {svc.image_url ? (
+                        <img src={svc.image_url} alt={svc.title} className="w-20 h-20 rounded-xl object-cover shrink-0" />
+                      ) : (
+                        <div className="w-20 h-20 rounded-xl bg-muted/50 flex items-center justify-center shrink-0">
+                          <Camera className="h-6 w-6 text-muted-foreground/40" />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-semibold text-sm text-foreground">{svc.title}</h3>
+                          {!svc.is_active && <Badge variant="outline" className="text-[10px] rounded-md">Inactive</Badge>}
+                          {svc.is_featured && <Badge className="text-[10px] rounded-md bg-primary/10 text-primary border-0">Featured</Badge>}
+                        </div>
+                        <p className="text-xs text-muted-foreground line-clamp-2 mb-1.5">{svc.short_description}</p>
+                        <p className="text-sm font-bold text-primary">{formatCurrency(svc.starting_price)}</p>
+                      </div>
+                      <Button size="sm" variant="outline" className="rounded-lg h-8 text-xs shrink-0" onClick={() => setEditService({ ...svc })}>
+                        <Edit className="h-3 w-3 mr-1" /> Edit
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              ))}
+              {(!services || services.length === 0) && (
+                <div className="text-center py-8">
+                  <Camera className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground">No services found</p>
                 </div>
               )}
             </CardContent>
