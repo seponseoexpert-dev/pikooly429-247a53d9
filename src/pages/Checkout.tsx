@@ -750,6 +750,12 @@ const Checkout = () => {
                           <Check size={12} className="text-primary-foreground" />
                         </div>
                       )}
+                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${form.paymentMethod === method.value ? "bg-primary/15" : "bg-muted"}`}>
+                        {method.icon === "Banknote" && <Banknote size={18} className="text-primary" />}
+                        {method.icon === "Wallet" && <Wallet size={18} className="text-primary" />}
+                        {method.icon === "CreditCard" && <CreditCard size={18} className="text-primary" />}
+                        {method.icon === "Smartphone" && <Smartphone size={18} className="text-primary" />}
+                      </div>
                       <p className="font-semibold text-xs sm:text-sm leading-tight">{method.label}</p>
                       <p className="text-[10px] sm:text-xs text-muted-foreground leading-snug line-clamp-2">{method.desc}</p>
                     </label>
