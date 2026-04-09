@@ -266,3 +266,16 @@
     padding-top: max(env(safe-area-inset-top, 0px), 0px);
   }
 }
+
+/* Prevent iOS auto-zoom on input focus */
+@supports (-webkit-overflow-scrolling: touch) {
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) and (max-width: 767px) {
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+}
