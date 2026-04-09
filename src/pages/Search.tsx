@@ -188,7 +188,7 @@ const SearchPage = () => {
                 <X size={18} />
               </button>
             ) : (
-              <button type="button" onClick={() => { /* voice search placeholder */ }} className="shrink-0 text-primary/70 hover:text-primary transition-colors" aria-label="Voice search">
+              <button type="button" onClick={startVoiceSearch} className={`shrink-0 transition-colors ${isListening ? "text-destructive animate-pulse" : "text-primary/70 hover:text-primary"}`} aria-label="Voice search">
                 <Mic size={20} />
               </button>
             )}
