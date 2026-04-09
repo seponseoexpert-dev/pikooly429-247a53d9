@@ -153,7 +153,7 @@ const SearchPage = () => {
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value.slice(0, 60))}
               placeholder="Search flowers, cakes, gifts..."
-              className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground/50"
+              className="flex-1 bg-transparent text-base outline-none placeholder:text-muted-foreground/50"
             />
             {searchQuery ? (
               <button type="button" onClick={() => setSearchQuery("")} className="shrink-0 text-muted-foreground hover:text-foreground transition-colors">
