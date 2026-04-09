@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect, useMemo, ReactNode } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback, ReactNode } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Search, ShoppingCart, X, User, Truck, ChevronDown, MapPinCheck, Moon, Sun, Globe, Sparkles } from "lucide-react";
+import { Search, ShoppingCart, X, User, Truck, ChevronDown, MapPinCheck, Moon, Sun, Globe, Sparkles, Clock, TrendingUp, ArrowUpRight } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useTheme } from "next-themes";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -105,7 +105,31 @@ const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileSearchExpanded, setMobileSearchExpanded] = useState(false);
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const mobileSearchInputRef = useRef<HTMLInputElement>(null);
+
+  // Load recent searches from localStorage
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("recent-searches");
+      if (stored) setRecentSearches(JSON.parse(stored).slice(0, 6));
+    } catch {}
+  }, []);
+
+  const saveRecentSearch = useCallback((term: string) => {
+    const clean = term.trim();
+    if (!clean || clean.length < 2) return;
+    setRecentSearches(prev => {
+      const updated = [clean, ...prev.filter(s => s.toLowerCase() !== clean.toLowerCase())].slice(0, 6);
+      try { localStorage.setItem("recent-searches", JSON.stringify(updated)); } catch {}
+      return updated;
+    });
+  }, []);
+
+  const clearRecentSearches = useCallback(() => {
+    setRecentSearches([]);
+    try { localStorage.removeItem("recent-searches"); } catch {}
+  }, []);
   const { totalItems, setIsOpen } = useCart();
   const { settings, isLoading: settingsLoading } = useSiteSettings();
   const { currencies, selectedCurrency, setSelectedCurrency, formatPrice } = useMultiCurrency();
@@ -232,7 +256,11 @@ const Header = () => {
   const megaMenuCloseTimer = useRef<number | null>(null);
 
   const shouldShowSearchPanel = showSuggestions && debouncedSearch.length >= 1;
+  const shouldShowIdlePanel = showSuggestions && debouncedSearch.length === 0;
   const showEmptyResults = shouldShowSearchPanel && !isSearching && !hasAnyResults;
+
+  // Popular categories for idle search
+  const popularCategories = useMemo(() => categories.slice(0, 6), [categories]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -327,12 +355,67 @@ const Header = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (safeSearchQuery) {
+      saveRecentSearch(safeSearchQuery);
       navigate(`/shop?search=${encodeURIComponent(safeSearchQuery)}`);
       setSearchQuery("");
       setShowSuggestions(false);
     }
   };
-  const handleSelect = (slug: string) => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product/${slug}`); };
+  const handleSelect = (slug: string) => { saveRecentSearch(searchQuery); setSearchQuery(""); setShowSuggestions(false); navigate(`/product/${slug}`); };
+
+  const handleRecentClick = (term: string) => {
+    setSearchQuery(term);
+    setShowSuggestions(true);
+  };
+
+  // Idle search panel (recent + popular)
+  const IdleSearchPanel = () => (
+    <div className="py-2">
+      {recentSearches.length > 0 && (
+        <div className="pb-1.5">
+          <div className="flex items-center justify-between px-5 py-2">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 flex items-center gap-1.5">
+              <Clock size={11} /> Recent Searches
+            </p>
+            <button onClick={clearRecentSearches} className="text-[10px] text-primary hover:underline font-medium">Clear</button>
+          </div>
+          <div className="flex flex-wrap gap-1.5 px-5 pb-2">
+            {recentSearches.map((term, i) => (
+              <button
+                key={i}
+                onClick={() => handleRecentClick(term)}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-muted/60 hover:bg-primary/10 text-xs font-medium text-foreground/80 hover:text-primary transition-colors border border-border/30"
+              >
+                <Clock size={10} className="text-muted-foreground/50" />
+                {term}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+      {popularCategories.length > 0 && (
+        <div className={recentSearches.length > 0 ? "border-t border-border/30 pt-1.5" : ""}>
+          <p className="px-5 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 flex items-center gap-1.5">
+            <TrendingUp size={11} /> Popular Categories
+          </p>
+          {popularCategories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${cat.slug}`); }}
+              className="flex items-center gap-3 w-full px-5 py-2 hover:bg-primary/5 transition-colors text-left group/item"
+            >
+              {cat.image_url && <img src={cat.image_url} alt={cat.name} width={32} height={32} className="w-8 h-8 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
+              <span className="text-sm font-medium text-foreground/80 group-hover/item:text-primary transition-colors flex-1">{cat.name}</span>
+              <ArrowUpRight size={13} className="text-muted-foreground/40 group-hover/item:text-primary transition-colors" />
+            </button>
+          ))}
+        </div>
+      )}
+      {recentSearches.length === 0 && popularCategories.length === 0 && (
+        <div className="px-5 py-4 text-center text-sm text-muted-foreground">Start typing to search...</div>
+      )}
+    </div>
+  );
 
   // Icon button component for consistency
   const IconBtn = ({ icon: Icon, label, onClick, href, badge, className = "" }: {
