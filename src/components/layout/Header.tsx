@@ -472,107 +472,14 @@ const Header = () => {
               )}
             </Link>
 
-            {/* Desktop Search — Premium pill style */}
-            <div className="hidden md:block flex-1 max-w-md lg:max-w-xl xl:max-w-2xl mx-auto relative" ref={searchRef}>
-              <form onSubmit={handleSearch} className="relative group">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors duration-200" size={17} />
-                <input
-                  autoComplete="off"
-                  enterKeyHint="search"
-                  inputMode="search"
-                  maxLength={60}
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => { setSearchQuery(e.target.value.slice(0, 60)); setShowSuggestions(true); }}
-                   onFocus={() => setShowSuggestions(true)}
-                  placeholder={t("search_placeholder")}
-                  className="w-full rounded-full border border-border/40 bg-muted/30 py-2.5 pl-11 pr-10 text-[13px] shadow-none outline-none transition-all duration-200 placeholder:text-muted-foreground/50 focus:border-primary/40 focus:bg-card focus:ring-1 focus:ring-primary/10 focus:shadow-[0_2px_12px_-4px_hsl(var(--primary)/0.1)] lg:py-2.5"
-                />
-                {searchQuery && (
-                  <button type="button" onClick={() => { setSearchQuery(""); setShowSuggestions(false); }} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
-                    <X size={15} />
-                  </button>
-                )}
-              </form>
-
-              {shouldShowSearchPanel && (
-                <div className="absolute left-0 right-0 top-full mt-2.5 z-[100] bg-card/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-[0_16px_48px_-12px_hsl(var(--foreground)/0.15)] overflow-hidden animate-fade-in max-h-[70vh] overflow-y-auto">
-                  {isSearching && (
-                    <div className="flex items-center gap-3 px-5 py-4 text-sm text-muted-foreground">
-                      <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
-                      Searching...
-                    </div>
-                  )}
-
-                  {!isSearching && searchCats.length > 0 && (
-                    <div className="py-1.5">
-                      <p className="px-5 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Categories</p>
-                      {searchCats.map((cat) => (
-                        <button key={cat.id} onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${cat.slug}`); }} className="flex items-center gap-3.5 w-full px-5 py-2.5 hover:bg-primary/5 transition-colors text-left group/item">
-                          {cat.image_url && <img src={cat.image_url} alt={cat.name} width={36} height={36} className="w-9 h-9 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
-                          <span className="text-sm font-medium text-foreground group-hover/item:text-primary transition-colors"><HighlightMatch text={cat.name} query={debouncedSearch} /></span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {!isSearching && searchSubs.length > 0 && (
-                    <div className={`py-1.5 ${searchCats.length > 0 ? "border-t border-border/30" : ""}`}>
-                      <p className="px-5 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Subcategories</p>
-                      {searchSubs.map((sub) => (
-                        <button key={sub.id} onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${sub.slug}`); }} className="flex items-center gap-3.5 w-full px-5 py-2.5 hover:bg-primary/5 transition-colors text-left group/item">
-                          {sub.image_url && <img src={sub.image_url} alt={sub.name} width={36} height={36} className="w-9 h-9 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
-                          <span className="text-sm font-medium text-foreground group-hover/item:text-primary transition-colors"><HighlightMatch text={sub.name} query={debouncedSearch} /></span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {!isSearching && suggestions.length > 0 && (
-                    <div className={`py-1.5 ${(searchCats.length > 0 || searchSubs.length > 0) ? "border-t border-border/30" : ""}`}>
-                      <p className="px-5 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Products</p>
-                      {suggestions.map((p) => (
-                        <button key={p.id} onClick={() => handleSelect(p.slug)} className="flex items-center gap-3.5 w-full px-5 py-2.5 hover:bg-primary/5 transition-colors text-left group/item">
-                          {p.image_url && (
-                            <img src={p.image_url} alt={p.name} width={44} height={44} className="w-11 h-11 rounded-xl object-cover shrink-0 ring-1 ring-border/40 group-hover/item:ring-primary/30 transition-all" loading="lazy" decoding="async" />
-                          )}
-                          <div className="min-w-0 flex-1">
-                            <p className="text-sm font-medium text-foreground truncate group-hover/item:text-primary transition-colors"><HighlightMatch text={p.name} query={debouncedSearch} /></p>
-                            <p className="text-xs text-primary font-semibold mt-0.5">
-                              {formatPrice(p.price)}
-                              {p.original_price && p.original_price > p.price && (
-                                <span className="text-muted-foreground line-through ml-1.5 font-normal">{formatPrice(p.original_price)}</span>
-                              )}
-                            </p>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {!isSearching && hasAnyResults && (
-                    <button
-                      onClick={handleSearch as any}
-                      className="w-full border-t border-border/40 px-5 py-3 text-center text-sm font-medium text-primary hover:bg-primary/5 transition-colors"
-                    >
-                      View all results for "{debouncedSearch}" →
-                    </button>
-                  )}
-
-                  {showEmptyResults && (
-                    <div className="px-5 py-6 text-center">
-                      <Search size={24} className="mx-auto text-muted-foreground/30 mb-2" />
-                      <p className="text-sm text-muted-foreground">No results found for "{debouncedSearch}"</p>
-                    </div>
-                  )}
+            {/* Desktop Search — navigates to search page */}
+            <div className="hidden md:block flex-1 max-w-md lg:max-w-xl xl:max-w-2xl mx-auto relative">
+              <div className="relative group cursor-pointer" onClick={() => navigate("/search")}>
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={17} />
+                <div className="w-full rounded-full border border-border/40 bg-muted/30 py-2.5 pl-11 pr-10 text-[13px] text-muted-foreground/50 transition-all duration-200 hover:border-primary/40 hover:bg-card hover:ring-1 hover:ring-primary/10 lg:py-2.5">
+                  {t("search_placeholder")}
                 </div>
-              )}
-
-              {shouldShowIdlePanel && (
-                <div className="absolute left-0 right-0 top-full mt-2.5 z-[100] bg-card/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-[0_16px_48px_-12px_hsl(var(--foreground)/0.15)] overflow-hidden animate-fade-in max-h-[70vh] overflow-y-auto">
-                  <IdleSearchPanel />
-                </div>
-              )}
+              </div>
             </div>
 
             {/* Right Actions */}
@@ -580,7 +487,7 @@ const Header = () => {
               {/* Mobile search icon - visible only when scrolled */}
               <button
                 type="button"
-                onClick={() => { setMobileSearchExpanded(true); setTimeout(() => mobileSearchInputRef.current?.focus(), 50); }}
+                onClick={() => navigate("/search")}
                   className={`touch-target md:hidden relative flex flex-col items-center justify-center gap-0.5 rounded-xl px-1.5 py-1.5 text-foreground/70 transition-all duration-200 hover:text-primary hover:bg-muted/50 active:scale-95 ${
                   scrolled && !mobileSearchExpanded ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden pointer-events-none"
                 }`}
