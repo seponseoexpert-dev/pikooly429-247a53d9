@@ -505,8 +505,9 @@ const FieldRenderer = ({
     );
   }
   if (field.type === "radio" && field.options) {
+    const effectiveValue = value || field.options[0]?.value || "";
     return (
-      <RadioGroup value={value || field.options[0]?.value} onValueChange={onChange} className="flex items-center gap-4 pt-1">
+      <RadioGroup value={effectiveValue} onValueChange={onChange} className="flex items-center gap-4 pt-1">
         {field.options.map((opt) => (
           <div key={opt.value} className="flex items-center gap-1.5">
             <RadioGroupItem value={opt.value} id={`${field.key}-${opt.value}`} />
@@ -1514,8 +1515,15 @@ const AdminSettings = () => {
   const saveMutation = useMutation({
     mutationFn: async (vals: Record<string, string>) => {
       const keys = getActiveKeys();
+      // For radio fields, use the default (first option) if value is empty
+      const fields = sectionFields[activeSection] || [];
       const promises = keys.map(async (key) => {
-        const value = vals[key] || "";
+        let value = vals[key] || "";
+        // If the field is a radio and value is empty, use the first option as default
+        const fieldDef = fields.find((f) => f.key === key);
+        if (fieldDef?.type === "radio" && !value && fieldDef.options?.length) {
+          value = fieldDef.options[0].value;
+        }
         const existing = settings.find((s: any) => s.key === key);
         if (existing) {
           return supabase.from("site_settings").update({ value }).eq("key", key);
