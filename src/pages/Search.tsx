@@ -136,13 +136,13 @@ const SearchPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Search Header - sticky */}
-      <div className="sticky top-0 z-50 bg-card border-b border-border/40 shadow-sm safe-area-top">
-        <div className="flex items-center gap-2 px-3 py-2.5 sm:px-4 md:px-6">
-          <button onClick={() => navigate(-1)} className="shrink-0 p-2 -ml-1 rounded-full hover:bg-muted/60 transition-colors active:scale-95" aria-label="Go back">
-            <ArrowLeft size={20} className="text-foreground/70" />
-          </button>
-          <form onSubmit={handleSearch} className="flex-1 relative">
+      {/* Search Header - sticky, FNP style */}
+      <div className="sticky top-0 z-50 bg-card safe-area-top">
+        <div className="px-3 py-3 sm:px-4 md:px-6">
+          <form onSubmit={handleSearch} className="flex items-center gap-2.5 rounded-lg border border-border/60 bg-card px-3 py-2.5 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.10)]">
+            <button type="button" onClick={() => navigate(-1)} className="shrink-0 text-foreground/60 hover:text-foreground transition-colors active:scale-95" aria-label="Go back">
+              <ArrowLeft size={22} />
+            </button>
             <input
               ref={inputRef}
               type="text"
@@ -153,16 +153,20 @@ const SearchPage = () => {
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value.slice(0, 60))}
               placeholder="Search flowers, cakes, gifts..."
-              className="w-full rounded-full border border-border/50 bg-muted/40 py-2.5 pl-10 pr-10 text-sm outline-none transition-all placeholder:text-muted-foreground/50 focus:border-primary/40 focus:bg-card focus:ring-2 focus:ring-primary/10"
+              className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground/50"
             />
-            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            {searchQuery && (
-              <button type="button" onClick={() => setSearchQuery("")} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                <X size={16} />
+            {searchQuery ? (
+              <button type="button" onClick={() => setSearchQuery("")} className="shrink-0 text-muted-foreground hover:text-foreground transition-colors">
+                <X size={18} />
+              </button>
+            ) : (
+              <button type="button" onClick={() => { /* voice search placeholder */ }} className="shrink-0 text-primary/70 hover:text-primary transition-colors" aria-label="Voice search">
+                <Mic size={20} />
               </button>
             )}
           </form>
         </div>
+        <div className="border-b border-border/30" />
       </div>
 
       {/* Content */}
