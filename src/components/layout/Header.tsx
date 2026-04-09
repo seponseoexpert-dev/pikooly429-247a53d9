@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect, useMemo, useCallback, ReactNode } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Search, ShoppingCart, X, User, Truck, ChevronDown, MapPinCheck, Moon, Sun, Globe, Sparkles, Clock, TrendingUp, ArrowUpRight } from "lucide-react";
+import { Search, ShoppingCart, User, Truck, ChevronDown, MapPinCheck, Moon, Sun, Globe, Sparkles } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useTheme } from "next-themes";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -103,37 +103,14 @@ const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileSearchExpanded, setMobileSearchExpanded] = useState(false);
 
-  // Load recent searches from localStorage
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem("recent-searches");
-      if (stored) setRecentSearches(JSON.parse(stored).slice(0, 6));
-    } catch {}
-  }, []);
-
-  const saveRecentSearch = useCallback((term: string) => {
-    const clean = term.trim();
-    if (!clean || clean.length < 2) return;
-    setRecentSearches(prev => {
-      const updated = [clean, ...prev.filter(s => s.toLowerCase() !== clean.toLowerCase())].slice(0, 6);
-      try { localStorage.setItem("recent-searches", JSON.stringify(updated)); } catch {}
-      return updated;
-    });
-  }, []);
-
-  const clearRecentSearches = useCallback(() => {
-    setRecentSearches([]);
-    try { localStorage.removeItem("recent-searches"); } catch {}
-  }, []);
   const { totalItems, setIsOpen } = useCart();
   const { settings, isLoading: settingsLoading } = useSiteSettings();
-  const { currencies, selectedCurrency, setSelectedCurrency, formatPrice } = useMultiCurrency();
+  const { currencies, selectedCurrency, setSelectedCurrency } = useMultiCurrency();
   const { user } = useAuth();
   const { language, setLanguage, t, languages, multiLanguageEnabled } = useLanguage();
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
-  const searchRef = useRef<HTMLDivElement>(null);
   const currencyRef = useRef<HTMLDivElement>(null);
   const languageRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
@@ -142,7 +119,6 @@ const Header = () => {
   const logoUrl = settings.company_logo || "";
   const announcementText = settings.announcement_bar_text || "🌸 Same Day Delivery Available in 500+ Cities";
   const showAnnouncement = !settingsLoading && settings.announcement_bar_enabled !== "false";
-  const safeSearchQuery = useMemo(() => sanitizeSearchTerm(searchQuery), [searchQuery]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
