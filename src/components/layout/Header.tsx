@@ -585,99 +585,17 @@ const Header = () => {
             className={`md:hidden relative ${
               !scrolled || mobileSearchExpanded ? "pb-2 opacity-100" : "pb-0 opacity-0 pointer-events-none"
             }`}
-            ref={searchRef}
           >
             <div className={`transition-all duration-100 ease-out overflow-hidden ${
               !scrolled || mobileSearchExpanded ? "max-h-[60px]" : "max-h-0"
             }`}>
-            <form onSubmit={handleSearch} className="relative group">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={15} />
-              <input
-                ref={mobileSearchInputRef}
-                autoComplete="off"
-                enterKeyHint="search"
-                inputMode="search"
-                maxLength={60}
-                type="text"
-                value={searchQuery}
-                onChange={(e) => { setSearchQuery(e.target.value.slice(0, 60)); setShowSuggestions(true); }}
-                onFocus={() => setShowSuggestions(true)}
-                placeholder={t("search_placeholder")}
-                className="w-full rounded-full border border-border/60 bg-muted/50 py-2.5 pl-10 pr-9 text-[13px] shadow-[0_20px_40px_-32px_hsl(var(--foreground)/0.45)] outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary/40 focus:ring-2 focus:ring-primary/15"
-              />
-              {(searchQuery || mobileSearchExpanded) && (
-                <button type="button" onClick={() => { setSearchQuery(""); setShowSuggestions(false); if (mobileSearchExpanded) setMobileSearchExpanded(false); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                  <X size={15} />
-                </button>
-              )}
-            </form>
+            <div className="relative group cursor-pointer" onClick={() => navigate("/search")}>
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" size={15} />
+              <div className="w-full rounded-full border border-border/60 bg-muted/50 py-2.5 pl-10 pr-9 text-[13px] text-muted-foreground/60 shadow-[0_20px_40px_-32px_hsl(var(--foreground)/0.45)]">
+                {t("search_placeholder")}
+              </div>
             </div>
-            {shouldShowSearchPanel && (
-              <div className="absolute left-0 right-0 top-full mt-1.5 z-[100] bg-card/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-[0_12px_36px_-8px_hsl(var(--foreground)/0.12)] overflow-hidden animate-fade-in max-h-[60vh] overflow-y-auto">
-                {isSearching && (
-                  <div className="flex items-center gap-3 px-4 py-3 text-sm text-muted-foreground">
-                    <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
-                    Searching...
-                  </div>
-                )}
-
-                {!isSearching && searchCats.length > 0 && (
-                  <div className="py-1">
-                    <p className="px-4 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Categories</p>
-                    {searchCats.map((cat) => (
-                      <button key={cat.id} onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${cat.slug}`); }} className="flex items-center gap-3 w-full px-4 py-2 hover:bg-primary/5 transition-colors text-left">
-                        {cat.image_url && <img src={cat.image_url} alt={cat.name} width={32} height={32} className="w-8 h-8 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
-                        <span className="text-[13px] font-medium text-foreground"><HighlightMatch text={cat.name} query={debouncedSearch} /></span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {!isSearching && searchSubs.length > 0 && (
-                  <div className={`py-1 ${searchCats.length > 0 ? "border-t border-border/30" : ""}`}>
-                    <p className="px-4 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Subcategories</p>
-                    {searchSubs.map((sub) => (
-                      <button key={sub.id} onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${sub.slug}`); }} className="flex items-center gap-3 w-full px-4 py-2 hover:bg-primary/5 transition-colors text-left">
-                        {sub.image_url && <img src={sub.image_url} alt={sub.name} width={32} height={32} className="w-8 h-8 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
-                        <span className="text-[13px] font-medium text-foreground"><HighlightMatch text={sub.name} query={debouncedSearch} /></span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {!isSearching && suggestions.length > 0 && (
-                  <div className={`py-1 ${(searchCats.length > 0 || searchSubs.length > 0) ? "border-t border-border/30" : ""}`}>
-                    <p className="px-4 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Products</p>
-                    {suggestions.map((p) => (
-                      <button key={p.id} onClick={() => handleSelect(p.slug)} className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-primary/5 transition-colors text-left">
-                        {p.image_url && <img src={p.image_url} alt={p.name} width={40} height={40} className="w-10 h-10 rounded-xl object-cover shrink-0 ring-1 ring-border/40" loading="lazy" decoding="async" />}
-                        <div className="min-w-0 flex-1">
-                          <p className="text-[13px] font-medium text-foreground truncate"><HighlightMatch text={p.name} query={debouncedSearch} /></p>
-                          <p className="text-xs text-primary font-semibold mt-0.5">
-                            {formatPrice(p.price)}
-                            {p.original_price && p.original_price > p.price && (
-                              <span className="text-muted-foreground line-through ml-1.5 font-normal">{formatPrice(p.original_price)}</span>
-                            )}
-                          </p>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {showEmptyResults && (
-                  <div className="px-4 py-5 text-center">
-                    <Search size={20} className="mx-auto text-muted-foreground/30 mb-1.5" />
-                    <p className="text-sm text-muted-foreground">No results found</p>
-                  </div>
-                )}
-              </div>
-            )}
-            {shouldShowIdlePanel && (
-              <div className="absolute left-0 right-0 top-full mt-1.5 z-[100] bg-card/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-[0_12px_36px_-8px_hsl(var(--foreground)/0.12)] overflow-hidden animate-fade-in max-h-[60vh] overflow-y-auto">
-                <IdleSearchPanel />
-              </div>
-            )}
+            </div>
           </div>
 
           {/* === NAV BAR (Desktop/Tablet) === */}
