@@ -97,16 +97,11 @@ const HighlightMatch = ({ text, query }: { text: string; query: string }): React
 };
 
 const Header = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showSuggestions, setShowSuggestions] = useState(false);
   const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [pinnedMegaMenu, setPinnedMegaMenu] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const [mobileSearchExpanded, setMobileSearchExpanded] = useState(false);
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [recentSearches, setRecentSearches] = useState<string[]>([]);
-  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
 
   // Load recent searches from localStorage
   useEffect(() => {
