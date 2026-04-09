@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect, useMemo, ReactNode } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback, ReactNode } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Search, ShoppingCart, X, User, Truck, ChevronDown, MapPinCheck, Moon, Sun, Globe, Sparkles } from "lucide-react";
+import { Search, ShoppingCart, X, User, Truck, ChevronDown, MapPinCheck, Moon, Sun, Globe, Sparkles, Clock, TrendingUp, ArrowUpRight } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useTheme } from "next-themes";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -105,7 +105,31 @@ const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileSearchExpanded, setMobileSearchExpanded] = useState(false);
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const mobileSearchInputRef = useRef<HTMLInputElement>(null);
+
+  // Load recent searches from localStorage
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("recent-searches");
+      if (stored) setRecentSearches(JSON.parse(stored).slice(0, 6));
+    } catch {}
+  }, []);
+
+  const saveRecentSearch = useCallback((term: string) => {
+    const clean = term.trim();
+    if (!clean || clean.length < 2) return;
+    setRecentSearches(prev => {
+      const updated = [clean, ...prev.filter(s => s.toLowerCase() !== clean.toLowerCase())].slice(0, 6);
+      try { localStorage.setItem("recent-searches", JSON.stringify(updated)); } catch {}
+      return updated;
+    });
+  }, []);
+
+  const clearRecentSearches = useCallback(() => {
+    setRecentSearches([]);
+    try { localStorage.removeItem("recent-searches"); } catch {}
+  }, []);
   const { totalItems, setIsOpen } = useCart();
   const { settings, isLoading: settingsLoading } = useSiteSettings();
   const { currencies, selectedCurrency, setSelectedCurrency, formatPrice } = useMultiCurrency();
@@ -232,7 +256,11 @@ const Header = () => {
   const megaMenuCloseTimer = useRef<number | null>(null);
 
   const shouldShowSearchPanel = showSuggestions && debouncedSearch.length >= 1;
+  const shouldShowIdlePanel = showSuggestions && debouncedSearch.length === 0;
   const showEmptyResults = shouldShowSearchPanel && !isSearching && !hasAnyResults;
+
+  // Popular categories for idle search
+  const popularCategories = useMemo(() => categories.slice(0, 6), [categories]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -327,12 +355,67 @@ const Header = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (safeSearchQuery) {
+      saveRecentSearch(safeSearchQuery);
       navigate(`/shop?search=${encodeURIComponent(safeSearchQuery)}`);
       setSearchQuery("");
       setShowSuggestions(false);
     }
   };
-  const handleSelect = (slug: string) => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product/${slug}`); };
+  const handleSelect = (slug: string) => { saveRecentSearch(searchQuery); setSearchQuery(""); setShowSuggestions(false); navigate(`/product/${slug}`); };
+
+  const handleRecentClick = (term: string) => {
+    setSearchQuery(term);
+    setShowSuggestions(true);
+  };
+
+  // Idle search panel (recent + popular)
+  const IdleSearchPanel = () => (
+    <div className="py-2">
+      {recentSearches.length > 0 && (
+        <div className="pb-1.5">
+          <div className="flex items-center justify-between px-5 py-2">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 flex items-center gap-1.5">
+              <Clock size={11} /> Recent Searches
+            </p>
+            <button onClick={clearRecentSearches} className="text-[10px] text-primary hover:underline font-medium">Clear</button>
+          </div>
+          <div className="flex flex-wrap gap-1.5 px-5 pb-2">
+            {recentSearches.map((term, i) => (
+              <button
+                key={i}
+                onClick={() => handleRecentClick(term)}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-muted/60 hover:bg-primary/10 text-xs font-medium text-foreground/80 hover:text-primary transition-colors border border-border/30"
+              >
+                <Clock size={10} className="text-muted-foreground/50" />
+                {term}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+      {popularCategories.length > 0 && (
+        <div className={recentSearches.length > 0 ? "border-t border-border/30 pt-1.5" : ""}>
+          <p className="px-5 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 flex items-center gap-1.5">
+            <TrendingUp size={11} /> Popular Categories
+          </p>
+          {popularCategories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${cat.slug}`); }}
+              className="flex items-center gap-3 w-full px-5 py-2 hover:bg-primary/5 transition-colors text-left group/item"
+            >
+              {cat.image_url && <img src={cat.image_url} alt={cat.name} width={32} height={32} className="w-8 h-8 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
+              <span className="text-sm font-medium text-foreground/80 group-hover/item:text-primary transition-colors flex-1">{cat.name}</span>
+              <ArrowUpRight size={13} className="text-muted-foreground/40 group-hover/item:text-primary transition-colors" />
+            </button>
+          ))}
+        </div>
+      )}
+      {recentSearches.length === 0 && popularCategories.length === 0 && (
+        <div className="px-5 py-4 text-center text-sm text-muted-foreground">Start typing to search...</div>
+      )}
+    </div>
+  );
 
   // Icon button component for consistency
   const IconBtn = ({ icon: Icon, label, onClick, href, badge, className = "" }: {
@@ -401,7 +484,7 @@ const Header = () => {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => { setSearchQuery(e.target.value.slice(0, 60)); setShowSuggestions(true); }}
-                  onFocus={() => setShowSuggestions(sanitizeSearchTerm(searchQuery).length >= 1)}
+                   onFocus={() => setShowSuggestions(true)}
                   placeholder={t("search_placeholder")}
                   className="w-full rounded-full border border-border/40 bg-muted/30 py-2.5 pl-11 pr-10 text-[13px] shadow-none outline-none transition-all duration-200 placeholder:text-muted-foreground/50 focus:border-primary/40 focus:bg-card focus:ring-1 focus:ring-primary/10 focus:shadow-[0_2px_12px_-4px_hsl(var(--primary)/0.1)] lg:py-2.5"
                 />
@@ -482,6 +565,12 @@ const Header = () => {
                       <p className="text-sm text-muted-foreground">No results found for "{debouncedSearch}"</p>
                     </div>
                   )}
+                </div>
+              )}
+
+              {shouldShowIdlePanel && (
+                <div className="absolute left-0 right-0 top-full mt-2.5 z-[100] bg-card/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-[0_16px_48px_-12px_hsl(var(--foreground)/0.15)] overflow-hidden animate-fade-in max-h-[70vh] overflow-y-auto">
+                  <IdleSearchPanel />
                 </div>
               )}
             </div>
@@ -602,7 +691,7 @@ const Header = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => { setSearchQuery(e.target.value.slice(0, 60)); setShowSuggestions(true); }}
-                onFocus={() => setShowSuggestions(sanitizeSearchTerm(searchQuery).length >= 1)}
+                onFocus={() => setShowSuggestions(true)}
                 placeholder={t("search_placeholder")}
                 className="w-full rounded-full border border-border/60 bg-muted/50 py-2.5 pl-10 pr-9 text-[13px] shadow-[0_20px_40px_-32px_hsl(var(--foreground)/0.45)] outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary/40 focus:ring-2 focus:ring-primary/15"
               />
@@ -671,6 +760,11 @@ const Header = () => {
                     <p className="text-sm text-muted-foreground">No results found</p>
                   </div>
                 )}
+              </div>
+            )}
+            {shouldShowIdlePanel && (
+              <div className="absolute left-0 right-0 top-full mt-1.5 z-[100] bg-card/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-[0_12px_36px_-8px_hsl(var(--foreground)/0.12)] overflow-hidden animate-fade-in max-h-[60vh] overflow-y-auto">
+                <IdleSearchPanel />
               </div>
             )}
           </div>
