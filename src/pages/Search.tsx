@@ -55,6 +55,34 @@ const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
+  const startVoiceSearch = useCallback(() => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Voice search is not supported in this browser.");
+      return;
+    }
+    if (isListening) {
+      recognitionRef.current?.stop();
+      return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+    recognitionRef.current = recognition;
+
+    recognition.onstart = () => setIsListening(true);
+    recognition.onresult = (event: any) => {
+      const transcript = Array.from(event.results).map((r: any) => r[0].transcript).join("");
+      setSearchQuery(transcript);
+    };
+    recognition.onerror = () => setIsListening(false);
+    recognition.onend = () => setIsListening(false);
+    recognition.start();
+  }, [isListening]);
 
   useEffect(() => {
     try {
@@ -160,7 +188,7 @@ const SearchPage = () => {
                 <X size={18} />
               </button>
             ) : (
-              <button type="button" onClick={() => { /* voice search placeholder */ }} className="shrink-0 text-primary/70 hover:text-primary transition-colors" aria-label="Voice search">
+              <button type="button" onClick={startVoiceSearch} className={`shrink-0 transition-colors ${isListening ? "text-destructive animate-pulse" : "text-primary/70 hover:text-primary"}`} aria-label="Voice search">
                 <Mic size={20} />
               </button>
             )}
