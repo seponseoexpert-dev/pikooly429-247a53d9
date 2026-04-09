@@ -675,11 +675,14 @@ const Header = () => {
           {/* === MOBILE SEARCH === */}
           {/* Full search bar - shown when not scrolled OR when expanded */}
           <div
-            className={`md:hidden relative transition-all duration-100 ease-out overflow-hidden ${
-              !scrolled || mobileSearchExpanded ? "max-h-[60px] opacity-100 pb-2" : "max-h-0 opacity-0 pb-0"
+            className={`md:hidden relative ${
+              !scrolled || mobileSearchExpanded ? "pb-2 opacity-100" : "pb-0 opacity-0 pointer-events-none"
             }`}
             ref={searchRef}
           >
+            <div className={`transition-all duration-100 ease-out overflow-hidden ${
+              !scrolled || mobileSearchExpanded ? "max-h-[60px]" : "max-h-0"
+            }`}>
             <form onSubmit={handleSearch} className="relative group">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={15} />
               <input
@@ -701,6 +704,7 @@ const Header = () => {
                 </button>
               )}
             </form>
+            </div>
             {shouldShowSearchPanel && (
               <div className="absolute left-0 right-0 top-full mt-1.5 z-[100] bg-card/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-[0_12px_36px_-8px_hsl(var(--foreground)/0.12)] overflow-hidden animate-fade-in max-h-[60vh] overflow-y-auto">
                 {isSearching && (
