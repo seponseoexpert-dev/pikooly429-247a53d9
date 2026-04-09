@@ -505,8 +505,9 @@ const FieldRenderer = ({
     );
   }
   if (field.type === "radio" && field.options) {
+    const effectiveValue = value || field.options[0]?.value || "";
     return (
-      <RadioGroup value={value || field.options[0]?.value} onValueChange={onChange} className="flex items-center gap-4 pt-1">
+      <RadioGroup value={effectiveValue} onValueChange={onChange} className="flex items-center gap-4 pt-1">
         {field.options.map((opt) => (
           <div key={opt.value} className="flex items-center gap-1.5">
             <RadioGroupItem value={opt.value} id={`${field.key}-${opt.value}`} />
