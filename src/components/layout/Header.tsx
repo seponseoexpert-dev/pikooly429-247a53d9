@@ -567,6 +567,12 @@ const Header = () => {
                   )}
                 </div>
               )}
+
+              {shouldShowIdlePanel && (
+                <div className="absolute left-0 right-0 top-full mt-2.5 z-[100] bg-card/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-[0_16px_48px_-12px_hsl(var(--foreground)/0.15)] overflow-hidden animate-fade-in max-h-[70vh] overflow-y-auto">
+                  <IdleSearchPanel />
+                </div>
+              )}
             </div>
 
             {/* Right Actions */}
@@ -754,6 +760,11 @@ const Header = () => {
                     <p className="text-sm text-muted-foreground">No results found</p>
                   </div>
                 )}
+              </div>
+            )}
+            {shouldShowIdlePanel && (
+              <div className="absolute left-0 right-0 top-full mt-1.5 z-[100] bg-card/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-[0_12px_36px_-8px_hsl(var(--foreground)/0.12)] overflow-hidden animate-fade-in max-h-[60vh] overflow-y-auto">
+                <IdleSearchPanel />
               </div>
             )}
           </div>
