@@ -2,7 +2,7 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import TextAlign from "@tiptap/extension-text-align";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import {
   Bold, Italic, List, ListOrdered, Quote, AlignLeft, AlignCenter, AlignRight, AlignJustify, Link as LinkIcon, Undo, Redo,
 } from "lucide-react";
@@ -22,6 +22,25 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
     ],
     content: value,
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
+    editorProps: {
+      attributes: {
+        class: "outline-none min-h-[90px] sm:min-h-[140px] cursor-text",
+        // Prevent iOS zoom by ensuring font-size >= 16px
+        style: "font-size: 16px;",
+      },
+      // Fix mobile touch handling inside dialogs
+      handleDOMEvents: {
+        touchstart: (_view, event) => {
+          // Prevent dialog from stealing focus on mobile
+          event.stopPropagation();
+          return false;
+        },
+        focus: (_view, event) => {
+          event.stopPropagation();
+          return false;
+        },
+      },
+    },
   });
 
   useEffect(() => {
@@ -29,6 +48,14 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
       editor.commands.setContent(value || "");
     }
   }, [value]);
+
+  const handleEditorClick = useCallback((e: React.MouseEvent) => {
+    // Ensure editor gets focus when clicking anywhere in the editor area
+    e.stopPropagation();
+    if (editor && !editor.isFocused) {
+      editor.commands.focus("end");
+    }
+  }, [editor]);
 
   if (!editor) return null;
 
@@ -38,7 +65,15 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
       variant="ghost"
       size="icon"
       className={`h-7 w-7 sm:h-8 sm:w-8 ${active ? "bg-muted text-foreground" : "text-muted-foreground"}`}
-      onClick={onClick}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onClick();
+      }}
+      onMouseDown={(e) => {
+        // Prevent losing editor focus when clicking toolbar buttons
+        e.preventDefault();
+      }}
     >
       {children}
     </Button>
@@ -66,12 +101,18 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
   };
 
   return (
-    <div className="border rounded-lg overflow-hidden">
-      <div className="flex flex-wrap items-center gap-0.5 p-1 sm:p-1.5 border-b bg-muted/30">
+    <div className="border rounded-lg overflow-hidden" onClick={handleEditorClick}>
+      <div
+        className="flex flex-wrap items-center gap-0.5 p-1 sm:p-1.5 border-b bg-muted/30"
+        onMouseDown={(e) => e.preventDefault()}
+        onTouchStart={(e) => e.stopPropagation()}
+      >
         <select
           value={currentHeading()}
           onChange={(e) => setBlock(e.target.value)}
+          onMouseDown={(e) => e.stopPropagation()}
           className="h-7 sm:h-8 text-xs bg-background border border-border rounded px-1.5 sm:px-2 outline-none cursor-pointer mr-0.5 sm:mr-1"
+          style={{ fontSize: "16px" }}
         >
           <option value="p">Paragraph</option>
           <option value="h1">Heading 1</option>
@@ -94,7 +135,10 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
         <ToolBtn onClick={() => editor.chain().focus().undo().run()}><Undo size={14} /></ToolBtn>
         <ToolBtn onClick={() => editor.chain().focus().redo().run()}><Redo size={14} /></ToolBtn>
       </div>
-      <EditorContent editor={editor} className="prose prose-sm max-w-none p-2 sm:p-3 min-h-[100px] sm:min-h-[150px] focus-within:outline-none [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[90px] sm:[&_.ProseMirror]:min-h-[140px]" />
+      <EditorContent
+        editor={editor}
+        className="prose prose-sm max-w-none p-2 sm:p-3 min-h-[100px] sm:min-h-[150px] focus-within:outline-none [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[90px] sm:[&_.ProseMirror]:min-h-[140px]"
+      />
     </div>
   );
 };
