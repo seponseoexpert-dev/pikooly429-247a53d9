@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect, useMemo, useCallback, ReactNode } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Search, ShoppingCart, X, User, Truck, ChevronDown, MapPinCheck, Moon, Sun, Globe, Sparkles, Clock, TrendingUp, ArrowUpRight } from "lucide-react";
+import { Search, ShoppingCart, User, Truck, ChevronDown, MapPinCheck, Moon, Sun, Globe, Sparkles } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useTheme } from "next-themes";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -10,135 +10,23 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-const sanitizeSearchTerm = (value: string) =>
-  value
-    .replace(/&amp;|&#38;|&#038;/gi, "&")
-    .replace(/&nbsp;/gi, " ")
-    .replace(/<[^>]*>/g, " ")
-    .replace(/[,%()']/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, 60);
 
-const normalizeSearchText = (value?: string | null) => sanitizeSearchTerm(value || "").toLowerCase();
-
-const scoreSearchText = (candidate: string, term: string) => {
-  const normalizedCandidate = normalizeSearchText(candidate);
-
-  if (!normalizedCandidate || !term) return 0;
-  if (normalizedCandidate === term) return 1000;
-  if (normalizedCandidate.startsWith(term)) return 700;
-
-  const words = normalizedCandidate.split(" ").filter(Boolean);
-
-  if (words.some((word) => word === term)) return 650;
-  if (words.some((word) => word.startsWith(term))) return 550;
-  if (normalizedCandidate.includes(term)) return 300;
-
-  return 0;
-};
-
-const getSearchKeywordBonus = (term: string, haystack: string) => {
-  if (term.length !== 1) return 0;
-
-  const keywordBoosts: Record<string, string[]> = {
-    f: ["flower", "flowers", "floral"],
-    b: ["bouquet", "birthday", "box"],
-    c: ["cake", "combo", "carnation"],
-    r: ["rose", "roses"],
-  };
-
-  return (keywordBoosts[term] || []).some((keyword) => haystack.includes(keyword)) ? 120 : 0;
-};
-
-const rankSearchItems = <T extends { name?: string | null; slug?: string | null; short_description?: string | null }>(
-  items: T[],
-  term: string,
-  limit: number,
-) => {
-  const normalizedTerm = normalizeSearchText(term);
-
-  return items
-    .map((item) => {
-      const name = normalizeSearchText(item.name);
-      const slug = normalizeSearchText((item.slug || "").replace(/-/g, " "));
-      const shortDescription = normalizeSearchText(item.short_description);
-      const haystack = `${name} ${slug} ${shortDescription}`.trim();
-      const score = Math.max(
-        scoreSearchText(name, normalizedTerm),
-        Math.max(scoreSearchText(slug, normalizedTerm) - 40, 0),
-        Math.max(scoreSearchText(shortDescription, normalizedTerm) - 80, 0),
-      ) + getSearchKeywordBonus(normalizedTerm, haystack);
-
-      return { item, score, name };
-    })
-    .filter((entry) => entry.score > 0)
-    .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name))
-    .slice(0, limit)
-    .map(({ item }) => item);
-};
-
-const HighlightMatch = ({ text, query }: { text: string; query: string }): ReactNode => {
-  if (!query || query.length < 1) return <>{text}</>;
-  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const regex = new RegExp(`(${escaped})`, "gi");
-  const parts = text.split(regex);
-  return (
-    <>
-      {parts.map((part, i) =>
-        regex.test(part) ? (
-          <span key={i} className="text-primary font-bold">{part}</span>
-        ) : (
-          <span key={i}>{part}</span>
-        )
-      )}
-    </>
-  );
-};
 
 const Header = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showSuggestions, setShowSuggestions] = useState(false);
   const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [pinnedMegaMenu, setPinnedMegaMenu] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const [mobileSearchExpanded, setMobileSearchExpanded] = useState(false);
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [recentSearches, setRecentSearches] = useState<string[]>([]);
-  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
 
-  // Load recent searches from localStorage
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem("recent-searches");
-      if (stored) setRecentSearches(JSON.parse(stored).slice(0, 6));
-    } catch {}
-  }, []);
-
-  const saveRecentSearch = useCallback((term: string) => {
-    const clean = term.trim();
-    if (!clean || clean.length < 2) return;
-    setRecentSearches(prev => {
-      const updated = [clean, ...prev.filter(s => s.toLowerCase() !== clean.toLowerCase())].slice(0, 6);
-      try { localStorage.setItem("recent-searches", JSON.stringify(updated)); } catch {}
-      return updated;
-    });
-  }, []);
-
-  const clearRecentSearches = useCallback(() => {
-    setRecentSearches([]);
-    try { localStorage.removeItem("recent-searches"); } catch {}
-  }, []);
   const { totalItems, setIsOpen } = useCart();
   const { settings, isLoading: settingsLoading } = useSiteSettings();
-  const { currencies, selectedCurrency, setSelectedCurrency, formatPrice } = useMultiCurrency();
+  const { currencies, selectedCurrency, setSelectedCurrency } = useMultiCurrency();
   const { user } = useAuth();
   const { language, setLanguage, t, languages, multiLanguageEnabled } = useLanguage();
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
-  const searchRef = useRef<HTMLDivElement>(null);
   const currencyRef = useRef<HTMLDivElement>(null);
   const languageRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
@@ -147,61 +35,6 @@ const Header = () => {
   const logoUrl = settings.company_logo || "";
   const announcementText = settings.announcement_bar_text || "🌸 Same Day Delivery Available in 500+ Cities";
   const showAnnouncement = !settingsLoading && settings.announcement_bar_enabled !== "false";
-  const safeSearchQuery = useMemo(() => sanitizeSearchTerm(searchQuery), [searchQuery]);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setDebouncedSearch(safeSearchQuery);
-    }, 180);
-
-    return () => window.clearTimeout(timer);
-  }, [safeSearchQuery]);
-
-  const { data: searchResults = { products: [], cats: [], subs: [] }, isFetching: isSearching } = useQuery({
-    queryKey: ["header-search-all", debouncedSearch],
-    queryFn: async () => {
-      const term = normalizeSearchText(debouncedSearch);
-
-      if (!term) {
-        return { products: [], cats: [], subs: [] };
-      }
-
-      const [prodRes, catRes, subRes] = await Promise.all([
-        supabase
-          .from("products")
-          .select("id, name, slug, price, original_price, image_url, short_description")
-          .eq("is_active", true)
-          .or(`name.ilike.%${term}%,short_description.ilike.%${term}%,slug.ilike.%${term}%`)
-          .limit(24),
-        supabase
-          .from("categories")
-          .select("id, name, slug, image_url")
-          .eq("is_active", true)
-          .ilike("name", `%${term}%`)
-          .limit(16),
-        supabase
-          .from("subcategories")
-          .select("id, name, slug, image_url, category_id")
-          .eq("is_active", true)
-          .ilike("name", `%${term}%`)
-          .limit(24),
-      ]);
-
-      return {
-        products: rankSearchItems(prodRes.data || [], term, 8),
-        cats: rankSearchItems(catRes.data || [], term, 6),
-        subs: rankSearchItems(subRes.data || [], term, 8),
-      };
-    },
-    enabled: debouncedSearch.length >= 1,
-    staleTime: 60 * 1000,
-    placeholderData: (prev) => prev,
-  });
-
-  const suggestions = searchResults.products;
-  const searchCats = searchResults.cats;
-  const searchSubs = searchResults.subs;
-  const hasAnyResults = suggestions.length > 0 || searchCats.length > 0 || searchSubs.length > 0;
 
   const { data: categories = [] } = useQuery({
     queryKey: ["header-categories"],
@@ -255,16 +88,8 @@ const Header = () => {
   const [canUseHover, setCanUseHover] = useState(false);
   const megaMenuCloseTimer = useRef<number | null>(null);
 
-  const shouldShowSearchPanel = showSuggestions && debouncedSearch.length >= 1;
-  const shouldShowIdlePanel = showSuggestions && debouncedSearch.length === 0;
-  const showEmptyResults = shouldShowSearchPanel && !isSearching && !hasAnyResults;
-
-  // Popular categories for idle search
-  const popularCategories = useMemo(() => categories.slice(0, 6), [categories]);
-
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(e.target as Node)) setShowSuggestions(false);
       if (currencyRef.current && !currencyRef.current.contains(e.target as Node)) setShowCurrencyDropdown(false);
       if (languageRef.current && !languageRef.current.contains(e.target as Node)) setShowLanguageDropdown(false);
       if (navRef.current && !navRef.current.contains(e.target as Node)) {
@@ -293,7 +118,6 @@ const Header = () => {
     setPinnedMegaMenu(null);
   }, [location.pathname]);
 
-  // Track scroll position for compact mobile header
   useEffect(() => {
     const onScroll = () => {
       const isScrolled = window.scrollY > 60;
@@ -340,7 +164,7 @@ const Header = () => {
       resizeObserver.disconnect();
       window.removeEventListener("resize", scheduleHeaderOffsetUpdate);
     };
-  }, [showAnnouncement, multiLanguageEnabled, languages.length, location.pathname, searchQuery, suggestions.length]);
+  }, [showAnnouncement, multiLanguageEnabled, languages.length, location.pathname]);
 
   const openMegaMenu = (id: string) => {
     if (megaMenuCloseTimer.current) { window.clearTimeout(megaMenuCloseTimer.current); megaMenuCloseTimer.current = null; }
@@ -351,71 +175,6 @@ const Header = () => {
     if (megaMenuCloseTimer.current) window.clearTimeout(megaMenuCloseTimer.current);
     megaMenuCloseTimer.current = window.setTimeout(() => { setHoveredCat(null); megaMenuCloseTimer.current = null; }, 120);
   };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (safeSearchQuery) {
-      saveRecentSearch(safeSearchQuery);
-      navigate(`/shop?search=${encodeURIComponent(safeSearchQuery)}`);
-      setSearchQuery("");
-      setShowSuggestions(false);
-    }
-  };
-  const handleSelect = (slug: string) => { saveRecentSearch(searchQuery); setSearchQuery(""); setShowSuggestions(false); navigate(`/product/${slug}`); };
-
-  const handleRecentClick = (term: string) => {
-    setSearchQuery(term);
-    setShowSuggestions(true);
-  };
-
-  // Idle search panel (recent + popular)
-  const IdleSearchPanel = () => (
-    <div className="py-2">
-      {recentSearches.length > 0 && (
-        <div className="pb-1.5">
-          <div className="flex items-center justify-between px-5 py-2">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 flex items-center gap-1.5">
-              <Clock size={11} /> Recent Searches
-            </p>
-            <button onClick={clearRecentSearches} className="text-[10px] text-primary hover:underline font-medium">Clear</button>
-          </div>
-          <div className="flex flex-wrap gap-1.5 px-5 pb-2">
-            {recentSearches.map((term, i) => (
-              <button
-                key={i}
-                onClick={() => handleRecentClick(term)}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-muted/60 hover:bg-primary/10 text-xs font-medium text-foreground/80 hover:text-primary transition-colors border border-border/30"
-              >
-                <Clock size={10} className="text-muted-foreground/50" />
-                {term}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-      {popularCategories.length > 0 && (
-        <div className={recentSearches.length > 0 ? "border-t border-border/30 pt-1.5" : ""}>
-          <p className="px-5 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 flex items-center gap-1.5">
-            <TrendingUp size={11} /> Popular Categories
-          </p>
-          {popularCategories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${cat.slug}`); }}
-              className="flex items-center gap-3 w-full px-5 py-2 hover:bg-primary/5 transition-colors text-left group/item"
-            >
-              {cat.image_url && <img src={cat.image_url} alt={cat.name} width={32} height={32} className="w-8 h-8 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
-              <span className="text-sm font-medium text-foreground/80 group-hover/item:text-primary transition-colors flex-1">{cat.name}</span>
-              <ArrowUpRight size={13} className="text-muted-foreground/40 group-hover/item:text-primary transition-colors" />
-            </button>
-          ))}
-        </div>
-      )}
-      {recentSearches.length === 0 && popularCategories.length === 0 && (
-        <div className="px-5 py-4 text-center text-sm text-muted-foreground">Start typing to search...</div>
-      )}
-    </div>
-  );
 
   // Icon button component for consistency
   const IconBtn = ({ icon: Icon, label, onClick, href, badge, className = "" }: {
@@ -472,107 +231,14 @@ const Header = () => {
               )}
             </Link>
 
-            {/* Desktop Search — Premium pill style */}
-            <div className="hidden md:block flex-1 max-w-md lg:max-w-xl xl:max-w-2xl mx-auto relative" ref={searchRef}>
-              <form onSubmit={handleSearch} className="relative group">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors duration-200" size={17} />
-                <input
-                  autoComplete="off"
-                  enterKeyHint="search"
-                  inputMode="search"
-                  maxLength={60}
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => { setSearchQuery(e.target.value.slice(0, 60)); setShowSuggestions(true); }}
-                   onFocus={() => setShowSuggestions(true)}
-                  placeholder={t("search_placeholder")}
-                  className="w-full rounded-full border border-border/40 bg-muted/30 py-2.5 pl-11 pr-10 text-[13px] shadow-none outline-none transition-all duration-200 placeholder:text-muted-foreground/50 focus:border-primary/40 focus:bg-card focus:ring-1 focus:ring-primary/10 focus:shadow-[0_2px_12px_-4px_hsl(var(--primary)/0.1)] lg:py-2.5"
-                />
-                {searchQuery && (
-                  <button type="button" onClick={() => { setSearchQuery(""); setShowSuggestions(false); }} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
-                    <X size={15} />
-                  </button>
-                )}
-              </form>
-
-              {shouldShowSearchPanel && (
-                <div className="absolute left-0 right-0 top-full mt-2.5 z-[100] bg-card/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-[0_16px_48px_-12px_hsl(var(--foreground)/0.15)] overflow-hidden animate-fade-in max-h-[70vh] overflow-y-auto">
-                  {isSearching && (
-                    <div className="flex items-center gap-3 px-5 py-4 text-sm text-muted-foreground">
-                      <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
-                      Searching...
-                    </div>
-                  )}
-
-                  {!isSearching && searchCats.length > 0 && (
-                    <div className="py-1.5">
-                      <p className="px-5 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Categories</p>
-                      {searchCats.map((cat) => (
-                        <button key={cat.id} onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${cat.slug}`); }} className="flex items-center gap-3.5 w-full px-5 py-2.5 hover:bg-primary/5 transition-colors text-left group/item">
-                          {cat.image_url && <img src={cat.image_url} alt={cat.name} width={36} height={36} className="w-9 h-9 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
-                          <span className="text-sm font-medium text-foreground group-hover/item:text-primary transition-colors"><HighlightMatch text={cat.name} query={debouncedSearch} /></span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {!isSearching && searchSubs.length > 0 && (
-                    <div className={`py-1.5 ${searchCats.length > 0 ? "border-t border-border/30" : ""}`}>
-                      <p className="px-5 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Subcategories</p>
-                      {searchSubs.map((sub) => (
-                        <button key={sub.id} onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${sub.slug}`); }} className="flex items-center gap-3.5 w-full px-5 py-2.5 hover:bg-primary/5 transition-colors text-left group/item">
-                          {sub.image_url && <img src={sub.image_url} alt={sub.name} width={36} height={36} className="w-9 h-9 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
-                          <span className="text-sm font-medium text-foreground group-hover/item:text-primary transition-colors"><HighlightMatch text={sub.name} query={debouncedSearch} /></span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {!isSearching && suggestions.length > 0 && (
-                    <div className={`py-1.5 ${(searchCats.length > 0 || searchSubs.length > 0) ? "border-t border-border/30" : ""}`}>
-                      <p className="px-5 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Products</p>
-                      {suggestions.map((p) => (
-                        <button key={p.id} onClick={() => handleSelect(p.slug)} className="flex items-center gap-3.5 w-full px-5 py-2.5 hover:bg-primary/5 transition-colors text-left group/item">
-                          {p.image_url && (
-                            <img src={p.image_url} alt={p.name} width={44} height={44} className="w-11 h-11 rounded-xl object-cover shrink-0 ring-1 ring-border/40 group-hover/item:ring-primary/30 transition-all" loading="lazy" decoding="async" />
-                          )}
-                          <div className="min-w-0 flex-1">
-                            <p className="text-sm font-medium text-foreground truncate group-hover/item:text-primary transition-colors"><HighlightMatch text={p.name} query={debouncedSearch} /></p>
-                            <p className="text-xs text-primary font-semibold mt-0.5">
-                              {formatPrice(p.price)}
-                              {p.original_price && p.original_price > p.price && (
-                                <span className="text-muted-foreground line-through ml-1.5 font-normal">{formatPrice(p.original_price)}</span>
-                              )}
-                            </p>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {!isSearching && hasAnyResults && (
-                    <button
-                      onClick={handleSearch as any}
-                      className="w-full border-t border-border/40 px-5 py-3 text-center text-sm font-medium text-primary hover:bg-primary/5 transition-colors"
-                    >
-                      View all results for "{debouncedSearch}" →
-                    </button>
-                  )}
-
-                  {showEmptyResults && (
-                    <div className="px-5 py-6 text-center">
-                      <Search size={24} className="mx-auto text-muted-foreground/30 mb-2" />
-                      <p className="text-sm text-muted-foreground">No results found for "{debouncedSearch}"</p>
-                    </div>
-                  )}
+            {/* Desktop Search — navigates to search page */}
+            <div className="hidden md:block flex-1 max-w-md lg:max-w-xl xl:max-w-2xl mx-auto relative">
+              <div className="relative group cursor-pointer" onClick={() => navigate("/search")}>
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={17} />
+                <div className="w-full rounded-full border border-border/40 bg-muted/30 py-2.5 pl-11 pr-10 text-[13px] text-muted-foreground/50 transition-all duration-200 hover:border-primary/40 hover:bg-card hover:ring-1 hover:ring-primary/10 lg:py-2.5">
+                  {t("search_placeholder")}
                 </div>
-              )}
-
-              {shouldShowIdlePanel && (
-                <div className="absolute left-0 right-0 top-full mt-2.5 z-[100] bg-card/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-[0_16px_48px_-12px_hsl(var(--foreground)/0.15)] overflow-hidden animate-fade-in max-h-[70vh] overflow-y-auto">
-                  <IdleSearchPanel />
-                </div>
-              )}
+              </div>
             </div>
 
             {/* Right Actions */}
@@ -580,7 +246,7 @@ const Header = () => {
               {/* Mobile search icon - visible only when scrolled */}
               <button
                 type="button"
-                onClick={() => { setMobileSearchExpanded(true); setTimeout(() => mobileSearchInputRef.current?.focus(), 50); }}
+                onClick={() => navigate("/search")}
                   className={`touch-target md:hidden relative flex flex-col items-center justify-center gap-0.5 rounded-xl px-1.5 py-1.5 text-foreground/70 transition-all duration-200 hover:text-primary hover:bg-muted/50 active:scale-95 ${
                   scrolled && !mobileSearchExpanded ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden pointer-events-none"
                 }`}
@@ -678,99 +344,17 @@ const Header = () => {
             className={`md:hidden relative ${
               !scrolled || mobileSearchExpanded ? "pb-2 opacity-100" : "pb-0 opacity-0 pointer-events-none"
             }`}
-            ref={searchRef}
           >
             <div className={`transition-all duration-100 ease-out overflow-hidden ${
               !scrolled || mobileSearchExpanded ? "max-h-[60px]" : "max-h-0"
             }`}>
-            <form onSubmit={handleSearch} className="relative group">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={15} />
-              <input
-                ref={mobileSearchInputRef}
-                autoComplete="off"
-                enterKeyHint="search"
-                inputMode="search"
-                maxLength={60}
-                type="text"
-                value={searchQuery}
-                onChange={(e) => { setSearchQuery(e.target.value.slice(0, 60)); setShowSuggestions(true); }}
-                onFocus={() => setShowSuggestions(true)}
-                placeholder={t("search_placeholder")}
-                className="w-full rounded-full border border-border/60 bg-muted/50 py-2.5 pl-10 pr-9 text-[13px] shadow-[0_20px_40px_-32px_hsl(var(--foreground)/0.45)] outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary/40 focus:ring-2 focus:ring-primary/15"
-              />
-              {(searchQuery || mobileSearchExpanded) && (
-                <button type="button" onClick={() => { setSearchQuery(""); setShowSuggestions(false); if (mobileSearchExpanded) setMobileSearchExpanded(false); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                  <X size={15} />
-                </button>
-              )}
-            </form>
+            <div className="relative group cursor-pointer" onClick={() => navigate("/search")}>
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" size={15} />
+              <div className="w-full rounded-full border border-border/60 bg-muted/50 py-2.5 pl-10 pr-9 text-[13px] text-muted-foreground/60 shadow-[0_20px_40px_-32px_hsl(var(--foreground)/0.45)]">
+                {t("search_placeholder")}
+              </div>
             </div>
-            {shouldShowSearchPanel && (
-              <div className="absolute left-0 right-0 top-full mt-1.5 z-[100] bg-card/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-[0_12px_36px_-8px_hsl(var(--foreground)/0.12)] overflow-hidden animate-fade-in max-h-[60vh] overflow-y-auto">
-                {isSearching && (
-                  <div className="flex items-center gap-3 px-4 py-3 text-sm text-muted-foreground">
-                    <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
-                    Searching...
-                  </div>
-                )}
-
-                {!isSearching && searchCats.length > 0 && (
-                  <div className="py-1">
-                    <p className="px-4 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Categories</p>
-                    {searchCats.map((cat) => (
-                      <button key={cat.id} onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${cat.slug}`); }} className="flex items-center gap-3 w-full px-4 py-2 hover:bg-primary/5 transition-colors text-left">
-                        {cat.image_url && <img src={cat.image_url} alt={cat.name} width={32} height={32} className="w-8 h-8 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
-                        <span className="text-[13px] font-medium text-foreground"><HighlightMatch text={cat.name} query={debouncedSearch} /></span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {!isSearching && searchSubs.length > 0 && (
-                  <div className={`py-1 ${searchCats.length > 0 ? "border-t border-border/30" : ""}`}>
-                    <p className="px-4 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Subcategories</p>
-                    {searchSubs.map((sub) => (
-                      <button key={sub.id} onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${sub.slug}`); }} className="flex items-center gap-3 w-full px-4 py-2 hover:bg-primary/5 transition-colors text-left">
-                        {sub.image_url && <img src={sub.image_url} alt={sub.name} width={32} height={32} className="w-8 h-8 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
-                        <span className="text-[13px] font-medium text-foreground"><HighlightMatch text={sub.name} query={debouncedSearch} /></span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {!isSearching && suggestions.length > 0 && (
-                  <div className={`py-1 ${(searchCats.length > 0 || searchSubs.length > 0) ? "border-t border-border/30" : ""}`}>
-                    <p className="px-4 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">Products</p>
-                    {suggestions.map((p) => (
-                      <button key={p.id} onClick={() => handleSelect(p.slug)} className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-primary/5 transition-colors text-left">
-                        {p.image_url && <img src={p.image_url} alt={p.name} width={40} height={40} className="w-10 h-10 rounded-xl object-cover shrink-0 ring-1 ring-border/40" loading="lazy" decoding="async" />}
-                        <div className="min-w-0 flex-1">
-                          <p className="text-[13px] font-medium text-foreground truncate"><HighlightMatch text={p.name} query={debouncedSearch} /></p>
-                          <p className="text-xs text-primary font-semibold mt-0.5">
-                            {formatPrice(p.price)}
-                            {p.original_price && p.original_price > p.price && (
-                              <span className="text-muted-foreground line-through ml-1.5 font-normal">{formatPrice(p.original_price)}</span>
-                            )}
-                          </p>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {showEmptyResults && (
-                  <div className="px-4 py-5 text-center">
-                    <Search size={20} className="mx-auto text-muted-foreground/30 mb-1.5" />
-                    <p className="text-sm text-muted-foreground">No results found</p>
-                  </div>
-                )}
-              </div>
-            )}
-            {shouldShowIdlePanel && (
-              <div className="absolute left-0 right-0 top-full mt-1.5 z-[100] bg-card/98 backdrop-blur-xl border border-border/60 rounded-2xl shadow-[0_12px_36px_-8px_hsl(var(--foreground)/0.12)] overflow-hidden animate-fade-in max-h-[60vh] overflow-y-auto">
-                <IdleSearchPanel />
-              </div>
-            )}
+            </div>
           </div>
 
           {/* === NAV BAR (Desktop/Tablet) === */}

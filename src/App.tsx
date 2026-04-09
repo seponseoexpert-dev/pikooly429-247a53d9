@@ -65,6 +65,7 @@ const EventCategoryDetail = lazy(() => import("./pages/EventCategoryDetail"));
 const AdminEvents = lazy(() => import("./pages/admin/AdminEvents"));
 const Photography = lazy(() => import("./pages/Photography"));
 const AdminPhotography = lazy(() => import("./pages/admin/AdminPhotography"));
+const SearchPage = lazy(() => import("./pages/Search"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -139,6 +140,7 @@ const App = () => (
               <Route path="/events" element={<PublicLayout><Events /></PublicLayout>} />
               <Route path="/events/:slug" element={<PublicLayout><EventCategoryDetail /></PublicLayout>} />
               <Route path="/photography" element={<PublicLayout><Photography /></PublicLayout>} />
+              <Route path="/search" element={<Suspense fallback={<PageLoader />}><SearchPage /></Suspense>} />
               <Route path="/auth" element={<PublicLayout><Auth /></PublicLayout>} />
               <Route path="/account" element={<PublicLayout><Account /></PublicLayout>} />
               <Route path="/reset-password" element={<PublicLayout><ResetPassword /></PublicLayout>} />
