@@ -36,60 +36,6 @@ const Header = () => {
   const announcementText = settings.announcement_bar_text || "🌸 Same Day Delivery Available in 500+ Cities";
   const showAnnouncement = !settingsLoading && settings.announcement_bar_enabled !== "false";
 
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setDebouncedSearch(safeSearchQuery);
-    }, 180);
-
-    return () => window.clearTimeout(timer);
-  }, [safeSearchQuery]);
-
-  const { data: searchResults = { products: [], cats: [], subs: [] }, isFetching: isSearching } = useQuery({
-    queryKey: ["header-search-all", debouncedSearch],
-    queryFn: async () => {
-      const term = normalizeSearchText(debouncedSearch);
-
-      if (!term) {
-        return { products: [], cats: [], subs: [] };
-      }
-
-      const [prodRes, catRes, subRes] = await Promise.all([
-        supabase
-          .from("products")
-          .select("id, name, slug, price, original_price, image_url, short_description")
-          .eq("is_active", true)
-          .or(`name.ilike.%${term}%,short_description.ilike.%${term}%,slug.ilike.%${term}%`)
-          .limit(24),
-        supabase
-          .from("categories")
-          .select("id, name, slug, image_url")
-          .eq("is_active", true)
-          .ilike("name", `%${term}%`)
-          .limit(16),
-        supabase
-          .from("subcategories")
-          .select("id, name, slug, image_url, category_id")
-          .eq("is_active", true)
-          .ilike("name", `%${term}%`)
-          .limit(24),
-      ]);
-
-      return {
-        products: rankSearchItems(prodRes.data || [], term, 8),
-        cats: rankSearchItems(catRes.data || [], term, 6),
-        subs: rankSearchItems(subRes.data || [], term, 8),
-      };
-    },
-    enabled: debouncedSearch.length >= 1,
-    staleTime: 60 * 1000,
-    placeholderData: (prev) => prev,
-  });
-
-  const suggestions = searchResults.products;
-  const searchCats = searchResults.cats;
-  const searchSubs = searchResults.subs;
-  const hasAnyResults = suggestions.length > 0 || searchCats.length > 0 || searchSubs.length > 0;
-
   const { data: categories = [] } = useQuery({
     queryKey: ["header-categories"],
     queryFn: async () => {
@@ -142,16 +88,8 @@ const Header = () => {
   const [canUseHover, setCanUseHover] = useState(false);
   const megaMenuCloseTimer = useRef<number | null>(null);
 
-  const shouldShowSearchPanel = showSuggestions && debouncedSearch.length >= 1;
-  const shouldShowIdlePanel = showSuggestions && debouncedSearch.length === 0;
-  const showEmptyResults = shouldShowSearchPanel && !isSearching && !hasAnyResults;
-
-  // Popular categories for idle search
-  const popularCategories = useMemo(() => categories.slice(0, 6), [categories]);
-
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(e.target as Node)) setShowSuggestions(false);
       if (currencyRef.current && !currencyRef.current.contains(e.target as Node)) setShowCurrencyDropdown(false);
       if (languageRef.current && !languageRef.current.contains(e.target as Node)) setShowLanguageDropdown(false);
       if (navRef.current && !navRef.current.contains(e.target as Node)) {
@@ -180,7 +118,6 @@ const Header = () => {
     setPinnedMegaMenu(null);
   }, [location.pathname]);
 
-  // Track scroll position for compact mobile header
   useEffect(() => {
     const onScroll = () => {
       const isScrolled = window.scrollY > 60;
@@ -227,7 +164,7 @@ const Header = () => {
       resizeObserver.disconnect();
       window.removeEventListener("resize", scheduleHeaderOffsetUpdate);
     };
-  }, [showAnnouncement, multiLanguageEnabled, languages.length, location.pathname, searchQuery, suggestions.length]);
+  }, [showAnnouncement, multiLanguageEnabled, languages.length, location.pathname]);
 
   const openMegaMenu = (id: string) => {
     if (megaMenuCloseTimer.current) { window.clearTimeout(megaMenuCloseTimer.current); megaMenuCloseTimer.current = null; }
@@ -238,71 +175,6 @@ const Header = () => {
     if (megaMenuCloseTimer.current) window.clearTimeout(megaMenuCloseTimer.current);
     megaMenuCloseTimer.current = window.setTimeout(() => { setHoveredCat(null); megaMenuCloseTimer.current = null; }, 120);
   };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (safeSearchQuery) {
-      saveRecentSearch(safeSearchQuery);
-      navigate(`/shop?search=${encodeURIComponent(safeSearchQuery)}`);
-      setSearchQuery("");
-      setShowSuggestions(false);
-    }
-  };
-  const handleSelect = (slug: string) => { saveRecentSearch(searchQuery); setSearchQuery(""); setShowSuggestions(false); navigate(`/product/${slug}`); };
-
-  const handleRecentClick = (term: string) => {
-    setSearchQuery(term);
-    setShowSuggestions(true);
-  };
-
-  // Idle search panel (recent + popular)
-  const IdleSearchPanel = () => (
-    <div className="py-2">
-      {recentSearches.length > 0 && (
-        <div className="pb-1.5">
-          <div className="flex items-center justify-between px-5 py-2">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 flex items-center gap-1.5">
-              <Clock size={11} /> Recent Searches
-            </p>
-            <button onClick={clearRecentSearches} className="text-[10px] text-primary hover:underline font-medium">Clear</button>
-          </div>
-          <div className="flex flex-wrap gap-1.5 px-5 pb-2">
-            {recentSearches.map((term, i) => (
-              <button
-                key={i}
-                onClick={() => handleRecentClick(term)}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-muted/60 hover:bg-primary/10 text-xs font-medium text-foreground/80 hover:text-primary transition-colors border border-border/30"
-              >
-                <Clock size={10} className="text-muted-foreground/50" />
-                {term}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-      {popularCategories.length > 0 && (
-        <div className={recentSearches.length > 0 ? "border-t border-border/30 pt-1.5" : ""}>
-          <p className="px-5 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 flex items-center gap-1.5">
-            <TrendingUp size={11} /> Popular Categories
-          </p>
-          {popularCategories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => { setSearchQuery(""); setShowSuggestions(false); navigate(`/product-category/${cat.slug}`); }}
-              className="flex items-center gap-3 w-full px-5 py-2 hover:bg-primary/5 transition-colors text-left group/item"
-            >
-              {cat.image_url && <img src={cat.image_url} alt={cat.name} width={32} height={32} className="w-8 h-8 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
-              <span className="text-sm font-medium text-foreground/80 group-hover/item:text-primary transition-colors flex-1">{cat.name}</span>
-              <ArrowUpRight size={13} className="text-muted-foreground/40 group-hover/item:text-primary transition-colors" />
-            </button>
-          ))}
-        </div>
-      )}
-      {recentSearches.length === 0 && popularCategories.length === 0 && (
-        <div className="px-5 py-4 text-center text-sm text-muted-foreground">Start typing to search...</div>
-      )}
-    </div>
-  );
 
   // Icon button component for consistency
   const IconBtn = ({ icon: Icon, label, onClick, href, badge, className = "" }: {
