@@ -43,7 +43,16 @@ const TrackOrder = () => {
       const { data, error } = await supabase.functions.invoke("track-order", {
         body: { order_number: orderNumber.trim() },
       });
-      if (error) throw error;
+      if (error) {
+        // Try to parse the error message for "Order not found"
+        const errMsg = typeof error === "object" && error?.message ? error.message : String(error);
+        if (errMsg.includes("Order not found") || errMsg.includes("404")) {
+          toast.error("Order not found. Please check the number.");
+        } else {
+          toast.error("Failed to track order. Please try again.");
+        }
+        return;
+      }
       if (data?.error) {
         toast.error(data.error === "Order not found" ? "Order not found. Please check the number." : data.error);
         return;
