@@ -118,12 +118,20 @@ const ProductGrid = memo(() => {
   const cardWidthClass = "w-[140px] sm:w-[160px] md:w-[180px] lg:w-[200px] xl:w-[210px]";
 
   return (
-    <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Products" style={{ contain: "layout style" }}>
+    <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Products" style={{ contain: "layout style", contentVisibility: "auto", containIntrinsicSize: "auto 800px" }}>
       <CategoryTabs tabs={allTrendingTabs} activeTab={activeTab} onTabChange={setActiveTab} />
 
       {productsLoading ? (
-        <div className="flex items-center justify-center py-10">
-          <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+        <div className="py-4">
+          <div className="flex gap-3 overflow-hidden">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="w-[140px] sm:w-[160px] md:w-[180px] flex-shrink-0">
+                <div className="aspect-square rounded-xl bg-muted animate-pulse" />
+                <div className="mt-2 h-3 w-3/4 rounded bg-muted animate-pulse" />
+                <div className="mt-1.5 h-3 w-1/2 rounded bg-muted animate-pulse" />
+              </div>
+            ))}
+          </div>
         </div>
       ) : trendingProducts.length === 0 ? (
         <div className="text-center py-16 px-4">
@@ -175,8 +183,16 @@ const ProductGrid = memo(() => {
       )}
 
       {productsLoading ? (
-        <div className="flex items-center justify-center py-10">
-          <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+        <div className="py-4">
+          <div className="flex gap-3 overflow-hidden">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="w-[140px] sm:w-[160px] md:w-[180px] flex-shrink-0">
+                <div className="aspect-square rounded-xl bg-muted animate-pulse" />
+                <div className="mt-2 h-3 w-3/4 rounded bg-muted animate-pulse" />
+                <div className="mt-1.5 h-3 w-1/2 rounded bg-muted animate-pulse" />
+              </div>
+            ))}
+          </div>
         </div>
       ) : tailoredProducts.length === 0 ? (
         <div className="text-center py-16 px-4">

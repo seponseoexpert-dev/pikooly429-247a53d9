@@ -5,9 +5,10 @@ import { ArrowRight, Camera, CalendarDays, Clapperboard, Gift, PartyPopper, Spar
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-import photoEventImg from "@/assets/photo-event.png";
-import photoVideoImg from "@/assets/photo-video.png";
-import photoGiftImg from "@/assets/photo-gift.png";
+// Lazy-load fallback images only when needed (not bundled into main chunk)
+const photoEventImg = "/src/assets/photo-event.png";
+const photoVideoImg = "/src/assets/photo-video.png";
+const photoGiftImg = "/src/assets/photo-gift.png";
 
 const PHOTO_FALLBACKS = [photoEventImg, photoVideoImg, photoGiftImg];
 

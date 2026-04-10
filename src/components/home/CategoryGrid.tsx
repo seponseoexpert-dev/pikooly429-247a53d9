@@ -22,15 +22,22 @@ const CategoryGrid = memo(() => {
   });
 
   if (isLoading) return (
-    <section className="py-3 sm:py-4 md:py-6 section-container flex items-center justify-center min-h-[120px]">
-      <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+    <section className="py-4 sm:py-5 md:py-6 lg:py-8 section-container" style={{ minHeight: "200px" }}>
+      <div className="flex gap-3 overflow-hidden">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="flex flex-col items-center gap-1.5 w-[80px] sm:w-[90px] flex-shrink-0">
+            <div className="w-[76px] h-[76px] sm:w-[86px] sm:h-[86px] rounded-2xl bg-muted animate-pulse" />
+            <div className="h-2.5 w-14 rounded bg-muted animate-pulse" />
+          </div>
+        ))}
+      </div>
     </section>
   );
 
   if (categories.length === 0) return null;
 
   return (
-    <section className="py-4 sm:py-5 md:py-6 lg:py-8 section-container" aria-label="Shop by Category" style={{ contain: "layout style" }}>
+    <section className="py-4 sm:py-5 md:py-6 lg:py-8 section-container" aria-label="Shop by Category" style={{ contain: "layout style", minHeight: "200px" }}>
       {/* Mobile/Tablet: 2-row horizontal scroll | Desktop: full grid */}
       <div className="lg:hidden">
         <div className="grid grid-rows-2 grid-flow-col gap-x-3 gap-y-3 sm:gap-x-4 sm:gap-y-4 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory auto-cols-[80px] sm:auto-cols-[90px] md:auto-cols-[100px]">

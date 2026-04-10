@@ -85,7 +85,7 @@ const HeroSection = memo(() => {
   const hasBgImage = !!slide?.bg_image_url;
 
   return (
-    <section className="section-container py-2.5 sm:py-4 lg:py-6" style={{ contain: "layout style" }}>
+    <section className="section-container py-2.5 sm:py-4 lg:py-6" style={{ contain: "layout style", minHeight: "clamp(140px, 25vw, 280px)" }}>
       <div className="relative">
         <div
           className="relative overflow-hidden rounded-xl sm:rounded-2xl lg:rounded-[20px] transition-colors duration-500"
