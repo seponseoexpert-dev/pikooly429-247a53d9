@@ -22,8 +22,15 @@ const CategoryGrid = memo(() => {
   });
 
   if (isLoading) return (
-    <section className="py-3 sm:py-4 md:py-6 section-container flex items-center justify-center min-h-[120px]">
-      <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+    <section className="py-4 sm:py-5 md:py-6 lg:py-8 section-container" style={{ minHeight: "200px" }}>
+      <div className="flex gap-3 overflow-hidden">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="flex flex-col items-center gap-1.5 w-[80px] sm:w-[90px] flex-shrink-0">
+            <div className="w-[76px] h-[76px] sm:w-[86px] sm:h-[86px] rounded-2xl bg-muted animate-pulse" />
+            <div className="h-2.5 w-14 rounded bg-muted animate-pulse" />
+          </div>
+        ))}
+      </div>
     </section>
   );
 
