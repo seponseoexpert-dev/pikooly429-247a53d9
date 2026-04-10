@@ -26,7 +26,7 @@ const Index = () => {
 
   // Prefetch shop data so it's cached when user navigates to Shop page
   useEffect(() => {
-    const timer = window.setTimeout(() => {
+    const prefetchShop = () => {
       queryClient.prefetchQuery({
         queryKey: ["shop-products"],
         queryFn: async () => {
@@ -34,23 +34,14 @@ const Index = () => {
           return data;
         },
       });
-      queryClient.prefetchQuery({
-        queryKey: ["shop-categories"],
-        queryFn: async () => {
-          const { data } = await supabase.from("categories").select("*").eq("is_active", true).order("display_order");
-          return data;
-        },
-      });
-      queryClient.prefetchQuery({
-        queryKey: ["shop-subcategories"],
-        queryFn: async () => {
-          const { data } = await supabase.from("subcategories").select("*").eq("is_active", true).order("display_order");
-          return data;
-        },
-      });
-    }, 1200);
+    };
 
-    return () => window.clearTimeout(timer);
+    if ("requestIdleCallback" in window) {
+      const id = (window as any).requestIdleCallback(prefetchShop, { timeout: 5000 });
+      return () => (window as any).cancelIdleCallback(id);
+    }
+    const id = globalThis.setTimeout(prefetchShop, 4000);
+    return () => globalThis.clearTimeout(id);
   }, [queryClient]);
 
   const seoTitle = settings.homepage_seo_title || settings.site_title || "Pikooly";

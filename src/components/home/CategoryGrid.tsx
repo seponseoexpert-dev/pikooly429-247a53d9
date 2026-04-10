@@ -48,8 +48,8 @@ const CategoryGrid = memo(() => {
                   height={96}
                   decoding="async"
                   className="w-full h-full object-contain"
-                  loading={idx < 8 ? "eager" : "lazy"}
-                  fetchPriority={idx < 4 ? "high" : undefined}
+                  loading={idx < 4 ? "eager" : "lazy"}
+                  fetchPriority={idx < 2 ? "high" : undefined}
                 />
               </div>
               <span className="text-[10px] sm:text-[11px] font-medium text-foreground/80 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-1 w-[76px] sm:w-[86px] md:w-[96px]">
@@ -76,8 +76,8 @@ const CategoryGrid = memo(() => {
                 height={110}
                 decoding="async"
                 className="w-full h-full object-contain"
-                loading={idx < 8 ? "eager" : "lazy"}
-                fetchPriority={idx < 4 ? "high" : undefined}
+                  loading={idx < 4 ? "eager" : "lazy"}
+                  fetchPriority={idx < 2 ? "high" : undefined}
               />
             </div>
             <span className="text-xs font-medium text-foreground/80 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-1 w-full px-0.5">
