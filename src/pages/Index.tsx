@@ -26,31 +26,31 @@ const Index = () => {
 
   // Prefetch shop data so it's cached when user navigates to Shop page
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      queryClient.prefetchQuery({
-        queryKey: ["shop-products"],
-        queryFn: async () => {
-          const { data } = await supabase.from("products").select("*, categories(name, slug), product_categories(category_id, categories(name, slug)), product_subcategories(subcategory_id)").eq("is_active", true).order("created_at", { ascending: false });
-          return data;
-        },
-      });
-      queryClient.prefetchQuery({
-        queryKey: ["shop-categories"],
-        queryFn: async () => {
-          const { data } = await supabase.from("categories").select("*").eq("is_active", true).order("display_order");
-          return data;
-        },
-      });
-      queryClient.prefetchQuery({
-        queryKey: ["shop-subcategories"],
-        queryFn: async () => {
-          const { data } = await supabase.from("subcategories").select("*").eq("is_active", true).order("display_order");
-          return data;
-        },
-      });
-    }, 1200);
+    // Defer shop prefetch until user is idle (not blocking initial render)
+    const idleId = "requestIdleCallback" in window
+      ? (window as any).requestIdleCallback(() => {
+          queryClient.prefetchQuery({
+            queryKey: ["shop-products"],
+            queryFn: async () => {
+              const { data } = await supabase.from("products").select("*, categories(name, slug), product_categories(category_id, categories(name, slug)), product_subcategories(subcategory_id)").eq("is_active", true).order("created_at", { ascending: false });
+              return data;
+            },
+          });
+        }, { timeout: 5000 })
+      : window.setTimeout(() => {
+          queryClient.prefetchQuery({
+            queryKey: ["shop-products"],
+            queryFn: async () => {
+              const { data } = await supabase.from("products").select("*, categories(name, slug), product_categories(category_id, categories(name, slug)), product_subcategories(subcategory_id)").eq("is_active", true).order("created_at", { ascending: false });
+              return data;
+            },
+          });
+        }, 4000);
 
-    return () => window.clearTimeout(timer);
+    return () => {
+      if ("requestIdleCallback" in window) (window as any).cancelIdleCallback(idleId);
+      else window.clearTimeout(idleId);
+    };
   }, [queryClient]);
 
   const seoTitle = settings.homepage_seo_title || settings.site_title || "Pikooly";

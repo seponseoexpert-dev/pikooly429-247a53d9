@@ -54,7 +54,7 @@ const Header = () => {
   });
 
   const { data: subcategories = [] } = useQuery({
-    queryKey: ["header-subcategories-with-count"],
+    queryKey: ["header-subcategories"],
     queryFn: async () => {
       const { data: subs, error } = await supabase
         .from("subcategories")
@@ -62,14 +62,7 @@ const Header = () => {
         .eq("is_active", true)
         .order("display_order");
       if (error) throw error;
-      const { data: counts } = await supabase
-        .from("product_subcategories")
-        .select("subcategory_id");
-      const countMap: Record<string, number> = {};
-      (counts || []).forEach((c) => {
-        countMap[c.subcategory_id] = (countMap[c.subcategory_id] || 0) + 1;
-      });
-      return (subs || []).map((s) => ({ ...s, product_count: countMap[s.id] || 0 }));
+      return (subs || []).map((s) => ({ ...s, product_count: 0 }));
     },
     staleTime: 10 * 60 * 1000,
     placeholderData: (prev) => prev,

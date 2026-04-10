@@ -20,7 +20,8 @@ const ProductGrid = memo(() => {
         .from("products")
         .select("*, categories(name, slug), product_categories(category_id, categories(name, slug)), product_subcategories(subcategory_id)")
         .eq("is_active", true)
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .limit(60);
       if (error) throw error;
       return data;
     },
