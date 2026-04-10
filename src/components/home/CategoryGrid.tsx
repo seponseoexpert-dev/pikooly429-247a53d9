@@ -30,7 +30,7 @@ const CategoryGrid = memo(() => {
   if (categories.length === 0) return null;
 
   return (
-    <section className="py-4 sm:py-5 md:py-6 lg:py-8 section-container" aria-label="Shop by Category" style={{ contain: "layout style" }}>
+    <section className="py-4 sm:py-5 md:py-6 lg:py-8 section-container" aria-label="Shop by Category" style={{ contain: "layout style", minHeight: "200px" }}>
       {/* Mobile/Tablet: 2-row horizontal scroll | Desktop: full grid */}
       <div className="lg:hidden">
         <div className="grid grid-rows-2 grid-flow-col gap-x-3 gap-y-3 sm:gap-x-4 sm:gap-y-4 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory auto-cols-[80px] sm:auto-cols-[90px] md:auto-cols-[100px]">
