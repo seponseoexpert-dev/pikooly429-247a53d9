@@ -118,7 +118,7 @@ const ProductGrid = memo(() => {
   const cardWidthClass = "w-[140px] sm:w-[160px] md:w-[180px] lg:w-[200px] xl:w-[210px]";
 
   return (
-    <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Products" style={{ contain: "layout style", minHeight: "400px" }}>
+    <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Products" style={{ contain: "layout style", contentVisibility: "auto", containIntrinsicSize: "auto 800px" }}>
       <CategoryTabs tabs={allTrendingTabs} activeTab={activeTab} onTabChange={setActiveTab} />
 
       {productsLoading ? (
