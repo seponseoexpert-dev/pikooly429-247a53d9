@@ -39,10 +39,9 @@ const Index = () => {
     if ("requestIdleCallback" in window) {
       const id = (window as any).requestIdleCallback(prefetchShop, { timeout: 5000 });
       return () => (window as any).cancelIdleCallback(id);
-    } else {
-      const id = window.setTimeout(prefetchShop, 4000);
-      return () => window.clearTimeout(id);
     }
+    const id = globalThis.setTimeout(prefetchShop, 4000);
+    return () => globalThis.clearTimeout(id);
   }, [queryClient]);
 
   const seoTitle = settings.homepage_seo_title || settings.site_title || "Pikooly";
