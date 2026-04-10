@@ -5,10 +5,10 @@ import { ArrowRight, Camera, CalendarDays, Clapperboard, Gift, PartyPopper, Spar
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-// Use URL strings instead of static imports to avoid bundling large PNGs into JS
-const photoEventImg = new URL("@/assets/photo-event.png", import.meta.url).href;
-const photoVideoImg = new URL("@/assets/photo-video.png", import.meta.url).href;
-const photoGiftImg = new URL("@/assets/photo-gift.png", import.meta.url).href;
+// Lazy-load fallback images only when needed (not bundled into main chunk)
+const photoEventImg = "/src/assets/photo-event.png";
+const photoVideoImg = "/src/assets/photo-video.png";
+const photoGiftImg = "/src/assets/photo-gift.png";
 
 const PHOTO_FALLBACKS = [photoEventImg, photoVideoImg, photoGiftImg];
 
