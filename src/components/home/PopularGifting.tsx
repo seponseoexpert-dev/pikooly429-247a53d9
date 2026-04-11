@@ -2,9 +2,27 @@ import { memo } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Gift, Clock, Truck, Sparkles, Plane } from "lucide-react";
+
+/* Default items shown when DB is empty */
+const defaultItems = [
+  { id: "d1", title: "Corporate Gifts", icon: "gift", image_url: null, link: "/shop" },
+  { id: "d2", title: "Get Today", icon: "clock", image_url: null, link: "/shop" },
+  { id: "d3", title: "Midnight Delivery", icon: "truck", image_url: null, link: "/shop" },
+  { id: "d4", title: "Just Launched", icon: "sparkles", image_url: null, link: "/shop" },
+  { id: "d5", title: "Send Abroad", icon: "plane", image_url: null, link: "/shop" },
+];
+
+const iconMap: Record<string, React.ReactNode> = {
+  gift: <Gift className="w-10 h-10 text-foreground/30" />,
+  clock: <Clock className="w-10 h-10 text-foreground/30" />,
+  truck: <Truck className="w-10 h-10 text-foreground/30" />,
+  sparkles: <Sparkles className="w-10 h-10 text-foreground/30" />,
+  plane: <Plane className="w-10 h-10 text-foreground/30" />,
+};
 
 const PopularGifting = memo(() => {
-  const { data: items = [], isLoading } = useQuery({
+  const { data: dbItems = [], isLoading } = useQuery({
     queryKey: ["popular-gifting"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -18,16 +36,18 @@ const PopularGifting = memo(() => {
     staleTime: 5 * 60 * 1000,
   });
 
+  const items = dbItems.length > 0 ? dbItems : defaultItems;
+
   if (isLoading) {
     return (
       <section className="py-4 sm:py-6 lg:py-8">
         <div className="section-container">
-          <div className="h-6 w-48 bg-muted animate-pulse rounded mb-4" />
+          <div className="h-7 w-52 bg-muted animate-pulse rounded mb-5" />
           <div className="flex gap-4 overflow-hidden">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="shrink-0 w-[160px] sm:w-[200px]">
-                <div className="aspect-[4/3] rounded-xl bg-muted animate-pulse" />
-                <div className="h-4 w-24 bg-muted animate-pulse rounded mt-2 mx-auto" />
+              <div key={i} className="shrink-0 flex-1 min-w-[140px]">
+                <div className="aspect-[4/3] rounded-2xl bg-muted animate-pulse" />
+                <div className="h-4 w-24 bg-muted animate-pulse rounded mt-3 mx-auto" />
               </div>
             ))}
           </div>
@@ -36,8 +56,6 @@ const PopularGifting = memo(() => {
     );
   }
 
-  if (items.length === 0) return null;
-
   return (
     <section className="py-4 sm:py-6 lg:py-8" aria-label="Popular in Gifting">
       <div className="section-container">
@@ -45,17 +63,21 @@ const PopularGifting = memo(() => {
           Popular In Gifting
         </h2>
 
-        {/* Desktop: grid row */}
-        <div className="hidden lg:grid gap-5" style={{ gridTemplateColumns: `repeat(${Math.min(items.length, 5)}, 1fr)` }}>
-          {items.slice(0, 5).map((item) => (
+        {/* Desktop: 5-col grid */}
+        <div className="hidden lg:grid grid-cols-5 gap-5">
+          {items.slice(0, 5).map((item: any) => (
             <GiftCard key={item.id} item={item} />
           ))}
         </div>
 
         {/* Mobile/Tablet: horizontal scroll */}
         <div className="lg:hidden flex gap-3 overflow-x-auto scrollbar-hide pb-1 snap-x snap-mandatory">
-          {items.map((item) => (
-            <div key={item.id} className="shrink-0 snap-start" style={{ width: "calc(40vw - 12px)", minWidth: "140px", maxWidth: "200px" }}>
+          {items.map((item: any) => (
+            <div
+              key={item.id}
+              className="shrink-0 snap-start"
+              style={{ width: "calc(40vw - 12px)", minWidth: "140px", maxWidth: "200px" }}
+            >
               <GiftCard item={item} />
             </div>
           ))}
@@ -70,12 +92,13 @@ interface GiftItem {
   title: string;
   image_url: string | null;
   link: string | null;
+  icon?: string;
 }
 
 const GiftCard = ({ item }: { item: GiftItem }) => {
   const content = (
-    <div className="flex flex-col items-center group">
-      <div className="w-full aspect-[4/3] rounded-xl overflow-hidden bg-[#f5f0e8]">
+    <div className="flex flex-col items-center group cursor-pointer">
+      <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden bg-[#f5f0e8]">
         {item.image_url ? (
           <img
             src={item.image_url}
@@ -85,14 +108,14 @@ const GiftCard = ({ item }: { item: GiftItem }) => {
             decoding="async"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-muted-foreground/40">
-            <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-            </svg>
+          <div className="w-full h-full flex items-center justify-center">
+            {item.icon && iconMap[item.icon] ? iconMap[item.icon] : (
+              <Gift className="w-10 h-10 text-foreground/30" />
+            )}
           </div>
         )}
       </div>
-      <span className="mt-2 text-xs sm:text-sm font-medium text-foreground/80 group-hover:text-foreground transition-colors text-center line-clamp-1">
+      <span className="mt-2.5 text-xs sm:text-sm font-medium text-foreground/80 group-hover:text-foreground transition-colors text-center line-clamp-1">
         {item.title}
       </span>
     </div>
