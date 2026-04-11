@@ -237,7 +237,7 @@ const Header = () => {
               <button
                 type="button"
                 onClick={() => navigate("/search")}
-                  className={`touch-target md:hidden relative flex flex-col items-center justify-center gap-0.5 rounded-xl px-1.5 py-1.5 text-foreground/70 transition-all duration-200 hover:text-primary hover:bg-muted/50 active:scale-95 ${
+                className={`touch-target lg:hidden relative flex flex-col items-center justify-center gap-0.5 rounded-xl px-1.5 py-1.5 text-foreground/70 transition-all duration-200 hover:text-primary hover:bg-muted/50 active:scale-95 ${
                   scrolled && !mobileSearchExpanded ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden pointer-events-none"
                 }`}
                 aria-label="Search"
@@ -331,7 +331,7 @@ const Header = () => {
           {/* === MOBILE SEARCH === */}
           {/* Full search bar - shown when not scrolled OR when expanded */}
           <div
-            className={`md:hidden relative ${
+            className={`lg:hidden relative ${
               !scrolled || mobileSearchExpanded ? "pb-2 opacity-100" : "pb-0 opacity-0 pointer-events-none"
             }`}
           >
