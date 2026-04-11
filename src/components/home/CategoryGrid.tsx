@@ -57,7 +57,6 @@ const CategoryGrid = memo(() => {
   const row1 = mobileCategories.slice(0, half);
   const row2 = mobileCategories.slice(half);
   const desktopCategories = categories.slice(0, 9);
-  const desktopGridColumns = Math.min(desktopCategories.length || 1, 9);
 
   const bannerImage = banner?.bg_image_url || banner?.image_url;
 
@@ -88,8 +87,8 @@ const CategoryGrid = memo(() => {
     const itemWidth = isMobile
       ? { width: "80px" }
       : isTablet
-        ? { width: "96px" }
-        : { width: "100%", maxWidth: "132px" };
+        ? { width: "100px" }
+        : { width: "100%" };
 
     const imageShellClass = isDesktop
       ? "rounded-[20px]"
@@ -97,7 +96,11 @@ const CategoryGrid = memo(() => {
         ? "rounded-[18px]"
         : "rounded-[16px] sm:rounded-[18px]";
 
-    const imageScaleClass = isDesktop ? "max-h-[74%] max-w-[74%]" : "max-h-[72%] max-w-[72%]";
+    const imageScaleClass = isDesktop
+      ? "h-[76%] w-[76%]"
+      : isTablet
+        ? "h-[74%] w-[74%]"
+        : "h-[72%] w-[72%]";
 
     return (
       <Link
@@ -106,20 +109,20 @@ const CategoryGrid = memo(() => {
         style={itemWidth}
       >
         <div
-          className={`w-full aspect-square overflow-hidden bg-muted/40 ring-1 ring-border/30 ${imageShellClass} ${
+          className={`w-full aspect-square overflow-hidden bg-muted/25 ${imageShellClass} ${
             isDesktop
-              ? "rounded-[20px] group-hover:shadow-md group-hover:scale-[1.03] transition-all duration-200"
+              ? "group-hover:shadow-md group-hover:scale-[1.03] transition-all duration-200"
               : "transition-all duration-200"
           }`}
         >
-          <div className="flex h-full w-full items-center justify-center rounded-[inherit] bg-background/90 p-2 sm:p-2.5">
+          <div className="flex h-full w-full items-center justify-center p-2">
             <img
               src={cat.image_url || "/placeholder.svg"}
               alt={cat.name}
               width={isDesktop ? 140 : 100}
               height={isDesktop ? 140 : 100}
               decoding="async"
-              className={`${imageScaleClass} h-auto w-auto object-contain`}
+              className={`${imageScaleClass} object-contain`}
               loading={idx < 4 ? "eager" : "lazy"}
               fetchPriority={idx < 2 ? "high" : undefined}
             />
@@ -137,7 +140,7 @@ const CategoryGrid = memo(() => {
   };
 
   return (
-    <section className="py-3 sm:py-4 md:py-5 lg:py-8" aria-label="Shop by Category" style={{ contain: "layout style", minHeight: "180px" }}>
+    <section className="py-3 sm:py-4 md:py-5 lg:py-6" aria-label="Shop by Category" style={{ contain: "layout style", minHeight: "180px" }}>
       {/* Mobile: 2 horizontal scroll rows with banner between */}
       <div className="sm:hidden space-y-3">
         <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-0.5 snap-x snap-mandatory">
@@ -161,10 +164,7 @@ const CategoryGrid = memo(() => {
       </div>
 
       {/* Desktop: single row of 9 */}
-      <div
-        className="hidden lg:grid justify-items-center gap-x-5 gap-y-4 section-container"
-        style={{ gridTemplateColumns: `repeat(${desktopGridColumns}, minmax(0, 1fr))` }}
-      >
+      <div className="hidden lg:grid grid-cols-9 gap-x-4 gap-y-4 section-container">
         {desktopCategories.map((cat, idx) => (
           <CategoryItem key={cat.id} cat={cat} idx={idx} size="desktop" />
         ))}
