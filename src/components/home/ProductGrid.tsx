@@ -156,26 +156,32 @@ const ProductGrid = memo(() => {
         </div>
       )}
 
-      <div className="mt-8 sm:mt-10 md:mt-12 lg:mt-14 mb-3 md:mb-5 text-center">
-        <h2 className="section-heading font-display font-semibold text-foreground mb-1">Tailored For Your Occasions</h2>
-        <p className="text-muted-foreground text-[12px] sm:text-[13px]">Find the perfect gift for every moment</p>
+      <div className="mt-8 sm:mt-10 md:mt-12 lg:mt-14 mb-0 text-left section-container">
+        <h2 className="section-heading font-display font-semibold text-foreground">Tailored For Your Occasions</h2>
       </div>
 
       {occasionCategories.length > 0 && (
-        <div className="flex gap-3 sm:gap-4 md:gap-5 overflow-x-auto pb-3 mb-4 md:mb-6 scrollbar-hide justify-start sm:justify-center px-1">
+        <div className="flex overflow-x-auto scrollbar-hide border-b border-border/50 mb-4 md:mb-6 section-container">
           {occasionCategories.map((cat) => {
             const isActive = activeTailoredSlug === cat.slug;
             return (
-              <button key={cat.slug} onClick={() => setActiveTailoredSlug(cat.slug)} className="flex flex-col items-center gap-1.5 min-w-[56px] sm:min-w-[64px] group relative">
-                <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center transition-all duration-300 ${isActive ? "bg-primary text-primary-foreground shadow-md" : "bg-muted/50 text-muted-foreground group-hover:bg-muted group-hover:text-foreground"}`}>
+              <button
+                key={cat.slug}
+                onClick={() => setActiveTailoredSlug(cat.slug)}
+                className={`flex flex-col items-center gap-1.5 px-5 sm:px-7 md:px-8 py-3 sm:py-4 shrink-0 relative transition-all duration-200 border-b-2 -mb-[1px] ${
+                  isActive
+                    ? "border-primary text-foreground"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <div className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
                   {cat.image_url ? (
-                    <img src={cat.image_url} alt={cat.name} className={`w-5 h-5 rounded object-cover transition-all ${isActive ? "brightness-0 invert" : ""}`} loading="lazy" decoding="async" />
+                    <img src={cat.image_url} alt={cat.name} className="w-5 h-5 sm:w-6 sm:h-6 object-contain" loading="lazy" decoding="async" />
                   ) : (
-                    <Gift size={18} />
+                    <Gift size={20} />
                   )}
                 </div>
-                <span className={`text-[10px] sm:text-[11px] font-medium whitespace-nowrap transition-colors ${isActive ? "text-foreground" : "text-muted-foreground"}`}>{cat.name}</span>
-                {isActive && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full bg-primary" />}
+                <span className={`text-[11px] sm:text-[13px] whitespace-nowrap ${isActive ? "font-semibold" : "font-medium"}`}>{cat.name}</span>
               </button>
             );
           })}
