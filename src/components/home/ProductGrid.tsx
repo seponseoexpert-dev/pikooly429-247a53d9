@@ -134,9 +134,9 @@ const ProductGrid = memo(() => {
 
       {productsLoading ? (
         <div className="py-4">
-          <div className="flex gap-3 overflow-hidden">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="w-[140px] sm:w-[160px] md:w-[180px] flex-shrink-0">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i}>
                 <div className="aspect-square rounded-xl bg-muted animate-pulse" />
                 <div className="mt-2 h-3 w-3/4 rounded bg-muted animate-pulse" />
                 <div className="mt-1.5 h-3 w-1/2 rounded bg-muted animate-pulse" />
@@ -150,13 +150,24 @@ const ProductGrid = memo(() => {
           <p className="text-muted-foreground text-sm">No products found in this category</p>
         </div>
       ) : (
-        <ProductCarousel>
-          {trendingProducts.map((product: any) => (
-            <div key={product.id} className={`flex-shrink-0 snap-start ${cardWidthClass}`}>
-              <ProductCard product={product} />
-            </div>
-          ))}
-        </ProductCarousel>
+        <>
+          {/* Desktop: 5-column grid */}
+          <div className="hidden lg:grid grid-cols-5 gap-4">
+            {trendingProducts.slice(0, 5).map((product: any) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+          {/* Mobile/Tablet: carousel */}
+          <div className="lg:hidden">
+            <ProductCarousel>
+              {trendingProducts.slice(0, 10).map((product: any) => (
+                <div key={product.id} className={`flex-shrink-0 snap-start ${cardWidthClass}`}>
+                  <ProductCard product={product} />
+                </div>
+              ))}
+            </ProductCarousel>
+          </div>
+        </>
       )}
 
 
