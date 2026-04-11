@@ -57,7 +57,6 @@ const CategoryGrid = memo(() => {
   const row1 = mobileCategories.slice(0, half);
   const row2 = mobileCategories.slice(half);
   const desktopCategories = categories.slice(0, 9);
-  const desktopGridColumns = Math.min(desktopCategories.length || 1, 9);
 
   const bannerImage = banner?.bg_image_url || banner?.image_url;
 
@@ -86,22 +85,22 @@ const CategoryGrid = memo(() => {
     const isMobile = size === "mobile";
     const isTablet = size === "tablet";
     const itemWidth = isMobile
-      ? { width: "78px" }
+      ? { width: "80px" }
       : isTablet
-        ? { width: "94px" }
-        : { width: "100%", maxWidth: "122px" };
+        ? { width: "100px" }
+        : { width: "100%" };
 
     const imageShellClass = isDesktop
-      ? "rounded-[18px]"
+      ? "rounded-[20px]"
       : isTablet
         ? "rounded-[18px]"
         : "rounded-[16px] sm:rounded-[18px]";
 
     const imageScaleClass = isDesktop
-      ? "h-[74%] w-[74%]"
+      ? "h-[76%] w-[76%]"
       : isTablet
-        ? "h-[72%] w-[72%]"
-        : "h-[70%] w-[70%]";
+        ? "h-[74%] w-[74%]"
+        : "h-[72%] w-[72%]";
 
     return (
       <Link
@@ -112,11 +111,11 @@ const CategoryGrid = memo(() => {
         <div
           className={`w-full aspect-square overflow-hidden bg-muted/25 ${imageShellClass} ${
             isDesktop
-              ? "group-hover:shadow-md group-hover:scale-[1.02] transition-all duration-200"
+              ? "group-hover:shadow-md group-hover:scale-[1.03] transition-all duration-200"
               : "transition-all duration-200"
           }`}
         >
-          <div className="flex h-full w-full items-center justify-center p-1.5 sm:p-2">
+          <div className="flex h-full w-full items-center justify-center p-2">
             <img
               src={cat.image_url || "/placeholder.svg"}
               alt={cat.name}
@@ -131,7 +130,7 @@ const CategoryGrid = memo(() => {
         </div>
         <span
           className={`font-medium text-foreground/80 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-2 w-full ${
-            isDesktop ? "text-[13px]" : "text-[10.5px] sm:text-[11.5px]"
+            isDesktop ? "text-[13px]" : "text-[11px] sm:text-[12px]"
           }`}
         >
           {cat.name}
@@ -141,7 +140,7 @@ const CategoryGrid = memo(() => {
   };
 
   return (
-    <section className="py-3 sm:py-4 md:py-5 lg:py-8" aria-label="Shop by Category" style={{ contain: "layout style", minHeight: "180px" }}>
+    <section className="py-3 sm:py-4 md:py-5 lg:py-6" aria-label="Shop by Category" style={{ contain: "layout style", minHeight: "180px" }}>
       {/* Mobile: 2 horizontal scroll rows with banner between */}
       <div className="sm:hidden space-y-3">
         <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-0.5 snap-x snap-mandatory">
@@ -165,10 +164,7 @@ const CategoryGrid = memo(() => {
       </div>
 
       {/* Desktop: single row of 9 */}
-      <div
-        className="hidden lg:grid justify-items-center gap-x-5 gap-y-4 section-container"
-        style={{ gridTemplateColumns: `repeat(${desktopGridColumns}, minmax(0, 1fr))` }}
-      >
+      <div className="hidden lg:grid grid-cols-9 gap-x-4 gap-y-4 section-container">
         {desktopCategories.map((cat, idx) => (
           <CategoryItem key={cat.id} cat={cat} idx={idx} size="desktop" />
         ))}
