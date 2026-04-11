@@ -1,7 +1,14 @@
-import { memo, useRef } from "react";
+import { memo } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+
+type Category = {
+  id: string;
+  name: string;
+  slug: string;
+  image_url: string | null;
+};
 
 const CategoryGrid = memo(() => {
   const { data: categories = [], isLoading } = useQuery({
@@ -46,87 +53,64 @@ const CategoryGrid = memo(() => {
 
   if (categories.length === 0) return null;
 
-  const row1 = categories.slice(0, Math.ceil(categories.length / 2));
-  const row2 = categories.slice(Math.ceil(categories.length / 2));
+  const compactCategories = categories.slice(0, 8);
   const desktopCategories = categories.slice(0, 9);
 
   return (
     <section className="py-3 sm:py-4 lg:py-6" aria-label="Shop by Category" style={{ contain: "layout style", minHeight: "180px" }}>
-      {/* Mobile & Tablet: Two rows, horizontal scroll like FNP */}
-      <div className="lg:hidden space-y-5">
-        <ScrollRow categories={row1} startIdx={0} />
-        <ScrollRow categories={row2} startIdx={row1.length} />
+      <div className="grid grid-cols-4 gap-x-2.5 gap-y-4 px-3 sm:px-6 lg:hidden">
+        {compactCategories.map((cat, idx) => (
+          <div key={cat.id} className="flex justify-center">
+            <CategoryItem cat={cat} idx={idx} size="compact" />
+          </div>
+        ))}
       </div>
 
-      {/* Desktop: 9-column grid */}
       <div className="hidden lg:grid grid-cols-9 gap-x-5 gap-y-4 section-container">
         {desktopCategories.map((cat, idx) => (
-          <Link
-            key={cat.id}
-            to={`/product-category/${cat.slug}`}
-            className="flex flex-col items-center gap-2.5 group"
-          >
-            <div className="w-full aspect-square overflow-hidden rounded-[20px] bg-[#f5f5f5] group-hover:shadow-md group-hover:scale-[1.03] transition-all duration-200">
-              <div className="flex h-full w-full items-center justify-center p-3">
-                <img
-                  src={cat.image_url || "/placeholder.svg"}
-                  alt={cat.name}
-                  width={140}
-                  height={140}
-                  decoding="async"
-                  className="max-h-[80%] max-w-[80%] h-auto w-auto object-contain"
-                  loading={idx < 4 ? "eager" : "lazy"}
-                  fetchPriority={idx < 2 ? "high" : undefined}
-                />
-              </div>
-            </div>
-            <span className="text-[13px] font-medium text-foreground/80 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-2 w-full">
-              {cat.name}
-            </span>
-          </Link>
+          <CategoryItem key={cat.id} cat={cat} idx={idx} size="desktop" />
         ))}
       </div>
     </section>
   );
 });
 
-/** Horizontal scroll row for mobile/tablet — FNP style large icons */
-const ScrollRow = ({ categories, startIdx }: { categories: { id: string; name: string; slug: string; image_url: string | null }[]; startIdx: number }) => {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
+const CategoryItem = ({ cat, idx, size }: { cat: Category; idx: number; size: "compact" | "desktop" }) => {
   return (
-    <div
-      ref={scrollRef}
-      className="flex gap-3 sm:gap-4 px-4 sm:px-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory"
-      style={{ WebkitOverflowScrolling: "touch" }}
+    <Link
+      to={`/product-category/${cat.slug}`}
+      className={`group flex w-full flex-col items-center ${
+        size === "compact" ? "max-w-[82px] gap-2 sm:max-w-[104px]" : "gap-2.5"
+      }`}
     >
-      {categories.map((cat, idx) => (
-        <Link
-          key={cat.id}
-          to={`/product-category/${cat.slug}`}
-          className="flex flex-col items-center gap-1.5 shrink-0 snap-start group"
-          style={{ width: "90px" }}
-        >
-          <div className="w-[90px] h-[90px] sm:w-[100px] sm:h-[100px] overflow-hidden rounded-2xl bg-[#f5f5f5]">
-            <div className="flex h-full w-full items-center justify-center p-2">
-              <img
-                src={cat.image_url || "/placeholder.svg"}
-                alt={cat.name}
-                width={80}
-                height={80}
-                decoding="async"
-                className="max-h-[78%] max-w-[78%] h-auto w-auto object-contain"
-                loading={startIdx + idx < 4 ? "eager" : "lazy"}
-                fetchPriority={startIdx + idx < 2 ? "high" : undefined}
-              />
-            </div>
-          </div>
-          <span className="text-[11px] sm:text-[12px] font-medium text-foreground/80 text-center leading-tight line-clamp-2 w-full">
-            {cat.name}
-          </span>
-        </Link>
-      ))}
-    </div>
+      <div
+        className={`flex aspect-square w-full items-center justify-center overflow-hidden bg-muted/70 transition-all duration-200 ${
+          size === "compact"
+            ? "rounded-[18px] p-2.5 shadow-sm"
+            : "rounded-[20px] p-3 group-hover:scale-[1.03] group-hover:shadow-md"
+        }`}
+      >
+        <img
+          src={cat.image_url || "/placeholder.svg"}
+          alt={cat.name}
+          width={size === "compact" ? 84 : 140}
+          height={size === "compact" ? 84 : 140}
+          decoding="async"
+          className={`h-auto w-auto object-contain transition-transform duration-200 group-hover:scale-[1.04] ${
+            size === "compact" ? "max-h-[80%] max-w-[80%]" : "max-h-[80%] max-w-[80%]"
+          }`}
+          loading={idx < 4 ? "eager" : "lazy"}
+          fetchPriority={idx < 2 ? "high" : undefined}
+        />
+      </div>
+      <span
+        className={`w-full text-center font-medium leading-tight line-clamp-2 text-foreground/80 transition-colors group-hover:text-foreground ${
+          size === "compact" ? "text-[11px] sm:text-xs" : "text-[13px]"
+        }`}
+      >
+        {cat.name}
+      </span>
+    </Link>
   );
 };
 
