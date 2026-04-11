@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 // Lazy load all below-fold sections
 const OfferBanners = lazy(() => import("@/components/home/OfferBanners"));
+const PopularGifting = lazy(() => import("@/components/home/PopularGifting"));
 const RelationshipGrid = lazy(() => import("@/components/home/RelationshipGrid"));
 const CelebrationsCalendar = lazy(() => import("@/components/home/CelebrationsCalendar"));
 const GiftingStories = lazy(() => import("@/components/home/GiftingStories"));
@@ -95,6 +96,11 @@ const Index = () => {
       <div className="deferred-section">
         <Suspense fallback={<LazyFallback />}>
           <OfferBanners />
+        </Suspense>
+      </div>
+      <div className="deferred-section">
+        <Suspense fallback={<LazyFallback />}>
+          <PopularGifting />
         </Suspense>
       </div>
       <div className="deferred-section">
