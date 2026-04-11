@@ -21,7 +21,6 @@ const CategoryGrid = memo(() => {
     placeholderData: (prev) => prev,
   });
 
-  // Fetch a single active banner to show between category rows
   const { data: banner } = useQuery({
     queryKey: ["category-banner"],
     queryFn: async () => {
@@ -39,10 +38,10 @@ const CategoryGrid = memo(() => {
   });
 
   if (isLoading) return (
-    <section className="py-4 sm:py-5 md:py-6 lg:py-8 section-container" style={{ minHeight: "280px" }}>
-      <div className="grid grid-cols-4 gap-3">
+    <section className="py-3 sm:py-4 section-container" style={{ minHeight: "260px" }}>
+      <div className="flex gap-3 overflow-hidden">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="flex flex-col items-center gap-1.5">
+          <div key={i} className="flex flex-col items-center gap-1.5 shrink-0" style={{ width: "22vw" }}>
             <div className="w-full aspect-square rounded-xl bg-muted animate-pulse" />
             <div className="h-2.5 w-14 rounded bg-muted animate-pulse" />
           </div>
@@ -53,31 +52,54 @@ const CategoryGrid = memo(() => {
 
   if (categories.length === 0) return null;
 
-  // Mobile: first 8 categories in 2 rows of 4
-  const mobileCategories = categories.slice(0, 8);
-  const mobileRow1 = mobileCategories.slice(0, 4);
-  const mobileRow2 = mobileCategories.slice(4, 8);
+  // Split categories into two rows for mobile scroll
+  const half = Math.ceil(categories.length / 2);
+  const row1 = categories.slice(0, half);
+  const row2 = categories.slice(half);
 
-  // Desktop: first 9 categories in single row
+  // Desktop: first 9
   const desktopCategories = categories.slice(0, 9);
 
-  const CategoryCard = ({ cat, idx, size = "mobile" }: { cat: typeof categories[0]; idx: number; size?: "mobile" | "desktop" }) => (
+  const bannerImage = banner?.bg_image_url || banner?.image_url;
+
+  const BannerSlot = () => {
+    if (!bannerImage) return null;
+    const content = (
+      <div className="rounded-xl overflow-hidden">
+        <img
+          src={bannerImage}
+          alt={banner?.title || "Offer"}
+          className="w-full h-auto object-cover"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    );
+    return banner?.link ? (
+      <Link to={banner.link} className="block mx-4 sm:mx-5">{content}</Link>
+    ) : (
+      <div className="mx-4 sm:mx-5">{content}</div>
+    );
+  };
+
+  const CategoryItem = ({ cat, idx, isDesktop = false }: { cat: typeof categories[0]; idx: number; isDesktop?: boolean }) => (
     <Link
       to={`/product-category/${cat.slug}`}
-      className="flex flex-col items-center gap-1.5 group"
+      className={`flex flex-col items-center group ${isDesktop ? "gap-2" : "gap-1 shrink-0 snap-start"}`}
+      style={isDesktop ? undefined : { width: "22vw", minWidth: "76px", maxWidth: "110px" }}
     >
       <div className={`
-        w-full aspect-square rounded-xl overflow-hidden bg-card
-        shadow-[0_2px_10px_-2px_rgba(0,0,0,0.10)]
-        group-hover:shadow-[0_4px_16px_-3px_rgba(0,0,0,0.16)]
+        w-full aspect-square rounded-xl overflow-hidden bg-white
+        shadow-[0_1px_6px_-1px_rgba(0,0,0,0.08)]
+        group-hover:shadow-[0_3px_12px_-2px_rgba(0,0,0,0.14)]
         transition-all duration-300
-        ${size === "desktop" ? "group-hover:scale-[1.03] p-3" : "p-2"}
+        ${isDesktop ? "group-hover:scale-[1.03] p-2.5" : "p-1.5 sm:p-2"}
       `}>
         <img
           src={cat.image_url || "/placeholder.svg"}
           alt={cat.name}
-          width={size === "desktop" ? 120 : 96}
-          height={size === "desktop" ? 120 : 96}
+          width={isDesktop ? 120 : 96}
+          height={isDesktop ? 120 : 96}
           decoding="async"
           className="w-full h-full object-contain"
           loading={idx < 4 ? "eager" : "lazy"}
@@ -86,64 +108,40 @@ const CategoryGrid = memo(() => {
       </div>
       <span className={`
         font-medium text-foreground/80 group-hover:text-foreground
-        transition-colors text-center leading-tight line-clamp-2 w-full px-0.5
-        ${size === "desktop" ? "text-xs" : "text-[10px] sm:text-[11px]"}
+        transition-colors text-center leading-tight line-clamp-2 w-full
+        ${isDesktop ? "text-xs" : "text-[10px] sm:text-[11px]"}
       `}>
         {cat.name}
       </span>
     </Link>
   );
 
-  const BannerSlot = () => {
-    if (!banner) return null;
-    const bannerImage = banner.bg_image_url || banner.image_url;
-    if (!bannerImage) return null;
-
-    const content = (
-      <div className="w-full rounded-xl overflow-hidden shadow-[0_2px_10px_-2px_rgba(0,0,0,0.10)]">
-        <img
-          src={bannerImage}
-          alt={banner.title || "Offer"}
-          className="w-full h-auto object-cover"
-          loading="lazy"
-          decoding="async"
-        />
-      </div>
-    );
-
-    return banner.link ? (
-      <Link to={banner.link} className="block">{content}</Link>
-    ) : (
-      <div>{content}</div>
-    );
-  };
-
   return (
-    <section className="py-4 sm:py-5 md:py-6 lg:py-8 section-container" aria-label="Shop by Category" style={{ contain: "layout style", minHeight: "200px" }}>
-      {/* Mobile/Tablet: 2 rows of 4 with banner in between */}
-      <div className="lg:hidden space-y-3">
-        {/* Row 1 - 4 categories */}
-        <div className="grid grid-cols-4 gap-2.5 sm:gap-3">
-          {mobileRow1.map((cat, idx) => (
-            <CategoryCard key={cat.id} cat={cat} idx={idx} size="mobile" />
+    <section className="py-3 sm:py-4 md:py-5 lg:py-8" aria-label="Shop by Category" style={{ contain: "layout style", minHeight: "200px" }}>
+      {/* Mobile/Tablet: 2 horizontal scroll rows with banner between */}
+      <div className="lg:hidden space-y-2.5">
+        {/* Row 1 - horizontal scroll */}
+        <div className="flex gap-2.5 sm:gap-3 overflow-x-auto scrollbar-hide px-4 sm:px-5 pb-1 snap-x snap-mandatory">
+          {row1.map((cat, idx) => (
+            <CategoryItem key={cat.id} cat={cat} idx={idx} />
           ))}
         </div>
 
         {/* Banner between rows */}
         <BannerSlot />
 
-        {/* Row 2 - 4 categories */}
-        <div className="grid grid-cols-4 gap-2.5 sm:gap-3">
-          {mobileRow2.map((cat, idx) => (
-            <CategoryCard key={cat.id} cat={cat} idx={idx + 4} size="mobile" />
+        {/* Row 2 - horizontal scroll */}
+        <div className="flex gap-2.5 sm:gap-3 overflow-x-auto scrollbar-hide px-4 sm:px-5 pb-1 snap-x snap-mandatory">
+          {row2.map((cat, idx) => (
+            <CategoryItem key={cat.id} cat={cat} idx={idx + half} />
           ))}
         </div>
       </div>
 
-      {/* Desktop: single row of 9 */}
-      <div className="hidden lg:grid grid-cols-9 gap-x-4 gap-y-4 xl:gap-x-5">
+      {/* Desktop: single row grid of 9 */}
+      <div className="hidden lg:grid grid-cols-9 gap-x-4 gap-y-4 xl:gap-x-5 section-container">
         {desktopCategories.map((cat, idx) => (
-          <CategoryCard key={cat.id} cat={cat} idx={idx} size="desktop" />
+          <CategoryItem key={cat.id} cat={cat} idx={idx} isDesktop />
         ))}
       </div>
     </section>
