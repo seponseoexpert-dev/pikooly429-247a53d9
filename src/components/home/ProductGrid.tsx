@@ -86,10 +86,13 @@ const ProductGrid = memo(() => {
 
   const trendingProducts = useMemo(() => {
     const tab = allTrendingTabs.find((t) => t.id === activeTab);
-    if (!tab) return featured.length > 0 ? featured.slice(0, 12) : products.slice(0, 12);
+    if (!tab) return products.slice(0, 12);
     if (tab.type === "trending") {
       if (tab.id === "best") return [...products].sort((a: any, b: any) => (b.review_count || 0) - (a.review_count || 0)).slice(0, 12);
-      return featured.length > 0 ? featured.slice(0, 12) : products.slice(0, 12);
+      // "For You": show featured first, then fill with remaining products
+      const featuredIds = new Set(featured.map((p: any) => p.id));
+      const rest = products.filter((p: any) => !featuredIds.has(p.id));
+      return [...featured, ...rest].slice(0, 12);
     }
     if (tab.type === "sub" && "subId" in tab) {
       return products.filter((p: any) => p.subcategory_id === tab.subId || p.product_subcategories?.some((psc: any) => psc.subcategory_id === tab.subId)).slice(0, 12);
