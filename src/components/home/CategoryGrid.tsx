@@ -135,8 +135,8 @@ const CategoryGrid = memo(() => {
         </div>
       </div>
 
-      {/* Tablet: 2 rows grid, 4 per row */}
-      <div className="hidden sm:grid lg:hidden grid-cols-4 gap-4 px-6">
+      {/* Tablet: single row scroll */}
+      <div className="hidden sm:flex lg:hidden gap-4 overflow-x-auto scrollbar-hide px-6 pb-1 snap-x snap-mandatory">
         {mobileCategories.map((cat, idx) => (
           <CategoryItem key={cat.id} cat={cat} idx={idx} size="tablet" />
         ))}
