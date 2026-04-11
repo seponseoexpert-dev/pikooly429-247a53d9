@@ -138,7 +138,7 @@ const CategoryGrid = memo(() => {
       {/* Tablet: 2 rows grid, 4 per row */}
       <div className="hidden sm:grid lg:hidden grid-cols-4 gap-4 px-6">
         {mobileCategories.map((cat, idx) => (
-          <CategoryItem key={cat.id} cat={cat} idx={idx} />
+          <CategoryItem key={cat.id} cat={cat} idx={idx} size="tablet" />
         ))}
       </div>
 
