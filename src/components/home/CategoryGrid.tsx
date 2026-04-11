@@ -84,11 +84,7 @@ const CategoryGrid = memo(() => {
     const isDesktop = size === "desktop";
     const isMobile = size === "mobile";
     const isTablet = size === "tablet";
-    const itemWidth = isMobile
-      ? { width: "80px" }
-      : isTablet
-        ? { width: "100px" }
-        : { width: "100%" };
+    const itemWidth = { width: "100%" };
 
     const imageShellClass = isDesktop
       ? "rounded-[20px]"
@@ -105,7 +101,7 @@ const CategoryGrid = memo(() => {
     return (
       <Link
         to={`/product-category/${cat.slug}`}
-        className={`flex flex-col items-center group shrink-0 snap-start ${isDesktop ? "gap-2.5" : "gap-1.5"}`}
+        className={`flex w-full flex-col items-center group ${isDesktop ? "gap-2.5" : "gap-1.5"}`}
         style={itemWidth}
       >
         <div
@@ -143,28 +139,28 @@ const CategoryGrid = memo(() => {
     <section className="py-3 sm:py-4 md:py-5 lg:py-6" aria-label="Shop by Category" style={{ contain: "layout style", minHeight: "180px" }}>
       {/* Mobile: 2 horizontal scroll rows with banner between */}
       <div className="sm:hidden space-y-3">
-        <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-0.5 snap-x snap-mandatory">
+        <div className="grid grid-cols-4 gap-x-3 gap-y-4 px-4">
           {row1.map((cat, idx) => (
             <CategoryItem key={cat.id} cat={cat} idx={idx} />
           ))}
         </div>
         <BannerSlot />
-        <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-0.5 snap-x snap-mandatory">
+        <div className="grid grid-cols-4 gap-x-3 gap-y-4 px-4">
           {row2.map((cat, idx) => (
             <CategoryItem key={cat.id} cat={cat} idx={idx + half} />
           ))}
         </div>
       </div>
 
-      {/* Tablet: single row scroll */}
-      <div className="hidden sm:flex lg:hidden gap-4 overflow-x-auto scrollbar-hide px-6 pb-1 snap-x snap-mandatory">
+      {/* Tablet: stable grid */}
+      <div className="hidden sm:grid lg:hidden grid-cols-4 gap-x-4 gap-y-4 px-6">
         {mobileCategories.map((cat, idx) => (
           <CategoryItem key={cat.id} cat={cat} idx={idx} size="tablet" />
         ))}
       </div>
 
       {/* Desktop: single row of 9 */}
-      <div className="hidden lg:grid grid-cols-9 gap-x-4 gap-y-4 section-container">
+      <div className="hidden lg:grid grid-cols-9 gap-x-4 xl:gap-x-5 gap-y-4 section-container">
         {desktopCategories.map((cat, idx) => (
           <CategoryItem key={cat.id} cat={cat} idx={idx} size="desktop" />
         ))}
