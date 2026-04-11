@@ -156,7 +156,7 @@ const ProductGrid = memo(() => {
         </div>
       )}
 
-      <div className="mt-8 sm:mt-10 md:mt-12 lg:mt-14 bg-[hsl(var(--muted)/0.4)] py-6 sm:py-8 md:py-10 px-4 sm:px-6 md:px-8 rounded-none">
+      <div className="mt-8 sm:mt-10 md:mt-12 lg:mt-14 bg-[#f5f5f5] py-6 sm:py-8 md:py-10 px-4 sm:px-6 md:px-8">
         <div className="section-container">
           <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-4 sm:mb-5">Tailored For Your Occasions</h2>
 
