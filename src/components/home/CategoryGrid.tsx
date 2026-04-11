@@ -122,7 +122,7 @@ const CategoryGrid = memo(() => {
       {/* Mobile/Tablet: 2 horizontal scroll rows with banner between */}
       <div className="lg:hidden space-y-3">
         {/* Row 1 */}
-        <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-0.5 snap-x snap-mandatory">
+        <div className="flex gap-3 sm:gap-5 overflow-x-auto scrollbar-hide px-4 pb-0.5 snap-x snap-mandatory sm:justify-center">
           {row1.map((cat, idx) => (
             <CategoryItem key={cat.id} cat={cat} idx={idx} />
           ))}
@@ -131,7 +131,7 @@ const CategoryGrid = memo(() => {
         <BannerSlot />
 
         {/* Row 2 */}
-        <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-0.5 snap-x snap-mandatory">
+        <div className="flex gap-3 sm:gap-5 overflow-x-auto scrollbar-hide px-4 pb-0.5 snap-x snap-mandatory sm:justify-center">
           {row2.map((cat, idx) => (
             <CategoryItem key={cat.id} cat={cat} idx={idx + half} />
           ))}
