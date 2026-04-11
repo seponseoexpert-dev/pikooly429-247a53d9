@@ -83,11 +83,13 @@ const CategoryGrid = memo(() => {
   const CategoryItem = ({ cat, idx, size = "mobile" }: { cat: typeof categories[0]; idx: number; size?: "mobile" | "desktop" | "tablet" }) => {
     const isDesktop = size === "desktop";
     const isMobile = size === "mobile";
+    const isTablet = size === "tablet";
+    const itemWidth = isMobile ? { width: "80px" } : isTablet ? { width: "100px" } : {};
     return (
       <Link
         to={`/product-category/${cat.slug}`}
         className={`flex flex-col items-center group shrink-0 snap-start ${isDesktop ? "gap-2.5" : "gap-1.5"}`}
-        style={isMobile ? { width: "80px" } : {}}
+        style={itemWidth}
       >
         <div
           className={`w-full aspect-square overflow-hidden bg-[#f5f5f5] ${
