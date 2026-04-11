@@ -39,13 +39,13 @@ const CategoryGrid = memo(() => {
   return (
     <section className="py-4 sm:py-5 md:py-6 lg:py-8 section-container" aria-label="Shop by Category" style={{ contain: "layout style", minHeight: "200px" }}>
       {/* Mobile/Tablet: 2-row horizontal scroll | Desktop: full grid */}
-      <div className="lg:hidden">
-        <div className="grid grid-rows-2 grid-flow-col gap-x-3 gap-y-3 sm:gap-x-4 sm:gap-y-4 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory auto-cols-[80px] sm:auto-cols-[90px] md:auto-cols-[100px]">
+      <div className="lg:hidden -mx-4 px-4">
+        <div className="flex flex-nowrap gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory">
           {categories.map((cat, idx) => (
             <Link
               key={cat.id}
               to={`/product-category/${cat.slug}`}
-              className="flex flex-col items-center gap-1.5 group snap-start"
+              className="flex flex-col items-center gap-1.5 group snap-start shrink-0"
             >
               <div className="w-[76px] h-[76px] sm:w-[86px] sm:h-[86px] md:w-[96px] md:h-[96px] rounded-xl overflow-hidden bg-card shadow-[0_2px_12px_-3px_rgba(0,0,0,0.12)] group-hover:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.18)] transition-all duration-300 p-1.5 sm:p-2">
                 <img
