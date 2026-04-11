@@ -225,7 +225,7 @@ const Header = () => {
             </Link>
 
             {/* Desktop Search — navigates to search page */}
-            <div className="hidden md:block flex-1 max-w-md lg:max-w-xl xl:max-w-2xl mx-auto relative">
+            <div className="hidden md:block lg:hidden flex-1 max-w-md mx-auto relative">
               <div className="relative group cursor-pointer" onClick={() => navigate("/search")}>
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={17} />
                 <div className="w-full rounded-full border border-border/40 bg-muted/30 py-2.5 pl-11 pr-10 text-[13px] text-muted-foreground/50 transition-all duration-200 hover:border-primary/40 hover:bg-card hover:ring-1 hover:ring-primary/10 lg:py-2.5">
