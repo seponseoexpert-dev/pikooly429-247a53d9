@@ -159,13 +159,6 @@ const ProductGrid = memo(() => {
         </ProductCarousel>
       )}
 
-      {trendingProducts.length > 0 && (
-        <div className="text-center mt-4 sm:mt-6">
-          <Link to={trendingViewAllLink} className="inline-block px-6 py-2 border border-foreground/15 text-foreground rounded-full text-[12px] sm:text-[13px] font-medium hover:bg-foreground hover:text-background transition-all duration-300">
-            {trendingViewAllText} →
-          </Link>
-        </div>
-      )}
 
       <div className="mt-8 sm:mt-10 md:mt-12 lg:mt-14 bg-[#f5f5f0] py-6 sm:py-8 md:py-10 px-4 sm:px-6 md:px-8">
         <div className="section-container">
