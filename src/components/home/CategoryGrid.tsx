@@ -54,11 +54,12 @@ const CategoryGrid = memo(() => {
   if (categories.length === 0) return null;
 
   const compactCategories = categories.slice(0, 8);
+  const tabletCategories = categories.slice(0, 8);
   const desktopCategories = categories.slice(0, 9);
 
   return (
     <section className="py-3 sm:py-4 lg:py-6" aria-label="Shop by Category" style={{ contain: "layout style", minHeight: "180px" }}>
-      <div className="grid grid-cols-4 gap-x-2.5 gap-y-4 px-3 sm:px-6 lg:hidden">
+      <div className="grid grid-cols-4 gap-x-2.5 gap-y-4 px-3 sm:px-6 md:hidden">
         {compactCategories.map((cat, idx) => (
           <div key={cat.id} className="flex justify-center">
             <CategoryItem cat={cat} idx={idx} size="compact" />
@@ -66,7 +67,13 @@ const CategoryGrid = memo(() => {
         ))}
       </div>
 
-      <div className="hidden lg:grid grid-cols-9 gap-x-5 gap-y-4 section-container">
+      <div className="hidden md:grid xl:hidden grid-cols-8 gap-x-4 gap-y-4 section-container">
+        {tabletCategories.map((cat, idx) => (
+          <CategoryItem key={cat.id} cat={cat} idx={idx} size="desktop" />
+        ))}
+      </div>
+
+      <div className="hidden xl:grid grid-cols-9 gap-x-5 gap-y-4 section-container">
         {desktopCategories.map((cat, idx) => (
           <CategoryItem key={cat.id} cat={cat} idx={idx} size="desktop" />
         ))}
@@ -86,8 +93,8 @@ const CategoryItem = ({ cat, idx, size }: { cat: Category; idx: number; size: "c
       <div
         className={`flex aspect-square w-full items-center justify-center overflow-hidden bg-muted/70 transition-all duration-200 ${
           size === "compact"
-            ? "rounded-[18px] p-2.5 shadow-sm"
-            : "rounded-[20px] p-3 group-hover:scale-[1.03] group-hover:shadow-md"
+            ? "rounded-[18px] p-2 shadow-sm"
+            : "rounded-[20px] p-2.5 group-hover:scale-[1.03] group-hover:shadow-md lg:p-3"
         }`}
       >
         <img
@@ -97,7 +104,7 @@ const CategoryItem = ({ cat, idx, size }: { cat: Category; idx: number; size: "c
           height={size === "compact" ? 84 : 140}
           decoding="async"
           className={`h-auto w-auto object-contain transition-transform duration-200 group-hover:scale-[1.04] ${
-            size === "compact" ? "max-h-[80%] max-w-[80%]" : "max-h-[80%] max-w-[80%]"
+            size === "compact" ? "max-h-[86%] max-w-[86%]" : "max-h-[88%] max-w-[88%]"
           }`}
           loading={idx < 4 ? "eager" : "lazy"}
           fetchPriority={idx < 2 ? "high" : undefined}
