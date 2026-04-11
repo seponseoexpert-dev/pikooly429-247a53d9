@@ -138,7 +138,7 @@ const DesktopSearchDropdown = ({ isOpen, onClose, onOpen }: DesktopSearchDropdow
   const hasResults = searchResults.products.length > 0 || searchResults.cats.length > 0;
 
   return (
-    <div ref={dropdownRef} className="hidden lg:block flex-1 max-w-lg xl:max-w-2xl mx-auto relative z-[60]">
+    <div ref={dropdownRef} className="hidden lg:block flex-1 min-w-0 max-w-[520px] xl:max-w-[640px] mx-auto relative z-[60]">
       {/* Search Input */}
       <form onSubmit={handleSearch} className="relative">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" size={17} />
@@ -153,7 +153,7 @@ const DesktopSearchDropdown = ({ isOpen, onClose, onOpen }: DesktopSearchDropdow
           onChange={e => setSearchQuery(e.target.value.slice(0, 60))}
           onFocus={onOpen}
           placeholder={t("search_placeholder")}
-          className="w-full rounded-full border border-border/40 bg-muted/30 py-2.5 pl-11 pr-10 text-[13px] text-foreground placeholder:text-muted-foreground/50 outline-none transition-all duration-200 focus:border-primary/40 focus:bg-card focus:ring-1 focus:ring-primary/10 hover:border-primary/40 hover:bg-card hover:ring-1 hover:ring-primary/10 lg:py-2.5"
+          className="w-full min-w-0 rounded-full border border-border/40 bg-muted/30 py-2.5 pl-11 pr-10 text-[13px] text-foreground placeholder:text-muted-foreground/50 outline-none transition-all duration-200 focus:border-primary/40 focus:bg-card focus:ring-1 focus:ring-primary/10 hover:border-primary/40 hover:bg-card hover:ring-1 hover:ring-primary/10 lg:py-2.5"
         />
         {searchQuery && (
           <button type="button" onClick={() => setSearchQuery("")} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
@@ -168,7 +168,7 @@ const DesktopSearchDropdown = ({ isOpen, onClose, onOpen }: DesktopSearchDropdow
           {/* Backdrop */}
           <div className="fixed inset-0 bg-black/10 z-[-1]" onClick={onClose} />
           
-          <div className="absolute top-full left-0 right-0 mt-2 bg-card rounded-xl border border-border/50 shadow-[0_8px_30px_-4px_rgba(0,0,0,0.15)] max-h-[70vh] overflow-y-auto z-[60] animate-fade-in">
+          <div className="absolute top-full left-0 right-0 mt-2 w-full min-w-0 bg-card rounded-xl border border-border/50 shadow-[0_8px_30px_-4px_rgba(0,0,0,0.15)] max-h-[70vh] overflow-y-auto z-[60] animate-fade-in">
             {/* Idle State */}
             {showIdle && (
               <div className="p-4">
