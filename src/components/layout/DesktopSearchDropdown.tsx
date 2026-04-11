@@ -138,7 +138,7 @@ const DesktopSearchDropdown = ({ isOpen, onClose, onOpen }: DesktopSearchDropdow
   const hasResults = searchResults.products.length > 0 || searchResults.cats.length > 0;
 
   return (
-    <div ref={dropdownRef} className="hidden md:block flex-1 max-w-md lg:max-w-xl xl:max-w-2xl mx-auto relative z-[60]">
+    <div ref={dropdownRef} className="hidden lg:block flex-1 max-w-lg xl:max-w-2xl mx-auto relative z-[60]">
       {/* Search Input */}
       <form onSubmit={handleSearch} className="relative">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" size={17} />
