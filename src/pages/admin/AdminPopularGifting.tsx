@@ -38,7 +38,7 @@ const AdminPopularGifting = () => {
 
   const saveMutation = useMutation({
     mutationFn: async (values: GiftItem) => {
-      const { id, ...rest } = values as any;
+      const { id: _id, ...rest } = values as any;
       if (editing?.id) {
         const { error } = await supabase.from("popular_gifting").update(rest).eq("id", editing.id);
         if (error) throw error;
@@ -113,7 +113,7 @@ const AdminPopularGifting = () => {
             </div>
             <div>
               <Label>Image</Label>
-              <CloudinaryUpload onUpload={(url) => setForm({ ...form, image_url: url })} />
+              <CloudinaryUpload value={form.image_url} onChange={(url) => setForm({ ...form, image_url: url })} />
               {form.image_url && (
                 <img src={form.image_url} alt="" className="mt-2 h-24 rounded-lg object-cover" />
               )}
