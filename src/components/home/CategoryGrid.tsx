@@ -80,12 +80,14 @@ const CategoryGrid = memo(() => {
     );
   };
 
-  const CategoryItem = ({ cat, idx, size = "mobile" }: { cat: typeof categories[0]; idx: number; size?: "mobile" | "desktop" }) => {
+  const CategoryItem = ({ cat, idx, size = "mobile" }: { cat: typeof categories[0]; idx: number; size?: "mobile" | "desktop" | "tablet" }) => {
     const isDesktop = size === "desktop";
+    const isMobile = size === "mobile";
     return (
       <Link
         to={`/product-category/${cat.slug}`}
         className={`flex flex-col items-center group shrink-0 snap-start ${isDesktop ? "gap-2.5" : "gap-1.5"}`}
+        style={isMobile ? { width: "80px" } : {}}
       >
         <div
           className={`w-full aspect-square overflow-hidden bg-[#f5f5f5] ${
