@@ -168,9 +168,9 @@ const ProductGrid = memo(() => {
               <button
                 key={cat.slug}
                 onClick={() => setActiveTailoredSlug(cat.slug)}
-                className={`flex flex-col items-center gap-1.5 px-5 sm:px-7 md:px-8 py-3 sm:py-4 shrink-0 relative transition-all duration-200 border-b-2 -mb-[1px] ${
+                className={`flex flex-col items-center gap-1.5 px-5 sm:px-7 md:px-8 py-3 sm:py-4 shrink-0 relative transition-all duration-200 rounded-t-lg border-b-2 -mb-[1px] ${
                   isActive
-                    ? "border-primary text-foreground"
+                    ? "border-primary text-foreground bg-muted/60"
                     : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -188,6 +188,7 @@ const ProductGrid = memo(() => {
         </div>
       )}
 
+      <div className="bg-muted/30 rounded-xl py-4 sm:py-6 px-2 sm:px-4">
       {productsLoading ? (
         <div className="py-4">
           <div className="flex gap-3 overflow-hidden">
@@ -222,6 +223,7 @@ const ProductGrid = memo(() => {
           </Link>
         </div>
       )}
+      </div>
     </section>
   );
 });
