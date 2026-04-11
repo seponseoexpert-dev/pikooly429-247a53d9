@@ -86,20 +86,20 @@ const CategoryGrid = memo(() => {
       <Link
         to={`/product-category/${cat.slug}`}
         className={`flex flex-col items-center group shrink-0 snap-start ${isDesktop ? "gap-2.5" : "gap-1.5"}`}
-        style={isDesktop ? {} : { width: "80px" }}
+        style={isDesktop ? {} : { width: "clamp(80px, 18vw, 120px)" }}
       >
         <div
           className={`w-full aspect-square overflow-hidden bg-[#f5f5f5] ${
             isDesktop
               ? "rounded-[20px] group-hover:shadow-md group-hover:scale-[1.03] transition-all duration-200"
-              : "rounded-[16px]"
+              : "rounded-[16px] sm:rounded-[18px]"
           }`}
         >
           <img
             src={cat.image_url || "/placeholder.svg"}
             alt={cat.name}
-            width={isDesktop ? 140 : 80}
-            height={isDesktop ? 140 : 80}
+            width={isDesktop ? 140 : 100}
+            height={isDesktop ? 140 : 100}
             decoding="async"
             className="w-full h-full object-contain p-1"
             loading={idx < 4 ? "eager" : "lazy"}
@@ -108,7 +108,7 @@ const CategoryGrid = memo(() => {
         </div>
         <span
           className={`font-medium text-foreground/80 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-2 w-full ${
-            isDesktop ? "text-[13px]" : "text-[11px]"
+            isDesktop ? "text-[13px]" : "text-[11px] sm:text-[12px]"
           }`}
         >
           {cat.name}
