@@ -65,6 +65,7 @@ const EventCategoryDetail = lazy(() => import("./pages/EventCategoryDetail"));
 const AdminEvents = lazy(() => import("./pages/admin/AdminEvents"));
 const Photography = lazy(() => import("./pages/Photography"));
 const AdminPhotography = lazy(() => import("./pages/admin/AdminPhotography"));
+const AdminPopularGifting = lazy(() => import("./pages/admin/AdminPopularGifting"));
 const SearchPage = lazy(() => import("./pages/Search"));
 
 const queryClient = new QueryClient({
@@ -163,6 +164,7 @@ const App = () => (
               <Route path="/admin/bouquet" element={<AdminRoute><AdminBouquet /></AdminRoute>} />
               <Route path="/admin/events" element={<AdminRoute><AdminEvents /></AdminRoute>} />
               <Route path="/admin/photography" element={<AdminRoute><AdminPhotography /></AdminRoute>} />
+              <Route path="/admin/popular-gifting" element={<AdminRoute><AdminPopularGifting /></AdminRoute>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>
