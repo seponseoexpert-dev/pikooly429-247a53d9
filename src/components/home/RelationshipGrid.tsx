@@ -33,20 +33,20 @@ const RelationshipGrid = memo(() => {
             <Link
               key={item.id}
               to={item.link || `/product-category/${item.slug}`}
-              className="flex flex-col items-center gap-1.5 group snap-start shrink-0"
+              className="flex flex-col items-center gap-2 group snap-start shrink-0"
             >
-              <div className="w-[76px] h-[76px] sm:w-[86px] sm:h-[86px] md:w-[96px] md:h-[96px] rounded-2xl overflow-hidden bg-card border border-border/40 shadow-sm group-hover:shadow-md group-hover:border-primary/20 transition-all duration-300 p-1.5 sm:p-2">
+              <div className="w-[80px] h-[80px] sm:w-[90px] sm:h-[90px] md:w-[100px] md:h-[100px] rounded-xl overflow-hidden bg-card shadow-[0_2px_12px_-3px_rgba(0,0,0,0.12)] group-hover:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.18)] transition-all duration-300">
                 <img
                   src={item.image_url || "/placeholder.svg"}
                   alt={item.name}
-                  width={96}
-                  height={96}
+                  width={100}
+                  height={100}
                   decoding="async"
                   loading="lazy"
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-cover"
                 />
               </div>
-              <span className="text-[10px] sm:text-[11px] font-medium text-foreground/70 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-1 w-[76px] sm:w-[86px] md:w-[96px]">
+              <span className="text-[10px] sm:text-[11px] font-medium text-foreground/80 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-1 w-[80px] sm:w-[90px] md:w-[100px]">
                 {item.name}
               </span>
             </Link>
@@ -62,7 +62,7 @@ const RelationshipGrid = memo(() => {
             to={item.link || `/product-category/${item.slug}`}
             className="flex flex-col items-center gap-2 group snap-start shrink-0"
           >
-            <div className="w-[110px] h-[110px] xl:w-[120px] xl:h-[120px] rounded-2xl overflow-hidden bg-card border border-border/40 shadow-sm group-hover:shadow-md group-hover:border-primary/20 transition-all duration-300 group-hover:scale-[1.03] p-2.5">
+            <div className="w-[110px] h-[110px] xl:w-[120px] xl:h-[120px] rounded-xl overflow-hidden bg-card shadow-[0_2px_12px_-3px_rgba(0,0,0,0.12)] group-hover:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.18)] transition-all duration-300 group-hover:scale-[1.03]">
               <img
                 src={item.image_url || "/placeholder.svg"}
                 alt={item.name}
@@ -70,10 +70,10 @@ const RelationshipGrid = memo(() => {
                 height={120}
                 decoding="async"
                 loading="lazy"
-                className="w-full h-full object-contain"
+                className="w-full h-full object-cover"
               />
             </div>
-            <span className="text-xs font-medium text-foreground/70 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-1 max-w-[110px] xl:max-w-[120px]">
+            <span className="text-xs font-medium text-foreground/80 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-1 max-w-[110px] xl:max-w-[120px]">
               {item.name}
             </span>
           </Link>

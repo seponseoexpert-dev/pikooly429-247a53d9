@@ -47,7 +47,7 @@ const CategoryGrid = memo(() => {
               to={`/product-category/${cat.slug}`}
               className="flex flex-col items-center gap-1.5 group snap-start"
             >
-              <div className="w-[76px] h-[76px] sm:w-[86px] sm:h-[86px] md:w-[96px] md:h-[96px] rounded-2xl overflow-hidden bg-card border border-border/40 shadow-sm group-hover:shadow-md group-hover:border-primary/20 transition-all duration-300 p-1.5 sm:p-2">
+              <div className="w-[76px] h-[76px] sm:w-[86px] sm:h-[86px] md:w-[96px] md:h-[96px] rounded-xl overflow-hidden bg-card shadow-[0_2px_12px_-3px_rgba(0,0,0,0.12)] group-hover:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.18)] transition-all duration-300 p-1.5 sm:p-2">
                 <img
                   src={cat.image_url || "/placeholder.svg"}
                   alt={cat.name}
@@ -75,7 +75,7 @@ const CategoryGrid = memo(() => {
             to={`/product-category/${cat.slug}`}
             className="flex flex-col items-center gap-2 group w-full"
           >
-            <div className="w-[100px] h-[100px] xl:w-[110px] xl:h-[110px] mx-auto rounded-2xl overflow-hidden bg-card border border-border/40 shadow-sm group-hover:shadow-md group-hover:border-primary/20 transition-all duration-300 group-hover:scale-[1.03] p-2.5">
+            <div className="w-[100px] h-[100px] xl:w-[110px] xl:h-[110px] mx-auto rounded-xl overflow-hidden bg-card shadow-[0_2px_12px_-3px_rgba(0,0,0,0.12)] group-hover:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.18)] transition-all duration-300 group-hover:scale-[1.03] p-2.5">
               <img
                 src={cat.image_url || "/placeholder.svg"}
                 alt={cat.name}
@@ -83,8 +83,8 @@ const CategoryGrid = memo(() => {
                 height={110}
                 decoding="async"
                 className="w-full h-full object-contain"
-                  loading={idx < 4 ? "eager" : "lazy"}
-                  fetchPriority={idx < 2 ? "high" : undefined}
+                loading={idx < 4 ? "eager" : "lazy"}
+                fetchPriority={idx < 2 ? "high" : undefined}
               />
             </div>
             <span className="text-xs font-medium text-foreground/80 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-1 w-full px-0.5">
