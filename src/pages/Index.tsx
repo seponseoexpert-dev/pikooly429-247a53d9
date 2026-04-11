@@ -102,6 +102,7 @@ const Index = () => {
         <Suspense fallback={<LazyFallback />}>
           <PopularGifting />
         </Suspense>
+      </div>
       <div className="deferred-section">
         <Suspense fallback={<LazyFallback />}>
           <RelationshipGrid />
