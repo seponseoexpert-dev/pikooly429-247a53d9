@@ -156,21 +156,21 @@ const ProductGrid = memo(() => {
         </div>
       )}
 
-      <div className="mt-8 sm:mt-10 md:mt-12 lg:mt-14 bg-[#f5f5f5] py-6 sm:py-8 md:py-10 px-4 sm:px-6 md:px-8">
+      <div className="mt-8 sm:mt-10 md:mt-12 lg:mt-14 bg-[#f5f5f0] py-6 sm:py-8 md:py-10 px-4 sm:px-6 md:px-8">
         <div className="section-container">
           <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-4 sm:mb-5">Tailored For Your Occasions</h2>
 
           {occasionCategories.length > 0 && (
-            <div className="flex overflow-x-auto scrollbar-hide gap-2 sm:gap-3 md:gap-4 mb-5 md:mb-7">
+            <div className="flex overflow-x-auto scrollbar-hide gap-3 sm:gap-4 md:gap-6 lg:gap-8 mb-5 md:mb-7">
               {occasionCategories.map((cat) => {
                 const isActive = activeTailoredSlug === cat.slug;
                 return (
                   <button
                     key={cat.slug}
                     onClick={() => setActiveTailoredSlug(cat.slug)}
-                    className={`flex flex-col items-center gap-1.5 px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 shrink-0 rounded-lg transition-all duration-200 ${
+                    className={`flex flex-col items-center gap-1.5 px-5 sm:px-7 md:px-10 py-2.5 sm:py-3 shrink-0 rounded-lg transition-all duration-200 ${
                       isActive
-                        ? "border-2 border-foreground/70 bg-muted/80 text-foreground"
+                        ? "border-2 border-[#6b7c3e] bg-[#f5f3eb] text-foreground shadow-sm"
                         : "border border-transparent text-muted-foreground hover:text-foreground"
                     }`}
                   >
@@ -217,7 +217,7 @@ const ProductGrid = memo(() => {
 
           {tailoredProducts.length > 0 && (
             <div className="text-center mt-5 sm:mt-7">
-              <Link to={viewAllTailoredLink} className="inline-block px-8 py-2.5 border-2 border-primary/80 text-primary rounded-full text-[12px] sm:text-[13px] font-semibold hover:bg-primary hover:text-primary-foreground transition-all duration-300">
+              <Link to={viewAllTailoredLink} className="inline-block px-8 py-2.5 border-2 border-[#6b7c3e] text-[#6b7c3e] rounded-full text-[12px] sm:text-[13px] font-semibold hover:bg-[#6b7c3e] hover:text-white transition-all duration-300">
                 {viewAllTailoredText} →
               </Link>
             </div>
