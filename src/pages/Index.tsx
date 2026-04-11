@@ -13,6 +13,7 @@ const PopularGifting = lazy(() => import("@/components/home/PopularGifting"));
 const RelationshipGrid = lazy(() => import("@/components/home/RelationshipGrid"));
 const CelebrationsCalendar = lazy(() => import("@/components/home/CelebrationsCalendar"));
 const GiftingStories = lazy(() => import("@/components/home/GiftingStories"));
+const HomeLivingGifts = lazy(() => import("@/components/home/HomeLivingGifts"));
 const EventsSection = lazy(() => import("@/components/home/EventsSection"));
 const BlogSection = lazy(() => import("@/components/home/BlogSection"));
 const CustomerReviewSection = lazy(() => import("@/components/home/CustomerReviewSection"));
@@ -112,6 +113,11 @@ const Index = () => {
       <div className="deferred-section">
         <Suspense fallback={<LazyFallback />}>
           <PopularGifting />
+        </Suspense>
+      </div>
+      <div className="deferred-section">
+        <Suspense fallback={<LazyFallback />}>
+          <HomeLivingGifts />
         </Suspense>
       </div>
       <div className="deferred-section">
