@@ -57,6 +57,7 @@ const CategoryGrid = memo(() => {
   const row1 = mobileCategories.slice(0, half);
   const row2 = mobileCategories.slice(half);
   const desktopCategories = categories.slice(0, 9);
+  const desktopGridColumns = Math.min(desktopCategories.length || 1, 9);
 
   const bannerImage = banner?.bg_image_url || banner?.image_url;
 
@@ -84,7 +85,20 @@ const CategoryGrid = memo(() => {
     const isDesktop = size === "desktop";
     const isMobile = size === "mobile";
     const isTablet = size === "tablet";
-    const itemWidth = isMobile ? { width: "80px" } : isTablet ? { width: "100px" } : {};
+    const itemWidth = isMobile
+      ? { width: "80px" }
+      : isTablet
+        ? { width: "96px" }
+        : { width: "100%", maxWidth: "132px" };
+
+    const imageShellClass = isDesktop
+      ? "rounded-[20px]"
+      : isTablet
+        ? "rounded-[18px]"
+        : "rounded-[16px] sm:rounded-[18px]";
+
+    const imageScaleClass = isDesktop ? "max-h-[74%] max-w-[74%]" : "max-h-[72%] max-w-[72%]";
+
     return (
       <Link
         to={`/product-category/${cat.slug}`}
@@ -92,22 +106,24 @@ const CategoryGrid = memo(() => {
         style={itemWidth}
       >
         <div
-          className={`w-full aspect-square overflow-hidden bg-[#f5f5f5] ${
+          className={`w-full aspect-square overflow-hidden bg-muted/40 ring-1 ring-border/30 ${imageShellClass} ${
             isDesktop
               ? "rounded-[20px] group-hover:shadow-md group-hover:scale-[1.03] transition-all duration-200"
-              : "rounded-[16px] sm:rounded-[18px]"
+              : "transition-all duration-200"
           }`}
         >
-          <img
-            src={cat.image_url || "/placeholder.svg"}
-            alt={cat.name}
-            width={isDesktop ? 140 : 100}
-            height={isDesktop ? 140 : 100}
-            decoding="async"
-            className="w-full h-full object-contain p-1"
-            loading={idx < 4 ? "eager" : "lazy"}
-            fetchPriority={idx < 2 ? "high" : undefined}
-          />
+          <div className="flex h-full w-full items-center justify-center rounded-[inherit] bg-background/90 p-2 sm:p-2.5">
+            <img
+              src={cat.image_url || "/placeholder.svg"}
+              alt={cat.name}
+              width={isDesktop ? 140 : 100}
+              height={isDesktop ? 140 : 100}
+              decoding="async"
+              className={`${imageScaleClass} h-auto w-auto object-contain`}
+              loading={idx < 4 ? "eager" : "lazy"}
+              fetchPriority={idx < 2 ? "high" : undefined}
+            />
+          </div>
         </div>
         <span
           className={`font-medium text-foreground/80 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-2 w-full ${
@@ -145,7 +161,10 @@ const CategoryGrid = memo(() => {
       </div>
 
       {/* Desktop: single row of 9 */}
-      <div className="hidden lg:grid grid-cols-9 gap-x-5 gap-y-4 section-container">
+      <div
+        className="hidden lg:grid justify-items-center gap-x-5 gap-y-4 section-container"
+        style={{ gridTemplateColumns: `repeat(${desktopGridColumns}, minmax(0, 1fr))` }}
+      >
         {desktopCategories.map((cat, idx) => (
           <CategoryItem key={cat.id} cat={cat} idx={idx} size="desktop" />
         ))}
