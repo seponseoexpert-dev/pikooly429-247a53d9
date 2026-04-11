@@ -38,12 +38,12 @@ const CategoryGrid = memo(() => {
   });
 
   if (isLoading) return (
-    <section className="py-3 sm:py-4 section-container" style={{ minHeight: "260px" }}>
-      <div className="flex gap-3 overflow-hidden px-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="flex flex-col items-center gap-2 shrink-0" style={{ width: "24vw" }}>
-            <div className="w-full aspect-square rounded-2xl bg-muted animate-pulse" />
-            <div className="h-3 w-14 rounded bg-muted animate-pulse" />
+    <section className="py-2 sm:py-3" style={{ minHeight: "320px" }}>
+      <div className="grid grid-cols-4 gap-x-2 gap-y-3 px-3">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} className="flex flex-col items-center gap-1.5">
+            <div className="w-full aspect-square rounded-xl bg-muted animate-pulse" />
+            <div className="h-3 w-12 rounded bg-muted animate-pulse" />
           </div>
         ))}
       </div>
@@ -73,62 +73,76 @@ const CategoryGrid = memo(() => {
       </div>
     );
     return banner?.link ? (
-      <Link to={banner.link} className="block mx-4 sm:mx-5">{content}</Link>
+      <Link to={banner.link} className="block px-3 sm:px-4">{content}</Link>
     ) : (
-      <div className="mx-4 sm:mx-5">{content}</div>
+      <div className="px-3 sm:px-4">{content}</div>
     );
   };
 
-  const CategoryItem = ({ cat, idx, isDesktop = false }: { cat: typeof categories[0]; idx: number; isDesktop?: boolean }) => (
+  const MobileCategoryItem = ({ cat, idx }: { cat: typeof categories[0]; idx: number }) => (
     <Link
       to={`/product-category/${cat.slug}`}
-      className={`flex flex-col items-center group ${isDesktop ? "gap-2" : "gap-1.5 shrink-0 snap-start"}`}
-      style={isDesktop ? undefined : { width: "24vw", minWidth: "80px", maxWidth: "120px" }}
+      className="flex flex-col items-center gap-1.5 group snap-start shrink-0"
+      style={{ width: "calc(25vw - 10px)", minWidth: "72px", maxWidth: "100px" }}
     >
-      <div className={`
-        w-full aspect-square rounded-2xl overflow-hidden bg-white
-        border border-border/40
-        group-hover:border-primary/30
-        group-hover:shadow-md
-        transition-all duration-200
-        ${isDesktop ? "group-hover:scale-[1.04] p-2" : "p-1.5"}
-      `}>
+      <div className="w-full aspect-square rounded-xl overflow-hidden bg-white border border-black/[0.06] group-hover:border-primary/20 transition-colors p-1">
         <img
           src={cat.image_url || "/placeholder.svg"}
           alt={cat.name}
-          width={isDesktop ? 120 : 100}
-          height={isDesktop ? 120 : 100}
+          width={96}
+          height={96}
+          decoding="async"
+          className="w-full h-full object-contain rounded-lg"
+          loading={idx < 4 ? "eager" : "lazy"}
+          fetchPriority={idx < 2 ? "high" : undefined}
+        />
+      </div>
+      <span className="text-[11px] font-medium text-foreground/80 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-2 w-full">
+        {cat.name}
+      </span>
+    </Link>
+  );
+
+  const DesktopCategoryItem = ({ cat, idx }: { cat: typeof categories[0]; idx: number }) => (
+    <Link
+      to={`/product-category/${cat.slug}`}
+      className="flex flex-col items-center gap-2 group"
+    >
+      <div className="w-full aspect-square rounded-2xl overflow-hidden bg-white border border-black/[0.06] group-hover:border-primary/20 group-hover:shadow-md group-hover:scale-[1.03] transition-all duration-200 p-2.5">
+        <img
+          src={cat.image_url || "/placeholder.svg"}
+          alt={cat.name}
+          width={120}
+          height={120}
           decoding="async"
           className="w-full h-full object-contain"
           loading={idx < 4 ? "eager" : "lazy"}
           fetchPriority={idx < 2 ? "high" : undefined}
         />
       </div>
-      <span className={`
-        font-medium text-foreground/80 group-hover:text-foreground
-        transition-colors text-center leading-tight line-clamp-2 w-full
-        ${isDesktop ? "text-xs" : "text-[11px] sm:text-xs"}
-      `}>
+      <span className="text-xs font-medium text-foreground/80 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-2 w-full">
         {cat.name}
       </span>
     </Link>
   );
 
   return (
-    <section className="py-3 sm:py-4 md:py-5 lg:py-8" aria-label="Shop by Category" style={{ contain: "layout style", minHeight: "200px" }}>
+    <section className="py-2 sm:py-3 md:py-5 lg:py-8" aria-label="Shop by Category" style={{ contain: "layout style", minHeight: "200px" }}>
       {/* Mobile/Tablet: 2 horizontal scroll rows with banner between */}
-      <div className="lg:hidden space-y-3">
-        <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 sm:px-5 pb-1 snap-x snap-mandatory">
+      <div className="lg:hidden space-y-2.5">
+        {/* Row 1 */}
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide px-3 sm:px-4 pb-0.5 snap-x snap-mandatory">
           {row1.map((cat, idx) => (
-            <CategoryItem key={cat.id} cat={cat} idx={idx} />
+            <MobileCategoryItem key={cat.id} cat={cat} idx={idx} />
           ))}
         </div>
 
         <BannerSlot />
 
-        <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 sm:px-5 pb-1 snap-x snap-mandatory">
+        {/* Row 2 */}
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide px-3 sm:px-4 pb-0.5 snap-x snap-mandatory">
           {row2.map((cat, idx) => (
-            <CategoryItem key={cat.id} cat={cat} idx={idx + half} />
+            <MobileCategoryItem key={cat.id} cat={cat} idx={idx + half} />
           ))}
         </div>
       </div>
@@ -136,7 +150,7 @@ const CategoryGrid = memo(() => {
       {/* Desktop: single row grid of 9 */}
       <div className="hidden lg:grid grid-cols-9 gap-x-4 gap-y-4 xl:gap-x-5 section-container">
         {desktopCategories.map((cat, idx) => (
-          <CategoryItem key={cat.id} cat={cat} idx={idx} isDesktop />
+          <DesktopCategoryItem key={cat.id} cat={cat} idx={idx} />
         ))}
       </div>
     </section>
