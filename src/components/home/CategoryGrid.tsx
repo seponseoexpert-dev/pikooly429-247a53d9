@@ -83,11 +83,13 @@ const CategoryGrid = memo(() => {
   const CategoryItem = ({ cat, idx, size = "mobile" }: { cat: typeof categories[0]; idx: number; size?: "mobile" | "desktop" | "tablet" }) => {
     const isDesktop = size === "desktop";
     const isMobile = size === "mobile";
+    const isTablet = size === "tablet";
+    const itemWidth = isMobile ? { width: "80px" } : isTablet ? { width: "100px" } : {};
     return (
       <Link
         to={`/product-category/${cat.slug}`}
         className={`flex flex-col items-center group shrink-0 snap-start ${isDesktop ? "gap-2.5" : "gap-1.5"}`}
-        style={isMobile ? { width: "80px" } : {}}
+        style={itemWidth}
       >
         <div
           className={`w-full aspect-square overflow-hidden bg-[#f5f5f5] ${
@@ -135,8 +137,8 @@ const CategoryGrid = memo(() => {
         </div>
       </div>
 
-      {/* Tablet: 2 rows grid, 4 per row */}
-      <div className="hidden sm:grid lg:hidden grid-cols-4 gap-4 px-6">
+      {/* Tablet: single row scroll */}
+      <div className="hidden sm:flex lg:hidden gap-4 overflow-x-auto scrollbar-hide px-6 pb-1 snap-x snap-mandatory">
         {mobileCategories.map((cat, idx) => (
           <CategoryItem key={cat.id} cat={cat} idx={idx} size="tablet" />
         ))}
