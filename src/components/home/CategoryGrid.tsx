@@ -21,28 +21,28 @@ const CategoryGrid = memo(() => {
     placeholderData: (prev) => prev,
   });
 
-  const { data: banner } = useQuery({
-    queryKey: ["category-banner"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("offer_banners")
-        .select("id, title, image_url, bg_image_url, link")
-        .eq("is_active", true)
-        .order("display_order")
-        .limit(1)
-        .maybeSingle();
-      if (error) throw error;
-      return data;
-    },
-    staleTime: 5 * 60 * 1000,
-  });
-
   if (isLoading) return (
-    <section className="py-3 sm:py-4" style={{ minHeight: "280px" }}>
-      <div className="flex gap-4 px-4 overflow-hidden">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="flex flex-col items-center gap-2 shrink-0" style={{ width: "120px" }}>
-            <div className="w-full aspect-square rounded-2xl bg-muted animate-pulse" />
+    <section className="py-3 sm:py-4 md:py-5 lg:py-6" style={{ minHeight: "220px" }}>
+      <div className="grid grid-cols-4 gap-x-3 gap-y-4 px-4 sm:hidden">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} className="flex flex-col items-center gap-1.5">
+            <div className="w-full aspect-square rounded-[16px] bg-muted animate-pulse" />
+            <div className="h-3 w-14 rounded bg-muted animate-pulse" />
+          </div>
+        ))}
+      </div>
+      <div className="hidden sm:grid lg:hidden grid-cols-4 gap-x-4 gap-y-4 px-6">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} className="flex flex-col items-center gap-2">
+            <div className="w-full max-w-[110px] aspect-square rounded-[18px] bg-muted animate-pulse" />
+            <div className="h-3 w-16 rounded bg-muted animate-pulse" />
+          </div>
+        ))}
+      </div>
+      <div className="hidden lg:grid grid-cols-9 gap-x-4 xl:gap-x-5 gap-y-4 section-container">
+        {Array.from({ length: 9 }).map((_, i) => (
+          <div key={i} className="flex flex-col items-center gap-2.5">
+            <div className="w-full aspect-square rounded-[20px] bg-muted animate-pulse" />
             <div className="h-3.5 w-16 rounded bg-muted animate-pulse" />
           </div>
         ))}
@@ -53,42 +53,17 @@ const CategoryGrid = memo(() => {
   if (categories.length === 0) return null;
 
   const mobileCategories = categories.slice(0, 8);
-  const half = Math.ceil(mobileCategories.length / 2);
-  const row1 = mobileCategories.slice(0, half);
-  const row2 = mobileCategories.slice(half);
+  const tabletCategories = categories.slice(0, 8);
   const desktopCategories = categories.slice(0, 9);
-
-  const bannerImage = banner?.bg_image_url || banner?.image_url;
-
-  const BannerSlot = () => {
-    if (!bannerImage) return null;
-    const content = (
-      <div className="rounded-xl overflow-hidden">
-        <img
-          src={bannerImage}
-          alt={banner?.title || "Offer"}
-          className="w-full h-auto object-cover"
-          loading="lazy"
-          decoding="async"
-        />
-      </div>
-    );
-    return banner?.link ? (
-      <Link to={banner.link} className="block px-4">{content}</Link>
-    ) : (
-      <div className="px-4">{content}</div>
-    );
-  };
 
   const CategoryItem = ({ cat, idx, size = "mobile" }: { cat: typeof categories[0]; idx: number; size?: "mobile" | "desktop" | "tablet" }) => {
     const isDesktop = size === "desktop";
-    const isMobile = size === "mobile";
     const isTablet = size === "tablet";
-    const itemWidth = isMobile
-      ? { width: "80px" }
+    const itemWidth = isDesktop
+      ? { width: "100%" }
       : isTablet
-        ? { width: "100px" }
-        : { width: "100%" };
+        ? { width: "100%", maxWidth: "110px" }
+        : { width: "100%", maxWidth: "86px" };
 
     const imageShellClass = isDesktop
       ? "rounded-[20px]"
@@ -105,7 +80,7 @@ const CategoryGrid = memo(() => {
     return (
       <Link
         to={`/product-category/${cat.slug}`}
-        className={`flex flex-col items-center group shrink-0 snap-start ${isDesktop ? "gap-2.5" : "gap-1.5"}`}
+        className={`flex w-full flex-col items-center justify-self-center group ${isDesktop ? "gap-2.5" : "gap-1.5"}`}
         style={itemWidth}
       >
         <div
@@ -115,7 +90,7 @@ const CategoryGrid = memo(() => {
               : "transition-all duration-200"
           }`}
         >
-          <div className="flex h-full w-full items-center justify-center p-2">
+          <div className="flex h-full w-full items-center justify-center p-1.5 sm:p-2">
             <img
               src={cat.image_url || "/placeholder.svg"}
               alt={cat.name}
@@ -141,30 +116,19 @@ const CategoryGrid = memo(() => {
 
   return (
     <section className="py-3 sm:py-4 md:py-5 lg:py-6" aria-label="Shop by Category" style={{ contain: "layout style", minHeight: "180px" }}>
-      {/* Mobile: 2 horizontal scroll rows with banner between */}
-      <div className="sm:hidden space-y-3">
-        <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-0.5 snap-x snap-mandatory">
-          {row1.map((cat, idx) => (
-            <CategoryItem key={cat.id} cat={cat} idx={idx} />
-          ))}
-        </div>
-        <BannerSlot />
-        <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-0.5 snap-x snap-mandatory">
-          {row2.map((cat, idx) => (
-            <CategoryItem key={cat.id} cat={cat} idx={idx + half} />
-          ))}
-        </div>
+      <div className="grid grid-cols-4 gap-x-3 gap-y-4 px-4 sm:hidden">
+        {mobileCategories.map((cat, idx) => (
+          <CategoryItem key={cat.id} cat={cat} idx={idx} />
+        ))}
       </div>
 
-      {/* Tablet: single row scroll */}
-      <div className="hidden sm:flex lg:hidden gap-4 overflow-x-auto scrollbar-hide px-6 pb-1 snap-x snap-mandatory">
-        {mobileCategories.map((cat, idx) => (
+      <div className="hidden sm:grid lg:hidden grid-cols-4 gap-x-4 gap-y-4 px-6">
+        {tabletCategories.map((cat, idx) => (
           <CategoryItem key={cat.id} cat={cat} idx={idx} size="tablet" />
         ))}
       </div>
 
-      {/* Desktop: single row of 9 */}
-      <div className="hidden lg:grid grid-cols-9 gap-x-4 gap-y-4 section-container">
+      <div className="hidden lg:grid grid-cols-9 gap-x-4 xl:gap-x-5 gap-y-4 section-container">
         {desktopCategories.map((cat, idx) => (
           <CategoryItem key={cat.id} cat={cat} idx={idx} size="desktop" />
         ))}
