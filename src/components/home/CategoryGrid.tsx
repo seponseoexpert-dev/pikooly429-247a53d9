@@ -38,12 +38,12 @@ const CategoryGrid = memo(() => {
   });
 
   if (isLoading) return (
-    <section className="py-2 sm:py-3" style={{ minHeight: "320px" }}>
-      <div className="grid grid-cols-4 gap-x-2 gap-y-3 px-3">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="flex flex-col items-center gap-1.5">
-            <div className="w-full aspect-square rounded-xl bg-muted animate-pulse" />
-            <div className="h-3 w-12 rounded bg-muted animate-pulse" />
+    <section className="py-3 sm:py-4" style={{ minHeight: "280px" }}>
+      <div className="flex gap-4 px-4 overflow-hidden">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="flex flex-col items-center gap-2 shrink-0" style={{ width: "120px" }}>
+            <div className="w-full aspect-square rounded-2xl bg-muted animate-pulse" />
+            <div className="h-3.5 w-16 rounded bg-muted animate-pulse" />
           </div>
         ))}
       </div>
@@ -52,9 +52,10 @@ const CategoryGrid = memo(() => {
 
   if (categories.length === 0) return null;
 
-  const half = Math.ceil(categories.length / 2);
-  const row1 = categories.slice(0, half);
-  const row2 = categories.slice(half);
+  const mobileCategories = categories.slice(0, 8);
+  const half = Math.ceil(mobileCategories.length / 2);
+  const row1 = mobileCategories.slice(0, half);
+  const row2 = mobileCategories.slice(half);
   const desktopCategories = categories.slice(0, 9);
 
   const bannerImage = banner?.bg_image_url || banner?.image_url;
@@ -73,84 +74,74 @@ const CategoryGrid = memo(() => {
       </div>
     );
     return banner?.link ? (
-      <Link to={banner.link} className="block px-3 sm:px-4">{content}</Link>
+      <Link to={banner.link} className="block px-4">{content}</Link>
     ) : (
-      <div className="px-3 sm:px-4">{content}</div>
+      <div className="px-4">{content}</div>
     );
   };
 
-  const MobileCategoryItem = ({ cat, idx }: { cat: typeof categories[0]; idx: number }) => (
-    <Link
-      to={`/product-category/${cat.slug}`}
-      className="flex flex-col items-center gap-1.5 group snap-start shrink-0"
-      style={{ width: "calc(25vw - 10px)", minWidth: "72px", maxWidth: "100px" }}
-    >
-      <div className="w-full aspect-square rounded-xl overflow-hidden bg-white border border-black/[0.06] group-hover:border-primary/20 transition-colors p-1">
-        <img
-          src={cat.image_url || "/placeholder.svg"}
-          alt={cat.name}
-          width={96}
-          height={96}
-          decoding="async"
-          className="w-full h-full object-contain rounded-lg"
-          loading={idx < 4 ? "eager" : "lazy"}
-          fetchPriority={idx < 2 ? "high" : undefined}
-        />
-      </div>
-      <span className="text-[11px] font-medium text-foreground/80 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-2 w-full">
-        {cat.name}
-      </span>
-    </Link>
-  );
-
-  const DesktopCategoryItem = ({ cat, idx }: { cat: typeof categories[0]; idx: number }) => (
-    <Link
-      to={`/product-category/${cat.slug}`}
-      className="flex flex-col items-center gap-2 group"
-    >
-      <div className="w-full aspect-square rounded-2xl overflow-hidden bg-white border border-black/[0.06] group-hover:border-primary/20 group-hover:shadow-md group-hover:scale-[1.03] transition-all duration-200 p-2.5">
-        <img
-          src={cat.image_url || "/placeholder.svg"}
-          alt={cat.name}
-          width={120}
-          height={120}
-          decoding="async"
-          className="w-full h-full object-contain"
-          loading={idx < 4 ? "eager" : "lazy"}
-          fetchPriority={idx < 2 ? "high" : undefined}
-        />
-      </div>
-      <span className="text-xs font-medium text-foreground/80 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-2 w-full">
-        {cat.name}
-      </span>
-    </Link>
-  );
+  const CategoryItem = ({ cat, idx, size = "mobile" }: { cat: typeof categories[0]; idx: number; size?: "mobile" | "desktop" }) => {
+    const isDesktop = size === "desktop";
+    return (
+      <Link
+        to={`/product-category/${cat.slug}`}
+        className={`flex flex-col items-center group shrink-0 snap-start ${isDesktop ? "gap-2.5" : "gap-1.5"}`}
+        style={isDesktop ? {} : { width: "80px" }}
+      >
+        <div
+          className={`w-full aspect-square overflow-hidden bg-[#f5f5f5] ${
+            isDesktop
+              ? "rounded-[20px] group-hover:shadow-md group-hover:scale-[1.03] transition-all duration-200"
+              : "rounded-[16px]"
+          }`}
+        >
+          <img
+            src={cat.image_url || "/placeholder.svg"}
+            alt={cat.name}
+            width={isDesktop ? 140 : 80}
+            height={isDesktop ? 140 : 80}
+            decoding="async"
+            className="w-full h-full object-contain p-1"
+            loading={idx < 4 ? "eager" : "lazy"}
+            fetchPriority={idx < 2 ? "high" : undefined}
+          />
+        </div>
+        <span
+          className={`font-medium text-foreground/80 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-2 w-full ${
+            isDesktop ? "text-[13px]" : "text-[11px]"
+          }`}
+        >
+          {cat.name}
+        </span>
+      </Link>
+    );
+  };
 
   return (
-    <section className="py-2 sm:py-3 md:py-5 lg:py-8" aria-label="Shop by Category" style={{ contain: "layout style", minHeight: "200px" }}>
+    <section className="py-3 sm:py-4 md:py-5 lg:py-8" aria-label="Shop by Category" style={{ contain: "layout style", minHeight: "180px" }}>
       {/* Mobile/Tablet: 2 horizontal scroll rows with banner between */}
-      <div className="lg:hidden space-y-2.5">
+      <div className="lg:hidden space-y-3">
         {/* Row 1 */}
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide px-3 sm:px-4 pb-0.5 snap-x snap-mandatory">
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-0.5 snap-x snap-mandatory">
           {row1.map((cat, idx) => (
-            <MobileCategoryItem key={cat.id} cat={cat} idx={idx} />
+            <CategoryItem key={cat.id} cat={cat} idx={idx} />
           ))}
         </div>
 
         <BannerSlot />
 
         {/* Row 2 */}
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide px-3 sm:px-4 pb-0.5 snap-x snap-mandatory">
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-0.5 snap-x snap-mandatory">
           {row2.map((cat, idx) => (
-            <MobileCategoryItem key={cat.id} cat={cat} idx={idx + half} />
+            <CategoryItem key={cat.id} cat={cat} idx={idx + half} />
           ))}
         </div>
       </div>
 
-      {/* Desktop: single row grid of 9 */}
-      <div className="hidden lg:grid grid-cols-9 gap-x-4 gap-y-4 xl:gap-x-5 section-container">
+      {/* Desktop: single row of 9 */}
+      <div className="hidden lg:grid grid-cols-9 gap-x-5 gap-y-4 section-container">
         {desktopCategories.map((cat, idx) => (
-          <DesktopCategoryItem key={cat.id} cat={cat} idx={idx} />
+          <CategoryItem key={cat.id} cat={cat} idx={idx} size="desktop" />
         ))}
       </div>
     </section>
