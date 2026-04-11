@@ -39,11 +39,11 @@ const CategoryGrid = memo(() => {
 
   if (isLoading) return (
     <section className="py-3 sm:py-4 section-container" style={{ minHeight: "260px" }}>
-      <div className="flex gap-3 overflow-hidden">
+      <div className="flex gap-3 overflow-hidden px-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="flex flex-col items-center gap-1.5 shrink-0" style={{ width: "22vw" }}>
-            <div className="w-full aspect-square rounded-xl bg-muted animate-pulse" />
-            <div className="h-2.5 w-14 rounded bg-muted animate-pulse" />
+          <div key={i} className="flex flex-col items-center gap-2 shrink-0" style={{ width: "24vw" }}>
+            <div className="w-full aspect-square rounded-2xl bg-muted animate-pulse" />
+            <div className="h-3 w-14 rounded bg-muted animate-pulse" />
           </div>
         ))}
       </div>
@@ -52,12 +52,9 @@ const CategoryGrid = memo(() => {
 
   if (categories.length === 0) return null;
 
-  // Split categories into two rows for mobile scroll
   const half = Math.ceil(categories.length / 2);
   const row1 = categories.slice(0, half);
   const row2 = categories.slice(half);
-
-  // Desktop: first 9
   const desktopCategories = categories.slice(0, 9);
 
   const bannerImage = banner?.bg_image_url || banner?.image_url;
@@ -85,21 +82,22 @@ const CategoryGrid = memo(() => {
   const CategoryItem = ({ cat, idx, isDesktop = false }: { cat: typeof categories[0]; idx: number; isDesktop?: boolean }) => (
     <Link
       to={`/product-category/${cat.slug}`}
-      className={`flex flex-col items-center group ${isDesktop ? "gap-2" : "gap-1 shrink-0 snap-start"}`}
-      style={isDesktop ? undefined : { width: "22vw", minWidth: "76px", maxWidth: "110px" }}
+      className={`flex flex-col items-center group ${isDesktop ? "gap-2" : "gap-1.5 shrink-0 snap-start"}`}
+      style={isDesktop ? undefined : { width: "24vw", minWidth: "80px", maxWidth: "120px" }}
     >
       <div className={`
-        w-full aspect-square rounded-xl overflow-hidden bg-white
-        shadow-[0_1px_6px_-1px_rgba(0,0,0,0.08)]
-        group-hover:shadow-[0_3px_12px_-2px_rgba(0,0,0,0.14)]
-        transition-all duration-300
-        ${isDesktop ? "group-hover:scale-[1.03] p-2.5" : "p-1.5 sm:p-2"}
+        w-full aspect-square rounded-2xl overflow-hidden bg-white
+        border border-border/40
+        group-hover:border-primary/30
+        group-hover:shadow-md
+        transition-all duration-200
+        ${isDesktop ? "group-hover:scale-[1.04] p-2" : "p-1.5"}
       `}>
         <img
           src={cat.image_url || "/placeholder.svg"}
           alt={cat.name}
-          width={isDesktop ? 120 : 96}
-          height={isDesktop ? 120 : 96}
+          width={isDesktop ? 120 : 100}
+          height={isDesktop ? 120 : 100}
           decoding="async"
           className="w-full h-full object-contain"
           loading={idx < 4 ? "eager" : "lazy"}
@@ -109,7 +107,7 @@ const CategoryGrid = memo(() => {
       <span className={`
         font-medium text-foreground/80 group-hover:text-foreground
         transition-colors text-center leading-tight line-clamp-2 w-full
-        ${isDesktop ? "text-xs" : "text-[10px] sm:text-[11px]"}
+        ${isDesktop ? "text-xs" : "text-[11px] sm:text-xs"}
       `}>
         {cat.name}
       </span>
@@ -119,19 +117,16 @@ const CategoryGrid = memo(() => {
   return (
     <section className="py-3 sm:py-4 md:py-5 lg:py-8" aria-label="Shop by Category" style={{ contain: "layout style", minHeight: "200px" }}>
       {/* Mobile/Tablet: 2 horizontal scroll rows with banner between */}
-      <div className="lg:hidden space-y-2.5">
-        {/* Row 1 - horizontal scroll */}
-        <div className="flex gap-2.5 sm:gap-3 overflow-x-auto scrollbar-hide px-4 sm:px-5 pb-1 snap-x snap-mandatory">
+      <div className="lg:hidden space-y-3">
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 sm:px-5 pb-1 snap-x snap-mandatory">
           {row1.map((cat, idx) => (
             <CategoryItem key={cat.id} cat={cat} idx={idx} />
           ))}
         </div>
 
-        {/* Banner between rows */}
         <BannerSlot />
 
-        {/* Row 2 - horizontal scroll */}
-        <div className="flex gap-2.5 sm:gap-3 overflow-x-auto scrollbar-hide px-4 sm:px-5 pb-1 snap-x snap-mandatory">
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 sm:px-5 pb-1 snap-x snap-mandatory">
           {row2.map((cat, idx) => (
             <CategoryItem key={cat.id} cat={cat} idx={idx + half} />
           ))}
