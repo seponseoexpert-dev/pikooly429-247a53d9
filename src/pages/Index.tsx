@@ -103,15 +103,15 @@ const Index = () => {
           <RelationshipGrid />
         </Suspense>
       </div>
-      <div className="deferred-section">
-        <Suspense fallback={<LazyFallback />}>
-          <PopularGifting />
-        </Suspense>
-      </div>
       <ProductGrid />
       <div className="deferred-section">
         <Suspense fallback={<LazyFallback />}>
           <CelebrationsCalendar />
+        </Suspense>
+      </div>
+      <div className="deferred-section">
+        <Suspense fallback={<LazyFallback />}>
+          <PopularGifting />
         </Suspense>
       </div>
       <div className="deferred-section">
