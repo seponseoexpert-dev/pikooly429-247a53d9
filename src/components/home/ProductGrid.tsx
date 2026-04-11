@@ -156,73 +156,73 @@ const ProductGrid = memo(() => {
         </div>
       )}
 
-      <div className="mt-8 sm:mt-10 md:mt-12 lg:mt-14 mb-0 text-left section-container">
-        <h2 className="section-heading font-display font-semibold text-foreground">Tailored For Your Occasions</h2>
-      </div>
+      <div className="mt-8 sm:mt-10 md:mt-12 lg:mt-14 bg-[hsl(var(--muted)/0.4)] py-6 sm:py-8 md:py-10 px-4 sm:px-6 md:px-8 rounded-none">
+        <div className="section-container">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-4 sm:mb-5">Tailored For Your Occasions</h2>
 
-      {occasionCategories.length > 0 && (
-        <div className="flex overflow-x-auto scrollbar-hide border-b border-border/50 mb-4 md:mb-6 section-container">
-          {occasionCategories.map((cat) => {
-            const isActive = activeTailoredSlug === cat.slug;
-            return (
-              <button
-                key={cat.slug}
-                onClick={() => setActiveTailoredSlug(cat.slug)}
-                className={`flex flex-col items-center gap-1.5 px-5 sm:px-7 md:px-8 py-3 sm:py-4 shrink-0 relative transition-all duration-200 rounded-t-lg border-b-2 -mb-[1px] ${
-                  isActive
-                    ? "border-primary text-foreground bg-muted/60"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <div className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
-                  {cat.image_url ? (
-                    <img src={cat.image_url} alt={cat.name} className="w-5 h-5 sm:w-6 sm:h-6 object-contain" loading="lazy" decoding="async" />
-                  ) : (
-                    <Gift size={20} />
-                  )}
-                </div>
-                <span className={`text-[11px] sm:text-[13px] whitespace-nowrap ${isActive ? "font-semibold" : "font-medium"}`}>{cat.name}</span>
-              </button>
-            );
-          })}
-        </div>
-      )}
-
-      <div className="bg-muted/30 rounded-xl py-4 sm:py-6 px-2 sm:px-4">
-      {productsLoading ? (
-        <div className="py-4">
-          <div className="flex gap-3 overflow-hidden">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="w-[140px] sm:w-[160px] md:w-[180px] flex-shrink-0">
-                <div className="aspect-square rounded-xl bg-muted animate-pulse" />
-                <div className="mt-2 h-3 w-3/4 rounded bg-muted animate-pulse" />
-                <div className="mt-1.5 h-3 w-1/2 rounded bg-muted animate-pulse" />
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : tailoredProducts.length === 0 ? (
-        <div className="text-center py-16 px-4">
-          <Gift className="w-10 h-10 mx-auto text-muted-foreground/30 mb-3" />
-          <p className="text-muted-foreground text-sm">No products found for this occasion</p>
-        </div>
-      ) : (
-        <ProductCarousel>
-          {tailoredProducts.slice(0, 12).map((product: any) => (
-            <div key={product.id} className={`flex-shrink-0 snap-start ${cardWidthClass}`}>
-              <ProductCard product={product} />
+          {occasionCategories.length > 0 && (
+            <div className="flex overflow-x-auto scrollbar-hide gap-2 sm:gap-3 md:gap-4 mb-5 md:mb-7">
+              {occasionCategories.map((cat) => {
+                const isActive = activeTailoredSlug === cat.slug;
+                return (
+                  <button
+                    key={cat.slug}
+                    onClick={() => setActiveTailoredSlug(cat.slug)}
+                    className={`flex flex-col items-center gap-1.5 px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 shrink-0 rounded-lg transition-all duration-200 ${
+                      isActive
+                        ? "border-2 border-foreground/70 bg-muted/80 text-foreground"
+                        : "border border-transparent text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center">
+                      {cat.image_url ? (
+                        <img src={cat.image_url} alt={cat.name} className="w-5 h-5 sm:w-6 sm:h-6 object-contain" loading="lazy" decoding="async" />
+                      ) : (
+                        <Gift size={18} />
+                      )}
+                    </div>
+                    <span className={`text-[11px] sm:text-[12px] md:text-[13px] whitespace-nowrap ${isActive ? "font-semibold" : "font-medium"}`}>{cat.name}</span>
+                  </button>
+                );
+              })}
             </div>
-          ))}
-        </ProductCarousel>
-      )}
+          )}
 
-      {tailoredProducts.length > 0 && (
-        <div className="text-center mt-4 sm:mt-6">
-          <Link to={viewAllTailoredLink} className="inline-block px-6 py-2 border border-foreground/15 text-foreground rounded-full text-[12px] sm:text-[13px] font-medium hover:bg-foreground hover:text-background transition-all duration-300">
-            {viewAllTailoredText} →
-          </Link>
+          {productsLoading ? (
+            <div className="py-4">
+              <div className="flex gap-3 overflow-hidden">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="w-[140px] sm:w-[160px] md:w-[180px] flex-shrink-0">
+                    <div className="aspect-square rounded-xl bg-background animate-pulse" />
+                    <div className="mt-2 h-3 w-3/4 rounded bg-background animate-pulse" />
+                    <div className="mt-1.5 h-3 w-1/2 rounded bg-background animate-pulse" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : tailoredProducts.length === 0 ? (
+            <div className="text-center py-16 px-4">
+              <Gift className="w-10 h-10 mx-auto text-muted-foreground/30 mb-3" />
+              <p className="text-muted-foreground text-sm">No products found for this occasion</p>
+            </div>
+          ) : (
+            <ProductCarousel>
+              {tailoredProducts.slice(0, 12).map((product: any) => (
+                <div key={product.id} className={`flex-shrink-0 snap-start ${cardWidthClass}`}>
+                  <ProductCard product={product} />
+                </div>
+              ))}
+            </ProductCarousel>
+          )}
+
+          {tailoredProducts.length > 0 && (
+            <div className="text-center mt-5 sm:mt-7">
+              <Link to={viewAllTailoredLink} className="inline-block px-8 py-2.5 border-2 border-primary/80 text-primary rounded-full text-[12px] sm:text-[13px] font-semibold hover:bg-primary hover:text-primary-foreground transition-all duration-300">
+                {viewAllTailoredText} →
+              </Link>
+            </div>
+          )}
         </div>
-      )}
       </div>
     </section>
   );
