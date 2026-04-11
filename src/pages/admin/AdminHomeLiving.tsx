@@ -159,8 +159,7 @@ const AdminHomeLiving = () => {
             ))}
           </div>
         )}
-      </div>
-    </AdminLayout>
+    </div>
   );
 };
 

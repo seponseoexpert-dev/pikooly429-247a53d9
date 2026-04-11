@@ -159,8 +159,7 @@ const AdminPopularGifting = () => {
             ))}
           </div>
         )}
-      </div>
-    </AdminLayout>
+    </div>
   );
 };
 
