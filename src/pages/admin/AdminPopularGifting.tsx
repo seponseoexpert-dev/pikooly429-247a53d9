@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import AdminLayout from "@/components/admin/AdminLayout";
+
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -80,8 +80,7 @@ const AdminPopularGifting = () => {
   };
 
   return (
-    <AdminLayout>
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <Gift className="h-6 w-6 text-primary" /> Popular In Gifting
@@ -159,8 +158,7 @@ const AdminPopularGifting = () => {
             ))}
           </div>
         )}
-      </div>
-    </AdminLayout>
+    </div>
   );
 };
 
