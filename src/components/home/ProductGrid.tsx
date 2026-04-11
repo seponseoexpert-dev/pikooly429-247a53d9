@@ -122,7 +122,15 @@ const ProductGrid = memo(() => {
 
   return (
     <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Products" style={{ contain: "layout style", contentVisibility: "auto", containIntrinsicSize: "auto 800px" }}>
-      <CategoryTabs tabs={allTrendingTabs} activeTab={activeTab} onTabChange={setActiveTab} />
+      <div className="flex items-center justify-between mb-4 sm:mb-5">
+        <div>
+          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground">Trending Items</h2>
+          <div className="w-12 h-[3px] bg-primary mt-1.5 rounded-full" />
+        </div>
+        <Link to="/shop" className="text-sm text-muted-foreground hover:text-foreground font-medium transition-colors">
+          View More »
+        </Link>
+      </div>
 
       {productsLoading ? (
         <div className="py-4">
