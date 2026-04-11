@@ -64,7 +64,7 @@ const PopularGifting = memo(() => {
         </h2>
 
         {/* Desktop: 5-col grid */}
-        <div className="hidden lg:grid grid-cols-5 gap-5">
+        <div className="hidden lg:grid grid-cols-5 gap-4 xl:gap-5">
           {items.slice(0, 5).map((item: any) => (
             <GiftCard key={item.id} item={item} />
           ))}
