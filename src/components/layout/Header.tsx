@@ -9,8 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-
-
+import DesktopSearchDropdown from "@/components/layout/DesktopSearchDropdown";
 
 const Header = () => {
   const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
@@ -18,6 +17,7 @@ const Header = () => {
   const [pinnedMegaMenu, setPinnedMegaMenu] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const [mobileSearchExpanded, setMobileSearchExpanded] = useState(false);
+  const [desktopSearchOpen, setDesktopSearchOpen] = useState(false);
 
   const { totalItems, setIsOpen } = useCart();
   const { settings, isLoading: settingsLoading } = useSiteSettings();
@@ -224,15 +224,12 @@ const Header = () => {
               )}
             </Link>
 
-            {/* Desktop Search — navigates to search page */}
-            <div className="hidden md:block flex-1 max-w-md lg:max-w-xl xl:max-w-2xl mx-auto relative">
-              <div className="relative group cursor-pointer" onClick={() => navigate("/search")}>
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={17} />
-                <div className="w-full rounded-full border border-border/40 bg-muted/30 py-2.5 pl-11 pr-10 text-[13px] text-muted-foreground/50 transition-all duration-200 hover:border-primary/40 hover:bg-card hover:ring-1 hover:ring-primary/10 lg:py-2.5">
-                  {t("search_placeholder")}
-                </div>
-              </div>
-            </div>
+            {/* Desktop Search — FNP-style dropdown */}
+            <DesktopSearchDropdown
+              isOpen={desktopSearchOpen}
+              onOpen={() => setDesktopSearchOpen(true)}
+              onClose={() => setDesktopSearchOpen(false)}
+            />
 
             {/* Right Actions */}
             <div className="flex items-center gap-0 sm:gap-0.5 ml-auto">
