@@ -1,7 +1,6 @@
-import { useState, useMemo, useEffect, memo } from "react";
+import { useState, useMemo, memo } from "react";
 import ProductCard from "@/components/product/ProductCard";
 import ProductCarousel from "@/components/home/ProductCarousel";
-import CategoryTabs from "@/components/home/CategoryTabs";
 import { Link } from "react-router-dom";
 import { Gift, Heart, Zap } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -10,7 +9,6 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const ProductGrid = memo(() => {
   const [activeTab, setActiveTab] = useState("for-you");
-  const [activeTailoredSlug, setActiveTailoredSlug] = useState("");
   const { settings } = useSiteSettings();
 
   const { data: products = [], isLoading: productsLoading } = useQuery({

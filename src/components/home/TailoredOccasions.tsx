@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Gift, Star } from "lucide-react";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
-import { useCart } from "@/contexts/CartContext";
+
 
 const TailoredOccasions = memo(() => {
   const [activeSlug, setActiveSlug] = useState("");
