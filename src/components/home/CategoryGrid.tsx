@@ -30,21 +30,27 @@ const CategoryGrid = memo(() => {
 
   if (isLoading) return (
     <section className="py-3 sm:py-4 lg:py-6" style={{ minHeight: "200px" }}>
-      {/* Mobile/Tablet: horizontal scroll skeleton */}
-      <div className="flex gap-4 px-4 overflow-hidden lg:hidden">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="flex flex-col items-center gap-2 shrink-0" style={{ width: "100px" }}>
-            <div className="w-[100px] h-[100px] rounded-2xl bg-muted animate-pulse" />
-            <div className="h-3 w-16 rounded bg-muted animate-pulse" />
+      <div className="grid grid-cols-4 gap-3 px-4 md:hidden">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} className="flex flex-col items-center gap-2">
+            <div className="w-full aspect-square rounded-2xl bg-muted animate-pulse" />
+            <div className="h-3 w-14 rounded bg-muted animate-pulse" />
           </div>
         ))}
       </div>
-      {/* Desktop: grid skeleton */}
-      <div className="hidden lg:grid grid-cols-9 gap-x-5 gap-y-4 section-container">
-        {Array.from({ length: 9 }).map((_, i) => (
-          <div key={i} className="flex flex-col items-center gap-2.5">
+      <div className="hidden md:flex justify-center gap-5 section-container lg:hidden">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} className="flex flex-col items-center gap-2.5 flex-1 max-w-[120px]">
             <div className="w-full aspect-square rounded-[20px] bg-muted animate-pulse" />
-            <div className="h-3.5 w-16 rounded bg-muted animate-pulse" />
+            <div className="h-3.5 w-14 rounded bg-muted animate-pulse" />
+          </div>
+        ))}
+      </div>
+      <div className="hidden lg:flex justify-center gap-5 section-container">
+        {Array.from({ length: 9 }).map((_, i) => (
+          <div key={i} className="flex flex-col items-center gap-2.5 flex-1 max-w-[130px]">
+            <div className="w-full aspect-square rounded-[20px] bg-muted animate-pulse" />
+            <div className="h-3.5 w-14 rounded bg-muted animate-pulse" />
           </div>
         ))}
       </div>
@@ -53,70 +59,67 @@ const CategoryGrid = memo(() => {
 
   if (categories.length === 0) return null;
 
-  const compactCategories = categories.slice(0, 8);
-  const tabletCategories = categories.slice(0, 8);
-  const desktopCategories = categories.slice(0, 9);
+  const mobileItems = categories.slice(0, 8);
+  const tabletItems = categories.slice(0, 8);
+  const desktopItems = categories.slice(0, 9);
 
   return (
-    <section className="py-3 sm:py-4 lg:py-6" aria-label="Shop by Category" style={{ contain: "layout style", minHeight: "180px" }}>
-      <div className="grid grid-cols-4 gap-x-2.5 gap-y-4 px-3 sm:px-6 md:hidden">
-        {compactCategories.map((cat, idx) => (
-          <div key={cat.id} className="flex justify-center">
-            <CategoryItem cat={cat} idx={idx} size="compact" />
-          </div>
+    <section className="py-3 sm:py-4 lg:py-6" aria-label="Shop by Category" style={{ contain: "layout style", minHeight: "160px" }}>
+      {/* Mobile: 2 rows × 4 columns */}
+      <div className="grid grid-cols-4 gap-x-3 gap-y-4 px-4 md:hidden">
+        {mobileItems.map((cat, idx) => (
+          <CategoryItem key={cat.id} cat={cat} idx={idx} variant="mobile" />
         ))}
       </div>
 
-      <div className="hidden md:grid xl:hidden grid-cols-8 gap-x-4 gap-y-4 section-container">
-        {tabletCategories.map((cat, idx) => (
-          <CategoryItem key={cat.id} cat={cat} idx={idx} size="desktop" />
+      {/* Tablet: single row */}
+      <div className="hidden md:flex lg:hidden justify-center gap-4 section-container">
+        {tabletItems.map((cat, idx) => (
+          <CategoryItem key={cat.id} cat={cat} idx={idx} variant="tablet" />
         ))}
       </div>
 
-      <div className="hidden xl:grid grid-cols-9 gap-x-5 gap-y-4 section-container">
-        {desktopCategories.map((cat, idx) => (
-          <CategoryItem key={cat.id} cat={cat} idx={idx} size="desktop" />
+      {/* Desktop: single row */}
+      <div className="hidden lg:flex justify-center gap-5 section-container">
+        {desktopItems.map((cat, idx) => (
+          <CategoryItem key={cat.id} cat={cat} idx={idx} variant="desktop" />
         ))}
       </div>
     </section>
   );
 });
 
-const CategoryItem = ({ cat, idx, size }: { cat: Category; idx: number; size: "compact" | "desktop" }) => {
+const CategoryItem = ({ cat, idx, variant }: { cat: Category; idx: number; variant: "mobile" | "tablet" | "desktop" }) => {
+  const containerClass = variant === "mobile"
+    ? "flex flex-col items-center gap-1.5 w-full"
+    : "flex flex-col items-center gap-2.5 flex-1 max-w-[130px]";
+
+  const iconBoxClass = variant === "mobile"
+    ? "w-full aspect-square rounded-[18px] bg-muted/70 flex items-center justify-center p-2 shadow-sm"
+    : "w-full aspect-square rounded-[20px] bg-muted/70 flex items-center justify-center p-2.5 transition-all duration-200 hover:scale-[1.03] hover:shadow-md";
+
+  const imgSize = variant === "mobile" ? 80 : 120;
+  const imgMaxClass = variant === "mobile" ? "max-h-[85%] max-w-[85%]" : "max-h-[88%] max-w-[88%]";
+
+  const textClass = variant === "mobile"
+    ? "w-full text-center text-[11px] sm:text-xs font-medium leading-tight line-clamp-2 text-foreground/80"
+    : "w-full text-center text-[13px] font-medium leading-tight line-clamp-2 text-foreground/80 transition-colors group-hover:text-foreground";
+
   return (
-    <Link
-      to={`/product-category/${cat.slug}`}
-      className={`group flex w-full flex-col items-center ${
-        size === "compact" ? "max-w-[82px] gap-2 sm:max-w-[104px]" : "gap-2.5"
-      }`}
-    >
-      <div
-        className={`flex aspect-square w-full items-center justify-center overflow-hidden bg-muted/70 transition-all duration-200 ${
-          size === "compact"
-            ? "rounded-[18px] p-2 shadow-sm"
-            : "rounded-[20px] p-2.5 group-hover:scale-[1.03] group-hover:shadow-md lg:p-3"
-        }`}
-      >
+    <Link to={`/product-category/${cat.slug}`} className={`group ${containerClass}`}>
+      <div className={iconBoxClass}>
         <img
           src={cat.image_url || "/placeholder.svg"}
           alt={cat.name}
-          width={size === "compact" ? 84 : 140}
-          height={size === "compact" ? 84 : 140}
+          width={imgSize}
+          height={imgSize}
           decoding="async"
-          className={`h-auto w-auto object-contain transition-transform duration-200 group-hover:scale-[1.04] ${
-            size === "compact" ? "max-h-[86%] max-w-[86%]" : "max-h-[88%] max-w-[88%]"
-          }`}
+          className={`h-auto w-auto object-contain transition-transform duration-200 group-hover:scale-[1.04] ${imgMaxClass}`}
           loading={idx < 4 ? "eager" : "lazy"}
           fetchPriority={idx < 2 ? "high" : undefined}
         />
       </div>
-      <span
-        className={`w-full text-center font-medium leading-tight line-clamp-2 text-foreground/80 transition-colors group-hover:text-foreground ${
-          size === "compact" ? "text-[11px] sm:text-xs" : "text-[13px]"
-        }`}
-      >
-        {cat.name}
-      </span>
+      <span className={textClass}>{cat.name}</span>
     </Link>
   );
 };
