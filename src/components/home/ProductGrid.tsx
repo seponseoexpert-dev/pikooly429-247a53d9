@@ -1,4 +1,4 @@
-import { useState, useMemo, memo } from "react";
+import { useMemo, memo } from "react";
 import ProductCard from "@/components/product/ProductCard";
 import ProductCarousel from "@/components/home/ProductCarousel";
 import { Link } from "react-router-dom";
