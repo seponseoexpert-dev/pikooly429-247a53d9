@@ -3,7 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import HeroSection from "@/components/home/HeroSection";
 import CategoryGrid from "@/components/home/CategoryGrid";
 import ProductGrid from "@/components/home/ProductGrid";
-
+import TailoredOccasions from "@/components/home/TailoredOccasions";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import SEOHead from "@/components/seo/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
@@ -106,7 +106,7 @@ const Index = () => {
         </Suspense>
       </div>
       <ProductGrid />
-      
+      <TailoredOccasions />
       <div className="deferred-section">
         <Suspense fallback={<LazyFallback />}>
           <CelebrationsCalendar />
