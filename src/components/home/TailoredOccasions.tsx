@@ -260,7 +260,7 @@ const ProductCard = memo(({ product, formatPrice }: { product: any; formatPrice:
   return (
     <Link
       to={linkTo}
-      className="group bg-white rounded-2xl overflow-hidden flex flex-col shadow-[0_2px_12px_rgba(0,0,0,0.07)] hover:shadow-[0_6px_24px_rgba(0,0,0,0.12)] transition-all duration-300 border border-border/40"
+      className="group bg-white rounded-lg overflow-hidden flex flex-col border-2 border-border hover:border-primary/40 transition-all duration-300 shadow-sm hover:shadow-md"
     >
       {/* Image - taller aspect */}
       <div className="relative aspect-square overflow-hidden bg-[#f8f7f4]">
