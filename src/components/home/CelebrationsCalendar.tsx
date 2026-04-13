@@ -24,7 +24,7 @@ const CelebrationsCalendar = memo(() => {
   if (celebrations.length === 0) return null;
 
   const scroll = (dir: number) => {
-    scrollRef.current?.scrollBy({ left: dir * 220, behavior: "smooth" });
+    scrollRef.current?.scrollBy({ left: dir * 280, behavior: "smooth" });
   };
 
   return (
@@ -40,27 +40,28 @@ const CelebrationsCalendar = memo(() => {
         >
           {celebrations.map((c: any) => {
             const card = (
-              <div className="min-w-[150px] w-[40vw] max-w-[240px] sm:min-w-[180px] md:min-w-[220px] flex-shrink-0 snap-start group">
-                <div className="relative rounded-xl sm:rounded-2xl overflow-hidden aspect-[4/5] bg-background border border-border/40 shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] group-hover:border-primary/30 group-hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.2)] transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.03]">
+              <div className="w-[43vw] min-w-[43vw] sm:min-w-[220px] md:min-w-[260px] lg:min-w-[280px] flex-shrink-0 snap-start group">
+                <div className="relative rounded-2xl overflow-hidden aspect-[3/4] bg-muted/30 group-hover:shadow-lg transition-all duration-500 ease-out group-hover:scale-[1.02]">
                   <img
                     src={c.image_url || "/placeholder.svg"}
                     alt={c.name}
-                    width={240}
-                    height={300}
+                    width={280}
+                    height={373}
                     className="w-full h-full object-cover"
                     loading="lazy"
                     decoding="async"
-                    sizes="(max-width: 480px) 40vw, (max-width: 640px) 180px, (max-width: 768px) 220px, 240px"
+                    sizes="(max-width: 480px) 43vw, (max-width: 640px) 220px, (max-width: 768px) 260px, 280px"
                   />
+                  {/* FNP-style date badge at top */}
                   <div className="absolute top-0 left-0 right-0">
-                    <div className="mx-auto w-[85%] bg-muted/80 backdrop-blur-sm text-center py-1 sm:py-1.5 rounded-b-xl">
-                      <span className="text-[10px] sm:text-xs md:text-sm font-bold text-foreground tracking-wide uppercase">
+                    <div className="mx-auto w-[70%] bg-muted/85 backdrop-blur-sm text-center py-1.5 sm:py-2 rounded-b-xl">
+                      <span className="text-[11px] sm:text-xs md:text-sm font-bold text-foreground tracking-wider uppercase">
                         {c.date_label}
                       </span>
                     </div>
                   </div>
                 </div>
-                <p className="text-xs sm:text-sm md:text-base font-medium text-foreground/80 text-center mt-2 group-hover:text-primary transition-colors line-clamp-1">
+                <p className="text-xs sm:text-sm md:text-base font-medium text-foreground/80 text-center mt-2 sm:mt-2.5 group-hover:text-primary transition-colors line-clamp-1">
                   {c.name}
                 </p>
               </div>
@@ -76,7 +77,7 @@ const CelebrationsCalendar = memo(() => {
           })}
         </div>
 
-        {celebrations.length > 4 && (
+        {celebrations.length > 3 && (
           <>
             <button onClick={() => scroll(-1)} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/3 w-9 h-9 rounded-full bg-card/90 shadow-md flex items-center justify-center hover:bg-muted active:scale-95 transition-all z-10 hidden sm:flex">
               <ChevronLeft size={18} />
