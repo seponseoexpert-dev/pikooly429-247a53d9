@@ -263,7 +263,7 @@ const ProductCard = memo(({ product, formatPrice }: { product: any; formatPrice:
       className="group bg-white rounded-2xl overflow-hidden flex flex-col shadow-[0_2px_12px_rgba(0,0,0,0.07)] hover:shadow-[0_6px_24px_rgba(0,0,0,0.12)] transition-all duration-300 border border-border/40"
     >
       {/* Image - taller aspect */}
-      <div className="relative aspect-[4/5] overflow-hidden bg-[#f8f7f4]">
+      <div className="relative aspect-square overflow-hidden bg-[#f8f7f4]">
         <img
           src={imgSrc}
           alt={product.name}
