@@ -189,7 +189,7 @@ const TailoredOccasions = memo(() => {
                 <div
                   key={product.id}
                   style={{ animationDelay: `${i * 60}ms` }}
-                  className="min-w-[44vw] sm:min-w-[200px] md:min-w-[220px] lg:min-w-[240px] max-w-[240px] snap-start shrink-0 motion-safe:animate-fade-in-up"
+                  className="w-[43vw] min-w-[43vw] max-w-[43vw] sm:w-[200px] sm:min-w-[200px] sm:max-w-[200px] md:w-[220px] md:min-w-[220px] md:max-w-[220px] lg:w-[240px] lg:min-w-[240px] lg:max-w-[240px] snap-start shrink-0 motion-safe:animate-fade-in-up"
                 >
                   <ProductCard product={product} formatPrice={formatPrice} />
                 </div>
