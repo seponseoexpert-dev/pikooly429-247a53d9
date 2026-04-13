@@ -281,6 +281,7 @@ export type Database = {
       }
       celebrations: {
         Row: {
+          bg_color: string | null
           created_at: string
           date_label: string
           display_order: number
@@ -292,6 +293,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          bg_color?: string | null
           created_at?: string
           date_label: string
           display_order?: number
@@ -303,6 +305,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          bg_color?: string | null
           created_at?: string
           date_label?: string
           display_order?: number
