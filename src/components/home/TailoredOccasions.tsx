@@ -8,7 +8,7 @@ import { useMultiCurrency } from "@/contexts/CurrencyContext";
 const TailoredOccasions = memo(() => {
   const [activeSlug, setActiveSlug] = useState("");
   const { formatPrice } = useMultiCurrency();
-  const scrollRef = useRef<HTMLDivElement>(null);
+  
 
   const { data: occasionCategories = [] } = useQuery({
     queryKey: ["homepage-occasion-categories"],
