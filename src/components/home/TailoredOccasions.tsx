@@ -36,18 +36,42 @@ const TailoredOccasions = memo(() => {
     placeholderData: (prev) => prev,
   });
 
+  const tailoredCatIds = useMemo(() => occasionCategories.map((c) => c.id), [occasionCategories]);
+
   const { data: products = [], isLoading } = useQuery({
-    queryKey: ["homepage-products"],
+    queryKey: ["tailored-occasion-products", tailoredCatIds],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("products")
-        .select("*, categories(name, slug), product_categories(category_id, categories(name, slug)), product_subcategories(subcategory_id)")
-        .eq("is_active", true)
-        .order("created_at", { ascending: false })
-        .limit(60);
-      if (error) throw error;
-      return data;
+      if (!tailoredCatIds.length) return [];
+      // Fetch products that belong to tailored categories via direct category_id OR junction table
+      const [directRes, junctionRes] = await Promise.all([
+        supabase
+          .from("products")
+          .select("*, categories(name, slug), product_categories(category_id, categories(name, slug))")
+          .eq("is_active", true)
+          .in("category_id", tailoredCatIds)
+          .order("created_at", { ascending: false })
+          .limit(60),
+        supabase
+          .from("product_categories")
+          .select("product_id, category_id, categories(name, slug), products(*, categories(name, slug))")
+          .in("category_id", tailoredCatIds)
+          .limit(60),
+      ]);
+      if (directRes.error) throw directRes.error;
+
+      const productMap = new Map<string, any>();
+      // Add direct category products
+      (directRes.data || []).forEach((p: any) => productMap.set(p.id, p));
+      // Add junction table products
+      (junctionRes.data || []).forEach((pc: any) => {
+        if (pc.products && pc.products.is_active && !productMap.has(pc.products.id)) {
+          const prod = { ...pc.products, product_categories: [{ category_id: pc.category_id, categories: pc.categories }] };
+          productMap.set(prod.id, prod);
+        }
+      });
+      return Array.from(productMap.values());
     },
+    enabled: tailoredCatIds.length > 0,
     staleTime: 5 * 60 * 1000,
     placeholderData: (prev) => prev,
   });
