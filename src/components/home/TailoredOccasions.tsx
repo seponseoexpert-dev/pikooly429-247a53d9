@@ -184,12 +184,12 @@ const TailoredOccasions = memo(() => {
         ) : (
           <div key={animKey} className="motion-safe:animate-fade-in-up">
             {/* Horizontal scroll - FNP style */}
-            <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
+            <div className="flex gap-2.5 sm:gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
               {filteredProducts.slice(0, 12).map((product: any, i: number) => (
                 <div
                   key={product.id}
                   style={{ animationDelay: `${i * 60}ms` }}
-                  className="min-w-[260px] sm:min-w-[280px] md:min-w-[290px] max-w-[300px] snap-start shrink-0 motion-safe:animate-fade-in-up"
+                  className="min-w-[44vw] sm:min-w-[220px] md:min-w-[240px] lg:min-w-[260px] max-w-[260px] snap-start shrink-0 motion-safe:animate-fade-in-up"
                 >
                   <ProductCard product={product} formatPrice={formatPrice} />
                 </div>
