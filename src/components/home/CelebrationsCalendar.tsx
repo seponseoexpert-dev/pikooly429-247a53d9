@@ -5,15 +5,20 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const PASTEL_COLORS = [
-  "#fce4ec", // pink
-  "#e3f2fd", // blue
-  "#fff9c4", // yellow
-  "#e8f5e9", // green
-  "#f3e5f5", // purple
-  "#fff3e0", // orange
-  "#e0f7fa", // cyan
-  "#fce4ec", // pink
+  "#f8d7da", "#d6eaf8", "#fef9e7", "#d5f5e3",
+  "#f5eef8", "#fdebd0", "#d1f2eb", "#fadbd8",
 ];
+
+// Parse "11TH APR" to render superscript TH/ST/ND/RD
+const DateLabel = ({ label }: { label: string }) => {
+  const match = label.match(/^(\d+)(ST|ND|RD|TH)\s+(.+)$/i);
+  if (!match) return <span>{label}</span>;
+  return (
+    <span>
+      {match[1]}<sup className="text-[7px] sm:text-[8px]">{match[2].toUpperCase()}</sup> {match[3].toUpperCase()}
+    </span>
+  );
+};
 
 const CelebrationsCalendar = memo(() => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -40,7 +45,7 @@ const CelebrationsCalendar = memo(() => {
 
   return (
     <section className="py-4 sm:py-6 md:py-8 section-container" style={{ contain: "layout style" }}>
-      <h2 className="section-heading font-display font-semibold text-foreground mb-3 sm:mb-4 md:mb-6">
+      <h2 className="section-heading font-display font-bold text-foreground mb-3 sm:mb-4 md:mb-6 text-lg sm:text-xl md:text-2xl">
         Celebrations Calendar
       </h2>
 
@@ -53,31 +58,34 @@ const CelebrationsCalendar = memo(() => {
             const bgColor = c.bg_color || PASTEL_COLORS[index % PASTEL_COLORS.length];
 
             const card = (
-              <div className="w-[43vw] min-w-[43vw] sm:min-w-[220px] md:min-w-[260px] lg:min-w-[280px] flex-shrink-0 snap-start group">
+              <div className="w-[44vw] min-w-[44vw] sm:min-w-[220px] md:min-w-[260px] lg:min-w-[280px] flex-shrink-0 snap-start group">
+                {/* FNP-style card: light bg, rounded, date inside top */}
                 <div
-                  className="relative rounded-2xl overflow-hidden aspect-[3/4] group-hover:shadow-lg transition-all duration-500 ease-out group-hover:scale-[1.02]"
+                  className="relative rounded-2xl overflow-hidden aspect-[4/5] transition-all duration-500 ease-out group-hover:shadow-lg group-hover:scale-[1.02]"
                   style={{ backgroundColor: bgColor }}
                 >
+                  {/* Date badge - FNP style: inside card top, subtle bg */}
+                  <div className="absolute top-0 left-0 right-0 z-10">
+                    <div
+                      className="mx-auto w-[75%] text-center py-1.5 sm:py-2 rounded-b-xl"
+                      style={{ backgroundColor: "rgba(255,255,255,0.65)", backdropFilter: "blur(6px)" }}
+                    >
+                      <span className="text-[11px] sm:text-xs md:text-sm font-bold text-foreground tracking-wide">
+                        <DateLabel label={c.date_label} />
+                      </span>
+                    </div>
+                  </div>
+
                   <img
                     src={c.image_url || "/placeholder.svg"}
                     alt={c.name}
                     width={280}
-                    height={373}
+                    height={350}
                     className="w-full h-full object-cover"
                     loading="lazy"
                     decoding="async"
-                    sizes="(max-width: 480px) 43vw, (max-width: 640px) 220px, (max-width: 768px) 260px, 280px"
+                    sizes="(max-width: 480px) 44vw, (max-width: 640px) 220px, (max-width: 768px) 260px, 280px"
                   />
-                  <div className="absolute top-0 left-0 right-0">
-                    <div
-                      className="mx-auto w-[70%] backdrop-blur-sm text-center py-1.5 sm:py-2 rounded-b-xl"
-                      style={{ backgroundColor: `${bgColor}dd` }}
-                    >
-                      <span className="text-[11px] sm:text-xs md:text-sm font-bold text-foreground tracking-wider uppercase">
-                        {c.date_label}
-                      </span>
-                    </div>
-                  </div>
                 </div>
                 <p className="text-xs sm:text-sm md:text-base font-medium text-foreground/80 text-center mt-2 sm:mt-2.5 group-hover:text-primary transition-colors line-clamp-1">
                   {c.name}
