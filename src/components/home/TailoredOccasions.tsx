@@ -1,9 +1,10 @@
 import { useState, useMemo, useEffect, memo, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Gift, Star, ChevronRight } from "lucide-react";
+import { Gift, Star, ChevronRight, ShoppingCart, Clock } from "lucide-react";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
+import { useCart } from "@/contexts/CartContext";
 
 const TailoredOccasions = memo(() => {
   const [activeSlug, setActiveSlug] = useState("");
@@ -153,18 +154,14 @@ const TailoredOccasions = memo(() => {
           </div>
         ) : (
           <div key={animKey} className="animate-fade-in">
-            {/* Mobile: 2-column grid */}
-            <div className="grid grid-cols-2 gap-2.5 sm:hidden">
-              {filteredProducts.slice(0, 6).map((product: any, i: number) => (
-                <div key={product.id} style={{ animationDelay: `${i * 60}ms` }} className="animate-fade-in opacity-0 [animation-fill-mode:forwards]">
-                  <ProductCard product={product} formatPrice={formatPrice} />
-                </div>
-              ))}
-            </div>
-            {/* Tablet+ grid */}
-            <div className="hidden sm:grid sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
-              {filteredProducts.slice(0, 8).map((product: any, i: number) => (
-                <div key={product.id} style={{ animationDelay: `${i * 50}ms` }} className="animate-fade-in opacity-0 [animation-fill-mode:forwards]">
+            {/* Horizontal scroll - FNP style */}
+            <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
+              {filteredProducts.slice(0, 12).map((product: any, i: number) => (
+                <div
+                  key={product.id}
+                  style={{ animationDelay: `${i * 60}ms` }}
+                  className="min-w-[260px] sm:min-w-[280px] md:min-w-[290px] max-w-[300px] snap-start shrink-0 animate-fade-in opacity-0 [animation-fill-mode:forwards]"
+                >
                   <ProductCard product={product} formatPrice={formatPrice} />
                 </div>
               ))}
@@ -189,23 +186,55 @@ const TailoredOccasions = memo(() => {
   );
 });
 
-/* Premium product card */
+/* FNP-style horizontal product card with Buy Now + Cart */
 const ProductCard = memo(({ product, formatPrice }: { product: any; formatPrice: (n: number) => string }) => {
   const imgSrc = product.image_url || "/placeholder.svg";
   const linkTo = `/product/${product.slug || product.id}`;
-  const origPrice = product.original_price;
-  const hasDiscount = origPrice && origPrice > product.price;
-  const discountPct = hasDiscount ? Math.round((1 - product.price / origPrice) * 100) : 0;
-  const rating = product.rating;
-  const isBestSeller = product.is_featured;
+  const navigate = useNavigate();
+  const { addItem } = useCart();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      originalPrice: product.original_price,
+      image: imgSrc,
+      category: product.categories?.name || "",
+      inStock: product.stock > 0,
+      rating: product.rating,
+    });
+  };
+
+  const handleBuyNow = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addItem(
+      {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        originalPrice: product.original_price,
+        image: imgSrc,
+        category: product.categories?.name || "",
+        inStock: product.stock > 0,
+        rating: product.rating,
+      },
+      undefined,
+      true
+    );
+    navigate("/checkout");
+  };
 
   return (
     <Link
       to={linkTo}
-      className="group bg-white rounded-xl overflow-hidden flex flex-col shadow-[0_1px_6px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.1)] transition-shadow duration-300"
+      className="group bg-white rounded-2xl overflow-hidden flex flex-col shadow-[0_2px_12px_rgba(0,0,0,0.07)] hover:shadow-[0_6px_24px_rgba(0,0,0,0.12)] transition-all duration-300 border border-border/40"
     >
-      {/* Image */}
-      <div className="relative aspect-square overflow-hidden bg-[#f8f7f4]">
+      {/* Image - taller aspect */}
+      <div className="relative aspect-[4/5] overflow-hidden bg-[#f8f7f4]">
         <img
           src={imgSrc}
           alt={product.name}
@@ -213,65 +242,51 @@ const ProductCard = memo(({ product, formatPrice }: { product: any; formatPrice:
           loading="lazy"
           decoding="async"
           width={300}
-          height={300}
+          height={375}
         />
-        {/* Discount badge */}
-        {hasDiscount && discountPct > 0 && (
-          <span className="absolute top-2 left-2 bg-red-500 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-md">
-            {discountPct}% OFF
-          </span>
-        )}
         {/* Delivery badge */}
         {product.delivery_time && (
-          <span className="absolute bottom-2 left-2 bg-white/95 backdrop-blur-sm text-[9px] sm:text-[10px] font-medium px-2 py-1 rounded-lg flex items-center gap-1 text-foreground/80 shadow-sm">
-            🕐 {product.delivery_time}
+          <span className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm text-[11px] font-medium px-3 py-1.5 rounded-full flex items-center gap-1.5 text-foreground/80 shadow-md">
+            <Clock size={13} strokeWidth={2} className="text-foreground/60" />
+            {product.delivery_time}
           </span>
         )}
       </div>
 
       {/* Info */}
-      <div className="px-2.5 sm:px-3 pt-2.5 pb-3.5 flex flex-col gap-1 flex-1">
-        <h3 className="font-sans text-[12px] sm:text-[13px] font-medium text-foreground/85 leading-snug line-clamp-2">
+      <div className="px-4 pt-3 pb-4 flex flex-col gap-1.5 flex-1">
+        {/* Product name */}
+        <h3 className="font-sans text-[14px] sm:text-[15px] font-semibold text-foreground leading-snug line-clamp-2 min-h-[40px]">
           {product.name}
         </h3>
 
         {/* Price */}
-        <div className="flex items-baseline gap-1.5 mt-0.5">
-          <span className="text-[15px] sm:text-[16px] font-bold text-foreground">
+        <div className="flex items-baseline gap-2 mt-0.5">
+          <span className="text-[18px] sm:text-[20px] font-bold text-foreground">
             {formatPrice(product.price)}
           </span>
-          {hasDiscount && (
-            <span className="text-[11px] sm:text-[12px] text-muted-foreground line-through">
-              {formatPrice(origPrice)}
+          {product.original_price && product.original_price > product.price && (
+            <span className="text-[12px] text-muted-foreground line-through">
+              {formatPrice(product.original_price)}
             </span>
           )}
         </div>
 
-        {/* Rating */}
-        {rating && rating > 0 && (
-          <div className="flex items-center gap-1.5 mt-0.5">
-            <div className="flex items-center gap-0.5 bg-emerald-600 text-white px-1.5 py-[2px] rounded">
-              <span className="text-[10px] font-bold leading-none">{rating.toFixed(1)}</span>
-              <Star size={8} className="fill-white text-white" />
-            </div>
-            {product.review_count > 0 && (
-              <span className="text-[10px] text-muted-foreground">
-                ({product.review_count})
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* Tags */}
-        {hasDiscount ? (
-          <span className="inline-block self-start text-[8px] sm:text-[9px] font-bold text-white bg-gradient-to-r from-red-500 to-rose-500 px-2 py-0.5 rounded-md mt-1 uppercase tracking-wider">
-            Price Drop
-          </span>
-        ) : isBestSeller ? (
-          <span className="inline-block self-start text-[8px] sm:text-[9px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md mt-1 uppercase tracking-wider">
-            Best Seller
-          </span>
-        ) : null}
+        {/* Buy Now + Cart buttons */}
+        <div className="flex items-center gap-2 mt-2">
+          <button
+            onClick={handleBuyNow}
+            className="flex-1 bg-[#5a6b2e] hover:bg-[#4a5a24] text-white text-[13px] font-semibold py-2.5 px-4 rounded-full transition-all duration-200 active:scale-95"
+          >
+            Buy Now
+          </button>
+          <button
+            onClick={handleAddToCart}
+            className="w-11 h-11 flex items-center justify-center rounded-full border-2 border-[#5a6b2e] text-[#5a6b2e] hover:bg-[#5a6b2e] hover:text-white transition-all duration-200 active:scale-95 shrink-0"
+          >
+            <ShoppingCart size={18} strokeWidth={2} />
+          </button>
+        </div>
       </div>
     </Link>
   );
