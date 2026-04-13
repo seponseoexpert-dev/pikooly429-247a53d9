@@ -184,12 +184,12 @@ const TailoredOccasions = memo(() => {
         ) : (
           <div key={animKey} className="motion-safe:animate-fade-in-up">
             {/* Horizontal scroll - FNP style */}
-            <div className="flex gap-2.5 sm:gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
-              {filteredProducts.slice(0, 12).map((product: any, i: number) => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3">
+              {filteredProducts.slice(0, 8).map((product: any, i: number) => (
                 <div
                   key={product.id}
                   style={{ animationDelay: `${i * 60}ms` }}
-                  className="min-w-[44vw] sm:min-w-[220px] md:min-w-[240px] lg:min-w-[260px] max-w-[260px] snap-start shrink-0 motion-safe:animate-fade-in-up"
+                  className="motion-safe:animate-fade-in-up"
                 >
                   <ProductCard product={product} formatPrice={formatPrice} />
                 </div>
@@ -283,37 +283,37 @@ const ProductCard = memo(({ product, formatPrice }: { product: any; formatPrice:
       </div>
 
       {/* Info */}
-      <div className="px-4 pt-3 pb-4 flex flex-col gap-1.5 flex-1">
+      <div className="px-2.5 pt-2 pb-3 flex flex-col gap-1 flex-1">
         {/* Product name */}
-        <h3 className="font-sans text-[14px] sm:text-[15px] font-semibold text-foreground leading-snug line-clamp-2 min-h-[40px]">
+        <h3 className="font-sans text-[12px] sm:text-[13px] font-semibold text-foreground leading-snug line-clamp-2 min-h-[32px]">
           {product.name}
         </h3>
 
         {/* Price */}
-        <div className="flex items-baseline gap-2 mt-0.5">
-          <span className="text-[18px] sm:text-[20px] font-bold text-foreground">
+        <div className="flex items-baseline gap-1.5 mt-0.5">
+          <span className="text-[14px] sm:text-[16px] font-bold text-foreground">
             {formatPrice(product.price)}
           </span>
           {product.original_price && product.original_price > product.price && (
-            <span className="text-[12px] text-muted-foreground line-through">
+            <span className="text-[10px] sm:text-[11px] text-muted-foreground line-through">
               {formatPrice(product.original_price)}
             </span>
           )}
         </div>
 
         {/* Buy Now + Cart buttons */}
-        <div className="flex items-center gap-2 mt-2">
+        <div className="flex items-center gap-1.5 mt-1.5">
           <button
             onClick={handleBuyNow}
-            className="flex-1 bg-[#5a6b2e] hover:bg-[#4a5a24] text-white text-[13px] font-semibold py-2.5 px-4 rounded-full transition-all duration-200 active:scale-95"
+            className="flex-1 bg-[#5a6b2e] hover:bg-[#4a5a24] text-white text-[11px] sm:text-[12px] font-semibold py-2 px-3 rounded-full transition-all duration-200 active:scale-95"
           >
             Buy Now
           </button>
           <button
             onClick={handleAddToCart}
-            className="w-11 h-11 flex items-center justify-center rounded-full border-2 border-[#5a6b2e] text-[#5a6b2e] hover:bg-[#5a6b2e] hover:text-white transition-all duration-200 active:scale-95 shrink-0"
+            className="w-9 h-9 flex items-center justify-center rounded-full border-2 border-[#5a6b2e] text-[#5a6b2e] hover:bg-[#5a6b2e] hover:text-white transition-all duration-200 active:scale-95 shrink-0"
           >
-            <ShoppingCart size={18} strokeWidth={2} />
+            <ShoppingCart size={15} strokeWidth={2} />
           </button>
         </div>
       </div>
