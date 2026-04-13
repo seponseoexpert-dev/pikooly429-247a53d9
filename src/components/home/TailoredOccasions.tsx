@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, memo } from "react";
+import { useState, useMemo, useEffect, memo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,7 +7,15 @@ import { useMultiCurrency } from "@/contexts/CurrencyContext";
 
 const TailoredOccasions = memo(() => {
   const [activeSlug, setActiveSlug] = useState("");
+  const [animKey, setAnimKey] = useState(0);
   const { formatPrice } = useMultiCurrency();
+
+  const handleTabChange = useCallback((slug: string) => {
+    if (slug !== activeSlug) {
+      setActiveSlug(slug);
+      setAnimKey((k) => k + 1);
+    }
+  }, [activeSlug]);
   
 
   const { data: occasionCategories = [] } = useQuery({
@@ -80,37 +88,42 @@ const TailoredOccasions = memo(() => {
         {occasionCategories.length > 0 && (
           <div className="relative mb-6">
             <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#d5d5c8] to-transparent" />
-            <div className="flex overflow-x-auto scrollbar-hide gap-1">
+            <div className="flex overflow-x-auto scrollbar-hide gap-0.5">
               {occasionCategories.map((cat) => {
                 const isActive = activeSlug === cat.slug;
                 return (
                   <button
                     key={cat.slug}
-                    onClick={() => setActiveSlug(cat.slug)}
-                    className={`flex flex-col items-center gap-2 px-5 sm:px-7 md:px-8 pt-3 pb-3 shrink-0 transition-all duration-300 relative rounded-t-xl
+                    onClick={() => handleTabChange(cat.slug)}
+                    className={`flex flex-col items-center gap-1.5 px-5 sm:px-7 md:px-8 pt-3.5 pb-3 shrink-0 transition-all duration-300 relative rounded-t-xl
                       ${isActive
-                        ? "bg-[#f0ede4] shadow-[0_-2px_8px_rgba(107,124,62,0.08)]"
+                        ? "bg-gradient-to-b from-[#f0ede4] to-[#e8e4d8] shadow-[0_-2px_10px_rgba(107,124,62,0.1)]"
                         : "hover:bg-[#f5f3ee]/60"
                       }`}
                   >
-                    {/* Active indicator bar */}
+                    {/* Active indicator bar with glow */}
                     {isActive && (
-                      <div className="absolute bottom-0 left-2 right-2 h-[2.5px] bg-gradient-to-r from-[#8a9a5b] to-[#6b7c3e] rounded-full z-10" />
+                      <div className="absolute bottom-0 left-1.5 right-1.5 h-[3px] bg-gradient-to-r from-[#8a9a5b] via-[#a3b56e] to-[#6b7c3e] rounded-full z-10 shadow-[0_0_6px_rgba(138,154,91,0.4)]" />
                     )}
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center">
+                    {/* Icon with colorful circle background */}
+                    <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-300 ${
+                      isActive 
+                        ? "bg-gradient-to-br from-[#e8f0d8] to-[#d4e0bc] shadow-[0_2px_8px_rgba(138,154,91,0.25)] scale-110" 
+                        : "bg-[#f5f3ee] group-hover:bg-[#eee]"
+                    }`}>
                       {cat.image_url ? (
                         <img
                           src={cat.image_url}
                           alt={cat.name}
-                          className={`w-8 h-8 sm:w-9 sm:h-9 object-contain transition-transform duration-300 ${isActive ? "scale-110" : ""}`}
+                          className={`w-7 h-7 sm:w-8 sm:h-8 object-contain transition-all duration-300 drop-shadow-sm ${isActive ? "drop-shadow-md" : ""}`}
                           loading="lazy"
                           decoding="async"
                         />
                       ) : (
-                        <Gift size={22} strokeWidth={1.5} className={isActive ? "text-[#5a6b2e]" : "text-muted-foreground"} />
+                        <Gift size={22} strokeWidth={1.5} className={`transition-colors duration-300 ${isActive ? "text-[#5a6b2e]" : "text-muted-foreground"}`} />
                       )}
                     </div>
-                    <span className={`text-[11px] sm:text-[12.5px] whitespace-nowrap leading-tight transition-colors duration-200 ${isActive ? "font-bold text-[#3d4a24]" : "font-medium text-muted-foreground"}`}>
+                    <span className={`text-[11px] sm:text-[12.5px] whitespace-nowrap leading-tight transition-all duration-200 ${isActive ? "font-bold text-[#3d4a24]" : "font-medium text-muted-foreground"}`}>
                       {cat.name}
                     </span>
                   </button>
@@ -139,20 +152,24 @@ const TailoredOccasions = memo(() => {
             <p className="text-muted-foreground text-sm">No products found for this occasion</p>
           </div>
         ) : (
-          <>
+          <div key={animKey} className="animate-fade-in">
             {/* Mobile: 2-column grid */}
             <div className="grid grid-cols-2 gap-2.5 sm:hidden">
-              {filteredProducts.slice(0, 6).map((product: any) => (
-                <ProductCard key={product.id} product={product} formatPrice={formatPrice} />
+              {filteredProducts.slice(0, 6).map((product: any, i: number) => (
+                <div key={product.id} style={{ animationDelay: `${i * 60}ms` }} className="animate-fade-in opacity-0 [animation-fill-mode:forwards]">
+                  <ProductCard product={product} formatPrice={formatPrice} />
+                </div>
               ))}
             </div>
             {/* Tablet+ grid */}
             <div className="hidden sm:grid sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
-              {filteredProducts.slice(0, 8).map((product: any) => (
-                <ProductCard key={product.id} product={product} formatPrice={formatPrice} />
+              {filteredProducts.slice(0, 8).map((product: any, i: number) => (
+                <div key={product.id} style={{ animationDelay: `${i * 50}ms` }} className="animate-fade-in opacity-0 [animation-fill-mode:forwards]">
+                  <ProductCard product={product} formatPrice={formatPrice} />
+                </div>
               ))}
             </div>
-          </>
+          </div>
         )}
 
         {/* CTA */}
