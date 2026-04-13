@@ -283,19 +283,19 @@ const ProductCard = memo(({ product, formatPrice }: { product: any; formatPrice:
       </div>
 
       {/* Info */}
-      <div className="px-4 pt-3 pb-4 flex flex-col gap-1.5 flex-1">
+      <div className="px-2.5 pt-2 pb-3 flex flex-col gap-1 flex-1">
         {/* Product name */}
-        <h3 className="font-sans text-[14px] sm:text-[15px] font-semibold text-foreground leading-snug line-clamp-2 min-h-[40px]">
+        <h3 className="font-sans text-[12px] sm:text-[13px] font-semibold text-foreground leading-snug line-clamp-2 min-h-[32px]">
           {product.name}
         </h3>
 
         {/* Price */}
-        <div className="flex items-baseline gap-2 mt-0.5">
-          <span className="text-[18px] sm:text-[20px] font-bold text-foreground">
+        <div className="flex items-baseline gap-1.5 mt-0.5">
+          <span className="text-[14px] sm:text-[16px] font-bold text-foreground">
             {formatPrice(product.price)}
           </span>
           {product.original_price && product.original_price > product.price && (
-            <span className="text-[12px] text-muted-foreground line-through">
+            <span className="text-[10px] sm:text-[11px] text-muted-foreground line-through">
               {formatPrice(product.original_price)}
             </span>
           )}
