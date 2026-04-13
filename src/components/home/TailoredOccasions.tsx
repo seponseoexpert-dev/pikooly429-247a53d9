@@ -302,18 +302,18 @@ const ProductCard = memo(({ product, formatPrice }: { product: any; formatPrice:
         </div>
 
         {/* Buy Now + Cart buttons */}
-        <div className="flex items-center gap-2 mt-2">
+        <div className="flex items-center gap-1.5 mt-1.5">
           <button
             onClick={handleBuyNow}
-            className="flex-1 bg-[#5a6b2e] hover:bg-[#4a5a24] text-white text-[13px] font-semibold py-2.5 px-4 rounded-full transition-all duration-200 active:scale-95"
+            className="flex-1 bg-[#5a6b2e] hover:bg-[#4a5a24] text-white text-[11px] sm:text-[12px] font-semibold py-2 px-3 rounded-full transition-all duration-200 active:scale-95"
           >
             Buy Now
           </button>
           <button
             onClick={handleAddToCart}
-            className="w-11 h-11 flex items-center justify-center rounded-full border-2 border-[#5a6b2e] text-[#5a6b2e] hover:bg-[#5a6b2e] hover:text-white transition-all duration-200 active:scale-95 shrink-0"
+            className="w-9 h-9 flex items-center justify-center rounded-full border-2 border-[#5a6b2e] text-[#5a6b2e] hover:bg-[#5a6b2e] hover:text-white transition-all duration-200 active:scale-95 shrink-0"
           >
-            <ShoppingCart size={18} strokeWidth={2} />
+            <ShoppingCart size={15} strokeWidth={2} />
           </button>
         </div>
       </div>
