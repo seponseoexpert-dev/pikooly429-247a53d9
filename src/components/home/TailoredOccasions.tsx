@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, memo, useRef } from "react";
+import { useState, useMemo, useEffect, memo } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,7 +8,7 @@ import { useMultiCurrency } from "@/contexts/CurrencyContext";
 const TailoredOccasions = memo(() => {
   const [activeSlug, setActiveSlug] = useState("");
   const { formatPrice } = useMultiCurrency();
-  const scrollRef = useRef<HTMLDivElement>(null);
+  
 
   const { data: occasionCategories = [] } = useQuery({
     queryKey: ["homepage-occasion-categories"],
@@ -66,49 +66,51 @@ const TailoredOccasions = memo(() => {
   if (occasionCategories.length === 0 && !isLoading) return null;
 
   return (
-    <section className="bg-white py-5 sm:py-8 md:py-10" aria-label="Tailored For Your Occasions">
+    <section className="bg-gradient-to-b from-[#faf9f6] to-white py-6 sm:py-10 md:py-12" aria-label="Tailored For Your Occasions">
       <div className="section-container">
         {/* Title */}
-        <h2 className="font-serif text-[22px] sm:text-2xl md:text-[28px] font-bold text-foreground mb-4 sm:mb-5 tracking-tight leading-tight">
+        <h2 className="font-serif text-[22px] sm:text-2xl md:text-[28px] font-bold text-foreground mb-1 tracking-tight leading-tight">
           Tailored For Your Occasions
         </h2>
+        <p className="text-muted-foreground text-[13px] sm:text-sm mb-5 sm:mb-6">
+          Find the perfect gift for every special moment
+        </p>
 
-        {/* FNP-Style Tabs */}
+        {/* Premium Tabs */}
         {occasionCategories.length > 0 && (
-          <div className="relative mb-5">
-            {/* Bottom border line */}
-            <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#d5d5c8]" />
-            <div className="flex overflow-x-auto scrollbar-hide">
+          <div className="relative mb-6">
+            <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#d5d5c8] to-transparent" />
+            <div className="flex overflow-x-auto scrollbar-hide gap-1">
               {occasionCategories.map((cat) => {
                 const isActive = activeSlug === cat.slug;
                 return (
                   <button
                     key={cat.slug}
                     onClick={() => setActiveSlug(cat.slug)}
-                    className={`flex flex-col items-center gap-1.5 px-4 sm:px-6 md:px-8 pt-3 pb-2.5 shrink-0 transition-all duration-200 relative
+                    className={`flex flex-col items-center gap-2 px-5 sm:px-7 md:px-8 pt-3 pb-3 shrink-0 transition-all duration-300 relative rounded-t-xl
                       ${isActive
-                        ? "text-foreground"
-                        : "text-muted-foreground hover:text-foreground/70"
+                        ? "bg-[#f0ede4] shadow-[0_-2px_8px_rgba(107,124,62,0.08)]"
+                        : "hover:bg-[#f5f3ee]/60"
                       }`}
                   >
-                    {/* Active tab background */}
+                    {/* Active indicator bar */}
                     {isActive && (
-                      <div className="absolute inset-0 bottom-0 rounded-t-lg border border-[#8a9a5b]/50 border-b-white bg-[#faf9f4] -mb-[1px] z-0" />
+                      <div className="absolute bottom-0 left-2 right-2 h-[2.5px] bg-gradient-to-r from-[#8a9a5b] to-[#6b7c3e] rounded-full z-10" />
                     )}
-                    <div className="relative z-10 w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center">
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center">
                       {cat.image_url ? (
                         <img
                           src={cat.image_url}
                           alt={cat.name}
-                          className="w-7 h-7 sm:w-8 sm:h-8 object-contain"
+                          className={`w-8 h-8 sm:w-9 sm:h-9 object-contain transition-transform duration-300 ${isActive ? "scale-110" : ""}`}
                           loading="lazy"
                           decoding="async"
                         />
                       ) : (
-                        <Gift size={24} strokeWidth={1.5} />
+                        <Gift size={22} strokeWidth={1.5} className={isActive ? "text-[#5a6b2e]" : "text-muted-foreground"} />
                       )}
                     </div>
-                    <span className={`relative z-10 text-[11px] sm:text-[13px] whitespace-nowrap leading-tight ${isActive ? "font-bold text-[#3d4a24]" : "font-medium"}`}>
+                    <span className={`text-[11px] sm:text-[12.5px] whitespace-nowrap leading-tight transition-colors duration-200 ${isActive ? "font-bold text-[#3d4a24]" : "font-medium text-muted-foreground"}`}>
                       {cat.name}
                     </span>
                   </button>
@@ -122,7 +124,7 @@ const TailoredOccasions = memo(() => {
         {isLoading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-md overflow-hidden">
+              <div key={i} className="bg-white rounded-xl overflow-hidden shadow-sm">
                 <div className="aspect-square bg-muted animate-pulse" />
                 <div className="p-3 space-y-2">
                   <div className="h-3 w-3/4 rounded bg-muted animate-pulse" />
@@ -138,15 +140,10 @@ const TailoredOccasions = memo(() => {
           </div>
         ) : (
           <>
-            {/* Mobile: horizontal scroll showing ~2.5 cards */}
-            <div
-              ref={scrollRef}
-              className="flex gap-2.5 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-1 sm:hidden"
-            >
-              {filteredProducts.slice(0, 10).map((product: any) => (
-                <div key={product.id} className="min-w-[42vw] max-w-[44vw] snap-start shrink-0">
-                  <ProductCard product={product} formatPrice={formatPrice} />
-                </div>
+            {/* Mobile: 2-column grid */}
+            <div className="grid grid-cols-2 gap-2.5 sm:hidden">
+              {filteredProducts.slice(0, 6).map((product: any) => (
+                <ProductCard key={product.id} product={product} formatPrice={formatPrice} />
               ))}
             </div>
             {/* Tablet+ grid */}
@@ -160,10 +157,10 @@ const TailoredOccasions = memo(() => {
 
         {/* CTA */}
         {filteredProducts.length > 0 && (
-          <div className="mt-5 sm:mt-7">
+          <div className="mt-6 sm:mt-8">
             <Link
               to={viewAllLink}
-              className="flex items-center justify-center w-full sm:w-auto sm:inline-flex gap-1.5 px-8 py-3.5 border border-[#8a9a5b] text-[#5a6b2e] rounded-lg text-sm font-semibold hover:bg-[#6b7c3e] hover:text-white hover:border-[#6b7c3e] transition-all duration-300"
+              className="flex items-center justify-center w-full sm:w-auto sm:inline-flex gap-1.5 px-8 py-3.5 border-2 border-[#8a9a5b] text-[#5a6b2e] rounded-xl text-sm font-semibold hover:bg-[#6b7c3e] hover:text-white hover:border-[#6b7c3e] transition-all duration-300 shadow-sm hover:shadow-md"
             >
               {viewAllText}
               <ChevronRight size={16} strokeWidth={2.5} />
@@ -175,22 +172,23 @@ const TailoredOccasions = memo(() => {
   );
 });
 
-/* Clean FNP-style product card with square image */
+/* Premium product card */
 const ProductCard = memo(({ product, formatPrice }: { product: any; formatPrice: (n: number) => string }) => {
   const imgSrc = product.image_url || "/placeholder.svg";
   const linkTo = `/product/${product.slug || product.id}`;
   const origPrice = product.original_price;
   const hasDiscount = origPrice && origPrice > product.price;
+  const discountPct = hasDiscount ? Math.round((1 - product.price / origPrice) * 100) : 0;
   const rating = product.rating;
   const isBestSeller = product.is_featured;
 
   return (
     <Link
       to={linkTo}
-      className="group bg-white rounded-md overflow-hidden flex flex-col"
+      className="group bg-white rounded-xl overflow-hidden flex flex-col shadow-[0_1px_6px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.1)] transition-shadow duration-300"
     >
-      {/* Square image */}
-      <div className="relative aspect-square overflow-hidden bg-[#f8f8f6]">
+      {/* Image */}
+      <div className="relative aspect-square overflow-hidden bg-[#f8f7f4]">
         <img
           src={imgSrc}
           alt={product.name}
@@ -200,42 +198,48 @@ const ProductCard = memo(({ product, formatPrice }: { product: any; formatPrice:
           width={300}
           height={300}
         />
+        {/* Discount badge */}
+        {hasDiscount && discountPct > 0 && (
+          <span className="absolute top-2 left-2 bg-red-500 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-md">
+            {discountPct}% OFF
+          </span>
+        )}
+        {/* Delivery badge */}
         {product.delivery_time && (
-          <span className="absolute bottom-1.5 left-1.5 bg-white/90 backdrop-blur-sm text-[9px] sm:text-[10px] font-medium px-1.5 py-0.5 rounded flex items-center gap-0.5 text-foreground/70">
+          <span className="absolute bottom-2 left-2 bg-white/95 backdrop-blur-sm text-[9px] sm:text-[10px] font-medium px-2 py-1 rounded-lg flex items-center gap-1 text-foreground/80 shadow-sm">
             🕐 {product.delivery_time}
           </span>
         )}
       </div>
 
       {/* Info */}
-      <div className="px-1.5 sm:px-2.5 pt-2.5 pb-3 flex flex-col gap-0.5 flex-1">
-        {/* Product name */}
-        <h3 className="font-sans text-[12px] sm:text-[13px] font-normal text-foreground/90 leading-snug line-clamp-2">
+      <div className="px-2.5 sm:px-3 pt-2.5 pb-3.5 flex flex-col gap-1 flex-1">
+        <h3 className="font-sans text-[12px] sm:text-[13px] font-medium text-foreground/85 leading-snug line-clamp-2">
           {product.name}
         </h3>
 
-        {/* Price row */}
-        <div className="flex items-baseline gap-1.5 mt-1">
+        {/* Price */}
+        <div className="flex items-baseline gap-1.5 mt-0.5">
+          <span className="text-[15px] sm:text-[16px] font-bold text-foreground">
+            {formatPrice(product.price)}
+          </span>
           {hasDiscount && (
             <span className="text-[11px] sm:text-[12px] text-muted-foreground line-through">
               {formatPrice(origPrice)}
             </span>
           )}
-          <span className="text-[15px] sm:text-[16px] font-bold text-foreground">
-            {formatPrice(product.price)}
-          </span>
         </div>
 
         {/* Rating */}
         {rating && rating > 0 && (
-          <div className="flex items-center gap-1 mt-1">
-            <div className="flex items-center gap-0.5 bg-emerald-600 text-white px-1.5 py-[1px] rounded-sm">
-              <span className="text-[10px] font-bold">{rating.toFixed(1)}</span>
+          <div className="flex items-center gap-1.5 mt-0.5">
+            <div className="flex items-center gap-0.5 bg-emerald-600 text-white px-1.5 py-[2px] rounded">
+              <span className="text-[10px] font-bold leading-none">{rating.toFixed(1)}</span>
               <Star size={8} className="fill-white text-white" />
             </div>
             {product.review_count > 0 && (
-              <span className="text-[11px] text-muted-foreground">
-                | {product.review_count}
+              <span className="text-[10px] text-muted-foreground">
+                ({product.review_count})
               </span>
             )}
           </div>
@@ -243,11 +247,11 @@ const ProductCard = memo(({ product, formatPrice }: { product: any; formatPrice:
 
         {/* Tags */}
         {hasDiscount ? (
-          <span className="inline-block self-start text-[9px] sm:text-[10px] font-bold text-white bg-red-500 px-2 py-0.5 rounded mt-1 uppercase tracking-wider">
+          <span className="inline-block self-start text-[8px] sm:text-[9px] font-bold text-white bg-gradient-to-r from-red-500 to-rose-500 px-2 py-0.5 rounded-md mt-1 uppercase tracking-wider">
             Price Drop
           </span>
         ) : isBestSeller ? (
-          <span className="inline-block self-start text-[9px] sm:text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded mt-1 uppercase tracking-wider">
+          <span className="inline-block self-start text-[8px] sm:text-[9px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md mt-1 uppercase tracking-wider">
             Best Seller
           </span>
         ) : null}
