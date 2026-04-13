@@ -42,34 +42,39 @@ const TailoredOccasions = memo(() => {
     queryKey: ["tailored-occasion-products", tailoredCatIds],
     queryFn: async () => {
       if (!tailoredCatIds.length) return [];
-      // Fetch products that belong to tailored categories via direct category_id OR junction table
-      const [directRes, junctionRes] = await Promise.all([
-        supabase
-          .from("products")
-          .select("*, categories(name, slug), product_categories(category_id, categories(name, slug))")
-          .eq("is_active", true)
-          .in("category_id", tailoredCatIds)
-          .order("created_at", { ascending: false })
-          .limit(60),
-        supabase
-          .from("product_categories")
-          .select("product_id, category_id, categories(name, slug), products(*, categories(name, slug))")
-          .in("category_id", tailoredCatIds)
-          .limit(60),
-      ]);
-      if (directRes.error) throw directRes.error;
-
-      const productMap = new Map<string, any>();
-      // Add direct category products
-      (directRes.data || []).forEach((p: any) => productMap.set(p.id, p));
-      // Add junction table products
-      (junctionRes.data || []).forEach((pc: any) => {
-        if (pc.products && pc.products.is_active && !productMap.has(pc.products.id)) {
-          const prod = { ...pc.products, product_categories: [{ category_id: pc.category_id, categories: pc.categories }] };
-          productMap.set(prod.id, prod);
-        }
-      });
-      return Array.from(productMap.values());
+      
+      // Step 1: Get product IDs from junction table for tailored categories
+      const { data: junctionData } = await supabase
+        .from("product_categories")
+        .select("product_id")
+        .in("category_id", tailoredCatIds);
+      
+      // Step 2: Get product IDs from direct category_id
+      const { data: directData } = await supabase
+        .from("products")
+        .select("id")
+        .eq("is_active", true)
+        .in("category_id", tailoredCatIds);
+      
+      // Combine unique product IDs
+      const productIds = [...new Set([
+        ...(junctionData || []).map((j: any) => j.product_id),
+        ...(directData || []).map((d: any) => d.id),
+      ])];
+      
+      if (!productIds.length) return [];
+      
+      // Step 3: Fetch full product data
+      const { data, error } = await supabase
+        .from("products")
+        .select("*, categories(name, slug), product_categories(category_id, categories(name, slug))")
+        .eq("is_active", true)
+        .in("id", productIds)
+        .order("created_at", { ascending: false })
+        .limit(60);
+      
+      if (error) throw error;
+      return data || [];
     },
     enabled: tailoredCatIds.length > 0,
     staleTime: 5 * 60 * 1000,
