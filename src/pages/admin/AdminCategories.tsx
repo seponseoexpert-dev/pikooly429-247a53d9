@@ -304,6 +304,18 @@ const AdminCategories = () => {
                 <Switch checked={form.show_in_homepage} onCheckedChange={(checked) => setForm({ ...form, show_in_homepage: checked })} />
                 <Label>Show in Homepage</Label>
               </div>
+              <div className="space-y-3 border-t pt-4">
+                <Label className="text-base font-semibold">🎨 Personalization Options</Label>
+                <p className="text-xs text-muted-foreground">এই ক্যাটাগরির প্রোডাক্টে কাস্টমার কী কাস্টমাইজ করতে পারবে সেট করুন।</p>
+                <div className="flex items-center gap-2">
+                  <Switch checked={form.allow_custom_image} onCheckedChange={(checked) => setForm({ ...form, allow_custom_image: checked })} />
+                  <Label>Allow Custom Photo Upload</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch checked={form.allow_custom_text} onCheckedChange={(checked) => setForm({ ...form, allow_custom_text: checked })} />
+                  <Label>Allow Custom Text (Personalization)</Label>
+                </div>
+              </div>
               {/* FAQ Section */}
               <div className="space-y-3 border-t pt-4">
                 <div className="flex items-center justify-between">
