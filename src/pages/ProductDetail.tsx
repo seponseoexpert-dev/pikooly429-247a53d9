@@ -2,7 +2,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import SEOHead from "@/components/seo/SEOHead";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, Heart, Minus, Plus, Star, Phone, MessageCircle } from "lucide-react";
+import { ShoppingBag, Heart, Minus, Plus, Star, Phone, MessageCircle, Type } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import ProductCard from "@/components/product/ProductCard";
 import { ProductDetailSkeleton } from "@/components/ui/skeletons";
@@ -23,19 +23,20 @@ const ProductDetail = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [activeTab, setActiveTab] = useState<"specification" | "description" | "reviews">("specification");
   const [customImages, setCustomImages] = useState<File[]>([]);
+  const [customText, setCustomText] = useState("");
 
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", id],
     queryFn: async () => {
       let { data, error } = await supabase
         .from("products")
-        .select("*, categories(name, slug, allow_custom_image)")
+        .select("*, categories(name, slug, allow_custom_image, allow_custom_text)")
         .eq("slug", id!)
         .maybeSingle();
       if (!data) {
         ({ data, error } = await supabase
           .from("products")
-          .select("*, categories(name, slug, allow_custom_image)")
+          .select("*, categories(name, slug, allow_custom_image, allow_custom_text)")
           .eq("id", id!)
           .maybeSingle());
       }
@@ -65,6 +66,7 @@ const ProductDetail = () => {
 
   // Check if this product's category allows custom image uploads
   const allowCustomImage = !!(product?.categories as any)?.allow_custom_image;
+  const allowCustomText = !!(product?.categories as any)?.allow_custom_text;
 
   const stripHtml = (html: string) => {
     const tmp = document.createElement("div");
@@ -193,7 +195,7 @@ const ProductDetail = () => {
 
   const cartProduct = {
     id: product.id,
-    name: product.name,
+    name: customText.trim() ? `${product.name} (Personalized: ${customText.trim()})` : product.name,
     price: product.price,
     originalPrice: product.original_price ?? undefined,
     image: mainImg,
@@ -292,6 +294,24 @@ const ProductDetail = () => {
           {allowCustomImage && (
             <div className="mb-5 p-4 rounded-xl border border-border/50 bg-muted/20">
               <CustomImageUpload images={customImages} onChange={setCustomImages} maxImages={5} />
+            </div>
+          )}
+
+          {allowCustomText && (
+            <div className="mb-5 p-4 rounded-xl border border-border/50 bg-muted/20">
+              <div className="flex items-center gap-2 mb-3">
+                <Type size={18} className="text-primary" />
+                <span className="text-sm font-semibold text-foreground">Add Personalised Text</span>
+              </div>
+              <input
+                type="text"
+                value={customText}
+                onChange={(e) => setCustomText(e.target.value.slice(0, 50))}
+                placeholder="Enter Name for Personalization"
+                className="w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                maxLength={50}
+              />
+              <p className="text-[11px] text-muted-foreground mt-1.5">{customText.length}/50 characters</p>
             </div>
           )}
 
