@@ -216,6 +216,9 @@ const BlogDetail = () => {
             </div>
           )}
 
+          {/* Table of Contents */}
+          <TableOfContents content={post.content || ""} />
+
           {/* Content */}
           <div className="prose prose-sm sm:prose-base dark:prose-invert max-w-none
             prose-headings:font-display prose-headings:text-foreground prose-headings:font-semibold
@@ -226,7 +229,7 @@ const BlogDetail = () => {
             prose-li:text-muted-foreground
             prose-strong:text-foreground
             rich-text-content"
-            dangerouslySetInnerHTML={{ __html: post.content || "" }}
+            dangerouslySetInnerHTML={{ __html: addHeadingIds(post.content || "") }}
           />
 
           {/* Share Section */}
