@@ -64,9 +64,9 @@ const ProductDetail = () => {
     placeholderData: (prev) => prev,
   });
 
-  // Check if this product's category allows custom image uploads
-  const allowCustomImage = !!(product?.categories as any)?.allow_custom_image;
-  const allowCustomText = !!(product?.categories as any)?.allow_custom_text;
+  // Check product-level personalization flags first, fallback to category
+  const allowCustomImage = !!(product as any)?.allow_custom_image || !!(product?.categories as any)?.allow_custom_image;
+  const allowCustomText = !!(product as any)?.allow_custom_text || !!(product?.categories as any)?.allow_custom_text;
 
   const stripHtml = (html: string) => {
     const tmp = document.createElement("div");

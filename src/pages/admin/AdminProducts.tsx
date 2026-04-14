@@ -45,6 +45,7 @@ const AdminProducts = () => {
   const defaultForm = {
     name: "", slug: "", short_description: "", description: "", price: 0, original_price: 0,
     image_url: "", category_id: "", category_ids: [] as string[], subcategory_ids: [] as string[], is_active: true, is_featured: false, stock: 0, tags: "",
+    allow_custom_image: false, allow_custom_text: false,
     specifications: [] as Array<{ item: string; value: string }>,
     seo_title: "", seo_description: "", delivery_time: "",
   };
@@ -101,6 +102,7 @@ const AdminProducts = () => {
       category_ids: catIds,
       subcategory_ids: subIds,
       is_active: p.is_active, is_featured: p.is_featured, stock: p.stock,
+      allow_custom_image: (p as any).allow_custom_image || false, allow_custom_text: (p as any).allow_custom_text || false,
       tags: (p.tags || []).join(", "),
       specifications: specs,
       seo_title: (p as any).seo_title || "", seo_description: (p as any).seo_description || "",
@@ -141,6 +143,7 @@ const AdminProducts = () => {
       image_url: imageUrl || null, category_id: primaryCategoryId,
       subcategory_id: form.subcategory_ids.length > 0 ? form.subcategory_ids[0] : null,
       is_active: form.is_active, is_featured: form.is_featured, stock: form.stock, tags,
+      allow_custom_image: form.allow_custom_image, allow_custom_text: form.allow_custom_text,
       specifications: specs.length > 0 ? specs : null,
       seo_title: form.seo_title.trim() || null, seo_description: form.seo_description.trim() || null,
       delivery_time: form.delivery_time.trim() || null,
@@ -412,6 +415,14 @@ const AdminProducts = () => {
                 <div className="flex items-center gap-2">
                   <Switch checked={form.is_featured} onCheckedChange={(c) => setForm({ ...form, is_featured: c })} />
                   <Label>Featured</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch checked={form.allow_custom_image} onCheckedChange={(c) => setForm({ ...form, allow_custom_image: c })} />
+                  <Label>📷 Custom Photo</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch checked={form.allow_custom_text} onCheckedChange={(c) => setForm({ ...form, allow_custom_text: c })} />
+                  <Label>✏️ Custom Text</Label>
                 </div>
               </div>
               <Button type="submit" className="w-full" disabled={saving}>{saving ? "Saving..." : editing ? "Update" : "Create"}</Button>
