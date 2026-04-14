@@ -2,7 +2,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import SEOHead from "@/components/seo/SEOHead";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, Heart, Minus, Plus, Star, Phone, MessageCircle } from "lucide-react";
+import { ShoppingBag, Heart, Minus, Plus, Star, Phone, MessageCircle, Type } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import ProductCard from "@/components/product/ProductCard";
 import { ProductDetailSkeleton } from "@/components/ui/skeletons";
@@ -23,19 +23,20 @@ const ProductDetail = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [activeTab, setActiveTab] = useState<"specification" | "description" | "reviews">("specification");
   const [customImages, setCustomImages] = useState<File[]>([]);
+  const [customText, setCustomText] = useState("");
 
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", id],
     queryFn: async () => {
       let { data, error } = await supabase
         .from("products")
-        .select("*, categories(name, slug, allow_custom_image)")
+        .select("*, categories(name, slug, allow_custom_image, allow_custom_text)")
         .eq("slug", id!)
         .maybeSingle();
       if (!data) {
         ({ data, error } = await supabase
           .from("products")
-          .select("*, categories(name, slug, allow_custom_image)")
+          .select("*, categories(name, slug, allow_custom_image, allow_custom_text)")
           .eq("id", id!)
           .maybeSingle());
       }
@@ -65,6 +66,7 @@ const ProductDetail = () => {
 
   // Check if this product's category allows custom image uploads
   const allowCustomImage = !!(product?.categories as any)?.allow_custom_image;
+  const allowCustomText = !!(product?.categories as any)?.allow_custom_text;
 
   const stripHtml = (html: string) => {
     const tmp = document.createElement("div");
