@@ -1227,6 +1227,8 @@ export type Database = {
       }
       products: {
         Row: {
+          allow_custom_image: boolean
+          allow_custom_text: boolean
           category_id: string | null
           created_at: string
           delivery_time: string | null
@@ -1252,6 +1254,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          allow_custom_image?: boolean
+          allow_custom_text?: boolean
           category_id?: string | null
           created_at?: string
           delivery_time?: string | null
@@ -1277,6 +1281,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          allow_custom_image?: boolean
+          allow_custom_text?: boolean
           category_id?: string | null
           created_at?: string
           delivery_time?: string | null
