@@ -29,34 +29,38 @@ const addHeadingIds = (html: string) => {
 };
 
 const TableOfContents = ({ content }: { content: string }) => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const headings = useMemo(() => extractHeadings(content), [content]);
   if (headings.length < 2) return null;
   return (
-    <div className="mb-6 sm:mb-8 rounded-xl border border-border bg-muted/40 overflow-hidden">
+    <div className="mb-6 sm:mb-8 rounded-2xl border border-primary/15 bg-gradient-to-br from-primary/5 via-muted/30 to-background overflow-hidden shadow-sm">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-foreground hover:bg-muted/60 transition-colors"
+        className="w-full flex items-center justify-between px-4 sm:px-5 py-3 sm:py-3.5 text-sm font-semibold text-foreground hover:bg-primary/5 transition-colors"
       >
-        <span className="flex items-center gap-2">
-          <List size={16} className="text-primary" />
-          Table of Contents
+        <span className="flex items-center gap-2.5">
+          <span className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+            <List size={15} className="text-primary" />
+          </span>
+          <span>Table of Contents</span>
+          <span className="text-[10px] text-muted-foreground font-normal bg-muted px-1.5 py-0.5 rounded-full">{headings.length}</span>
         </span>
-        <ChevronDown size={16} className={`text-muted-foreground transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+        <ChevronDown size={16} className={`text-muted-foreground transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
-        <nav className="px-4 pb-3 pt-0">
-          <ul className="space-y-1">
+        <nav className="px-4 sm:px-5 pb-4 pt-1 border-t border-primary/10">
+          <ul className="space-y-0.5">
             {headings.map((h, i) => (
-              <li key={i} className={h.level === 3 ? "pl-4" : ""}>
+              <li key={i}>
                 <a
                   href={`#${h.id}`}
-                  className="block py-1 text-sm text-muted-foreground hover:text-primary transition-colors leading-snug"
+                  className={`flex items-center gap-2 py-1.5 sm:py-2 text-[13px] sm:text-sm text-muted-foreground hover:text-primary transition-colors leading-snug rounded-lg hover:bg-primary/5 px-2.5 -mx-1 ${h.level === 3 ? "pl-7 sm:pl-8" : ""}`}
                   onClick={(e) => {
                     e.preventDefault();
                     document.getElementById(h.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
                   }}
                 >
+                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${h.level === 2 ? "bg-primary/60" : "bg-muted-foreground/30"}`} />
                   {h.text}
                 </a>
               </li>
