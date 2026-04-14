@@ -1,12 +1,72 @@
 import { useParams, Link } from "react-router-dom";
-import { Calendar, ArrowLeft, Clock, Share2, Facebook, Twitter } from "lucide-react";
+import { Calendar, ArrowLeft, Clock, Share2, List, ChevronDown } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import SEOHead from "@/components/seo/SEOHead";
 import { motion } from "framer-motion";
+
+const extractHeadings = (html: string) => {
+  const regex = /<h([2-3])[^>]*>(.*?)<\/h[2-3]>/gi;
+  const headings: { level: number; text: string; id: string }[] = [];
+  let match;
+  while ((match = regex.exec(html)) !== null) {
+    const text = match[2].replace(/<[^>]*>/g, "").trim();
+    const id = text.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-");
+    headings.push({ level: parseInt(match[1]), text, id });
+  }
+  return headings;
+};
+
+const addHeadingIds = (html: string) => {
+  return html.replace(/<h([2-3])([^>]*)>(.*?)<\/h[2-3]>/gi, (_, level, attrs, inner) => {
+    const text = inner.replace(/<[^>]*>/g, "").trim();
+    const id = text.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-");
+    return `<h${level}${attrs} id="${id}">${inner}</h${level}>`;
+  });
+};
+
+const TableOfContents = ({ content }: { content: string }) => {
+  const [open, setOpen] = useState(true);
+  const headings = useMemo(() => extractHeadings(content), [content]);
+  if (headings.length < 2) return null;
+  return (
+    <div className="mb-6 sm:mb-8 rounded-xl border border-border bg-muted/40 overflow-hidden">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-foreground hover:bg-muted/60 transition-colors"
+      >
+        <span className="flex items-center gap-2">
+          <List size={16} className="text-primary" />
+          Table of Contents
+        </span>
+        <ChevronDown size={16} className={`text-muted-foreground transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+      </button>
+      {open && (
+        <nav className="px-4 pb-3 pt-0">
+          <ul className="space-y-1">
+            {headings.map((h, i) => (
+              <li key={i} className={h.level === 3 ? "pl-4" : ""}>
+                <a
+                  href={`#${h.id}`}
+                  className="block py-1 text-sm text-muted-foreground hover:text-primary transition-colors leading-snug"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById(h.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }}
+                >
+                  {h.text}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
+    </div>
+  );
+};
 
 const BlogDetail = () => {
   const { slug } = useParams();
@@ -216,6 +276,9 @@ const BlogDetail = () => {
             </div>
           )}
 
+          {/* Table of Contents */}
+          <TableOfContents content={post.content || ""} />
+
           {/* Content */}
           <div className="prose prose-sm sm:prose-base dark:prose-invert max-w-none
             prose-headings:font-display prose-headings:text-foreground prose-headings:font-semibold
@@ -226,7 +289,7 @@ const BlogDetail = () => {
             prose-li:text-muted-foreground
             prose-strong:text-foreground
             rich-text-content"
-            dangerouslySetInnerHTML={{ __html: post.content || "" }}
+            dangerouslySetInnerHTML={{ __html: addHeadingIds(post.content || "") }}
           />
 
           {/* Share Section */}
