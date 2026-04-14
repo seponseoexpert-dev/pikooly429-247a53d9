@@ -1,9 +1,9 @@
 import { useParams, Link } from "react-router-dom";
-import { Calendar, ArrowLeft, Clock, Share2, Facebook, Twitter } from "lucide-react";
+import { Calendar, ArrowLeft, Clock, Share2, Facebook, Twitter, List } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import SEOHead from "@/components/seo/SEOHead";
 import { motion } from "framer-motion";
