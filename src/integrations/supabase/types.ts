@@ -222,6 +222,7 @@ export type Database = {
       categories: {
         Row: {
           allow_custom_image: boolean
+          allow_custom_text: boolean
           category_type: string
           created_at: string
           description: string | null
@@ -241,6 +242,7 @@ export type Database = {
         }
         Insert: {
           allow_custom_image?: boolean
+          allow_custom_text?: boolean
           category_type?: string
           created_at?: string
           description?: string | null
@@ -260,6 +262,7 @@ export type Database = {
         }
         Update: {
           allow_custom_image?: boolean
+          allow_custom_text?: boolean
           category_type?: string
           created_at?: string
           description?: string | null
