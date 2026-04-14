@@ -68,7 +68,7 @@ const AdminCategories = () => {
   const generateSlug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
   const resetForm = () => {
-    setForm({ name: "", slug: "", description: "", short_description: "", long_description: "", faq: "[]", image_url: "", is_active: true, show_in_homepage: true, show_in_header: true, display_order: 0, seo_title: "", category_type: "", allow_custom_image: false });
+    setForm({ name: "", slug: "", description: "", short_description: "", long_description: "", faq: "[]", image_url: "", is_active: true, show_in_homepage: true, show_in_header: true, display_order: 0, seo_title: "", category_type: "", allow_custom_image: false, allow_custom_text: false });
     setEditing(null);
     setImageFile(null);
   };
@@ -86,6 +86,7 @@ const AdminCategories = () => {
       seo_title: (cat as any).seo_title || "",
       category_type: (cat as any).category_type || "",
       allow_custom_image: (cat as any).allow_custom_image || false,
+      allow_custom_text: (cat as any).allow_custom_text || false,
     });
     setImageFile(null);
     setDialogOpen(true);
@@ -115,7 +116,7 @@ const AdminCategories = () => {
     const slug = form.slug || generateSlug(form.name);
     let parsedFaq: any[] = [];
     try { parsedFaq = JSON.parse(form.faq); } catch { parsedFaq = []; }
-    const payload = { name: form.name.trim(), slug, description: form.description || null, short_description: form.short_description || null, long_description: form.long_description || null, faq: parsedFaq, image_url: imageUrl || null, is_active: form.is_active, show_in_homepage: form.show_in_homepage, show_in_header: form.show_in_header, display_order: form.display_order, seo_title: form.seo_title || null, category_type: form.category_type || "category", allow_custom_image: form.allow_custom_image } as any;
+    const payload = { name: form.name.trim(), slug, description: form.description || null, short_description: form.short_description || null, long_description: form.long_description || null, faq: parsedFaq, image_url: imageUrl || null, is_active: form.is_active, show_in_homepage: form.show_in_homepage, show_in_header: form.show_in_header, display_order: form.display_order, seo_title: form.seo_title || null, category_type: form.category_type || "category", allow_custom_image: form.allow_custom_image, allow_custom_text: form.allow_custom_text } as any;
 
     if (editing) {
       const { error } = await supabase.from("categories").update(payload).eq("id", editing.id);
