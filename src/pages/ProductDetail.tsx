@@ -195,7 +195,7 @@ const ProductDetail = () => {
 
   const cartProduct = {
     id: product.id,
-    name: product.name,
+    name: customText.trim() ? `${product.name} (Personalized: ${customText.trim()})` : product.name,
     price: product.price,
     originalPrice: product.original_price ?? undefined,
     image: mainImg,
