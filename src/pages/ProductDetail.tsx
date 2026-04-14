@@ -297,6 +297,24 @@ const ProductDetail = () => {
             </div>
           )}
 
+          {allowCustomText && (
+            <div className="mb-5 p-4 rounded-xl border border-border/50 bg-muted/20">
+              <div className="flex items-center gap-2 mb-3">
+                <Type size={18} className="text-primary" />
+                <span className="text-sm font-semibold text-foreground">Add Personalised Text</span>
+              </div>
+              <input
+                type="text"
+                value={customText}
+                onChange={(e) => setCustomText(e.target.value.slice(0, 50))}
+                placeholder="Enter Name for Personalization"
+                className="w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                maxLength={50}
+              />
+              <p className="text-[11px] text-muted-foreground mt-1.5">{customText.length}/50 characters</p>
+            </div>
+          )}
+
           <div className="flex items-center gap-3 mb-5">
             <span className="text-sm font-medium">Quantity:</span>
             <div className="flex items-center border border-border rounded-xl overflow-hidden">
