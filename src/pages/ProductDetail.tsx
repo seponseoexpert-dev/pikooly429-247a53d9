@@ -241,18 +241,16 @@ const ProductDetail = () => {
       </nav>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 md:gap-8 lg:gap-12">
-        {/* Image Gallery */}
-        <div>
-          <div className="aspect-[4/5] rounded-2xl sm:rounded-3xl overflow-hidden bg-muted/10 border border-border/30 shadow-sm mb-3">
-            <img src={currentImg} alt={product.name} className="w-full h-full object-cover" loading="eager" fetchPriority="high" />
-          </div>
+        {/* Image Gallery - FNP style with side thumbnails */}
+        <div className="flex gap-3">
+          {/* Thumbnails - left side on desktop, bottom on mobile */}
           {allImages.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            <div className="hidden md:flex flex-col gap-2 flex-shrink-0">
               {allImages.map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setSelectedImage(i)}
-                  className={`w-14 h-14 sm:w-[72px] sm:h-[72px] rounded-lg sm:rounded-xl overflow-hidden border-2 flex-shrink-0 transition-all duration-300 ${
+                  className={`w-16 h-16 lg:w-[72px] lg:h-[72px] rounded-lg overflow-hidden border-2 flex-shrink-0 transition-all duration-300 ${
                     selectedImage === i ? "border-primary shadow-sm" : "border-border/40 opacity-60 hover:opacity-100"
                   }`}
                 >
@@ -261,6 +259,27 @@ const ProductDetail = () => {
               ))}
             </div>
           )}
+          <div className="flex-1 min-w-0">
+            <div className="aspect-square rounded-2xl sm:rounded-3xl overflow-hidden bg-muted/10 border border-border/30 shadow-sm">
+              <img src={currentImg} alt={product.name} className="w-full h-full object-cover" loading="eager" fetchPriority="high" />
+            </div>
+            {/* Mobile thumbnails - bottom */}
+            {allImages.length > 1 && (
+              <div className="flex md:hidden gap-2 overflow-x-auto pb-1 scrollbar-hide mt-3">
+                {allImages.map((img, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setSelectedImage(i)}
+                    className={`w-14 h-14 rounded-lg overflow-hidden border-2 flex-shrink-0 transition-all duration-300 ${
+                      selectedImage === i ? "border-primary shadow-sm" : "border-border/40 opacity-60 hover:opacity-100"
+                    }`}
+                  >
+                    <img src={img} alt={`${product.name} ${i + 1}`} className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="flex flex-col">
