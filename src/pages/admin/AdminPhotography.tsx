@@ -12,9 +12,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Camera, MapPin, DollarSign, Image, Trash2, Plus, Edit, CalendarCheck, Clock, TrendingUp, Users, CheckCircle2, XCircle, Eye, Video, Search as SearchIcon } from "lucide-react";
+import { Camera, MapPin, DollarSign, Image, Trash2, Plus, Edit, CalendarCheck, Clock, TrendingUp, Users, CheckCircle2, XCircle, Eye, Video, Search as SearchIcon, FileText } from "lucide-react";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { useCurrency } from "@/hooks/useCurrency";
+import PageContentEditor from "@/components/admin/PageContentEditor";
 
 const statusConfig: Record<string, { bg: string; text: string; icon: typeof CheckCircle2 }> = {
   pending: { bg: "bg-amber-50 border-amber-200", text: "text-amber-700", icon: Clock },
@@ -317,7 +318,7 @@ const AdminPhotography = () => {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="h-auto p-1 bg-muted/50 rounded-xl w-full grid grid-cols-3 md:grid-cols-7 gap-1">
+        <TabsList className="h-auto p-1 bg-muted/50 rounded-xl w-full grid grid-cols-4 md:grid-cols-8 gap-1">
           {[
             { value: "bookings", label: "Bookings", icon: CalendarCheck },
             { value: "services", label: "Services", icon: Camera },
@@ -326,6 +327,7 @@ const AdminPhotography = () => {
             { value: "travel", label: "Travel Fees", icon: TrendingUp },
             { value: "portfolio", label: "Portfolio", icon: Image },
             { value: "seo", label: "Page SEO", icon: SearchIcon },
+            { value: "content", label: "Page Content", icon: FileText },
           ].map((tab) => (
             <TabsTrigger
               key={tab.value}
@@ -762,6 +764,11 @@ const AdminPhotography = () => {
         {/* Page SEO Tab */}
         <TabsContent value="seo" className="mt-4">
           <PageSEOTab />
+        </TabsContent>
+
+        {/* Page Content Tab */}
+        <TabsContent value="content" className="mt-4">
+          <PageContentEditor prefix="photography" title="Photography" />
         </TabsContent>
       </Tabs>
 
