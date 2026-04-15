@@ -58,19 +58,17 @@ const CelebrationsCalendar = memo(() => {
             const bgColor = c.bg_color || PASTEL_COLORS[index % PASTEL_COLORS.length];
 
             const card = (
-              <div className="w-[44vw] min-w-[44vw] sm:min-w-[220px] md:min-w-[260px] lg:min-w-[280px] flex-shrink-0 snap-start group">
-                {/* FNP-style card: light bg, rounded, date inside top */}
+              <div className="w-[38vw] min-w-[38vw] sm:min-w-[160px] md:min-w-[190px] lg:min-w-[220px] xl:min-w-[240px] flex-shrink-0 snap-start group">
                 <div
-                  className="relative rounded-2xl overflow-hidden aspect-[4/5] transition-all duration-500 ease-out group-hover:shadow-lg group-hover:scale-[1.02]"
+                  className="relative rounded-xl sm:rounded-2xl overflow-hidden aspect-square transition-all duration-500 ease-out group-hover:shadow-lg group-hover:scale-[1.02]"
                   style={{ backgroundColor: bgColor }}
                 >
-                  {/* Date badge - FNP style: inside card top, subtle bg */}
                   <div className="absolute top-0 left-0 right-0 z-10">
                     <div
-                      className="mx-auto w-[75%] text-center py-1.5 sm:py-2 rounded-b-xl"
+                      className="mx-auto w-[75%] text-center py-1 sm:py-1.5 rounded-b-lg sm:rounded-b-xl"
                       style={{ backgroundColor: "rgba(255,255,255,0.65)", backdropFilter: "blur(6px)" }}
                     >
-                      <span className="text-[11px] sm:text-xs md:text-sm font-bold text-foreground tracking-wide">
+                      <span className="text-[10px] sm:text-[11px] md:text-xs font-bold text-foreground tracking-wide">
                         <DateLabel label={c.date_label} />
                       </span>
                     </div>
@@ -79,15 +77,15 @@ const CelebrationsCalendar = memo(() => {
                   <img
                     src={c.image_url || "/placeholder.svg"}
                     alt={c.name}
-                    width={280}
-                    height={350}
+                    width={240}
+                    height={240}
                     className="w-full h-full object-cover"
                     loading="lazy"
                     decoding="async"
-                    sizes="(max-width: 480px) 44vw, (max-width: 640px) 220px, (max-width: 768px) 260px, 280px"
+                    sizes="(max-width: 480px) 38vw, (max-width: 640px) 160px, (max-width: 768px) 190px, (max-width: 1024px) 220px, 240px"
                   />
                 </div>
-                <p className="text-xs sm:text-sm md:text-base font-medium text-foreground/80 text-center mt-2 sm:mt-2.5 group-hover:text-primary transition-colors line-clamp-1">
+                <p className="text-[11px] sm:text-xs md:text-sm font-medium text-foreground/80 text-center mt-1.5 sm:mt-2 group-hover:text-primary transition-colors line-clamp-1">
                   {c.name}
                 </p>
               </div>
