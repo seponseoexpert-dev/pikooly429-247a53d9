@@ -7,6 +7,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Check, ChevronRight, ChevronLeft, Flower2, Upload, Ruler, MessageSquare, ShoppingCart, ImagePlus, X } from "lucide-react";
 import SEOHead from "@/components/seo/SEOHead";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import PageBottomSEO from "@/components/seo/PageBottomSEO";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
@@ -418,6 +419,8 @@ const BouquetBuilder = () => {
           </Button>
         )}
       </div>
+
+      <PageBottomSEO prefix="bouquet" defaultTitle="Custom Bouquet Builder - Design Your Own Bouquet" />
     </main>
   );
 };
