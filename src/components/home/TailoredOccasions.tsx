@@ -262,16 +262,16 @@ const ProductCard = memo(({ product, formatPrice }: { product: any; formatPrice:
       to={linkTo}
       className="group bg-white rounded-lg overflow-hidden flex flex-col border-2 border-border hover:border-primary/40 transition-all duration-300 shadow-sm hover:shadow-md"
     >
-      {/* Image - taller aspect */}
-      <div className="relative aspect-square overflow-hidden bg-[#f8f7f4]">
+      {/* Image */}
+      <div className="relative aspect-square overflow-hidden bg-muted/10 p-2 sm:p-3">
         <img
           src={imgSrc}
           alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
           decoding="async"
           width={300}
-          height={375}
+          height={300}
         />
         {/* Delivery badge */}
         {product.delivery_time && (

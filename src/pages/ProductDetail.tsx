@@ -270,15 +270,15 @@ const ProductDetail = () => {
             </div>
           )}
           <div className="flex-1 min-w-0">
-            {/* Main image with hover zoom */}
+            {/* Main image with constrained size */}
             <div
-              className="aspect-[4/5] max-h-[500px] md:max-h-[520px] lg:max-h-[560px] rounded-2xl sm:rounded-3xl overflow-hidden bg-muted/10 border border-border/30 shadow-sm cursor-zoom-in relative group"
+              className="w-full max-w-[520px] lg:max-w-[560px] mx-auto aspect-square rounded-2xl sm:rounded-3xl overflow-hidden bg-muted/10 border border-border/30 shadow-sm cursor-zoom-in relative group"
               onMouseEnter={() => setIsZooming(true)}
               onMouseLeave={() => setIsZooming(false)}
               onMouseMove={handleMouseMove}
               onClick={() => setLightboxOpen(true)}
             >
-              <img src={currentImg} alt={product.name} className="w-full h-full object-cover" loading="eager" fetchPriority="high" />
+              <img src={currentImg} alt={product.name} className="w-full h-full object-contain p-2 sm:p-3" loading="eager" fetchPriority="high" />
               {/* Zoom overlay on hover (desktop only) */}
               {isZooming && (
                 <div
