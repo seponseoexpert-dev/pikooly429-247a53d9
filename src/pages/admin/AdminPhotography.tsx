@@ -327,7 +327,6 @@ const AdminPhotography = () => {
             { value: "travel", label: "Travel Fees", icon: TrendingUp },
             { value: "portfolio", label: "Portfolio", icon: Image },
             { value: "seo", label: "Page SEO", icon: SearchIcon },
-            { value: "content", label: "Page Content", icon: FileText },
           ].map((tab) => (
             <TabsTrigger
               key={tab.value}
@@ -764,11 +763,6 @@ const AdminPhotography = () => {
         {/* Page SEO Tab */}
         <TabsContent value="seo" className="mt-4">
           <PageSEOTab />
-        </TabsContent>
-
-        {/* Page Content Tab */}
-        <TabsContent value="content" className="mt-4">
-          <PageContentEditor prefix="photography" title="Photography" />
         </TabsContent>
       </Tabs>
 
