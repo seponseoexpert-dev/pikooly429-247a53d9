@@ -212,49 +212,64 @@
   }
 }
 
-/* Rich text content from admin editor */
-.rich-text-content h1,
-.rich-text-content h2,
-.rich-text-content h3,
-.rich-text-content h4 {
+/* Rich text content — shared between admin editor (.rich-text-editor-content) and frontend (.rich-text-content) */
+.rich-text-content h1, .rich-text-editor-content h1,
+.rich-text-content h2, .rich-text-editor-content h2,
+.rich-text-content h3, .rich-text-editor-content h3,
+.rich-text-content h4, .rich-text-editor-content h4,
+.rich-text-content h5, .rich-text-editor-content h5,
+.rich-text-content h6, .rich-text-editor-content h6 {
   font-family: "Lora", serif;
   font-weight: 600;
   color: hsl(var(--foreground));
-  margin-top: 1.25em;
-  margin-bottom: 0.5em;
+  margin-top: 1em;
+  margin-bottom: 0.4em;
+  line-height: 1.3;
 }
-.rich-text-content h2 { font-size: 1.25rem; }
-.rich-text-content h3 { font-size: 1.1rem; }
-.rich-text-content p {
+.rich-text-content h1, .rich-text-editor-content h1 { font-size: 1.75rem; }
+.rich-text-content h2, .rich-text-editor-content h2 { font-size: 1.4rem; }
+.rich-text-content h3, .rich-text-editor-content h3 { font-size: 1.15rem; }
+.rich-text-content h4, .rich-text-editor-content h4 { font-size: 1.05rem; }
+.rich-text-content h5, .rich-text-editor-content h5 { font-size: 0.95rem; }
+.rich-text-content h6, .rich-text-editor-content h6 { font-size: 0.875rem; }
+.rich-text-content p, .rich-text-editor-content p {
   margin-bottom: 0.75em;
 }
-.rich-text-content p:empty,
-.rich-text-content br {
+.rich-text-content p:empty, .rich-text-editor-content p:empty,
+.rich-text-content br, .rich-text-editor-content br {
   display: block;
   content: "";
   margin-bottom: 0.5em;
 }
-.rich-text-content ul,
-.rich-text-content ol {
+.rich-text-content ul, .rich-text-editor-content ul,
+.rich-text-content ol, .rich-text-editor-content ol {
   padding-left: 1.5em;
   margin-bottom: 0.75em;
 }
-.rich-text-content ul { list-style: disc; }
-.rich-text-content ol { list-style: decimal; }
-.rich-text-content li { margin-bottom: 0.25em; }
-.rich-text-content blockquote {
+.rich-text-content ul, .rich-text-editor-content ul { list-style: disc; }
+.rich-text-content ol, .rich-text-editor-content ol { list-style: decimal; }
+.rich-text-content li, .rich-text-editor-content li { margin-bottom: 0.25em; }
+.rich-text-content blockquote, .rich-text-editor-content blockquote {
   border-left: 3px solid hsl(var(--primary));
   padding-left: 1em;
   margin: 1em 0;
   font-style: italic;
   color: hsl(var(--muted-foreground));
 }
-.rich-text-content a {
+.rich-text-content a, .rich-text-editor-content a {
   color: hsl(var(--primary));
   text-decoration: underline;
 }
-.rich-text-content strong { font-weight: 700; }
-.rich-text-content em { font-style: italic; }
+.rich-text-content strong, .rich-text-editor-content strong { font-weight: 700; }
+.rich-text-content em, .rich-text-editor-content em { font-style: italic; }
+.rich-text-content u, .rich-text-editor-content u { text-decoration: underline; }
+.rich-text-content s, .rich-text-editor-content s { text-decoration: line-through; }
+.rich-text-content code, .rich-text-editor-content code {
+  background: hsl(var(--muted));
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.875em;
+}
 
 /* Safari-specific fixes */
 @supports (-webkit-touch-callout: none) {

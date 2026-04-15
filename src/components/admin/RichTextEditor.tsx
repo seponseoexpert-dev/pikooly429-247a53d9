@@ -2,9 +2,11 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import TextAlign from "@tiptap/extension-text-align";
+import Underline from "@tiptap/extension-underline";
 import { useEffect, useCallback } from "react";
 import {
-  Bold, Italic, List, ListOrdered, Quote, AlignLeft, AlignCenter, AlignRight, AlignJustify, Link as LinkIcon, Undo, Redo,
+  Bold, Italic, Underline as UnderlineIcon, Strikethrough, List, ListOrdered, Quote,
+  AlignLeft, AlignCenter, AlignRight, AlignJustify, Link as LinkIcon, Undo, Redo, Code,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -19,19 +21,17 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
       StarterKit,
       Link.configure({ openOnClick: false }),
       TextAlign.configure({ types: ["heading", "paragraph"] }),
+      Underline,
     ],
     content: value,
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
     editorProps: {
       attributes: {
-        class: "outline-none min-h-[90px] sm:min-h-[140px] cursor-text",
-        // Prevent iOS zoom by ensuring font-size >= 16px
+        class: "outline-none min-h-[90px] sm:min-h-[140px] cursor-text rich-text-editor-content",
         style: "font-size: 16px;",
       },
-      // Fix mobile touch handling inside dialogs
       handleDOMEvents: {
         touchstart: (_view, event) => {
-          // Prevent dialog from stealing focus on mobile
           event.stopPropagation();
           return false;
         },
@@ -50,7 +50,6 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
   }, [value]);
 
   const handleEditorClick = useCallback((e: React.MouseEvent) => {
-    // Ensure editor gets focus when clicking anywhere in the editor area
     e.stopPropagation();
     if (editor && !editor.isFocused) {
       editor.commands.focus("end");
@@ -59,21 +58,19 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
 
   if (!editor) return null;
 
-  const ToolBtn = ({ active, onClick, children }: { active?: boolean; onClick: () => void; children: React.ReactNode }) => (
+  const ToolBtn = ({ active, onClick, children, title }: { active?: boolean; onClick: () => void; children: React.ReactNode; title?: string }) => (
     <Button
       type="button"
       variant="ghost"
       size="icon"
+      title={title}
       className={`h-7 w-7 sm:h-8 sm:w-8 ${active ? "bg-muted text-foreground" : "text-muted-foreground"}`}
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
         onClick();
       }}
-      onMouseDown={(e) => {
-        // Prevent losing editor focus when clicking toolbar buttons
-        e.preventDefault();
-      }}
+      onMouseDown={(e) => e.preventDefault()}
     >
       {children}
     </Button>
@@ -122,18 +119,21 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
           <option value="h5">Heading 5</option>
           <option value="h6">Heading 6</option>
         </select>
-        <ToolBtn active={editor.isActive("bold")} onClick={() => editor.chain().focus().toggleBold().run()}><Bold size={14} /></ToolBtn>
-        <ToolBtn active={editor.isActive("italic")} onClick={() => editor.chain().focus().toggleItalic().run()}><Italic size={14} /></ToolBtn>
-        <ToolBtn active={editor.isActive("bulletList")} onClick={() => editor.chain().focus().toggleBulletList().run()}><List size={14} /></ToolBtn>
-        <ToolBtn active={editor.isActive("orderedList")} onClick={() => editor.chain().focus().toggleOrderedList().run()}><ListOrdered size={14} /></ToolBtn>
-        <ToolBtn active={editor.isActive("blockquote")} onClick={() => editor.chain().focus().toggleBlockquote().run()}><Quote size={14} /></ToolBtn>
-        <ToolBtn active={editor.isActive({ textAlign: "left" })} onClick={() => editor.chain().focus().setTextAlign("left").run()}><AlignLeft size={14} /></ToolBtn>
-        <ToolBtn active={editor.isActive({ textAlign: "center" })} onClick={() => editor.chain().focus().setTextAlign("center").run()}><AlignCenter size={14} /></ToolBtn>
-        <ToolBtn active={editor.isActive({ textAlign: "right" })} onClick={() => editor.chain().focus().setTextAlign("right").run()}><AlignRight size={14} /></ToolBtn>
-        <ToolBtn active={editor.isActive({ textAlign: "justify" })} onClick={() => editor.chain().focus().setTextAlign("justify").run()}><AlignJustify size={14} /></ToolBtn>
-        <ToolBtn active={editor.isActive("link")} onClick={addLink}><LinkIcon size={14} /></ToolBtn>
-        <ToolBtn onClick={() => editor.chain().focus().undo().run()}><Undo size={14} /></ToolBtn>
-        <ToolBtn onClick={() => editor.chain().focus().redo().run()}><Redo size={14} /></ToolBtn>
+        <ToolBtn active={editor.isActive("bold")} onClick={() => editor.chain().focus().toggleBold().run()} title="Bold"><Bold size={14} /></ToolBtn>
+        <ToolBtn active={editor.isActive("italic")} onClick={() => editor.chain().focus().toggleItalic().run()} title="Italic"><Italic size={14} /></ToolBtn>
+        <ToolBtn active={editor.isActive("underline")} onClick={() => editor.chain().focus().toggleUnderline().run()} title="Underline"><UnderlineIcon size={14} /></ToolBtn>
+        <ToolBtn active={editor.isActive("strike")} onClick={() => editor.chain().focus().toggleStrike().run()} title="Strikethrough"><Strikethrough size={14} /></ToolBtn>
+        <ToolBtn active={editor.isActive("code")} onClick={() => editor.chain().focus().toggleCode().run()} title="Inline Code"><Code size={14} /></ToolBtn>
+        <ToolBtn active={editor.isActive("bulletList")} onClick={() => editor.chain().focus().toggleBulletList().run()} title="Bullet List"><List size={14} /></ToolBtn>
+        <ToolBtn active={editor.isActive("orderedList")} onClick={() => editor.chain().focus().toggleOrderedList().run()} title="Ordered List"><ListOrdered size={14} /></ToolBtn>
+        <ToolBtn active={editor.isActive("blockquote")} onClick={() => editor.chain().focus().toggleBlockquote().run()} title="Quote"><Quote size={14} /></ToolBtn>
+        <ToolBtn active={editor.isActive({ textAlign: "left" })} onClick={() => editor.chain().focus().setTextAlign("left").run()} title="Align Left"><AlignLeft size={14} /></ToolBtn>
+        <ToolBtn active={editor.isActive({ textAlign: "center" })} onClick={() => editor.chain().focus().setTextAlign("center").run()} title="Align Center"><AlignCenter size={14} /></ToolBtn>
+        <ToolBtn active={editor.isActive({ textAlign: "right" })} onClick={() => editor.chain().focus().setTextAlign("right").run()} title="Align Right"><AlignRight size={14} /></ToolBtn>
+        <ToolBtn active={editor.isActive({ textAlign: "justify" })} onClick={() => editor.chain().focus().setTextAlign("justify").run()} title="Justify"><AlignJustify size={14} /></ToolBtn>
+        <ToolBtn active={editor.isActive("link")} onClick={addLink} title="Add Link"><LinkIcon size={14} /></ToolBtn>
+        <ToolBtn onClick={() => editor.chain().focus().undo().run()} title="Undo"><Undo size={14} /></ToolBtn>
+        <ToolBtn onClick={() => editor.chain().focus().redo().run()} title="Redo"><Redo size={14} /></ToolBtn>
       </div>
       <EditorContent
         editor={editor}
