@@ -93,7 +93,8 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
       editor.chain().focus().setParagraph().run();
     } else {
       const level = parseInt(val.replace("h", "")) as 1 | 2 | 3 | 4 | 5 | 6;
-      editor.chain().focus().toggleHeading({ level }).run();
+      // Use setHeading (not toggle) so switching between heading levels always works
+      editor.chain().focus().setHeading({ level }).run();
     }
   };
 
