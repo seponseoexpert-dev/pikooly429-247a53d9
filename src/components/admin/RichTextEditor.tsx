@@ -101,7 +101,12 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
     <div className="border rounded-lg overflow-hidden" onClick={handleEditorClick}>
       <div
         className="flex flex-wrap items-center gap-0.5 p-1 sm:p-1.5 border-b bg-muted/30"
-        onMouseDown={(e) => e.preventDefault()}
+        onMouseDown={(e) => {
+          const target = e.target as HTMLElement;
+          if (target.tagName !== "SELECT" && target.tagName !== "OPTION") {
+            e.preventDefault();
+          }
+        }}
         onTouchStart={(e) => e.stopPropagation()}
       >
         <select
