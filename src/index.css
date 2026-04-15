@@ -220,20 +220,22 @@
 .rich-text-content h5, .rich-text-editor-content h5,
 .rich-text-content h6, .rich-text-editor-content h6 {
   font-family: "Lora", serif;
-  font-weight: 600;
+  font-weight: 700;
   color: hsl(var(--foreground));
   margin-top: 1em;
   margin-bottom: 0.4em;
-  line-height: 1.3;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
-.rich-text-content h1, .rich-text-editor-content h1 { font-size: 1.75rem; }
-.rich-text-content h2, .rich-text-editor-content h2 { font-size: 1.4rem; }
-.rich-text-content h3, .rich-text-editor-content h3 { font-size: 1.15rem; }
-.rich-text-content h4, .rich-text-editor-content h4 { font-size: 1.05rem; }
-.rich-text-content h5, .rich-text-editor-content h5 { font-size: 0.95rem; }
-.rich-text-content h6, .rich-text-editor-content h6 { font-size: 0.875rem; }
+.rich-text-content h1, .rich-text-editor-content h1 { font-size: clamp(2rem, 3.4vw, 2.5rem); }
+.rich-text-content h2, .rich-text-editor-content h2 { font-size: clamp(1.7rem, 2.8vw, 2.1rem); }
+.rich-text-content h3, .rich-text-editor-content h3 { font-size: clamp(1.4rem, 2.2vw, 1.75rem); }
+.rich-text-content h4, .rich-text-editor-content h4 { font-size: clamp(1.2rem, 1.9vw, 1.45rem); }
+.rich-text-content h5, .rich-text-editor-content h5 { font-size: clamp(1.05rem, 1.6vw, 1.2rem); }
+.rich-text-content h6, .rich-text-editor-content h6 { font-size: 1rem; }
 .rich-text-content p, .rich-text-editor-content p {
   margin-bottom: 0.75em;
+  color: hsl(var(--foreground));
 }
 .rich-text-content p:empty, .rich-text-editor-content p:empty,
 .rich-text-content br, .rich-text-editor-content br {
