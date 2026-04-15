@@ -13,6 +13,7 @@ import type { LucideIcon } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import PageBottomSEO from "@/components/seo/PageBottomSEO";
 
 const CATEGORY_ICONS: Record<string, LucideIcon> = {
   birthday: PartyPopper,
@@ -524,6 +525,8 @@ const Events = () => {
           </div>
         </section>
       )}
+
+      <PageBottomSEO prefix="events" defaultTitle="Event Management Services in Bangladesh" />
     </main>
   );
 };
