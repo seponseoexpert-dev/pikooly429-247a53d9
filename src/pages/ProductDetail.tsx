@@ -24,6 +24,22 @@ const ProductDetail = () => {
   const [activeTab, setActiveTab] = useState<"specification" | "description" | "reviews">("specification");
   const [customImages, setCustomImages] = useState<File[]>([]);
   const [customText, setCustomText] = useState("");
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
+  const [isZooming, setIsZooming] = useState(false);
+  const imgContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setZoomPos({ x, y });
+  }, []);
+
+  const navigateLightbox = useCallback((dir: 1 | -1) => {
+    const imgs = product?.images?.length ? product.images : [product?.image_url || "/placeholder.svg"];
+    setSelectedImage((prev) => (prev + dir + imgs.length) % imgs.length);
+  }, [product]);
 
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", id],
