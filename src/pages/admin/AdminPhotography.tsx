@@ -11,8 +11,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { Camera, MapPin, DollarSign, Image, Trash2, Plus, Edit, CalendarCheck, Clock, TrendingUp, Users, CheckCircle2, XCircle, Eye, Video, Search as SearchIcon, FileText } from "lucide-react";
+import { Camera, MapPin, DollarSign, Image, Trash2, Plus, Edit, CalendarCheck, Clock, TrendingUp, Users, CheckCircle2, XCircle, Eye, Video, Search as SearchIcon } from "lucide-react";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { useCurrency } from "@/hooks/useCurrency";
 import PageContentEditor from "@/components/admin/PageContentEditor";
@@ -327,7 +328,6 @@ const AdminPhotography = () => {
             { value: "travel", label: "Travel Fees", icon: TrendingUp },
             { value: "portfolio", label: "Portfolio", icon: Image },
             { value: "seo", label: "Page SEO", icon: SearchIcon },
-            { value: "content", label: "Page Content", icon: FileText },
           ].map((tab) => (
             <TabsTrigger
               key={tab.value}
@@ -765,11 +765,6 @@ const AdminPhotography = () => {
         <TabsContent value="seo" className="mt-4">
           <PageSEOTab />
         </TabsContent>
-
-        {/* Page Content Tab */}
-        <TabsContent value="content" className="mt-4">
-          <PageContentEditor prefix="photography" title="Photography" />
-        </TabsContent>
       </Tabs>
 
       {/* Edit Package Dialog */}
@@ -881,6 +876,7 @@ const PageSEOTab = () => {
   const seoDesc = form.photo_seo_description || "Professional photography and videography services in Bangladesh.";
 
   return (
+    <>
     <Card className="border-border/50 shadow-sm">
       <CardHeader className="pb-3">
         <CardTitle className="text-base">Page SEO Settings</CardTitle>
@@ -960,6 +956,12 @@ const PageSEOTab = () => {
         </Button>
       </CardContent>
     </Card>
+
+    <Separator className="my-6" />
+
+    {/* Page Content (Long Description, FAQ, Images) */}
+    <PageContentEditor prefix="photography" title="Photography" />
+    </>
   );
 };
 

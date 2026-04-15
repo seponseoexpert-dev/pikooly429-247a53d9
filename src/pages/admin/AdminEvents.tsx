@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Package, Tag, CalendarCheck, Search, PlusCircle, X, FileText } from "lucide-react";
+import { Plus, Pencil, Trash2, Package, Tag, CalendarCheck, Search, PlusCircle, X } from "lucide-react";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
@@ -696,6 +696,11 @@ const PageSEOTab = () => {
       </div>
 
       <Button onClick={handleSave} disabled={saving} className="w-full">{saving ? "Saving..." : "Save SEO Settings"}</Button>
+
+      <Separator className="my-6" />
+
+      {/* Page Content (Long Description, FAQ, Images) */}
+      <PageContentEditor prefix="events" title="Events" />
     </div>
   );
 };
@@ -710,13 +715,11 @@ const AdminEvents = () => (
         <TabsTrigger value="packages"><Package className="w-4 h-4 mr-1" /> Packages</TabsTrigger>
         <TabsTrigger value="bookings"><CalendarCheck className="w-4 h-4 mr-1" /> Bookings</TabsTrigger>
         <TabsTrigger value="seo"><Search className="w-4 h-4 mr-1" /> Page SEO</TabsTrigger>
-        <TabsTrigger value="content"><FileText className="w-4 h-4 mr-1" /> Page Content</TabsTrigger>
       </TabsList>
       <TabsContent value="categories"><CategoriesTab /></TabsContent>
       <TabsContent value="packages"><PackagesTab /></TabsContent>
       <TabsContent value="bookings"><BookingsTab /></TabsContent>
       <TabsContent value="seo"><PageSEOTab /></TabsContent>
-      <TabsContent value="content"><PageContentEditor prefix="events" title="Events" /></TabsContent>
     </Tabs>
   </div>
 );
