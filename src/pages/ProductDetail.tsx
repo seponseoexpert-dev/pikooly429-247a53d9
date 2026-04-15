@@ -3,7 +3,7 @@ import SEOHead from "@/components/seo/SEOHead";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Heart, Minus, Plus, Star, Phone, MessageCircle, Type, X, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState, useMemo, useRef, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import ProductCard from "@/components/product/ProductCard";
 import { ProductDetailSkeleton } from "@/components/ui/skeletons";
 import ReviewSection from "@/components/product/ReviewSection";
