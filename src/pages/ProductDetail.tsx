@@ -252,9 +252,8 @@ const ProductDetail = () => {
       </nav>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 md:gap-8 lg:gap-12">
-        {/* Image Gallery - FNP style with side thumbnails */}
+        {/* Image Gallery - FNP style with side thumbnails + hover zoom */}
         <div className="flex gap-3">
-          {/* Thumbnails - left side on desktop, bottom on mobile */}
           {allImages.length > 1 && (
             <div className="hidden md:flex flex-col gap-2 flex-shrink-0">
               {allImages.map((img, i) => (
@@ -271,10 +270,31 @@ const ProductDetail = () => {
             </div>
           )}
           <div className="flex-1 min-w-0">
-            <div className="aspect-square rounded-2xl sm:rounded-3xl overflow-hidden bg-muted/10 border border-border/30 shadow-sm">
+            {/* Main image with hover zoom */}
+            <div
+              className="aspect-square rounded-2xl sm:rounded-3xl overflow-hidden bg-muted/10 border border-border/30 shadow-sm cursor-zoom-in relative group"
+              onMouseEnter={() => setIsZooming(true)}
+              onMouseLeave={() => setIsZooming(false)}
+              onMouseMove={handleMouseMove}
+              onClick={() => setLightboxOpen(true)}
+            >
               <img src={currentImg} alt={product.name} className="w-full h-full object-cover" loading="eager" fetchPriority="high" />
+              {/* Zoom overlay on hover (desktop only) */}
+              {isZooming && (
+                <div
+                  className="absolute inset-0 hidden md:block pointer-events-none"
+                  style={{
+                    backgroundImage: `url(${currentImg})`,
+                    backgroundSize: "250%",
+                    backgroundPosition: `${zoomPos.x}% ${zoomPos.y}%`,
+                    backgroundRepeat: "no-repeat",
+                  }}
+                />
+              )}
+              <span className="absolute bottom-3 right-3 bg-background/80 backdrop-blur-sm text-foreground text-xs px-2.5 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                Click to expand
+              </span>
             </div>
-            {/* Mobile thumbnails - bottom */}
             {allImages.length > 1 && (
               <div className="flex md:hidden gap-2 overflow-x-auto pb-1 scrollbar-hide mt-3">
                 {allImages.map((img, i) => (
@@ -292,6 +312,42 @@ const ProductDetail = () => {
             )}
           </div>
         </div>
+
+        {/* Lightbox Modal */}
+        {lightboxOpen && (
+          <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center" onClick={() => setLightboxOpen(false)}>
+            <button className="absolute top-4 right-4 text-white/80 hover:text-white z-10" onClick={() => setLightboxOpen(false)}>
+              <X size={28} />
+            </button>
+            {allImages.length > 1 && (
+              <>
+                <button className="absolute left-3 md:left-6 text-white/70 hover:text-white z-10 p-2" onClick={(e) => { e.stopPropagation(); setSelectedImage((p) => (p - 1 + allImages.length) % allImages.length); }}>
+                  <ChevronLeft size={32} />
+                </button>
+                <button className="absolute right-3 md:right-6 text-white/70 hover:text-white z-10 p-2" onClick={(e) => { e.stopPropagation(); setSelectedImage((p) => (p + 1) % allImages.length); }}>
+                  <ChevronRight size={32} />
+                </button>
+              </>
+            )}
+            <img
+              src={currentImg}
+              alt={product.name}
+              className="max-w-[90vw] max-h-[85vh] object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+            {allImages.length > 1 && (
+              <div className="absolute bottom-6 flex gap-2">
+                {allImages.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={(e) => { e.stopPropagation(); setSelectedImage(i); }}
+                    className={`w-2.5 h-2.5 rounded-full transition-all ${selectedImage === i ? "bg-white scale-125" : "bg-white/40"}`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="flex flex-col">
           <h1 className="text-sm sm:text-base md:text-lg lg:text-xl font-display font-bold text-foreground mb-2 leading-snug line-clamp-3">
