@@ -318,7 +318,7 @@ const AdminPhotography = () => {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="h-auto p-1 bg-muted/50 rounded-xl w-full grid grid-cols-3 md:grid-cols-7 gap-1">
+        <TabsList className="h-auto p-1 bg-muted/50 rounded-xl w-full grid grid-cols-4 md:grid-cols-8 gap-1">
           {[
             { value: "bookings", label: "Bookings", icon: CalendarCheck },
             { value: "services", label: "Services", icon: Camera },
@@ -764,6 +764,11 @@ const AdminPhotography = () => {
         {/* Page SEO Tab */}
         <TabsContent value="seo" className="mt-4">
           <PageSEOTab />
+        </TabsContent>
+
+        {/* Page Content Tab */}
+        <TabsContent value="content" className="mt-4">
+          <PageContentEditor prefix="photography" title="Photography" />
         </TabsContent>
       </Tabs>
 
