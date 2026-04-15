@@ -168,8 +168,8 @@ const AdminBouquet = () => {
           </Dialog>
         </div>
 
-        <Tabs value={tab} onValueChange={(v) => setTab(v as ItemType)}>
-          <TabsList>
+        <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
+          <TabsList className="flex-wrap">
             {(["flowers", "materials", "sizes"] as ItemType[]).map((t) => {
               const Icon = tabIcons[t];
               return (
@@ -178,6 +178,9 @@ const AdminBouquet = () => {
                 </TabsTrigger>
               );
             })}
+            <TabsTrigger value="content" className="gap-1.5">
+              <FileText className="h-4 w-4" />Page Content
+            </TabsTrigger>
           </TabsList>
 
           {(["flowers", "materials", "sizes"] as ItemType[]).map((t) => (
@@ -233,6 +236,10 @@ const AdminBouquet = () => {
               </div>
             </TabsContent>
           ))}
+
+          <TabsContent value="content">
+            <PageContentEditor prefix="bouquet" title="Bouquet" />
+          </TabsContent>
         </Tabs>
       </div>
   );
