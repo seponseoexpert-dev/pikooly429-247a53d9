@@ -876,6 +876,7 @@ const PageSEOTab = () => {
 
   return (
     <>
+    <Card className="border-border/50 shadow-sm">
       <CardHeader className="pb-3">
         <CardTitle className="text-base">Page SEO Settings</CardTitle>
         <p className="text-xs text-muted-foreground">/photography পেজের SEO ও Hero কনটেন্ট এডিট করুন</p>
