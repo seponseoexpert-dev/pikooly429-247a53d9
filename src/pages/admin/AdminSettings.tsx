@@ -53,6 +53,9 @@ const settingSections = [
   { key: "footer", label: "Footer", icon: FileText },
   { key: "trending_tabs", label: "Trending Tabs", icon: Star },
   { key: "bouquet_seo", label: "Bouquet SEO", icon: FileText },
+  { key: "events_page_content", label: "Events Page Content", icon: FileText },
+  { key: "photography_page_content", label: "Photography Page Content", icon: FileText },
+  { key: "bouquet_page_content", label: "Bouquet Page Content", icon: FileText },
   { key: "cloudinary", label: "Cloudinary", icon: Cloud },
   { key: "checkout", label: "Checkout", icon: CreditCard },
 ];
