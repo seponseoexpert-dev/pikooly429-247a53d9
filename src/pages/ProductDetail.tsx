@@ -272,7 +272,7 @@ const ProductDetail = () => {
           <div className="flex-1 min-w-0">
             {/* Main image with hover zoom */}
             <div
-              className="aspect-square rounded-2xl sm:rounded-3xl overflow-hidden bg-muted/10 border border-border/30 shadow-sm cursor-zoom-in relative group"
+              className="aspect-[4/5] max-h-[500px] md:max-h-[520px] lg:max-h-[560px] rounded-2xl sm:rounded-3xl overflow-hidden bg-muted/10 border border-border/30 shadow-sm cursor-zoom-in relative group"
               onMouseEnter={() => setIsZooming(true)}
               onMouseLeave={() => setIsZooming(false)}
               onMouseMove={handleMouseMove}
