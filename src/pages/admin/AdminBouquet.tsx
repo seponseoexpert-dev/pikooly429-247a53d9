@@ -178,8 +178,8 @@ const AdminBouquet = () => {
                 </TabsTrigger>
               );
             })}
-            <TabsTrigger value="content" className="gap-1.5">
-              <FileText className="h-4 w-4" />Page Content
+            <TabsTrigger value="seo" className="gap-1.5">
+              <FileText className="h-4 w-4" />Page SEO
             </TabsTrigger>
           </TabsList>
 
