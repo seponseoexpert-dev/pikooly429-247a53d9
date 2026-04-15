@@ -3,10 +3,15 @@ import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
+import Table from "@tiptap/extension-table";
+import TableRow from "@tiptap/extension-table-row";
+import TableCell from "@tiptap/extension-table-cell";
+import TableHeader from "@tiptap/extension-table-header";
 import { useEffect, useCallback } from "react";
 import {
   Bold, Italic, Underline as UnderlineIcon, Strikethrough, List, ListOrdered, Quote,
   AlignLeft, AlignCenter, AlignRight, AlignJustify, Link as LinkIcon, Undo, Redo, Code,
+  Table as TableIcon, Plus, Minus, Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -22,6 +27,10 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
       Link.configure({ openOnClick: false }),
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       Underline,
+      Table.configure({ resizable: true }),
+      TableRow,
+      TableHeader,
+      TableCell,
     ],
     content: value,
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
@@ -93,9 +102,12 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
       editor.chain().focus().setParagraph().run();
     } else {
       const level = parseInt(val.replace("h", "")) as 1 | 2 | 3 | 4 | 5 | 6;
-      // Use setHeading (not toggle) so switching between heading levels always works
       editor.chain().focus().setHeading({ level }).run();
     }
+  };
+
+  const insertTable = () => {
+    editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
   };
 
   return (
@@ -138,6 +150,20 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
         <ToolBtn active={editor.isActive({ textAlign: "right" })} onClick={() => editor.chain().focus().setTextAlign("right").run()} title="Align Right"><AlignRight size={14} /></ToolBtn>
         <ToolBtn active={editor.isActive({ textAlign: "justify" })} onClick={() => editor.chain().focus().setTextAlign("justify").run()} title="Justify"><AlignJustify size={14} /></ToolBtn>
         <ToolBtn active={editor.isActive("link")} onClick={addLink} title="Add Link"><LinkIcon size={14} /></ToolBtn>
+
+        {/* Table controls */}
+        <div className="w-px h-5 bg-border mx-0.5" />
+        <ToolBtn onClick={insertTable} title="Insert Table"><TableIcon size={14} /></ToolBtn>
+        {editor.isActive("table") && (
+          <>
+            <ToolBtn onClick={() => editor.chain().focus().addColumnAfter().run()} title="Add Column"><Plus size={12} /><span className="sr-only">Col</span></ToolBtn>
+            <ToolBtn onClick={() => editor.chain().focus().addRowAfter().run()} title="Add Row"><Plus size={12} /></ToolBtn>
+            <ToolBtn onClick={() => editor.chain().focus().deleteColumn().run()} title="Delete Column"><Minus size={12} /></ToolBtn>
+            <ToolBtn onClick={() => editor.chain().focus().deleteRow().run()} title="Delete Row"><Minus size={12} /></ToolBtn>
+            <ToolBtn onClick={() => editor.chain().focus().deleteTable().run()} title="Delete Table"><Trash2 size={14} /></ToolBtn>
+          </>
+        )}
+
         <ToolBtn onClick={() => editor.chain().focus().undo().run()} title="Undo"><Undo size={14} /></ToolBtn>
         <ToolBtn onClick={() => editor.chain().focus().redo().run()} title="Redo"><Redo size={14} /></ToolBtn>
       </div>
