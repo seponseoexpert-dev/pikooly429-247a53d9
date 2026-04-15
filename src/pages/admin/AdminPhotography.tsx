@@ -954,6 +954,12 @@ const PageSEOTab = () => {
         </Button>
       </CardContent>
     </Card>
+
+    <Separator className="my-6" />
+
+    {/* Page Content (Long Description, FAQ, Images) */}
+    <PageContentEditor prefix="photography" title="Photography" />
+    </>
   );
 };
 
