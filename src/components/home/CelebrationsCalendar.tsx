@@ -58,7 +58,7 @@ const CelebrationsCalendar = memo(() => {
             const bgColor = c.bg_color || PASTEL_COLORS[index % PASTEL_COLORS.length];
 
             const card = (
-              <div className="w-[38vw] min-w-[38vw] sm:min-w-[160px] md:min-w-[190px] lg:min-w-[220px] xl:min-w-[240px] flex-shrink-0 snap-start group">
+              <div className="w-[42vw] min-w-[42vw] sm:w-[30vw] sm:min-w-[30vw] md:w-[24vw] md:min-w-[24vw] lg:w-[18vw] lg:min-w-[18vw] xl:w-[16vw] xl:min-w-[16vw] max-w-[240px] flex-shrink-0 snap-start group">
                 <div
                   className="relative rounded-xl sm:rounded-2xl overflow-hidden aspect-square transition-all duration-500 ease-out group-hover:shadow-lg group-hover:scale-[1.02]"
                   style={{ backgroundColor: bgColor }}
@@ -82,7 +82,7 @@ const CelebrationsCalendar = memo(() => {
                     className="w-full h-full object-cover"
                     loading="lazy"
                     decoding="async"
-                    sizes="(max-width: 480px) 38vw, (max-width: 640px) 160px, (max-width: 768px) 190px, (max-width: 1024px) 220px, 240px"
+                    sizes="(max-width: 640px) 42vw, (max-width: 768px) 30vw, (max-width: 1024px) 24vw, (max-width: 1280px) 18vw, 16vw"
                   />
                 </div>
                 <p className="text-[11px] sm:text-xs md:text-sm font-medium text-foreground/80 text-center mt-1.5 sm:mt-2 group-hover:text-primary transition-colors line-clamp-1">
