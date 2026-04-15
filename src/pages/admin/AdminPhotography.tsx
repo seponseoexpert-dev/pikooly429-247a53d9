@@ -12,9 +12,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Camera, MapPin, DollarSign, Image, Trash2, Plus, Edit, CalendarCheck, Clock, TrendingUp, Users, CheckCircle2, XCircle, Eye, Video, Search as SearchIcon } from "lucide-react";
+import { Camera, MapPin, DollarSign, Image, Trash2, Plus, Edit, CalendarCheck, Clock, TrendingUp, Users, CheckCircle2, XCircle, Eye, Video, Search as SearchIcon, FileText } from "lucide-react";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { useCurrency } from "@/hooks/useCurrency";
+import PageContentEditor from "@/components/admin/PageContentEditor";
 
 const statusConfig: Record<string, { bg: string; text: string; icon: typeof CheckCircle2 }> = {
   pending: { bg: "bg-amber-50 border-amber-200", text: "text-amber-700", icon: Clock },
@@ -326,6 +327,7 @@ const AdminPhotography = () => {
             { value: "travel", label: "Travel Fees", icon: TrendingUp },
             { value: "portfolio", label: "Portfolio", icon: Image },
             { value: "seo", label: "Page SEO", icon: SearchIcon },
+            { value: "content", label: "Page Content", icon: FileText },
           ].map((tab) => (
             <TabsTrigger
               key={tab.value}
