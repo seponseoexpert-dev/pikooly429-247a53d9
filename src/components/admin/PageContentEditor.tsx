@@ -9,25 +9,32 @@ import { Separator } from "@/components/ui/separator";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 import { toast } from "sonner";
-import { FileText, Image, MessageSquare, Save } from "lucide-react";
+import { FileText, Image, MessageSquare, Save, PlusCircle, Trash2 } from "lucide-react";
 
 interface PageContentEditorProps {
-  prefix: string; // e.g. "events", "photography", "bouquet"
+  prefix: string;
   title: string;
 }
+
+const MAX_FAQS = 20;
 
 const PageContentEditor = ({ prefix, title }: PageContentEditorProps) => {
   const queryClient = useQueryClient();
 
-  const allKeys = [
+  // Build all possible keys (up to 20 FAQs)
+  const baseKeys = [
     `${prefix}_page_title`,
     `${prefix}_page_description`,
     `${prefix}_page_motto`,
     `${prefix}_page_image_1`,
     `${prefix}_page_image_2`,
     `${prefix}_page_image_3`,
-    ...Array.from({ length: 10 }, (_, i) => [`${prefix}_page_faq_${i + 1}_question`, `${prefix}_page_faq_${i + 1}_answer`]).flat(),
   ];
+  const allFaqKeys = Array.from({ length: MAX_FAQS }, (_, i) => [
+    `${prefix}_page_faq_${i + 1}_question`,
+    `${prefix}_page_faq_${i + 1}_answer`,
+  ]).flat();
+  const allKeys = [...baseKeys, ...allFaqKeys];
 
   const { data: settings = {}, isLoading } = useQuery({
     queryKey: [`${prefix}-page-content`],
@@ -40,14 +47,24 @@ const PageContentEditor = ({ prefix, title }: PageContentEditorProps) => {
   });
 
   const [form, setForm] = useState<Record<string, string>>({});
+  const [faqs, setFaqs] = useState<{ question: string; answer: string }[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !loaded) {
       const initial: Record<string, string> = {};
-      allKeys.forEach(k => { initial[k] = settings[k] || ""; });
+      baseKeys.forEach(k => { initial[k] = settings[k] || ""; });
       setForm(initial);
+
+      // Load existing FAQs dynamically
+      const existingFaqs: { question: string; answer: string }[] = [];
+      for (let i = 1; i <= MAX_FAQS; i++) {
+        const q = settings[`${prefix}_page_faq_${i}_question`] || "";
+        const a = settings[`${prefix}_page_faq_${i}_answer`] || "";
+        if (q || a) existingFaqs.push({ question: q, answer: a });
+      }
+      setFaqs(existingFaqs);
       setLoaded(true);
     }
   }, [isLoading, loaded, settings]);
@@ -56,10 +73,31 @@ const PageContentEditor = ({ prefix, title }: PageContentEditorProps) => {
     setForm(prev => ({ ...prev, [key]: value }));
   };
 
+  const addFaq = () => {
+    if (faqs.length >= MAX_FAQS) {
+      toast.error(`Maximum ${MAX_FAQS} FAQs allowed`);
+      return;
+    }
+    setFaqs(prev => [...prev, { question: "", answer: "" }]);
+  };
+
+  const removeFaq = (index: number) => {
+    setFaqs(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const updateFaq = (index: number, field: "question" | "answer", value: string) => {
+    setFaqs(prev => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value };
+      return updated;
+    });
+  };
+
   const handleSave = async () => {
     setSaving(true);
     try {
-      for (const key of allKeys) {
+      // Save base fields
+      for (const key of baseKeys) {
         const value = form[key] || "";
         if (!value && !settings[key]) continue;
         const { data: existing } = await supabase.from("site_settings").select("id").eq("key", key).maybeSingle();
@@ -69,6 +107,25 @@ const PageContentEditor = ({ prefix, title }: PageContentEditorProps) => {
           await supabase.from("site_settings").insert({ key, value });
         }
       }
+
+      // Save FAQs (write all slots, clear unused ones)
+      for (let i = 1; i <= MAX_FAQS; i++) {
+        const qKey = `${prefix}_page_faq_${i}_question`;
+        const aKey = `${prefix}_page_faq_${i}_answer`;
+        const qVal = faqs[i - 1]?.question || "";
+        const aVal = faqs[i - 1]?.answer || "";
+
+        for (const [key, value] of [[qKey, qVal], [aKey, aVal]]) {
+          if (!value && !settings[key]) continue;
+          const { data: existing } = await supabase.from("site_settings").select("id").eq("key", key).maybeSingle();
+          if (existing) {
+            await supabase.from("site_settings").update({ value }).eq("key", key);
+          } else if (value) {
+            await supabase.from("site_settings").insert({ key, value });
+          }
+        }
+      }
+
       queryClient.invalidateQueries({ queryKey: [`${prefix}-page-content`] });
       queryClient.invalidateQueries({ queryKey: ["site-settings"] });
       toast.success(`${title} content saved!`);
@@ -85,7 +142,7 @@ const PageContentEditor = ({ prefix, title }: PageContentEditorProps) => {
     <div className="max-w-3xl space-y-6">
       <div>
         <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1">
-          <FileText className="w-3 h-3" /> {title} — Page Content
+          <FileText className="w-3 h-3" /> {title} — Page Content (SEO)
         </Label>
         <p className="text-xs text-muted-foreground mt-1">
           This content appears at the bottom of the /{prefix}/ page above the footer for SEO purposes.
@@ -145,37 +202,43 @@ const PageContentEditor = ({ prefix, title }: PageContentEditorProps) => {
 
       <Separator />
 
-      {/* FAQ Section */}
+      {/* Dynamic FAQ Section */}
       <div>
-        <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1">
-          <MessageSquare className="w-3 h-3" /> FAQ Section (up to 10)
-        </Label>
+        <div className="flex justify-between items-center">
+          <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1">
+            <MessageSquare className="w-3 h-3" /> FAQ Section
+          </Label>
+          <Button type="button" variant="outline" size="sm" onClick={addFaq}>
+            <PlusCircle className="w-4 h-4 mr-1" /> Add FAQ
+          </Button>
+        </div>
         <div className="space-y-4 mt-3">
-          {Array.from({ length: 10 }, (_, i) => i + 1).map(i => {
-            const qKey = `${prefix}_page_faq_${i}_question`;
-            const aKey = `${prefix}_page_faq_${i}_answer`;
-            const hasContent = form[qKey] || form[aKey];
-            // Show first 3 always, rest only if they have content or previous one has content
-            const prevQ = `${prefix}_page_faq_${i - 1}_question`;
-            const showThis = i <= 3 || hasContent || (i > 1 && form[prevQ]);
-            if (!showThis) return null;
-            return (
-              <div key={i} className="border border-border/50 rounded-lg p-3 bg-muted/20 space-y-2">
-                <Label className="text-xs font-semibold text-muted-foreground">FAQ {i}</Label>
-                <Input
-                  value={form[qKey] || ""}
-                  onChange={e => updateField(qKey, e.target.value)}
-                  placeholder={`Question ${i}`}
-                />
-                <Textarea
-                  value={form[aKey] || ""}
-                  onChange={e => updateField(aKey, e.target.value)}
-                  placeholder={`Answer ${i}`}
-                  rows={2}
-                />
+          {faqs.length === 0 && (
+            <p className="text-sm text-muted-foreground text-center py-4 border border-dashed rounded-lg">
+              No FAQs added yet. Click "Add FAQ" to create one.
+            </p>
+          )}
+          {faqs.map((faq, i) => (
+            <div key={i} className="border border-border/50 rounded-lg p-3 bg-muted/20 space-y-2">
+              <div className="flex justify-between items-center">
+                <Label className="text-xs font-semibold text-muted-foreground">FAQ {i + 1}</Label>
+                <Button type="button" variant="ghost" size="sm" className="text-destructive h-7 px-2" onClick={() => removeFaq(i)}>
+                  <Trash2 className="w-3.5 h-3.5 mr-1" /> Remove
+                </Button>
               </div>
-            );
-          })}
+              <Input
+                value={faq.question}
+                onChange={e => updateFaq(i, "question", e.target.value)}
+                placeholder={`Question ${i + 1}`}
+              />
+              <Textarea
+                value={faq.answer}
+                onChange={e => updateFaq(i, "answer", e.target.value)}
+                placeholder={`Answer ${i + 1}`}
+                rows={2}
+              />
+            </div>
+          ))}
         </div>
       </div>
 
