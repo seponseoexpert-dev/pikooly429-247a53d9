@@ -95,7 +95,7 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
             }}
             className="flex-1 py-2 sm:py-2.5 rounded-lg sm:rounded-xl bg-primary text-primary-foreground text-[10px] sm:text-[11px] md:text-xs font-semibold hover:bg-primary/90 active:scale-[0.97] transition-all text-center min-h-[36px] sm:min-h-[40px]"
           >
-            Buy Now
+            Shop Now
           </button>
           <button
             onClick={(e) => {
