@@ -39,7 +39,7 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
   return (
     <div className="group bg-card rounded-xl sm:rounded-2xl overflow-hidden border border-border/30 hover:border-primary/20 hover:shadow-[0_8px_32px_-8px_hsl(var(--foreground)/0.1)] transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:-translate-y-1 flex flex-col h-full">
       {/* Image */}
-      <Link to={linkTo} className="block relative overflow-hidden aspect-square bg-muted/10">
+      <Link to={linkTo} className="block relative overflow-hidden aspect-[4/5] bg-muted/10">
         <img
           src={imgSrc}
           alt={product.name}
