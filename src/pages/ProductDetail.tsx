@@ -419,7 +419,7 @@ const ProductDetail = () => {
               <ShoppingBag size={18} /> ADD TO CART
             </Button>
             <Button size="lg" className="flex-1 h-12 sm:h-[52px] text-sm font-semibold rounded-xl bg-accent hover:bg-accent/90 text-accent-foreground" onClick={handleBuyNow}>
-              BUY NOW
+              SHOP NOW
             </Button>
           </div>
 
