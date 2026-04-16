@@ -108,6 +108,7 @@ const HeroSection = memo(() => {
                 fetchPriority="high"
                 decoding="async"
                 loading="eager"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 95vw, 1280px"
               />
             </Link>
           ) : (
