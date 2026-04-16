@@ -1,4 +1,5 @@
 import { memo, useState } from "react";
+import paymentMethodsImg from "@/assets/payment-methods.webp";
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Twitter, Youtube, Send, Phone, Mail, MapPin, Heart, ArrowRight } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -264,15 +265,10 @@ const Footer = memo(() => {
         <div className="border-t border-background/8">
           <div className="section-container py-5">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-              {activePaymentMethods.length > 0 && (
-                <div className="flex flex-wrap items-center gap-2">
-                  {activePaymentMethods.map((m) => (
-                    <div key={m.key} title={m.label} className="opacity-60 hover:opacity-100 transition-opacity">
-                      {m.svg}
-                    </div>
-                  ))}
-                </div>
-              )}
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-background/50 italic whitespace-nowrap">Pay with</span>
+                <img src={paymentMethodsImg} alt="Accepted payment methods" className="h-5 sm:h-6 w-auto object-contain opacity-80" loading="lazy" />
+              </div>
               <p className="text-[10px] sm:text-xs text-background/30 flex items-center gap-1">
                 {copyright} — Made with <Heart size={10} className="text-destructive inline" /> in Bangladesh
               </p>
