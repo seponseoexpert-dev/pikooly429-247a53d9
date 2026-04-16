@@ -36,6 +36,7 @@ const HeroSection = memo(() => {
     placeholderData: (prev) => prev,
   });
 
+  // Preload LCP image as early as possible
   useEffect(() => {
     if (slides.length > 0) {
       const firstImg = slides[0]?.bg_image_url || slides[0]?.image_url;
@@ -46,8 +47,9 @@ const HeroSection = memo(() => {
           link.rel = "preload";
           link.as = "image";
           link.href = firstImg;
-          link.fetchPriority = "high";
-          document.head.appendChild(link);
+          (link as any).fetchPriority = "high";
+          // Insert at top of head for earliest discovery
+          document.head.insertBefore(link, document.head.firstChild);
         }
       }
     }
