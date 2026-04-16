@@ -255,7 +255,7 @@ const Footer = memo(() => {
                   <img
                     src={paymentMethodsImg}
                     alt="Accepted payment methods"
-                    className="h-4 sm:h-5 w-auto object-contain"
+                    className="h-6 sm:h-7 md:h-8 w-auto object-contain"
                     loading="lazy"
                   />
                 </div>
