@@ -1,7 +1,8 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getOptimizedCloudinaryUrl } from "@/lib/imageUtils";
 
 type Category = {
   id: string;
@@ -109,7 +110,7 @@ const CategoryItem = ({ cat, idx, variant }: { cat: Category; idx: number; varia
     <Link to={`/product-category/${cat.slug}`} className={`group ${containerClass}`}>
       <div className={iconBoxClass}>
         <img
-          src={cat.image_url || "/placeholder.svg"}
+          src={getOptimizedCloudinaryUrl(cat.image_url || "/placeholder.svg", imgSize)}
           alt={cat.name}
           width={imgSize}
           height={imgSize}
