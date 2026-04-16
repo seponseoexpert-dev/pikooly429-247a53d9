@@ -322,24 +322,24 @@ const SearchPage = () => {
             {!isSearching && searchResults.products.length > 0 && (
               <div className={`px-4 pt-2 pb-4 ${(searchResults.cats.length > 0 || searchResults.subs.length > 0) ? "border-t border-border/30 mt-2" : ""}`}>
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 mb-2">Products</p>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-3">
                   {searchResults.products.map(p => (
-                    <button key={p.id} onClick={() => handleSelect(p.slug)} className="flex flex-col rounded-xl overflow-hidden bg-muted/20 border border-border/30 hover:border-primary/30 transition-all text-left group">
-                      <div className="aspect-[4/3] w-full overflow-hidden bg-muted/40">
+                    <button key={p.id} onClick={() => handleSelect(p.slug)} className="flex flex-col rounded-2xl overflow-hidden bg-card border border-border/40 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-200 text-left group">
+                      <div className="aspect-square w-full overflow-hidden bg-muted/30">
                         {p.image_url ? (
-                          <img src={p.image_url} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+                          <img src={p.image_url} alt={p.name} className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500 ease-out" loading="lazy" />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center"><Search size={20} className="text-muted-foreground/20" /></div>
+                          <div className="w-full h-full flex items-center justify-center"><Search size={22} className="text-muted-foreground/20" /></div>
                         )}
                       </div>
-                      <div className="px-2 py-2">
-                        <p className="text-xs font-medium text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors"><HighlightMatch text={p.name} query={debouncedSearch} /></p>
-                        <p className="text-xs text-primary font-semibold mt-1">
-                          {formatPrice(p.price)}
+                      <div className="px-3 py-2.5 space-y-1">
+                        <p className="text-[13px] font-semibold text-foreground/90 line-clamp-2 leading-snug group-hover:text-primary transition-colors"><HighlightMatch text={p.name} query={debouncedSearch} /></p>
+                        <div className="flex items-baseline gap-1.5">
+                          <span className="text-sm text-primary font-bold">{formatPrice(p.price)}</span>
                           {p.original_price && p.original_price > p.price && (
-                            <span className="text-muted-foreground line-through ml-1 font-normal text-[10px]">{formatPrice(p.original_price)}</span>
+                            <span className="text-muted-foreground/60 line-through text-[11px]">{formatPrice(p.original_price)}</span>
                           )}
-                        </p>
+                        </div>
                       </div>
                     </button>
                   ))}
