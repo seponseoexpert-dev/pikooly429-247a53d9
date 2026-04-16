@@ -7,6 +7,8 @@ import { Table } from "@tiptap/extension-table";
 import { TableRow } from "@tiptap/extension-table-row";
 import { TableCell } from "@tiptap/extension-table-cell";
 import { TableHeader } from "@tiptap/extension-table-header";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { FontSize } from "@tiptap/extension-font-size";
 import { useEffect, useCallback, forwardRef } from "react";
 import {
   Bold, Italic, Underline as UnderlineIcon, Strikethrough, List, ListOrdered, Quote,
@@ -61,6 +63,8 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
       TableRow,
       TableHeader,
       TableCell,
+      TextStyle,
+      FontSize,
     ],
     content: value,
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
@@ -100,6 +104,7 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
 
       return {
         currentBlock,
+        currentFontSize: editor.getAttributes("textStyle").fontSize || "",
         isBold: editor.isActive("bold"),
         isItalic: editor.isActive("italic"),
         isUnderline: editor.isActive("underline"),
@@ -179,6 +184,39 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
           <option value="h4">Heading 4</option>
           <option value="h5">Heading 5</option>
           <option value="h6">Heading 6</option>
+        </select>
+        <select
+          value={editorState?.currentFontSize ?? ""}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val) {
+              editor.chain().focus().setMark("textStyle", { fontSize: val }).run();
+            } else {
+              editor.chain().focus().unsetMark("textStyle").run();
+            }
+          }}
+          onClick={(e) => e.stopPropagation()}
+          onFocus={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          title="Font size"
+          className="h-7 sm:h-8 text-xs bg-background border border-border rounded px-1.5 sm:px-2 outline-none cursor-pointer mr-0.5 sm:mr-1"
+          style={{ fontSize: "16px" }}
+        >
+          <option value="">Size</option>
+          <option value="12px">12</option>
+          <option value="14px">14</option>
+          <option value="16px">16</option>
+          <option value="18px">18</option>
+          <option value="20px">20</option>
+          <option value="24px">24</option>
+          <option value="28px">28</option>
+          <option value="32px">32</option>
+          <option value="36px">36</option>
+          <option value="42px">42</option>
+          <option value="48px">48</option>
+          <option value="60px">60</option>
+          <option value="72px">72</option>
         </select>
         <ToolBtn active={editorState?.isBold} onClick={() => editor.chain().focus().toggleBold().run()} title="Bold"><Bold size={14} /></ToolBtn>
         <ToolBtn active={editorState?.isItalic} onClick={() => editor.chain().focus().toggleItalic().run()} title="Italic"><Italic size={14} /></ToolBtn>
