@@ -63,6 +63,8 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
       TableRow,
       TableHeader,
       TableCell,
+      TextStyle,
+      FontSize,
     ],
     content: value,
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
