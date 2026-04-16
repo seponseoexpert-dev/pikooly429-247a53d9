@@ -203,7 +203,7 @@ const TailoredOccasions = memo(() => {
 
         {/* CTA */}
         {filteredProducts.length > 0 && (
-          <div className="mt-6 sm:mt-8">
+          <div className="mt-6 sm:mt-8 text-center">
             <Link
               to={viewAllLink}
               className="flex items-center justify-center w-full sm:w-auto sm:inline-flex gap-1.5 px-8 py-3.5 border-2 border-[#8a9a5b] text-[#5a6b2e] rounded-xl text-sm font-semibold hover:bg-[#6b7c3e] hover:text-white hover:border-[#6b7c3e] transition-all duration-300 shadow-sm hover:shadow-md"
