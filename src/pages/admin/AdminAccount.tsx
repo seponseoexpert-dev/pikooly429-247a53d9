@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Lock, Save } from "lucide-react";
+import { logAdminActivity } from "@/lib/activityLog";
 
 const AdminAccount = () => {
   const { user } = useAuth();
@@ -29,6 +30,12 @@ const AdminAccount = () => {
     if (error) {
       toast({ title: "Update Failed", description: error.message, variant: "destructive" });
     } else {
+      await logAdminActivity({
+        action: "email_change",
+        userId: user?.id,
+        userEmail: user?.email,
+        description: `Requested email change to ${newEmail.trim()}`,
+      });
       toast({
         title: "Confirmation Email Sent",
         description: `A confirmation link has been sent to ${newEmail}. Please confirm to complete the change.`,
@@ -68,6 +75,12 @@ const AdminAccount = () => {
     if (error) {
       toast({ title: "Update Failed", description: error.message, variant: "destructive" });
     } else {
+      await logAdminActivity({
+        action: "password_change",
+        userId: user?.id,
+        userEmail: user?.email,
+        description: "Admin password updated",
+      });
       toast({ title: "Password Updated", description: "Your password has been changed successfully." });
       setCurrentPassword("");
       setNewPassword("");
