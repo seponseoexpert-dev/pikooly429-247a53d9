@@ -234,21 +234,21 @@ const SearchPage = () => {
                 <h3 className="text-sm font-semibold text-foreground flex items-center gap-1.5 mb-3">
                   <TrendingUp size={14} className="text-primary" /> Trending Gifts
                 </h3>
-                <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory">
+                <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory">
                   {trendingProducts.map(p => (
                     <button
                       key={p.id}
                       onClick={() => handleSelect(p.slug)}
-                      className="shrink-0 snap-start w-[100px] flex flex-col items-center gap-1.5 group"
+                      className="shrink-0 snap-start w-[76px] flex flex-col items-center gap-1 group"
                     >
-                      <div className="w-[88px] h-[88px] rounded-xl overflow-hidden ring-1 ring-border/40 group-hover:ring-primary/30 transition-all">
+                      <div className="w-[68px] h-[68px] rounded-xl overflow-hidden ring-1 ring-border/40 group-hover:ring-primary/30 transition-all bg-muted/30">
                         {p.image_url ? (
                           <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
                         ) : (
-                          <div className="w-full h-full bg-muted flex items-center justify-center"><Search size={20} className="text-muted-foreground/30" /></div>
+                          <div className="w-full h-full bg-muted flex items-center justify-center"><Search size={16} className="text-muted-foreground/30" /></div>
                         )}
                       </div>
-                      <span className="text-[11px] font-medium text-foreground/70 group-hover:text-primary text-center line-clamp-2 leading-tight transition-colors">{p.name}</span>
+                      <span className="text-[10px] font-medium text-foreground/60 group-hover:text-primary text-center line-clamp-2 leading-tight transition-colors">{p.name}</span>
                     </button>
                   ))}
                 </div>
@@ -259,20 +259,20 @@ const SearchPage = () => {
             {popularCategories.length > 0 && (
               <div className="px-4 pt-3 pb-4">
                 <h3 className="text-sm font-semibold text-foreground mb-3">Popular Categories</h3>
-                <div className="space-y-0.5">
+                <div className="grid grid-cols-2 gap-2">
                   {popularCategories.map(cat => (
                     <button
                       key={cat.id}
                       onClick={() => handleCatClick(cat.slug)}
-                      className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl hover:bg-primary/5 transition-colors text-left group"
+                      className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-xl bg-muted/30 hover:bg-primary/5 border border-border/30 transition-colors text-left group"
                     >
                       {cat.image_url ? (
-                        <img src={cat.image_url} alt={cat.name} className="w-10 h-10 rounded-xl object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />
+                        <img src={cat.image_url} alt={cat.name} className="w-9 h-9 rounded-lg object-cover shrink-0" loading="lazy" />
                       ) : (
-                        <div className="w-10 h-10 rounded-xl bg-muted shrink-0 ring-1 ring-border/40" />
+                        <div className="w-9 h-9 rounded-lg bg-muted shrink-0" />
                       )}
-                      <span className="text-sm font-medium text-foreground/80 group-hover:text-primary transition-colors flex-1">{cat.name}</span>
-                      <ArrowUpRight size={14} className="text-muted-foreground/40 group-hover:text-primary transition-colors" />
+                      <span className="text-xs font-medium text-foreground/80 group-hover:text-primary transition-colors flex-1 line-clamp-2 leading-tight">{cat.name}</span>
+                      <ArrowUpRight size={12} className="text-muted-foreground/30 group-hover:text-primary transition-colors shrink-0" />
                     </button>
                   ))}
                 </div>
