@@ -65,7 +65,7 @@ const ProductGrid = memo(() => {
     return [...featured, ...rest].slice(0, 12);
   }, [products, featured, allTrendingTabs]);
 
-  const cardWidthClass = "w-[140px] sm:w-[160px] md:w-[180px] lg:w-[200px] xl:w-[210px]";
+  const cardWidthClass = "w-[44vw] sm:w-[180px] md:w-[200px] lg:w-[210px] xl:w-[220px]";
 
   return (
     <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Products" style={{ contain: "layout style", minHeight: "420px" }}>
