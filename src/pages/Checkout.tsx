@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import paymentMethodsImg from "@/assets/payment-methods.webp";
 import { useCart } from "@/contexts/CartContext";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -152,7 +153,7 @@ const Checkout = () => {
     { value: "cod", label: "Cash on Delivery", desc: "Pay when you receive your order", statusKeys: ["cod_enabled", "cod_status"], icon: "Banknote" as const },
     { value: "paypal", label: "PayPal", desc: "Pay securely via PayPal", statusKeys: ["paypal_status"], icon: "Wallet" as const },
     { value: "stripe", label: "Stripe", desc: "Pay with credit/debit card via Stripe", statusKeys: ["stripe_status"], icon: "CreditCard" as const },
-    { value: "eps", label: "Online Payment", desc: "Pay with Cards, Bkash, Nagad, Upay, etc.", statusKeys: ["eps_status"], icon: "Smartphone" as const },
+    { value: "eps", label: "Local & Global Payment", desc: "Pay with Cards, Bkash, Nagad, Upay, etc.", statusKeys: ["eps_status"], icon: "Smartphone" as const },
   ];
 
   const { data: gatewaySettings = {} } = useQuery({
@@ -788,6 +789,10 @@ const Checkout = () => {
                       )}
                     </label>
                   ))}
+                </div>
+                {/* Payment Logos */}
+                <div className="mt-3 pt-3 border-t border-border">
+                  <img src={paymentMethodsImg} alt="Accepted payment methods - Visa, Mastercard, bKash, Nagad, Rocket, EPS and more" className="w-full h-auto object-contain" loading="lazy" />
                 </div>
               </section>
             </div>
