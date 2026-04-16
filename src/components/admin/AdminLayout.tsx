@@ -51,6 +51,7 @@ const navGroups = [
     items: [
       { label: "Subscribers", icon: Mail, path: "/admin/subscribers" },
       { label: "Settings", icon: Settings, path: "/admin/settings" },
+      { label: "Account", icon: UserCog, path: "/admin/account" },
       { label: "WP Migrate", icon: Download, path: "/admin/migrate" },
     ],
   },
