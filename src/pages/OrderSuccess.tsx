@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, Home, Phone, Mail, PartyPopper, CircleCheckBig, Package, Truck, CheckCircle, Clock, XCircle, Loader2 } from "lucide-react";
+import { Home, Phone, Mail, PartyPopper, CircleCheckBig, Package, Truck, CheckCircle, Clock, XCircle, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useQuery } from "@tanstack/react-query";
@@ -288,9 +288,9 @@ const OrderSuccess = () => {
           transition={{ delay: 0.85 }}
           className="flex flex-col sm:flex-row gap-3 justify-center"
         >
-          <Link to="/shop" className="flex-1 sm:flex-none">
+          <Link to={`/track-order?order=${orderNumber || ""}`} className="flex-1 sm:flex-none">
             <Button variant="outline" className="rounded-full gap-2 w-full sm:w-auto px-6 h-11">
-              <ShoppingBag size={16} /> Continue Shopping
+              <Package size={16} /> Track Your Order
             </Button>
           </Link>
           <Link to="/" className="flex-1 sm:flex-none">
