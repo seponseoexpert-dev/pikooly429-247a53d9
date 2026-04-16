@@ -168,6 +168,7 @@ const App = () => (
               <Route path="/admin/photography" element={<AdminRoute><AdminPhotography /></AdminRoute>} />
               <Route path="/admin/popular-gifting" element={<AdminRoute><AdminPopularGifting /></AdminRoute>} />
               <Route path="/admin/home-living" element={<AdminRoute><AdminHomeLiving /></AdminRoute>} />
+              <Route path="/admin/account" element={<AdminRoute><AdminAccount /></AdminRoute>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>
