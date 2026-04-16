@@ -104,6 +104,7 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
 
       return {
         currentBlock,
+        currentFontSize: editor.getAttributes("textStyle").fontSize || "",
         isBold: editor.isActive("bold"),
         isItalic: editor.isActive("italic"),
         isUnderline: editor.isActive("underline"),
