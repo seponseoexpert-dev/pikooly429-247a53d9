@@ -790,10 +790,11 @@ const Checkout = () => {
                     </label>
                   ))}
                 </div>
-                {/* Payment Logos */}
-                <div className="mt-3 pt-3 border-t border-border">
-                  <img src={paymentMethodsImg} alt="Accepted payment methods - Visa, Mastercard, bKash, Nagad, Rocket, EPS and more" className="w-full h-auto object-contain" loading="lazy" />
-                </div>
+                {form.paymentMethod === "eps" && (
+                  <div className="mt-3 pt-3 border-t border-border">
+                    <img src={paymentMethodsImg} alt="Accepted payment methods - Visa, Mastercard, bKash, Nagad, Rocket, EPS and more" className="w-full h-auto object-contain" loading="lazy" />
+                  </div>
+                )}
               </section>
             </div>
 
