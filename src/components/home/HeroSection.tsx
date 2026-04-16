@@ -105,6 +105,7 @@ const HeroSection = memo(() => {
                 className="absolute inset-0 h-full w-full object-cover"
                 fetchPriority="high"
                 decoding="async"
+                loading="eager"
               />
             </Link>
           ) : (
