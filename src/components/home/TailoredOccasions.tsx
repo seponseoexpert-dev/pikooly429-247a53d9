@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Gift, Star, ChevronRight, ShoppingCart, Clock } from "lucide-react";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { useCart } from "@/contexts/CartContext";
+import { getOptimizedCloudinaryUrl } from "@/lib/imageUtils";
 
 const TailoredOccasions = memo(() => {
   const [activeSlug, setActiveSlug] = useState("");
@@ -143,11 +144,13 @@ const TailoredOccasions = memo(() => {
                     }`}>
                       {cat.image_url ? (
                         <img
-                          src={cat.image_url}
+                          src={getOptimizedCloudinaryUrl(cat.image_url, 60)}
                           alt={cat.name}
                           className={`w-7 h-7 sm:w-8 sm:h-8 object-contain transition-all duration-300 drop-shadow-sm ${isActive ? "drop-shadow-md" : ""}`}
                           loading="lazy"
                           decoding="async"
+                          width={32}
+                          height={32}
                         />
                       ) : (
                         <Gift size={22} strokeWidth={1.5} className={`transition-colors duration-300 ${isActive ? "text-[#5a6b2e]" : "text-muted-foreground"}`} />
@@ -217,7 +220,7 @@ const TailoredOccasions = memo(() => {
 
 /* FNP-style horizontal product card with Buy Now + Cart */
 const ProductCard = memo(({ product, formatPrice }: { product: any; formatPrice: (n: number) => string }) => {
-  const imgSrc = product.image_url || "/placeholder.svg";
+  const imgSrc = getOptimizedCloudinaryUrl(product.image_url || "/placeholder.svg", 300);
   const linkTo = `/product/${product.slug || product.id}`;
   const navigate = useNavigate();
   const { addItem } = useCart();
