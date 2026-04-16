@@ -250,12 +250,12 @@ const Footer = memo(() => {
           <div className="section-container py-4">
             <div className="flex flex-col items-center gap-2.5">
               {showPaymentStrip && (
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-background/40 italic whitespace-nowrap">Pay with</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-background/40 italic whitespace-nowrap">Pay with</span>
                   <img
                     src={paymentMethodsImg}
                     alt="Accepted payment methods"
-                    className="h-6 sm:h-7 md:h-8 w-auto object-contain"
+                    className="h-8 sm:h-9 md:h-10 w-auto object-contain"
                     loading="lazy"
                   />
                 </div>
