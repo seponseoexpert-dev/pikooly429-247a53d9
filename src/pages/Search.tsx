@@ -294,44 +294,56 @@ const SearchPage = () => {
             {!isSearching && searchResults.cats.length > 0 && (
               <div className="px-4 pt-3 pb-1">
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 mb-2">Categories</p>
-                {searchResults.cats.map(cat => (
-                  <button key={cat.id} onClick={() => handleCatClick(cat.slug)} className="flex items-center gap-3 w-full px-2 py-2.5 rounded-xl hover:bg-primary/5 transition-colors text-left group">
-                    {cat.image_url && <img src={cat.image_url} alt={cat.name} className="w-9 h-9 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
-                    <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors"><HighlightMatch text={cat.name} query={debouncedSearch} /></span>
-                  </button>
-                ))}
+                <div className="flex gap-2 flex-wrap">
+                  {searchResults.cats.map(cat => (
+                    <button key={cat.id} onClick={() => handleCatClick(cat.slug)} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/40 hover:bg-primary/10 border border-border/30 transition-colors group">
+                      {cat.image_url && <img src={cat.image_url} alt={cat.name} className="w-6 h-6 rounded-full object-cover shrink-0" loading="lazy" />}
+                      <span className="text-xs font-medium text-foreground/80 group-hover:text-primary transition-colors"><HighlightMatch text={cat.name} query={debouncedSearch} /></span>
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
 
             {!isSearching && searchResults.subs.length > 0 && (
-              <div className={`px-4 pt-2 pb-1 ${searchResults.cats.length > 0 ? "border-t border-border/30 mt-1" : ""}`}>
+              <div className={`px-4 pt-2 pb-1 ${searchResults.cats.length > 0 ? "border-t border-border/30 mt-2" : ""}`}>
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 mb-2">Subcategories</p>
-                {searchResults.subs.map(sub => (
-                  <button key={sub.id} onClick={() => handleCatClick(sub.slug)} className="flex items-center gap-3 w-full px-2 py-2.5 rounded-xl hover:bg-primary/5 transition-colors text-left group">
-                    {sub.image_url && <img src={sub.image_url} alt={sub.name} className="w-9 h-9 rounded-lg object-cover shrink-0 ring-1 ring-border/40" loading="lazy" />}
-                    <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors"><HighlightMatch text={sub.name} query={debouncedSearch} /></span>
-                  </button>
-                ))}
+                <div className="flex gap-2 flex-wrap">
+                  {searchResults.subs.map(sub => (
+                    <button key={sub.id} onClick={() => handleCatClick(sub.slug)} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/40 hover:bg-primary/10 border border-border/30 transition-colors group">
+                      {sub.image_url && <img src={sub.image_url} alt={sub.name} className="w-6 h-6 rounded-full object-cover shrink-0" loading="lazy" />}
+                      <span className="text-xs font-medium text-foreground/80 group-hover:text-primary transition-colors"><HighlightMatch text={sub.name} query={debouncedSearch} /></span>
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
 
             {!isSearching && searchResults.products.length > 0 && (
-              <div className={`px-4 pt-2 pb-4 ${(searchResults.cats.length > 0 || searchResults.subs.length > 0) ? "border-t border-border/30 mt-1" : ""}`}>
+              <div className={`px-4 pt-2 pb-4 ${(searchResults.cats.length > 0 || searchResults.subs.length > 0) ? "border-t border-border/30 mt-2" : ""}`}>
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 mb-2">Products</p>
-                {searchResults.products.map(p => (
-                  <button key={p.id} onClick={() => handleSelect(p.slug)} className="flex items-center gap-3 w-full px-2 py-2.5 rounded-xl hover:bg-primary/5 transition-colors text-left group">
-                    {p.image_url && <img src={p.image_url} alt={p.name} className="w-12 h-12 rounded-xl object-cover shrink-0 ring-1 ring-border/40 group-hover:ring-primary/30 transition-all" loading="lazy" />}
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-foreground truncate group-hover:text-primary transition-colors"><HighlightMatch text={p.name} query={debouncedSearch} /></p>
-                      <p className="text-xs text-primary font-semibold mt-0.5">
-                        {formatPrice(p.price)}
-                        {p.original_price && p.original_price > p.price && (
-                          <span className="text-muted-foreground line-through ml-1.5 font-normal">{formatPrice(p.original_price)}</span>
+                <div className="grid grid-cols-2 gap-2">
+                  {searchResults.products.map(p => (
+                    <button key={p.id} onClick={() => handleSelect(p.slug)} className="flex flex-col rounded-xl overflow-hidden bg-muted/20 border border-border/30 hover:border-primary/30 transition-all text-left group">
+                      <div className="aspect-[4/3] w-full overflow-hidden bg-muted/40">
+                        {p.image_url ? (
+                          <img src={p.image_url} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center"><Search size={20} className="text-muted-foreground/20" /></div>
                         )}
-                      </p>
-                    </div>
-                  </button>
-                ))}
+                      </div>
+                      <div className="px-2 py-2">
+                        <p className="text-xs font-medium text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors"><HighlightMatch text={p.name} query={debouncedSearch} /></p>
+                        <p className="text-xs text-primary font-semibold mt-1">
+                          {formatPrice(p.price)}
+                          {p.original_price && p.original_price > p.price && (
+                            <span className="text-muted-foreground line-through ml-1 font-normal text-[10px]">{formatPrice(p.original_price)}</span>
+                          )}
+                        </p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
 
