@@ -100,6 +100,7 @@ const CategoryItem = ({ cat, idx, variant }: { cat: Category; idx: number; varia
     : "w-full aspect-square rounded-[20px] bg-muted/70 flex items-center justify-center p-2.5 transition-all duration-200 hover:scale-[1.03] hover:shadow-md";
 
   const imgSize = variant === "mobile" ? 80 : 120;
+  const cloudinaryWidth = variant === "mobile" ? 100 : 150;
   const imgMaxClass = variant === "mobile" ? "max-h-[85%] max-w-[85%]" : "max-h-[88%] max-w-[88%]";
 
   const textClass = variant === "mobile"
@@ -110,7 +111,7 @@ const CategoryItem = ({ cat, idx, variant }: { cat: Category; idx: number; varia
     <Link to={`/product-category/${cat.slug}`} className={`group ${containerClass}`}>
       <div className={iconBoxClass}>
         <img
-          src={getOptimizedCloudinaryUrl(cat.image_url || "/placeholder.svg", imgSize)}
+          src={getOptimizedCloudinaryUrl(cat.image_url || "/placeholder.svg", cloudinaryWidth)}
           alt={cat.name}
           width={imgSize}
           height={imgSize}
