@@ -534,7 +534,7 @@ const ProductDetail = () => {
           <h2 className="text-base sm:text-lg md:text-xl font-display font-bold mb-3 sm:mb-4">You May Also Like</h2>
           <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
             {related.map((p: any, i: number) => (
-              <div key={p.id} className="min-w-[140px] w-[140px] sm:min-w-[170px] sm:w-[170px] md:min-w-[200px] md:w-[200px] lg:min-w-[220px] lg:w-[220px] flex-shrink-0 snap-start">
+              <div key={p.id} className="min-w-[44vw] w-[44vw] sm:min-w-[180px] sm:w-[180px] md:min-w-[200px] md:w-[200px] lg:min-w-[220px] lg:w-[220px] flex-shrink-0 snap-start">
                 <ProductCard product={p} index={i} />
               </div>
             ))}
