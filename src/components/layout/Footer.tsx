@@ -1,7 +1,7 @@
 import { memo, useState } from "react";
 import paymentMethodsImg from "@/assets/payment-methods.webp";
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Twitter, Youtube, Send, Phone, Mail, MapPin, Heart, ArrowRight } from "lucide-react";
+import { Facebook, Instagram, Twitter, Youtube, Send, Phone, Mail, MapPin, Heart } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -82,34 +82,18 @@ const Footer = memo(() => {
 
   const finalCategoryLinks = categoryLinks.length > 0 ? categoryLinks : defaultCategoryLinks;
 
-  const paymentMethods = [
-    { key: "footer_payment_visa", label: "Visa", svg: (
-      <svg viewBox="0 0 48 32" width={40} height={28} role="img" aria-label="Visa"><rect width="48" height="32" rx="4" fill="#1A1F71"/><text x="24" y="20" textAnchor="middle" fill="#fff" fontSize="12" fontWeight="bold" fontFamily="sans-serif">VISA</text></svg>
-    )},
-    { key: "footer_payment_mastercard", label: "Mastercard", svg: (
-      <svg viewBox="0 0 48 32" width={40} height={28} role="img" aria-label="Mastercard"><rect width="48" height="32" rx="4" fill="#2D2D2D"/><circle cx="19" cy="16" r="9" fill="#EB001B" opacity="0.9"/><circle cx="29" cy="16" r="9" fill="#F79E1B" opacity="0.9"/><path d="M24 9.5a9 9 0 010 13 9 9 0 010-13z" fill="#FF5F00"/></svg>
-    )},
-    { key: "footer_payment_amex", label: "Amex", svg: (
-      <svg viewBox="0 0 48 32" width={40} height={28} role="img" aria-label="Amex"><rect width="48" height="32" rx="4" fill="#2E77BC"/><text x="24" y="20" textAnchor="middle" fill="#fff" fontSize="9" fontWeight="bold" fontFamily="sans-serif">AMEX</text></svg>
-    )},
-    { key: "footer_payment_paypal", label: "PayPal", svg: (
-      <svg viewBox="0 0 48 32" width={40} height={28} role="img" aria-label="PayPal"><rect width="48" height="32" rx="4" fill="#FFF" stroke="#ddd" strokeWidth="0.5"/><text x="24" y="20" textAnchor="middle" fill="#003087" fontSize="9" fontWeight="bold" fontFamily="sans-serif">PayPal</text></svg>
-    )},
-    { key: "footer_payment_stripe", label: "Stripe", svg: (
-      <svg viewBox="0 0 48 32" width={40} height={28} role="img" aria-label="Stripe"><rect width="48" height="32" rx="4" fill="#635BFF"/><text x="24" y="20" textAnchor="middle" fill="#fff" fontSize="9" fontWeight="bold" fontFamily="sans-serif">Stripe</text></svg>
-    )},
-    { key: "footer_payment_bkash", label: "bKash", svg: (
-      <svg viewBox="0 0 48 32" width={40} height={28} role="img" aria-label="bKash"><rect width="48" height="32" rx="4" fill="#E2136E"/><text x="24" y="20" textAnchor="middle" fill="#fff" fontSize="9" fontWeight="bold" fontFamily="sans-serif">bKash</text></svg>
-    )},
-    { key: "footer_payment_nagad", label: "Nagad", svg: (
-      <svg viewBox="0 0 48 32" width={40} height={28} role="img" aria-label="Nagad"><rect width="48" height="32" rx="4" fill="#F6921E"/><text x="24" y="20" textAnchor="middle" fill="#fff" fontSize="9" fontWeight="bold" fontFamily="sans-serif">Nagad</text></svg>
-    )},
-    { key: "footer_payment_cod", label: "Cash on Delivery", svg: (
-      <svg viewBox="0 0 48 32" width={40} height={28} role="img" aria-label="Cash on Delivery"><rect width="48" height="32" rx="4" fill="#4CAF50"/><text x="24" y="20" textAnchor="middle" fill="#fff" fontSize="8" fontWeight="bold" fontFamily="sans-serif">COD</text></svg>
-    )},
+  const paymentMethodKeys = [
+    "footer_payment_visa",
+    "footer_payment_mastercard",
+    "footer_payment_amex",
+    "footer_payment_paypal",
+    "footer_payment_stripe",
+    "footer_payment_bkash",
+    "footer_payment_nagad",
+    "footer_payment_cod",
   ];
 
-  const activePaymentMethods = paymentMethods.filter((m) => settings[m.key] === "true");
+  const showPaymentStrip = paymentMethodKeys.some((key) => settings[key] === "true");
 
   const defaultSocials = [
     { icon: Facebook, label: "Facebook" },
@@ -264,12 +248,21 @@ const Footer = memo(() => {
         {/* Bottom Bar */}
         <div className="border-t border-background/8">
           <div className="section-container py-5">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-background/50 italic whitespace-nowrap">Pay with</span>
-                <img src={paymentMethodsImg} alt="Accepted payment methods" className="h-5 sm:h-6 w-auto object-contain opacity-80" loading="lazy" />
-              </div>
-              <p className="text-[10px] sm:text-xs text-background/30 flex items-center gap-1">
+            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+              {showPaymentStrip && (
+                <div className="flex w-full flex-col items-start gap-1.5 sm:w-auto sm:flex-row sm:items-center sm:gap-2">
+                  <span className="text-xs text-background/50 italic whitespace-nowrap">Pay with</span>
+                  <div className="w-full max-w-[260px] overflow-hidden rounded-md bg-background/95 px-2 py-1 sm:max-w-[440px]">
+                    <img
+                      src={paymentMethodsImg}
+                      alt="Accepted payment methods"
+                      className="block h-auto w-full object-contain object-left"
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              )}
+              <p className="flex w-full items-center gap-1 text-left text-[10px] text-background/30 sm:w-auto sm:text-xs">
                 {copyright} — Made with <Heart size={10} className="text-destructive inline" /> in Bangladesh
               </p>
             </div>
