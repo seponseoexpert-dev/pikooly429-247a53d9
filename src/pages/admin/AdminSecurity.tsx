@@ -48,7 +48,7 @@ const AdminSecurity = () => {
     setVerifiedFactor(verified);
 
     // Clean up any stale unverified factors (abandoned enrollments)
-    const stale = totp.filter((f) => f.status === "unverified");
+    const stale = totp.filter((f) => f.status !== "verified");
     for (const f of stale) {
       await supabase.auth.mfa.unenroll({ factorId: f.id });
     }
@@ -62,7 +62,7 @@ const AdminSecurity = () => {
     setEnrolling(true);
     // Always clean stale factors first
     const { data: existing } = await supabase.auth.mfa.listFactors();
-    const stale = (existing?.totp ?? []).filter((f) => f.status === "unverified");
+    const stale = (existing?.totp ?? []).filter((f) => f.status !== "verified");
     for (const f of stale) {
       await supabase.auth.mfa.unenroll({ factorId: f.id });
     }
