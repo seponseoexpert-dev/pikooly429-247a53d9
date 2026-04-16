@@ -15,10 +15,10 @@ const ProductGrid = memo(() => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("*, categories(name, slug), product_categories(category_id, categories(name, slug)), product_subcategories(subcategory_id)")
+        .select("id, name, slug, price, original_price, image_url, rating, stock, is_featured, delivery_time, category_id, categories(name, slug), product_categories(category_id, categories(name, slug)), product_subcategories(subcategory_id)")
         .eq("is_active", true)
         .order("created_at", { ascending: false })
-        .limit(60);
+        .limit(30);
       if (error) throw error;
       return data;
     },

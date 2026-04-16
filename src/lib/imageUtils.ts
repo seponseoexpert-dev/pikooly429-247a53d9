@@ -68,17 +68,43 @@ export function toWebPPath(path: string): string {
 }
 
 /**
- * Supabase Storage image transformation URL builder.
- * Serves optimized, resized images via Supabase's built-in CDN.
- * Only works with Supabase storage URLs.
+ * Optimise a Cloudinary URL by injecting auto-format, auto-quality
+ * and an optional width resize into the transformation chain.
+ * Returns the original URL unchanged for non-Cloudinary sources.
+ */
+export function getOptimizedCloudinaryUrl(
+  url: string,
+  width?: number
+): string {
+  if (!url || !url.includes("res.cloudinary.com")) return url;
+
+  // Already has f_auto — skip to avoid double-transforming
+  if (url.includes("f_auto")) return url;
+
+  // Pattern: /upload/v1234/ → /upload/f_auto,q_auto,w_X/v1234/
+  const transforms = width
+    ? `f_auto,q_auto,w_${width}`
+    : "f_auto,q_auto";
+
+  return url.replace(/\/upload\//, `/upload/${transforms}/`);
+}
+
+/**
+ * Universal image optimiser — handles Cloudinary and Supabase storage.
  */
 export function getOptimizedImageUrl(
   url: string,
   options: { width?: number; height?: number; quality?: number; format?: string } = {}
 ): string {
+  if (!url) return url;
+
+  // Cloudinary
+  if (url.includes("res.cloudinary.com")) {
+    return getOptimizedCloudinaryUrl(url, options.width);
+  }
+
+  // Supabase storage
   const supabaseStorageBase = "https://uizdqqyiqxkcjufkksrc.supabase.co/storage/v1/object/public/";
-  
-  // Only transform Supabase storage URLs
   if (!url.startsWith(supabaseStorageBase)) return url;
   
   const params = new URLSearchParams();
@@ -89,7 +115,6 @@ export function getOptimizedImageUrl(
   
   if (params.toString() === "") return url;
 
-  // Transform: /storage/v1/object/public/ → /storage/v1/render/image/public/
   const renderUrl = url.replace(
     "/storage/v1/object/public/",
     "/storage/v1/render/image/public/"

@@ -1,8 +1,9 @@
 import { useCart } from "@/contexts/CartContext";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, Star, Clock } from "lucide-react";
-import { useState, memo } from "react";
+import { useState, memo, useMemo } from "react";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
+import { getOptimizedCloudinaryUrl } from "@/lib/imageUtils";
 
 interface ProductCardProps {
   product: {
@@ -31,7 +32,8 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
   const [isAdding, setIsAdding] = useState(false);
   const origPrice = product.original_price ?? product.originalPrice;
   const discount = origPrice ? Math.round((1 - product.price / origPrice) * 100) : 0;
-  const imgSrc = product.image_url || product.image || "/placeholder.svg";
+  const rawImg = product.image_url || product.image || "/placeholder.svg";
+  const imgSrc = useMemo(() => getOptimizedCloudinaryUrl(rawImg, 400), [rawImg]);
   const linkTo = `/product/${product.slug || product.id}`;
 
   return (
