@@ -215,6 +215,7 @@ const Header = () => {
                   decoding="async"
                   fetchPriority="high"
                   className="h-7 sm:h-8 md:h-9 lg:h-10 w-auto max-w-[100px] sm:max-w-[112px] md:max-w-[128px] lg:max-w-[140px] object-contain"
+                  style={{ aspectRatio: "140/48" }}
                 />
               ) : (
                 <span className="text-lg sm:text-xl md:text-2xl font-display font-bold">
