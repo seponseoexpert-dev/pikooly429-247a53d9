@@ -33,7 +33,7 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
   const origPrice = product.original_price ?? product.originalPrice;
   const discount = origPrice ? Math.round((1 - product.price / origPrice) * 100) : 0;
   const rawImg = product.image_url || product.image || "/placeholder.svg";
-  const imgSrc = useMemo(() => getOptimizedCloudinaryUrl(rawImg, 400), [rawImg]);
+  const imgSrc = useMemo(() => getOptimizedCloudinaryUrl(rawImg, 300), [rawImg]);
   const linkTo = `/product/${product.slug || product.id}`;
 
   return (
@@ -43,8 +43,8 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
         <img
           src={imgSrc}
           alt={product.name}
-          width={400}
-          height={400}
+          width={300}
+          height={300}
           decoding="async"
           className="w-full h-full object-contain group-hover:scale-[1.03] transition-transform duration-700 ease-out"
           loading="lazy"
