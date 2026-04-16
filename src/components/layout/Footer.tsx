@@ -247,22 +247,20 @@ const Footer = memo(() => {
 
         {/* Bottom Bar */}
         <div className="border-t border-background/8">
-          <div className="section-container py-5">
-            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="section-container py-4">
+            <div className="flex flex-col items-center gap-2.5">
               {showPaymentStrip && (
-                <div className="flex w-full flex-col items-start gap-1.5 sm:w-auto sm:flex-row sm:items-center sm:gap-2">
-                  <span className="text-xs text-background/50 italic whitespace-nowrap">Pay with</span>
-                  <div className="w-full max-w-[260px] overflow-hidden rounded-md bg-background/95 px-2 py-1 sm:max-w-[440px]">
-                    <img
-                      src={paymentMethodsImg}
-                      alt="Accepted payment methods"
-                      className="block h-auto w-full object-contain object-left"
-                      loading="lazy"
-                    />
-                  </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] text-background/40 italic whitespace-nowrap">Pay with</span>
+                  <img
+                    src={paymentMethodsImg}
+                    alt="Accepted payment methods"
+                    className="h-4 sm:h-5 w-auto object-contain"
+                    loading="lazy"
+                  />
                 </div>
               )}
-              <p className="flex w-full items-center gap-1 text-left text-[10px] text-background/30 sm:w-auto sm:text-xs">
+              <p className="flex items-center gap-1 text-[10px] text-background/30 sm:text-xs">
                 {copyright} — Made with <Heart size={10} className="text-destructive inline" /> in Bangladesh
               </p>
             </div>
