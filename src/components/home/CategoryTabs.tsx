@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { Flower2 } from "lucide-react";
+import { getOptimizedCloudinaryUrl } from "@/lib/imageUtils";
 
 interface Tab {
   id: string;
@@ -31,7 +32,7 @@ const CategoryTabs = memo(({ tabs, activeTab, onTabChange }: CategoryTabsProps) 
               }`}
             >
               {tab.imageUrl ? (
-                <img src={tab.imageUrl} alt="" className="w-4 h-4 md:w-5 md:h-5 rounded object-cover" loading="lazy" />
+                <img src={getOptimizedCloudinaryUrl(tab.imageUrl, 40)} alt="" className="w-4 h-4 md:w-5 md:h-5 rounded object-cover" loading="lazy" decoding="async" width={20} height={20} />
               ) : tab.icon ? (
                 <tab.icon size={14} />
               ) : (
