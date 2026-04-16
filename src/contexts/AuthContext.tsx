@@ -71,6 +71,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signOut = async () => {
+    const currentEmail = user?.email ?? null;
+    const currentId = user?.id ?? null;
+    if (currentId) {
+      // Best-effort logout log; never blocks signOut
+      import("@/lib/activityLog").then(({ logAdminActivity }) => {
+        logAdminActivity({
+          action: "logout",
+          userId: currentId,
+          userEmail: currentEmail,
+          description: "User signed out",
+        });
+      });
+    }
     await supabase.auth.signOut();
     setIsAdmin(false);
   };

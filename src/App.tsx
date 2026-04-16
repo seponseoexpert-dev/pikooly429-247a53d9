@@ -68,6 +68,8 @@ const AdminPhotography = lazy(() => import("./pages/admin/AdminPhotography"));
 const AdminPopularGifting = lazy(() => import("./pages/admin/AdminPopularGifting"));
 const AdminHomeLiving = lazy(() => import("./pages/admin/AdminHomeLiving"));
 const AdminAccount = lazy(() => import("./pages/admin/AdminAccount"));
+const AdminSecurity = lazy(() => import("./pages/admin/AdminSecurity"));
+const AdminActivityLog = lazy(() => import("./pages/admin/AdminActivityLog"));
 const SearchPage = lazy(() => import("./pages/Search"));
 
 const queryClient = new QueryClient({
@@ -169,6 +171,8 @@ const App = () => (
               <Route path="/admin/popular-gifting" element={<AdminRoute><AdminPopularGifting /></AdminRoute>} />
               <Route path="/admin/home-living" element={<AdminRoute><AdminHomeLiving /></AdminRoute>} />
               <Route path="/admin/account" element={<AdminRoute><AdminAccount /></AdminRoute>} />
+              <Route path="/admin/security" element={<AdminRoute><AdminSecurity /></AdminRoute>} />
+              <Route path="/admin/activity" element={<AdminRoute><AdminActivityLog /></AdminRoute>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>
