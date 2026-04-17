@@ -103,7 +103,56 @@ const AdminReviews = () => {
         </div>
       </div>
 
-      <Card>
+      {/* Mobile Card Layout */}
+      <div className="sm:hidden space-y-3">
+        {loading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i} className="animate-pulse"><CardContent className="p-3 space-y-2"><div className="h-4 bg-muted rounded w-1/2" /><div className="h-3 bg-muted rounded w-3/4" /></CardContent></Card>
+          ))
+        ) : filtered.length === 0 ? (
+          <Card><CardContent className="p-8 text-center"><MessageSquare className="h-10 w-10 mx-auto text-muted-foreground/40 mb-2" /><p className="text-muted-foreground text-sm">No reviews found.</p></CardContent></Card>
+        ) : (
+          filtered.map((review) => (
+            <Card key={review.id} className="overflow-hidden">
+              <CardContent className="p-3.5">
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-semibold text-sm truncate">{review.customer_name}</h3>
+                    <p className="text-xs text-muted-foreground truncate">{review.product_name}</p>
+                    <div className="mt-1.5">{renderStars(review.rating)}</div>
+                  </div>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full whitespace-nowrap shrink-0 font-medium ${review.is_approved ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-800"}`}>
+                    {review.is_approved ? "Approved" : "Pending"}
+                  </span>
+                </div>
+                {review.comment && (
+                  <p className="text-xs text-muted-foreground mt-2 line-clamp-3">{review.comment}</p>
+                )}
+                <div className="flex items-center justify-between mt-2 pt-2 border-t border-border">
+                  <span className="text-[10px] text-muted-foreground">{new Date(review.created_at).toLocaleDateString("en-GB")}</span>
+                  <div className="flex items-center gap-0">
+                    {!review.is_approved ? (
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => approveReview(review.id)}>
+                        <Check className="h-4 w-4 text-green-600" />
+                      </Button>
+                    ) : (
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => rejectReview(review.id)}>
+                        <X className="h-4 w-4 text-amber-600" />
+                      </Button>
+                    )}
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => deleteReview(review.id)}>
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
+
+      {/* Desktop Table Layout */}
+      <Card className="hidden sm:block">
         <CardContent className="p-0">
           {loading ? (
             <div className="divide-y divide-border">{Array.from({ length: 5 }).map((_, i) => <div key={i} className="flex items-center gap-4 p-4"><div className="h-4 w-1/4 bg-muted rounded animate-pulse" /><div className="h-4 flex-1 bg-muted rounded animate-pulse" /><div className="h-4 w-12 bg-muted rounded animate-pulse" /><div className="h-5 w-16 bg-muted rounded-full animate-pulse" /></div>)}</div>
@@ -118,7 +167,7 @@ const AdminReviews = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Customer</TableHead>
-                    <TableHead className="hidden sm:table-cell">Product</TableHead>
+                    <TableHead>Product</TableHead>
                     <TableHead>Rating</TableHead>
                     <TableHead className="hidden md:table-cell">Comment</TableHead>
                     <TableHead>Status</TableHead>
@@ -130,7 +179,7 @@ const AdminReviews = () => {
                   {filtered.map((review) => (
                     <TableRow key={review.id}>
                       <TableCell className="font-medium text-sm">{review.customer_name}</TableCell>
-                      <TableCell className="hidden sm:table-cell text-sm">{review.product_name}</TableCell>
+                      <TableCell className="text-sm">{review.product_name}</TableCell>
                       <TableCell>{renderStars(review.rating)}</TableCell>
                       <TableCell className="hidden md:table-cell text-sm text-muted-foreground max-w-[200px] truncate">{review.comment || "—"}</TableCell>
                       <TableCell>

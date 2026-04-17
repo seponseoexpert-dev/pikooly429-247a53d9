@@ -79,7 +79,63 @@ const AdminCustomers = () => {
         <Input placeholder="Search by name or phone..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10" />
       </div>
 
-      <Card>
+      {/* Mobile Card Layout */}
+      <div className="sm:hidden space-y-3">
+        {loading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i} className="animate-pulse">
+              <CardContent className="p-3 flex items-center gap-3">
+                <div className="h-10 w-10 bg-muted rounded-full shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-muted rounded w-3/4" />
+                  <div className="h-3 bg-muted rounded w-1/2" />
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        ) : filtered.length === 0 ? (
+          <Card>
+            <CardContent className="p-8 text-center">
+              <Users className="h-10 w-10 mx-auto text-muted-foreground/40 mb-2" />
+              <p className="text-muted-foreground text-sm">No customers found.</p>
+            </CardContent>
+          </Card>
+        ) : (
+          filtered.map((c) => (
+            <Card key={c.id} className="overflow-hidden hover:shadow-md transition-shadow">
+              <CardContent className="p-3.5">
+                <div className="flex items-start gap-3">
+                  {c.avatar_url ? (
+                    <img src={c.avatar_url} alt="" className="h-11 w-11 rounded-full object-cover shrink-0" />
+                  ) : (
+                    <div className="h-11 w-11 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-bold shrink-0">
+                      {(c.full_name || "?")[0].toUpperCase()}
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <h3 className="font-semibold text-sm truncate">{c.full_name || "—"}</h3>
+                        <p className="text-xs text-muted-foreground truncate">{c.phone || "No phone"}</p>
+                      </div>
+                      <Badge variant="secondary" className="text-[10px] shrink-0">{c.order_count} orders</Badge>
+                    </div>
+                    <div className="flex items-center justify-between mt-2 pt-2 border-t border-border">
+                      <span className="text-xs text-muted-foreground">
+                        Joined {new Date(c.created_at).toLocaleDateString("en-GB")}
+                      </span>
+                      <span className="text-sm font-bold text-primary">{formatCurrency(c.total_spent)}</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
+
+      {/* Desktop Table Layout */}
+      <Card className="hidden sm:block">
         <CardContent className="p-0">
           {loading ? (
             <div className="divide-y divide-border">{Array.from({ length: 5 }).map((_, i) => <div key={i} className="flex items-center gap-4 p-4"><div className="h-4 w-1/4 bg-muted rounded animate-pulse" /><div className="h-4 flex-1 bg-muted rounded animate-pulse" /><div className="h-4 w-24 bg-muted rounded animate-pulse" /></div>)}</div>
@@ -94,9 +150,9 @@ const AdminCustomers = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Name</TableHead>
-                    <TableHead className="hidden sm:table-cell">Phone</TableHead>
+                    <TableHead>Phone</TableHead>
                     <TableHead>Orders</TableHead>
-                    <TableHead className="hidden sm:table-cell">Total Spent</TableHead>
+                    <TableHead>Total Spent</TableHead>
                     <TableHead className="hidden md:table-cell">Joined</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -115,11 +171,11 @@ const AdminCustomers = () => {
                           <span className="font-medium">{c.full_name || "—"}</span>
                         </div>
                       </TableCell>
-                      <TableCell className="hidden sm:table-cell text-sm">{c.phone || "—"}</TableCell>
+                      <TableCell className="text-sm">{c.phone || "—"}</TableCell>
                       <TableCell>
                         <Badge variant="secondary">{c.order_count}</Badge>
                       </TableCell>
-                      <TableCell className="hidden sm:table-cell font-medium">{formatCurrency(c.total_spent)}</TableCell>
+                      <TableCell className="font-medium">{formatCurrency(c.total_spent)}</TableCell>
                       <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
                         {new Date(c.created_at).toLocaleDateString("en-GB")}
                       </TableCell>

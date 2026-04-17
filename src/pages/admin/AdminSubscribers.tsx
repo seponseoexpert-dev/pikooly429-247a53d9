@@ -55,13 +55,54 @@ const AdminSubscribers = () => {
           </div>
         </div>
 
-        <div className="bg-card rounded-xl border border-border overflow-x-auto">
+        {/* Mobile Card Layout */}
+        <div className="sm:hidden space-y-3">
+          {isLoading ? (
+            Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="bg-card rounded-xl border border-border p-3 animate-pulse space-y-2">
+                <div className="h-4 bg-muted rounded w-3/4" />
+                <div className="h-3 bg-muted rounded w-1/2" />
+              </div>
+            ))
+          ) : subscribers.length === 0 ? (
+            <div className="bg-card rounded-xl border border-border p-8 text-center text-muted-foreground text-sm">No subscribers yet</div>
+          ) : (
+            subscribers.map((sub) => (
+              <div key={sub.id} className="bg-card rounded-xl border border-border p-3.5">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <Mail className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                      <p className="font-medium text-sm truncate">{sub.email}</p>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground mt-1">
+                      {format(new Date(sub.created_at), "dd MMM yyyy, hh:mm a")}
+                    </p>
+                  </div>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => deleteMutation.mutate(sub.id)}>
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
+                </div>
+                <Badge
+                  variant={sub.is_active ? "default" : "secondary"}
+                  className="cursor-pointer mt-2 text-[10px]"
+                  onClick={() => toggleMutation.mutate({ id: sub.id, is_active: !sub.is_active })}
+                >
+                  {sub.is_active ? "Active" : "Inactive"}
+                </Badge>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Desktop Table Layout */}
+        <div className="hidden sm:block bg-card rounded-xl border border-border overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Email</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="hidden sm:table-cell">Subscribed At</TableHead>
+                <TableHead>Subscribed At</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -81,7 +122,7 @@ const AdminSubscribers = () => {
                 subscribers.map((sub) => (
                   <TableRow key={sub.id}>
                     <TableCell className="font-medium text-sm flex items-center gap-2">
-                      <Mail className="h-4 w-4 text-muted-foreground hidden sm:inline-block" />
+                      <Mail className="h-4 w-4 text-muted-foreground" />
                       {sub.email}
                     </TableCell>
                     <TableCell>
@@ -93,7 +134,7 @@ const AdminSubscribers = () => {
                         {sub.is_active ? "Active" : "Inactive"}
                       </Badge>
                     </TableCell>
-                    <TableCell className="hidden sm:table-cell text-muted-foreground text-sm">
+                    <TableCell className="text-muted-foreground text-sm">
                       {format(new Date(sub.created_at), "dd MMM yyyy, hh:mm a")}
                     </TableCell>
                     <TableCell className="text-right">
