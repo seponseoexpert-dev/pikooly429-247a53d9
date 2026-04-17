@@ -40,7 +40,7 @@ const AdminCategories = () => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Category | null>(null);
-  const [form, setForm] = useState({ name: "", slug: "", description: "", short_description: "", long_description: "", faq: "[]", image_url: "", is_active: true, show_in_homepage: true, show_in_header: true, display_order: 0, seo_title: "", category_type: "", allow_custom_image: false, allow_custom_text: false });
+  const [form, setForm] = useState({ name: "", slug: "", description: "", short_description: "", long_description: "", faq: "[]", image_url: "", is_active: true, show_in_homepage: true, show_in_header: true, display_order: 0, seo_title: "", category_types: [] as string[], allow_custom_image: false, allow_custom_text: false });
   const [saving, setSaving] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -68,7 +68,7 @@ const AdminCategories = () => {
   const generateSlug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
   const resetForm = () => {
-    setForm({ name: "", slug: "", description: "", short_description: "", long_description: "", faq: "[]", image_url: "", is_active: true, show_in_homepage: true, show_in_header: true, display_order: 0, seo_title: "", category_type: "", allow_custom_image: false, allow_custom_text: false });
+    setForm({ name: "", slug: "", description: "", short_description: "", long_description: "", faq: "[]", image_url: "", is_active: true, show_in_homepage: true, show_in_header: true, display_order: 0, seo_title: "", category_types: [], allow_custom_image: false, allow_custom_text: false });
     setEditing(null);
     setImageFile(null);
   };
@@ -84,7 +84,7 @@ const AdminCategories = () => {
       faq: JSON.stringify((cat as any).faq || []),
       image_url: cat.image_url || "", is_active: cat.is_active, show_in_homepage: (cat as any).show_in_homepage !== false, show_in_header: (cat as any).show_in_header !== false, display_order: cat.display_order,
       seo_title: (cat as any).seo_title || "",
-      category_type: (cat as any).category_type || "",
+      category_types: ((cat as any).category_types && (cat as any).category_types.length > 0) ? (cat as any).category_types : ((cat as any).category_type ? [(cat as any).category_type] : []),
       allow_custom_image: (cat as any).allow_custom_image || false,
       allow_custom_text: (cat as any).allow_custom_text || false,
     });
@@ -116,7 +116,8 @@ const AdminCategories = () => {
     const slug = form.slug || generateSlug(form.name);
     let parsedFaq: any[] = [];
     try { parsedFaq = JSON.parse(form.faq); } catch { parsedFaq = []; }
-    const payload = { name: form.name.trim(), slug, description: form.description || null, short_description: form.short_description || null, long_description: form.long_description || null, faq: parsedFaq, image_url: imageUrl || null, is_active: form.is_active, show_in_homepage: form.show_in_homepage, show_in_header: form.show_in_header, display_order: form.display_order, seo_title: form.seo_title || null, category_type: form.category_type || "category", allow_custom_image: form.allow_custom_image, allow_custom_text: form.allow_custom_text } as any;
+    const primaryType = form.category_types[0] || "category";
+    const payload = { name: form.name.trim(), slug, description: form.description || null, short_description: form.short_description || null, long_description: form.long_description || null, faq: parsedFaq, image_url: imageUrl || null, is_active: form.is_active, show_in_homepage: form.show_in_homepage, show_in_header: form.show_in_header, display_order: form.display_order, seo_title: form.seo_title || null, category_type: primaryType, category_types: form.category_types, allow_custom_image: form.allow_custom_image, allow_custom_text: form.allow_custom_text } as any;
 
     if (editing) {
       const { error } = await supabase.from("categories").update(payload).eq("id", editing.id);
@@ -284,20 +285,35 @@ const AdminCategories = () => {
                 <Label>Active</Label>
               </div>
               <div className="space-y-2">
-                <Label>Category Type</Label>
-                <select
-                  value={form.category_type}
-                  onChange={(e) => setForm({ ...form, category_type: e.target.value })}
-                  className="w-full border border-input rounded-md px-3 py-2 text-sm bg-background"
-                >
-                  <option value="">— Select (Optional) —</option>
-                  <option value="category">Category (Shop by Category)</option>
-                  <option value="occasion">Occasion (All Gifts Page)</option>
-                  <option value="tailored">Tailored For Your Occasions (Homepage)</option>
-                  <option value="trending">Trending (Homepage Tabs)</option>
-                </select>
+                <Label>Category Type (select one or more)</Label>
+                <div className="space-y-2 border border-input rounded-md p-3 bg-background">
+                  {[
+                    { value: "category", label: "Category (Shop by Category)" },
+                    { value: "occasion", label: "Occasion (All Gifts Page)" },
+                    { value: "tailored", label: "Tailored For Your Occasions (Homepage)" },
+                    { value: "trending", label: "Trending (Homepage Tabs)" },
+                  ].map((opt) => {
+                    const checked = form.category_types.includes(opt.value);
+                    return (
+                      <label key={opt.value} className="flex items-center gap-2 cursor-pointer text-sm">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={(e) => {
+                            const next = e.target.checked
+                              ? [...form.category_types, opt.value]
+                              : form.category_types.filter((v) => v !== opt.value);
+                            setForm({ ...form, category_types: next });
+                          }}
+                          className="h-4 w-4 rounded border-input accent-primary"
+                        />
+                        <span>{opt.label}</span>
+                      </label>
+                    );
+                  })}
+                </div>
                 <p className="text-xs text-muted-foreground">
-                   সিলেক্ট না করলে কোনো সেকশনে দেখাবে না। "Category" = Shop by Category। "Occasion" = All Gifts পেজে। "Tailored" = হোমপেজের ট্যাব। "Trending" = হোমপেজের ট্রেন্ডিং ট্যাব।
+                  একাধিক টাইপ সিলেক্ট করতে পারবেন। কোনোটি সিলেক্ট না করলে শুধু ডিফল্ট "Category" সেকশনে দেখাবে।
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -508,7 +524,9 @@ const AdminCategories = () => {
                         {subs.length > 0 && (
                           <span className="text-[10px] text-muted-foreground">{subs.length} subs</span>
                         )}
-                        <span className="text-[10px] text-muted-foreground capitalize">{(cat as any).category_type || "category"}</span>
+                        <span className="text-[10px] text-muted-foreground capitalize truncate">
+                          {((cat as any).category_types && (cat as any).category_types.length > 0 ? (cat as any).category_types : [(cat as any).category_type || "category"]).join(", ")}
+                        </span>
                       </div>
                     </div>
                     <div className="flex items-center gap-0 shrink-0">
@@ -595,7 +613,9 @@ const AdminCategories = () => {
                             <span className="font-medium text-sm">{cat.name}</span>
                           </div>
                         </TableCell>
-                        <TableCell className="hidden md:table-cell text-muted-foreground text-sm capitalize">{(cat as any).category_type || "category"}</TableCell>
+                        <TableCell className="hidden md:table-cell text-muted-foreground text-sm capitalize">
+                          {((cat as any).category_types && (cat as any).category_types.length > 0 ? (cat as any).category_types : [(cat as any).category_type || "category"]).join(", ")}
+                        </TableCell>
                         <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">{cat.slug}</TableCell>
                         <TableCell>
                           <Button variant="ghost" size="sm" className="text-xs" onClick={() => openCreateSub(cat.id)}>

@@ -35,8 +35,13 @@ const AllGifts = () => {
     },
   });
 
-  const occasions = categories.filter((c: any) => c.category_type === "occasion");
-  const categoryItems = categories.filter((c: any) => c.category_type !== "occasion" && c.category_type !== "tailored");
+  const getTypes = (c: any): string[] =>
+    (c.category_types && c.category_types.length > 0) ? c.category_types : [c.category_type].filter(Boolean);
+  const occasions = categories.filter((c: any) => getTypes(c).includes("occasion"));
+  const categoryItems = categories.filter((c: any) => {
+    const t = getTypes(c);
+    return !t.includes("occasion") && !t.includes("tailored");
+  });
 
   const getSubsForCat = (catId: string) =>
     subcategories.filter((s: any) => s.category_id === catId);

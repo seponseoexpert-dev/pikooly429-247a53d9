@@ -260,6 +260,7 @@ export type Database = {
           allow_custom_image: boolean
           allow_custom_text: boolean
           category_type: string
+          category_types: string[]
           created_at: string
           description: string | null
           display_order: number
@@ -280,6 +281,7 @@ export type Database = {
           allow_custom_image?: boolean
           allow_custom_text?: boolean
           category_type?: string
+          category_types?: string[]
           created_at?: string
           description?: string | null
           display_order?: number
@@ -300,6 +302,7 @@ export type Database = {
           allow_custom_image?: boolean
           allow_custom_text?: boolean
           category_type?: string
+          category_types?: string[]
           created_at?: string
           description?: string | null
           display_order?: number
