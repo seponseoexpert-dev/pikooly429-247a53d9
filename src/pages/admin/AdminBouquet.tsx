@@ -115,11 +115,11 @@ const AdminBouquet = () => {
           <h1 className="text-xl sm:text-2xl font-display font-bold text-foreground">Custom Bouquet Builder</h1>
           <Dialog open={dialogOpen} onOpenChange={(o) => { setDialogOpen(o); if (!o) resetForm(); }}>
             <DialogTrigger asChild>
-              <Button><Plus className="h-4 w-4 mr-2" />Add {tabLabels[tab].slice(0, -1)}</Button>
+              <Button><Plus className="h-4 w-4 mr-2" />Add {(tabLabels[tab] ?? "Item").slice(0, -1)}</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>{editId ? "Edit" : "Add"} {tabLabels[tab].slice(0, -1)}</DialogTitle>
+                <DialogTitle>{editId ? "Edit" : "Add"} {(tabLabels[tab] ?? "Item").slice(0, -1)}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
