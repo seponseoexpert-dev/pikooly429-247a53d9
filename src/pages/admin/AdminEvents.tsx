@@ -710,12 +710,14 @@ const AdminEvents = () => (
   <div>
     <h2 className="text-2xl font-bold text-foreground mb-6">Event Management</h2>
     <Tabs defaultValue="categories">
-      <TabsList className="flex-wrap">
-        <TabsTrigger value="categories"><Tag className="w-4 h-4 mr-1" /> Categories</TabsTrigger>
-        <TabsTrigger value="packages"><Package className="w-4 h-4 mr-1" /> Packages</TabsTrigger>
-        <TabsTrigger value="bookings"><CalendarCheck className="w-4 h-4 mr-1" /> Bookings</TabsTrigger>
-        <TabsTrigger value="seo"><Search className="w-4 h-4 mr-1" /> Page SEO</TabsTrigger>
-      </TabsList>
+      <div className="overflow-x-auto -mx-1 px-1 mb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <TabsList className="inline-flex w-max">
+          <TabsTrigger value="categories" className="whitespace-nowrap"><Tag className="w-4 h-4 mr-1" /> Categories</TabsTrigger>
+          <TabsTrigger value="packages" className="whitespace-nowrap"><Package className="w-4 h-4 mr-1" /> Packages</TabsTrigger>
+          <TabsTrigger value="bookings" className="whitespace-nowrap"><CalendarCheck className="w-4 h-4 mr-1" /> Bookings</TabsTrigger>
+          <TabsTrigger value="seo" className="whitespace-nowrap"><Search className="w-4 h-4 mr-1" /> Page SEO</TabsTrigger>
+        </TabsList>
+      </div>
       <TabsContent value="categories"><CategoriesTab /></TabsContent>
       <TabsContent value="packages"><PackagesTab /></TabsContent>
       <TabsContent value="bookings"><BookingsTab /></TabsContent>

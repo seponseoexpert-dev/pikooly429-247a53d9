@@ -169,19 +169,21 @@ const AdminBouquet = () => {
         </div>
 
         <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
-          <TabsList className="flex-wrap">
-            {(["flowers", "materials", "sizes"] as ItemType[]).map((t) => {
-              const Icon = tabIcons[t];
-              return (
-                <TabsTrigger key={t} value={t} className="gap-1.5">
-                  <Icon className="h-4 w-4" />{tabLabels[t]}
-                </TabsTrigger>
-              );
-            })}
-            <TabsTrigger value="seo" className="gap-1.5">
-              <FileText className="h-4 w-4" />Page SEO
-            </TabsTrigger>
-          </TabsList>
+          <div className="overflow-x-auto -mx-1 px-1 mb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <TabsList className="inline-flex w-max">
+              {(["flowers", "materials", "sizes"] as ItemType[]).map((t) => {
+                const Icon = tabIcons[t];
+                return (
+                  <TabsTrigger key={t} value={t} className="gap-1.5 whitespace-nowrap">
+                    <Icon className="h-4 w-4" />{tabLabels[t]}
+                  </TabsTrigger>
+                );
+              })}
+              <TabsTrigger value="seo" className="gap-1.5 whitespace-nowrap">
+                <FileText className="h-4 w-4" />Page SEO
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           {(["flowers", "materials", "sizes"] as ItemType[]).map((t) => (
             <TabsContent key={t} value={t}>
