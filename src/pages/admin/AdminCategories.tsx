@@ -524,7 +524,9 @@ const AdminCategories = () => {
                         {subs.length > 0 && (
                           <span className="text-[10px] text-muted-foreground">{subs.length} subs</span>
                         )}
-                        <span className="text-[10px] text-muted-foreground capitalize">{(cat as any).category_type || "category"}</span>
+                        <span className="text-[10px] text-muted-foreground capitalize truncate">
+                          {((cat as any).category_types && (cat as any).category_types.length > 0 ? (cat as any).category_types : [(cat as any).category_type || "category"]).join(", ")}
+                        </span>
                       </div>
                     </div>
                     <div className="flex items-center gap-0 shrink-0">
@@ -611,7 +613,9 @@ const AdminCategories = () => {
                             <span className="font-medium text-sm">{cat.name}</span>
                           </div>
                         </TableCell>
-                        <TableCell className="hidden md:table-cell text-muted-foreground text-sm capitalize">{(cat as any).category_type || "category"}</TableCell>
+                        <TableCell className="hidden md:table-cell text-muted-foreground text-sm capitalize">
+                          {((cat as any).category_types && (cat as any).category_types.length > 0 ? (cat as any).category_types : [(cat as any).category_type || "category"]).join(", ")}
+                        </TableCell>
                         <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">{cat.slug}</TableCell>
                         <TableCell>
                           <Button variant="ghost" size="sm" className="text-xs" onClick={() => openCreateSub(cat.id)}>
