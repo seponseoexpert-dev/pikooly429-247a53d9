@@ -113,7 +113,6 @@ const AdminBouquet = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <h1 className="text-xl sm:text-2xl font-display font-bold text-foreground">Custom Bouquet Builder</h1>
-          {tab !== "seo" as any && (
           <Dialog open={dialogOpen} onOpenChange={(o) => { setDialogOpen(o); if (!o) resetForm(); }}>
             <DialogTrigger asChild>
               <Button><Plus className="h-4 w-4 mr-2" />Add {(tabLabels[tab] ?? "Item").slice(0, -1)}</Button>
