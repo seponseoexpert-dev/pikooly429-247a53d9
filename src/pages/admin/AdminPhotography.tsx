@@ -319,26 +319,28 @@ const AdminPhotography = () => {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="h-auto p-1 bg-muted/50 rounded-xl w-full grid grid-cols-4 md:grid-cols-7 gap-1">
-          {[
-            { value: "bookings", label: "Bookings", icon: CalendarCheck },
-            { value: "services", label: "Services", icon: Camera },
-            { value: "outside", label: "Outside Dhaka", icon: MapPin },
-            { value: "pricing", label: "Pricing", icon: DollarSign },
-            { value: "travel", label: "Travel Fees", icon: TrendingUp },
-            { value: "portfolio", label: "Portfolio", icon: Image },
-            { value: "seo", label: "Page SEO", icon: SearchIcon },
-          ].map((tab) => (
-            <TabsTrigger
-              key={tab.value}
-              value={tab.value}
-              className="rounded-lg text-xs md:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm flex items-center gap-1.5 py-2"
-            >
-              <tab.icon className="h-3.5 w-3.5 hidden md:block" />
-              {tab.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+        <div className="overflow-x-auto -mx-1 px-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <TabsList className="h-auto p-1 bg-muted/50 rounded-xl inline-flex w-max md:w-full md:grid md:grid-cols-7 gap-1">
+            {[
+              { value: "bookings", label: "Bookings", icon: CalendarCheck },
+              { value: "services", label: "Services", icon: Camera },
+              { value: "outside", label: "Outside Dhaka", icon: MapPin },
+              { value: "pricing", label: "Pricing", icon: DollarSign },
+              { value: "travel", label: "Travel Fees", icon: TrendingUp },
+              { value: "portfolio", label: "Portfolio", icon: Image },
+              { value: "seo", label: "Page SEO", icon: SearchIcon },
+            ].map((tab) => (
+              <TabsTrigger
+                key={tab.value}
+                value={tab.value}
+                className="rounded-lg text-xs md:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm flex items-center gap-1.5 py-2 px-3 whitespace-nowrap"
+              >
+                <tab.icon className="h-3.5 w-3.5 hidden md:block" />
+                {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
 
         {/* Bookings Tab */}
         <TabsContent value="bookings" className="mt-4">
