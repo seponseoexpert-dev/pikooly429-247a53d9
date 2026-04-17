@@ -25,13 +25,15 @@ const TailoredOccasions = memo(() => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("categories")
-        .select("id, name, slug, image_url")
+        .select("id, name, slug, image_url, category_type, category_types")
         .eq("is_active", true)
         .eq("show_in_homepage", true)
-        .eq("category_type", "tailored")
         .order("display_order");
       if (error) throw error;
-      return data;
+      return (data || []).filter((c: any) => {
+        const types: string[] = (c.category_types && c.category_types.length > 0) ? c.category_types : [c.category_type].filter(Boolean);
+        return types.includes("tailored");
+      });
     },
     staleTime: 5 * 60 * 1000,
     placeholderData: (prev) => prev,
