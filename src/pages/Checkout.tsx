@@ -75,6 +75,7 @@ const Checkout = () => {
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
   const [couponLoading, setCouponLoading] = useState(false);
+  const [deliveryType, setDeliveryType] = useState<"same_day" | "next_day">("same_day");
   const [form, setForm] = useState({
     fullName: "",
     billingCountry: "",
@@ -243,28 +244,39 @@ const Checkout = () => {
     enabled: items.length > 0,
   });
 
-  const activeDistrict = districts.find((d) => d.id === selectedDistrict);
+  const activeDistrict: any = districts.find((d: any) => d.id === selectedDistrict);
 
-  // Calculate delivery fee & label: use highest category-specific fee, fallback to default
-  const { deliveryFee, deliveryLabel } = useMemo(() => {
-    if (!activeDistrict) return { deliveryFee: 0, deliveryLabel: "" };
-    const defaultFee = activeDistrict.delivery_fee ?? 0;
-    const defaultLabel = activeDistrict.delivery_label || "Standard Delivery";
+  // Helper: pick fee field based on delivery type
+  const pickFee = (row: any, type: "same_day" | "next_day") => {
+    if (!row) return 0;
+    if (type === "same_day") return Number(row.same_day_fee ?? row.delivery_fee ?? 0);
+    return Number(row.next_day_fee ?? 0);
+  };
 
-    if (!selectedDistrict || productCategories.length === 0) return { deliveryFee: defaultFee, deliveryLabel: defaultLabel };
+  // Calculate fee for both options (so both can be shown side by side)
+  const computeFee = (type: "same_day" | "next_day") => {
+    if (!activeDistrict) return 0;
+    const defaultFee = pickFee(activeDistrict, type);
 
+    if (!selectedDistrict || productCategories.length === 0) return defaultFee;
     const districtCatFees = categoryFees.filter((cf: any) => cf.district_id === selectedDistrict);
-    if (districtCatFees.length === 0) return { deliveryFee: defaultFee, deliveryLabel: defaultLabel };
+    if (districtCatFees.length === 0) return defaultFee;
 
     const catIds = productCategories.map((p: any) => p.category_id).filter(Boolean);
     const applicableFees = districtCatFees.filter((cf: any) => catIds.includes(cf.category_id));
-
-    if (applicableFees.length === 0) return { deliveryFee: defaultFee, deliveryLabel: defaultLabel };
+    if (applicableFees.length === 0) return defaultFee;
 
     // Use the highest fee among matching categories
-    const highest = applicableFees.reduce((max: any, cf: any) => cf.delivery_fee > max.delivery_fee ? cf : max, applicableFees[0]);
-    return { deliveryFee: highest.delivery_fee, deliveryLabel: highest.delivery_label || defaultLabel };
-  }, [activeDistrict, selectedDistrict, categoryFees, productCategories]);
+    return applicableFees.reduce((max: number, cf: any) => Math.max(max, pickFee(cf, type)), 0);
+  };
+
+  const sameDayFee = useMemo(() => computeFee("same_day"), [activeDistrict, selectedDistrict, categoryFees, productCategories]);
+  const nextDayFee = useMemo(() => computeFee("next_day"), [activeDistrict, selectedDistrict, categoryFees, productCategories]);
+
+  const deliveryFee = deliveryType === "same_day" ? sameDayFee : nextDayFee;
+  const deliveryLabel = deliveryType === "same_day"
+    ? (activeDistrict?.same_day_label || "Same Day Delivery")
+    : (activeDistrict?.next_day_label || "Next Day Delivery");
 
   // Coupon discount calculation
   const couponDiscount = appliedCoupon
@@ -375,6 +387,7 @@ const Checkout = () => {
         gift_message: form.giftMessage.trim() || null,
         delivery_date: form.deliveryDate || null,
         delivery_time: form.deliveryTime || null,
+        delivery_type: deliveryType,
         payment_method: form.paymentMethod,
         subtotal: totalPrice,
         delivery_fee: deliveryFee,
@@ -877,9 +890,65 @@ const Checkout = () => {
                   </Popover>
 
                   {activeDistrict && (
-                    <div className="mt-2 flex justify-between items-center bg-muted/50 rounded-lg px-3 py-2 text-sm">
-                      <span className="text-muted-foreground">{deliveryLabel}</span>
-                      <span className="font-medium">{formatPrice(deliveryFee)}</span>
+                    <div className="mt-3 space-y-2">
+                      <p className="text-xs font-semibold text-muted-foreground">Choose Delivery Speed</p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setDeliveryType("same_day")}
+                          className={cn(
+                            "relative text-left rounded-xl border-2 p-3 transition-all",
+                            deliveryType === "same_day"
+                              ? "border-primary bg-primary/5 shadow-sm"
+                              : "border-border bg-background hover:border-primary/40"
+                          )}
+                        >
+                          <div className="flex items-start gap-2">
+                            <div className={cn(
+                              "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center",
+                              deliveryType === "same_day" ? "border-primary" : "border-muted-foreground/40"
+                            )}>
+                              {deliveryType === "same_day" && <div className="w-2 h-2 rounded-full bg-primary" />}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5 text-sm font-semibold">
+                                <span className="text-amber-500">⚡</span>
+                                {activeDistrict.same_day_label || "Same Day Delivery"}
+                              </div>
+                              <div className="text-[11px] text-muted-foreground mt-0.5">Faster — delivered today</div>
+                              <div className="text-base font-bold text-primary mt-1">{formatPrice(sameDayFee)}</div>
+                            </div>
+                          </div>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setDeliveryType("next_day")}
+                          className={cn(
+                            "relative text-left rounded-xl border-2 p-3 transition-all",
+                            deliveryType === "next_day"
+                              ? "border-primary bg-primary/5 shadow-sm"
+                              : "border-border bg-background hover:border-primary/40"
+                          )}
+                        >
+                          <div className="flex items-start gap-2">
+                            <div className={cn(
+                              "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center",
+                              deliveryType === "next_day" ? "border-primary" : "border-muted-foreground/40"
+                            )}>
+                              {deliveryType === "next_day" && <div className="w-2 h-2 rounded-full bg-primary" />}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5 text-sm font-semibold">
+                                <span className="text-blue-500">📅</span>
+                                {activeDistrict.next_day_label || "Next Day Delivery"}
+                              </div>
+                              <div className="text-[11px] text-muted-foreground mt-0.5">Cheaper — delivered tomorrow</div>
+                              <div className="text-base font-bold text-primary mt-1">{formatPrice(nextDayFee)}</div>
+                            </div>
+                          </div>
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
