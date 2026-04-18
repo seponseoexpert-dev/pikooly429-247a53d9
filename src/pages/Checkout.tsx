@@ -900,13 +900,14 @@ const Checkout = () => {
                   {activeDistrict && (
                     <div className="mt-3 space-y-2">
                       <p className="text-xs font-semibold text-muted-foreground">Choose Delivery Speed</p>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        {/* Morning Slot */}
                         <button
                           type="button"
-                          onClick={() => setDeliveryType("same_day")}
+                          onClick={() => setDeliveryType("morning_slot")}
                           className={cn(
                             "relative text-left rounded-xl border-2 p-3 transition-all",
-                            deliveryType === "same_day"
+                            deliveryType === "morning_slot"
                               ? "border-primary bg-primary/5 shadow-sm"
                               : "border-border bg-background hover:border-primary/40"
                           )}
@@ -914,30 +915,67 @@ const Checkout = () => {
                           <div className="flex items-start gap-2">
                             <div className={cn(
                               "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center",
-                              deliveryType === "same_day" ? "border-primary" : "border-muted-foreground/40"
+                              deliveryType === "morning_slot" ? "border-primary" : "border-muted-foreground/40"
                             )}>
-                              {deliveryType === "same_day" && <div className="w-2 h-2 rounded-full bg-primary" />}
+                              {deliveryType === "morning_slot" && <div className="w-2 h-2 rounded-full bg-primary" />}
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-1.5 text-sm font-semibold">
-                                <SameDayAnimation />
-                                {activeDistrict.same_day_label || "Same Day Delivery"}
+                                <MorningSlotAnimation />
+                                {activeDistrict.morning_slot_label || "Morning Slot (9 AM - 2 PM)"}
                               </div>
                               <div className="text-[11px] text-muted-foreground mt-0.5">
-                                Bike, CNG & Private Car ·{" "}
+                                Bike & CNG ·{" "}
                                 <span className="font-semibold text-foreground">
                                   {(() => {
-                                    const today = new Date();
-                                    const dateStr = today.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-                                    return `Today, ${dateStr} by 11:30 PM`;
+                                    const t = new Date();
+                                    return `Today, ${t.toLocaleDateString("en-US", { month: "short", day: "numeric" })} by 2 PM`;
                                   })()}
                                 </span>
                               </div>
-                              <div className="text-base font-bold text-primary mt-1">{formatPrice(sameDayFee)}</div>
+                              <div className="text-base font-bold text-primary mt-1">{formatPrice(morningFee)}</div>
                             </div>
                           </div>
                         </button>
 
+                        {/* Evening Slot */}
+                        <button
+                          type="button"
+                          onClick={() => setDeliveryType("evening_slot")}
+                          className={cn(
+                            "relative text-left rounded-xl border-2 p-3 transition-all",
+                            deliveryType === "evening_slot"
+                              ? "border-primary bg-primary/5 shadow-sm"
+                              : "border-border bg-background hover:border-primary/40"
+                          )}
+                        >
+                          <div className="flex items-start gap-2">
+                            <div className={cn(
+                              "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center",
+                              deliveryType === "evening_slot" ? "border-primary" : "border-muted-foreground/40"
+                            )}>
+                              {deliveryType === "evening_slot" && <div className="w-2 h-2 rounded-full bg-primary" />}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5 text-sm font-semibold">
+                                <EveningSlotAnimation />
+                                {activeDistrict.evening_slot_label || "Evening Slot (4 PM - 10 PM)"}
+                              </div>
+                              <div className="text-[11px] text-muted-foreground mt-0.5">
+                                CNG & Private Car ·{" "}
+                                <span className="font-semibold text-foreground">
+                                  {(() => {
+                                    const t = new Date();
+                                    return `Today, ${t.toLocaleDateString("en-US", { month: "short", day: "numeric" })} by 10 PM`;
+                                  })()}
+                                </span>
+                              </div>
+                              <div className="text-base font-bold text-primary mt-1">{formatPrice(eveningFee)}</div>
+                            </div>
+                          </div>
+                        </button>
+
+                        {/* Next Day */}
                         <button
                           type="button"
                           onClick={() => setDeliveryType("next_day")}
