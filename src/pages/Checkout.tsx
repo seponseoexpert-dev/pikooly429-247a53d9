@@ -19,7 +19,7 @@ import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { cn } from "@/lib/utils";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { shouldSendMail, shouldSendSms, shouldSendPush, shouldSendAdminMail, sendBrowserPush } from "@/lib/notificationHelper";
-import { SameDayAnimation, NextDayAnimation } from "@/components/checkout/DeliveryAnimations";
+import { SameDayAnimation, NextDayAnimation, MorningSlotAnimation, EveningSlotAnimation } from "@/components/checkout/DeliveryAnimations";
 
 const countryPhoneCodes: Record<string, string> = {
   "Afghanistan": "+93", "Albania": "+355", "Algeria": "+213", "Andorra": "+376", "Angola": "+244",
@@ -76,7 +76,7 @@ const Checkout = () => {
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
   const [couponLoading, setCouponLoading] = useState(false);
-  const [deliveryType, setDeliveryType] = useState<"same_day" | "next_day">("same_day");
+  const [deliveryType, setDeliveryType] = useState<"morning_slot" | "evening_slot" | "next_day">("morning_slot");
   const [form, setForm] = useState({
     fullName: "",
     billingCountry: "",
@@ -248,14 +248,15 @@ const Checkout = () => {
   const activeDistrict: any = districts.find((d: any) => d.id === selectedDistrict);
 
   // Helper: pick fee field based on delivery type
-  const pickFee = (row: any, type: "same_day" | "next_day") => {
+  const pickFee = (row: any, type: "morning_slot" | "evening_slot" | "next_day") => {
     if (!row) return 0;
-    if (type === "same_day") return Number(row.same_day_fee ?? row.delivery_fee ?? 0);
+    if (type === "morning_slot") return Number(row.morning_slot_fee ?? row.same_day_fee ?? row.delivery_fee ?? 0);
+    if (type === "evening_slot") return Number(row.evening_slot_fee ?? row.same_day_fee ?? row.delivery_fee ?? 0);
     return Number(row.next_day_fee ?? 0);
   };
 
-  // Calculate fee for both options (so both can be shown side by side)
-  const computeFee = (type: "same_day" | "next_day") => {
+  // Calculate fee for a given option (so all three can be shown)
+  const computeFee = (type: "morning_slot" | "evening_slot" | "next_day") => {
     if (!activeDistrict) return 0;
     const defaultFee = pickFee(activeDistrict, type);
 
@@ -271,13 +272,19 @@ const Checkout = () => {
     return applicableFees.reduce((max: number, cf: any) => Math.max(max, pickFee(cf, type)), 0);
   };
 
-  const sameDayFee = useMemo(() => computeFee("same_day"), [activeDistrict, selectedDistrict, categoryFees, productCategories]);
+  const morningFee = useMemo(() => computeFee("morning_slot"), [activeDistrict, selectedDistrict, categoryFees, productCategories]);
+  const eveningFee = useMemo(() => computeFee("evening_slot"), [activeDistrict, selectedDistrict, categoryFees, productCategories]);
   const nextDayFee = useMemo(() => computeFee("next_day"), [activeDistrict, selectedDistrict, categoryFees, productCategories]);
 
-  const deliveryFee = deliveryType === "same_day" ? sameDayFee : nextDayFee;
-  const deliveryLabel = deliveryType === "same_day"
-    ? (activeDistrict?.same_day_label || "Same Day Delivery")
-    : (activeDistrict?.next_day_label || "Next Day Delivery");
+  const deliveryFee =
+    deliveryType === "morning_slot" ? morningFee :
+    deliveryType === "evening_slot" ? eveningFee :
+    nextDayFee;
+
+  const deliveryLabel =
+    deliveryType === "morning_slot" ? (activeDistrict?.morning_slot_label || "Morning Slot (9 AM - 2 PM)") :
+    deliveryType === "evening_slot" ? (activeDistrict?.evening_slot_label || "Evening Slot (4 PM - 10 PM)") :
+    (activeDistrict?.next_day_label || "Next Day Delivery");
 
   // Coupon discount calculation
   const couponDiscount = appliedCoupon
@@ -389,6 +396,7 @@ const Checkout = () => {
         delivery_date: form.deliveryDate || null,
         delivery_time: form.deliveryTime || null,
         delivery_type: deliveryType,
+        delivery_slot: deliveryType,
         payment_method: form.paymentMethod,
         subtotal: totalPrice,
         delivery_fee: deliveryFee,
@@ -893,13 +901,14 @@ const Checkout = () => {
                   {activeDistrict && (
                     <div className="mt-3 space-y-2">
                       <p className="text-xs font-semibold text-muted-foreground">Choose Delivery Speed</p>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        {/* Morning Slot */}
                         <button
                           type="button"
-                          onClick={() => setDeliveryType("same_day")}
+                          onClick={() => setDeliveryType("morning_slot")}
                           className={cn(
                             "relative text-left rounded-xl border-2 p-3 transition-all",
-                            deliveryType === "same_day"
+                            deliveryType === "morning_slot"
                               ? "border-primary bg-primary/5 shadow-sm"
                               : "border-border bg-background hover:border-primary/40"
                           )}
@@ -907,30 +916,67 @@ const Checkout = () => {
                           <div className="flex items-start gap-2">
                             <div className={cn(
                               "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center",
-                              deliveryType === "same_day" ? "border-primary" : "border-muted-foreground/40"
+                              deliveryType === "morning_slot" ? "border-primary" : "border-muted-foreground/40"
                             )}>
-                              {deliveryType === "same_day" && <div className="w-2 h-2 rounded-full bg-primary" />}
+                              {deliveryType === "morning_slot" && <div className="w-2 h-2 rounded-full bg-primary" />}
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-1.5 text-sm font-semibold">
-                                <SameDayAnimation />
-                                {activeDistrict.same_day_label || "Same Day Delivery"}
+                                <MorningSlotAnimation />
+                                {activeDistrict.morning_slot_label || "Morning Slot (9 AM - 2 PM)"}
                               </div>
                               <div className="text-[11px] text-muted-foreground mt-0.5">
-                                Bike, CNG & Private Car ·{" "}
+                                Bike & CNG ·{" "}
                                 <span className="font-semibold text-foreground">
                                   {(() => {
-                                    const today = new Date();
-                                    const dateStr = today.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-                                    return `Today, ${dateStr} by 11:30 PM`;
+                                    const t = new Date();
+                                    return `Today, ${t.toLocaleDateString("en-US", { month: "short", day: "numeric" })} by 2 PM`;
                                   })()}
                                 </span>
                               </div>
-                              <div className="text-base font-bold text-primary mt-1">{formatPrice(sameDayFee)}</div>
+                              <div className="text-base font-bold text-primary mt-1">{formatPrice(morningFee)}</div>
                             </div>
                           </div>
                         </button>
 
+                        {/* Evening Slot */}
+                        <button
+                          type="button"
+                          onClick={() => setDeliveryType("evening_slot")}
+                          className={cn(
+                            "relative text-left rounded-xl border-2 p-3 transition-all",
+                            deliveryType === "evening_slot"
+                              ? "border-primary bg-primary/5 shadow-sm"
+                              : "border-border bg-background hover:border-primary/40"
+                          )}
+                        >
+                          <div className="flex items-start gap-2">
+                            <div className={cn(
+                              "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center",
+                              deliveryType === "evening_slot" ? "border-primary" : "border-muted-foreground/40"
+                            )}>
+                              {deliveryType === "evening_slot" && <div className="w-2 h-2 rounded-full bg-primary" />}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5 text-sm font-semibold">
+                                <EveningSlotAnimation />
+                                {activeDistrict.evening_slot_label || "Evening Slot (4 PM - 10 PM)"}
+                              </div>
+                              <div className="text-[11px] text-muted-foreground mt-0.5">
+                                CNG & Private Car ·{" "}
+                                <span className="font-semibold text-foreground">
+                                  {(() => {
+                                    const t = new Date();
+                                    return `Today, ${t.toLocaleDateString("en-US", { month: "short", day: "numeric" })} by 10 PM`;
+                                  })()}
+                                </span>
+                              </div>
+                              <div className="text-base font-bold text-primary mt-1">{formatPrice(eveningFee)}</div>
+                            </div>
+                          </div>
+                        </button>
+
+                        {/* Next Day */}
                         <button
                           type="button"
                           onClick={() => setDeliveryType("next_day")}

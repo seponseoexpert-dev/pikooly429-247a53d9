@@ -1,6 +1,105 @@
 import React from "react";
 
-// Animated "Same Day" icon — bike, CNG auto-rickshaw + car racing across the frame
+// Animated "Morning Slot" — bright sun + small bike dashing across at sunrise
+export const MorningSlotAnimation: React.FC<{ className?: string }> = ({ className }) => {
+  return (
+    <span
+      className={className}
+      style={{
+        display: "inline-block",
+        width: 44,
+        height: 22,
+        position: "relative",
+        overflow: "hidden",
+        verticalAlign: "middle",
+        flexShrink: 0,
+      }}
+      aria-hidden
+    >
+      <style>{`
+        @keyframes ms-dash {
+          0%   { transform: translateX(-130%); }
+          100% { transform: translateX(160%); }
+        }
+        @keyframes ms-rays {
+          0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.9; }
+          50%      { transform: rotate(20deg) scale(1.1); opacity: 1; }
+        }
+        @keyframes ms-wheel { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
+        .ms-bike { position: absolute; bottom: 0; left: 0; will-change: transform; animation: ms-dash 1.6s linear infinite; }
+        .ms-wheel { transform-origin: center; transform-box: fill-box; animation: ms-wheel 0.4s linear infinite; }
+        .ms-sun-rays { transform-origin: center; transform-box: fill-box; animation: ms-rays 2s ease-in-out infinite; }
+      `}</style>
+      <svg width="14" height="14" viewBox="0 0 14 14" style={{ position: "absolute", top: 1, left: 2 }}>
+        <g className="ms-sun-rays">
+          <line x1="7" y1="1" x2="7" y2="3" stroke="#f59e0b" strokeWidth="0.8" strokeLinecap="round" />
+          <line x1="11.5" y1="2.5" x2="10" y2="4" stroke="#f59e0b" strokeWidth="0.8" strokeLinecap="round" />
+          <line x1="13" y1="7" x2="11" y2="7" stroke="#f59e0b" strokeWidth="0.8" strokeLinecap="round" />
+          <line x1="2.5" y1="2.5" x2="4" y2="4" stroke="#f59e0b" strokeWidth="0.8" strokeLinecap="round" />
+          <line x1="1" y1="7" x2="3" y2="7" stroke="#f59e0b" strokeWidth="0.8" strokeLinecap="round" />
+        </g>
+        <circle cx="7" cy="7" r="3" fill="#fbbf24" stroke="#f59e0b" strokeWidth="0.6" />
+      </svg>
+      <svg className="ms-bike" width="20" height="14" viewBox="0 0 20 14" fill="none">
+        <path d="M5 10 L9 5 L13 5 L15 10" stroke="#dc2626" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+        <circle cx="10" cy="3" r="1.2" fill="#1f2937" />
+        <circle className="ms-wheel" cx="5" cy="10.5" r="2.2" stroke="#1f2937" strokeWidth="1.1" fill="#fff" />
+        <circle className="ms-wheel" cx="15" cy="10.5" r="2.2" stroke="#1f2937" strokeWidth="1.1" fill="#fff" />
+      </svg>
+    </span>
+  );
+};
+
+// Animated "Evening Slot" — moon/twilight + small CNG dashing
+export const EveningSlotAnimation: React.FC<{ className?: string }> = ({ className }) => {
+  return (
+    <span
+      className={className}
+      style={{
+        display: "inline-block",
+        width: 44,
+        height: 22,
+        position: "relative",
+        overflow: "hidden",
+        verticalAlign: "middle",
+        flexShrink: 0,
+      }}
+      aria-hidden
+    >
+      <style>{`
+        @keyframes es-dash {
+          0%   { transform: translateX(-130%); }
+          100% { transform: translateX(160%); }
+        }
+        @keyframes es-twinkle {
+          0%, 100% { opacity: 0.4; }
+          50%      { opacity: 1; }
+        }
+        @keyframes es-wheel { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
+        .es-cng { position: absolute; bottom: 0; left: 0; will-change: transform; animation: es-dash 1.8s linear infinite; }
+        .es-wheel { transform-origin: center; transform-box: fill-box; animation: es-wheel 0.4s linear infinite; }
+        .es-star { animation: es-twinkle 1.6s ease-in-out infinite; }
+        .es-star.s2 { animation-delay: 0.4s; }
+        .es-star.s3 { animation-delay: 0.8s; }
+      `}</style>
+      <svg width="16" height="14" viewBox="0 0 16 14" style={{ position: "absolute", top: 1, left: 1 }}>
+        <path d="M9 2 A 5 5 0 1 0 9 12 A 4 4 0 1 1 9 2 Z" fill="#6366f1" />
+        <circle className="es-star" cx="2" cy="3" r="0.6" fill="#fcd34d" />
+        <circle className="es-star s2" cx="14" cy="4" r="0.6" fill="#fcd34d" />
+        <circle className="es-star s3" cx="13" cy="9" r="0.5" fill="#fcd34d" />
+      </svg>
+      <svg className="es-cng" width="22" height="16" viewBox="0 0 22 16" fill="none">
+        <path d="M4 4 Q11 2 18 4 L18 8 L4 8 Z" fill="#16a34a" />
+        <path d="M2 12 L3 8 H19 L20 12 V14 H2 Z" fill="#facc15" />
+        <path d="M5 8 L6 5 H16 L17 8 Z" fill="#dbeafe" opacity="0.85" />
+        <circle className="es-wheel" cx="5" cy="14" r="1.9" fill="#1f2937" />
+        <circle className="es-wheel" cx="17" cy="14" r="1.9" fill="#1f2937" />
+      </svg>
+    </span>
+  );
+};
+
+// Animated "Same Day" icon (LEGACY) — bike, CNG auto-rickshaw + car racing across the frame
 export const SameDayAnimation: React.FC<{ className?: string }> = ({ className }) => {
   return (
     <span
