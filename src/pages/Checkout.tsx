@@ -944,7 +944,18 @@ const Checkout = () => {
                                 <NextDayAnimation />
                                 {activeDistrict.next_day_label || "Next Day Delivery"}
                               </div>
-                              <div className="text-[11px] text-muted-foreground mt-0.5">Delivery in 1–2 days · Steadfast, Pathao & other couriers</div>
+                              <div className="text-[11px] text-muted-foreground mt-0.5">
+                                Delivery between{" "}
+                                <span className="font-semibold text-foreground">
+                                  {(() => {
+                                    const d1 = new Date(); d1.setDate(d1.getDate() + 1);
+                                    const d2 = new Date(); d2.setDate(d2.getDate() + 2);
+                                    const fmt = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+                                    return `${fmt(d1)} – ${fmt(d2)}`;
+                                  })()}
+                                </span>
+                                {" "}· Steadfast, Pathao & couriers
+                              </div>
                               <div className="text-base font-bold text-primary mt-1">{formatPrice(nextDayFee)}</div>
                             </div>
                           </div>
