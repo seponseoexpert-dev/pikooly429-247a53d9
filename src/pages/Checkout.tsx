@@ -913,7 +913,7 @@ const Checkout = () => {
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-1.5 text-sm font-semibold">
-                                <span className="text-amber-500">⚡</span>
+                                <SameDayAnimation />
                                 {activeDistrict.same_day_label || "Same Day Delivery"}
                               </div>
                               <div className="text-[11px] text-muted-foreground mt-0.5">Bike, CNG & Private Car</div>
