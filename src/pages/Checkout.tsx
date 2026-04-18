@@ -387,6 +387,7 @@ const Checkout = () => {
         gift_message: form.giftMessage.trim() || null,
         delivery_date: form.deliveryDate || null,
         delivery_time: form.deliveryTime || null,
+        delivery_type: deliveryType,
         payment_method: form.paymentMethod,
         subtotal: totalPrice,
         delivery_fee: deliveryFee,
@@ -889,9 +890,65 @@ const Checkout = () => {
                   </Popover>
 
                   {activeDistrict && (
-                    <div className="mt-2 flex justify-between items-center bg-muted/50 rounded-lg px-3 py-2 text-sm">
-                      <span className="text-muted-foreground">{deliveryLabel}</span>
-                      <span className="font-medium">{formatPrice(deliveryFee)}</span>
+                    <div className="mt-3 space-y-2">
+                      <p className="text-xs font-semibold text-muted-foreground">Choose Delivery Speed</p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setDeliveryType("same_day")}
+                          className={cn(
+                            "relative text-left rounded-xl border-2 p-3 transition-all",
+                            deliveryType === "same_day"
+                              ? "border-primary bg-primary/5 shadow-sm"
+                              : "border-border bg-background hover:border-primary/40"
+                          )}
+                        >
+                          <div className="flex items-start gap-2">
+                            <div className={cn(
+                              "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center",
+                              deliveryType === "same_day" ? "border-primary" : "border-muted-foreground/40"
+                            )}>
+                              {deliveryType === "same_day" && <div className="w-2 h-2 rounded-full bg-primary" />}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5 text-sm font-semibold">
+                                <span className="text-amber-500">⚡</span>
+                                {activeDistrict.same_day_label || "Same Day Delivery"}
+                              </div>
+                              <div className="text-[11px] text-muted-foreground mt-0.5">Faster — delivered today</div>
+                              <div className="text-base font-bold text-primary mt-1">{formatPrice(sameDayFee)}</div>
+                            </div>
+                          </div>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setDeliveryType("next_day")}
+                          className={cn(
+                            "relative text-left rounded-xl border-2 p-3 transition-all",
+                            deliveryType === "next_day"
+                              ? "border-primary bg-primary/5 shadow-sm"
+                              : "border-border bg-background hover:border-primary/40"
+                          )}
+                        >
+                          <div className="flex items-start gap-2">
+                            <div className={cn(
+                              "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center",
+                              deliveryType === "next_day" ? "border-primary" : "border-muted-foreground/40"
+                            )}>
+                              {deliveryType === "next_day" && <div className="w-2 h-2 rounded-full bg-primary" />}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5 text-sm font-semibold">
+                                <span className="text-blue-500">📅</span>
+                                {activeDistrict.next_day_label || "Next Day Delivery"}
+                              </div>
+                              <div className="text-[11px] text-muted-foreground mt-0.5">Cheaper — delivered tomorrow</div>
+                              <div className="text-base font-bold text-primary mt-1">{formatPrice(nextDayFee)}</div>
+                            </div>
+                          </div>
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
