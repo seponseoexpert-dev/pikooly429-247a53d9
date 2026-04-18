@@ -944,7 +944,7 @@ const Checkout = () => {
                                 <NextDayAnimation />
                                 {activeDistrict.next_day_label || "Next Day Delivery"}
                               </div>
-                              <div className="text-[11px] text-muted-foreground mt-0.5">Steadfast, Pathao & other couriers</div>
+                              <div className="text-[11px] text-muted-foreground mt-0.5">Delivery in 1–2 days · Steadfast, Pathao & other couriers</div>
                               <div className="text-base font-bold text-primary mt-1">{formatPrice(nextDayFee)}</div>
                             </div>
                           </div>
