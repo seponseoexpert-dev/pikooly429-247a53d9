@@ -854,6 +854,7 @@ export type Database = {
           delivery_date: string | null
           delivery_fee: number
           delivery_time: string | null
+          delivery_type: string | null
           discount: number
           gift_message: string | null
           id: string
@@ -879,6 +880,7 @@ export type Database = {
           delivery_date?: string | null
           delivery_fee?: number
           delivery_time?: string | null
+          delivery_type?: string | null
           discount?: number
           gift_message?: string | null
           id?: string
@@ -904,6 +906,7 @@ export type Database = {
           delivery_date?: string | null
           delivery_fee?: number
           delivery_time?: string | null
+          delivery_type?: string | null
           discount?: number
           gift_message?: string | null
           id?: string
@@ -1550,6 +1553,8 @@ export type Database = {
           delivery_label: string | null
           district_id: string
           id: string
+          next_day_fee: number
+          same_day_fee: number
           updated_at: string
         }
         Insert: {
@@ -1559,6 +1564,8 @@ export type Database = {
           delivery_label?: string | null
           district_id: string
           id?: string
+          next_day_fee?: number
+          same_day_fee?: number
           updated_at?: string
         }
         Update: {
@@ -1568,6 +1575,8 @@ export type Database = {
           delivery_label?: string | null
           district_id?: string
           id?: string
+          next_day_fee?: number
+          same_day_fee?: number
           updated_at?: string
         }
         Relationships: [
@@ -1596,6 +1605,10 @@ export type Database = {
           id: string
           is_active: boolean
           name: string
+          next_day_fee: number
+          next_day_label: string | null
+          same_day_fee: number
+          same_day_label: string | null
           updated_at: string
         }
         Insert: {
@@ -1606,6 +1619,10 @@ export type Database = {
           id?: string
           is_active?: boolean
           name: string
+          next_day_fee?: number
+          next_day_label?: string | null
+          same_day_fee?: number
+          same_day_label?: string | null
           updated_at?: string
         }
         Update: {
@@ -1616,6 +1633,10 @@ export type Database = {
           id?: string
           is_active?: boolean
           name?: string
+          next_day_fee?: number
+          next_day_label?: string | null
+          same_day_fee?: number
+          same_day_label?: string | null
           updated_at?: string
         }
         Relationships: []
