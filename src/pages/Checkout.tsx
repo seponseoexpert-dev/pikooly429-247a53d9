@@ -19,6 +19,7 @@ import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { cn } from "@/lib/utils";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { shouldSendMail, shouldSendSms, shouldSendPush, shouldSendAdminMail, sendBrowserPush } from "@/lib/notificationHelper";
+import { SameDayAnimation, NextDayAnimation } from "@/components/checkout/DeliveryAnimations";
 
 const countryPhoneCodes: Record<string, string> = {
   "Afghanistan": "+93", "Albania": "+355", "Algeria": "+213", "Andorra": "+376", "Angola": "+244",
