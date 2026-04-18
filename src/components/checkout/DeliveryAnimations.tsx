@@ -113,51 +113,98 @@ export const SameDayAnimation: React.FC<{ className?: string }> = ({ className }
   );
 };
 
-// Animated "Next Day" calendar icon — shows tomorrow's date with a subtle pulse
+// Animated "Next Day" icon — delivery truck dashing across the frame
 export const NextDayAnimation: React.FC<{ className?: string }> = ({ className }) => {
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const day = tomorrow.getDate();
-  const month = tomorrow.toLocaleString("en-US", { month: "short" });
-
   return (
     <span
       className={className}
       style={{
-        display: "inline-flex",
-        width: 22,
-        height: 22,
-        verticalAlign: "middle",
+        display: "inline-block",
+        width: 52,
+        height: 24,
         position: "relative",
+        overflow: "hidden",
+        verticalAlign: "middle",
         flexShrink: 0,
       }}
       aria-hidden
-      title={`${month} ${day}`}
     >
       <style>{`
-        @keyframes nd-pulse {
-          0%, 100% { transform: scale(1); }
-          50%      { transform: scale(1.08); }
+        @keyframes nd-dash {
+          0%   { transform: translateX(-130%); }
+          100% { transform: translateX(160%); }
         }
-        .nd-cal { animation: nd-pulse 1.8s ease-in-out infinite; transform-origin: center; }
+        @keyframes nd-wheel {
+          0%   { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        @keyframes nd-bob {
+          0%, 100% { transform: translateY(0); }
+          50%      { transform: translateY(-1px); }
+        }
+        .nd-track { position: absolute; inset: 0; }
+        .nd-vehicle { position: absolute; bottom: 0; left: 0; will-change: transform; animation: nd-dash linear infinite; }
+        .nd-vehicle.truck1 { animation-duration: 2.4s; animation-delay: 0s; }
+        .nd-vehicle.truck2 { animation-duration: 3.0s; animation-delay: 1.2s; }
+        .nd-wheel { transform-origin: center; transform-box: fill-box; animation: nd-wheel 0.4s linear infinite; }
+        .nd-body  { animation: nd-bob 0.45s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+        .nd-road {
+          position: absolute; left: 0; right: 0; bottom: 1px; height: 1px;
+          background-image: linear-gradient(to right, hsl(var(--muted-foreground) / 0.4) 50%, transparent 50%);
+          background-size: 6px 1px;
+        }
       `}</style>
-      <svg className="nd-cal" width="22" height="22" viewBox="0 0 22 22" fill="none">
-        <rect x="2" y="4" width="18" height="16" rx="2.5" fill="#3b82f6" />
-        <rect x="2" y="4" width="18" height="5" rx="2.5" fill="#1d4ed8" />
-        <rect x="6" y="2" width="1.6" height="4" rx="0.8" fill="#1e3a8a" />
-        <rect x="14.4" y="2" width="1.6" height="4" rx="0.8" fill="#1e3a8a" />
-        <text
-          x="11"
-          y="17"
-          textAnchor="middle"
-          fontSize="8"
-          fontWeight="700"
-          fill="#ffffff"
-          fontFamily="system-ui, -apple-system, sans-serif"
-        >
-          {day}
-        </text>
-      </svg>
+
+      <div className="nd-track">
+        <div className="nd-road" />
+
+        {/* Big delivery truck (Steadfast-style) */}
+        <svg className="nd-vehicle truck1" width="32" height="20" viewBox="0 0 32 20" fill="none">
+          <g className="nd-body">
+            {/* cargo box */}
+            <rect x="2" y="6" width="18" height="11" rx="1" fill="#3b82f6" />
+            <rect x="4" y="8" width="14" height="7" rx="0.5" fill="#dbeafe" opacity="0.4" />
+            {/* parcel logo */}
+            <rect x="8" y="9.5" width="6" height="4" rx="0.5" fill="#fff" />
+            <path d="M11 9.5 L11 13.5 M8 11.5 L14 11.5" stroke="#3b82f6" strokeWidth="0.6" />
+            {/* cab */}
+            <path d="M20 9 L24 9 L27 12 L27 17 L20 17 Z" fill="#1d4ed8" />
+            {/* windscreen */}
+            <path d="M21 10 L23.5 10 L25.5 12 L21 12 Z" fill="#dbeafe" opacity="0.9" />
+            {/* headlight */}
+            <rect x="26" y="13.5" width="1" height="1.2" rx="0.2" fill="#fde68a" />
+            {/* bumper */}
+            <rect x="20" y="16.5" width="7" height="0.8" fill="#1e3a8a" />
+          </g>
+          {/* wheels */}
+          <circle className="nd-wheel" cx="6" cy="17.5" r="2.2" fill="#1f2937" />
+          <circle className="nd-wheel" cx="14" cy="17.5" r="2.2" fill="#1f2937" />
+          <circle className="nd-wheel" cx="23" cy="17.5" r="2.2" fill="#1f2937" />
+          <circle cx="6" cy="17.5" r="0.7" fill="#9ca3af" />
+          <circle cx="14" cy="17.5" r="0.7" fill="#9ca3af" />
+          <circle cx="23" cy="17.5" r="0.7" fill="#9ca3af" />
+        </svg>
+
+        {/* Smaller courier van (Pathao-style) */}
+        <svg className="nd-vehicle truck2" width="26" height="18" viewBox="0 0 26 18" fill="none">
+          <g className="nd-body">
+            {/* van body */}
+            <path d="M2 7 Q2 6 3 6 L16 6 L21 10 L23 10 Q24 10 24 11 L24 15 L2 15 Z" fill="#ef4444" />
+            {/* windows */}
+            <rect x="4" y="7.5" width="5" height="3" rx="0.4" fill="#dbeafe" opacity="0.9" />
+            <path d="M16 7 L20 10 L16 10 Z" fill="#dbeafe" opacity="0.9" />
+            {/* side stripe */}
+            <rect x="2" y="12" width="22" height="0.8" fill="#fff" opacity="0.8" />
+            {/* headlight */}
+            <rect x="22.5" y="11.5" width="1.2" height="1" rx="0.2" fill="#fde68a" />
+          </g>
+          {/* wheels */}
+          <circle className="nd-wheel" cx="6" cy="15.5" r="2.2" fill="#1f2937" />
+          <circle className="nd-wheel" cx="19" cy="15.5" r="2.2" fill="#1f2937" />
+          <circle cx="6" cy="15.5" r="0.7" fill="#d1d5db" />
+          <circle cx="19" cy="15.5" r="0.7" fill="#d1d5db" />
+        </svg>
+      </div>
     </span>
   );
 };
