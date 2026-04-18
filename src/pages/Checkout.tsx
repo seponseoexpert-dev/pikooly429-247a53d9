@@ -19,7 +19,7 @@ import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { cn } from "@/lib/utils";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { shouldSendMail, shouldSendSms, shouldSendPush, shouldSendAdminMail, sendBrowserPush } from "@/lib/notificationHelper";
-import { SameDayAnimation, NextDayAnimation } from "@/components/checkout/DeliveryAnimations";
+import { SameDayAnimation, NextDayAnimation, MorningSlotAnimation, EveningSlotAnimation } from "@/components/checkout/DeliveryAnimations";
 
 const countryPhoneCodes: Record<string, string> = {
   "Afghanistan": "+93", "Albania": "+355", "Algeria": "+213", "Andorra": "+376", "Angola": "+244",
@@ -76,7 +76,7 @@ const Checkout = () => {
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
   const [couponLoading, setCouponLoading] = useState(false);
-  const [deliveryType, setDeliveryType] = useState<"same_day" | "next_day">("same_day");
+  const [deliveryType, setDeliveryType] = useState<"morning_slot" | "evening_slot" | "next_day">("morning_slot");
   const [form, setForm] = useState({
     fullName: "",
     billingCountry: "",
@@ -248,14 +248,15 @@ const Checkout = () => {
   const activeDistrict: any = districts.find((d: any) => d.id === selectedDistrict);
 
   // Helper: pick fee field based on delivery type
-  const pickFee = (row: any, type: "same_day" | "next_day") => {
+  const pickFee = (row: any, type: "morning_slot" | "evening_slot" | "next_day") => {
     if (!row) return 0;
-    if (type === "same_day") return Number(row.same_day_fee ?? row.delivery_fee ?? 0);
+    if (type === "morning_slot") return Number(row.morning_slot_fee ?? row.same_day_fee ?? row.delivery_fee ?? 0);
+    if (type === "evening_slot") return Number(row.evening_slot_fee ?? row.same_day_fee ?? row.delivery_fee ?? 0);
     return Number(row.next_day_fee ?? 0);
   };
 
-  // Calculate fee for both options (so both can be shown side by side)
-  const computeFee = (type: "same_day" | "next_day") => {
+  // Calculate fee for a given option (so all three can be shown)
+  const computeFee = (type: "morning_slot" | "evening_slot" | "next_day") => {
     if (!activeDistrict) return 0;
     const defaultFee = pickFee(activeDistrict, type);
 
@@ -271,13 +272,19 @@ const Checkout = () => {
     return applicableFees.reduce((max: number, cf: any) => Math.max(max, pickFee(cf, type)), 0);
   };
 
-  const sameDayFee = useMemo(() => computeFee("same_day"), [activeDistrict, selectedDistrict, categoryFees, productCategories]);
+  const morningFee = useMemo(() => computeFee("morning_slot"), [activeDistrict, selectedDistrict, categoryFees, productCategories]);
+  const eveningFee = useMemo(() => computeFee("evening_slot"), [activeDistrict, selectedDistrict, categoryFees, productCategories]);
   const nextDayFee = useMemo(() => computeFee("next_day"), [activeDistrict, selectedDistrict, categoryFees, productCategories]);
 
-  const deliveryFee = deliveryType === "same_day" ? sameDayFee : nextDayFee;
-  const deliveryLabel = deliveryType === "same_day"
-    ? (activeDistrict?.same_day_label || "Same Day Delivery")
-    : (activeDistrict?.next_day_label || "Next Day Delivery");
+  const deliveryFee =
+    deliveryType === "morning_slot" ? morningFee :
+    deliveryType === "evening_slot" ? eveningFee :
+    nextDayFee;
+
+  const deliveryLabel =
+    deliveryType === "morning_slot" ? (activeDistrict?.morning_slot_label || "Morning Slot (9 AM - 2 PM)") :
+    deliveryType === "evening_slot" ? (activeDistrict?.evening_slot_label || "Evening Slot (4 PM - 10 PM)") :
+    (activeDistrict?.next_day_label || "Next Day Delivery");
 
   // Coupon discount calculation
   const couponDiscount = appliedCoupon
