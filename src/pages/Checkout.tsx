@@ -941,7 +941,7 @@ const Checkout = () => {
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-1.5 text-sm font-semibold">
-                                <span className="text-blue-500">📅</span>
+                                <NextDayAnimation />
                                 {activeDistrict.next_day_label || "Next Day Delivery"}
                               </div>
                               <div className="text-[11px] text-muted-foreground mt-0.5">Steadfast, Pathao & other couriers</div>
