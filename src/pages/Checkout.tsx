@@ -915,7 +915,7 @@ const Checkout = () => {
                                 <span className="text-amber-500">⚡</span>
                                 {activeDistrict.same_day_label || "Same Day Delivery"}
                               </div>
-                              <div className="text-[11px] text-muted-foreground mt-0.5">Faster — delivered today</div>
+                              <div className="text-[11px] text-muted-foreground mt-0.5">Bike, CNG & Private Car</div>
                               <div className="text-base font-bold text-primary mt-1">{formatPrice(sameDayFee)}</div>
                             </div>
                           </div>
@@ -943,7 +943,7 @@ const Checkout = () => {
                                 <span className="text-blue-500">📅</span>
                                 {activeDistrict.next_day_label || "Next Day Delivery"}
                               </div>
-                              <div className="text-[11px] text-muted-foreground mt-0.5">Cheaper — delivered tomorrow</div>
+                              <div className="text-[11px] text-muted-foreground mt-0.5">Steadfast, Pathao & other couriers</div>
                               <div className="text-base font-bold text-primary mt-1">{formatPrice(nextDayFee)}</div>
                             </div>
                           </div>
