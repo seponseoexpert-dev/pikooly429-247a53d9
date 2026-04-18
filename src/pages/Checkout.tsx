@@ -916,7 +916,16 @@ const Checkout = () => {
                                 <SameDayAnimation />
                                 {activeDistrict.same_day_label || "Same Day Delivery"}
                               </div>
-                              <div className="text-[11px] text-muted-foreground mt-0.5">Bike, CNG & Private Car</div>
+                              <div className="text-[11px] text-muted-foreground mt-0.5">
+                                Bike, CNG & Private Car ·{" "}
+                                <span className="font-semibold text-foreground">
+                                  {(() => {
+                                    const today = new Date();
+                                    const dateStr = today.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+                                    return `Today, ${dateStr} by 11:30 PM`;
+                                  })()}
+                                </span>
+                              </div>
                               <div className="text-base font-bold text-primary mt-1">{formatPrice(sameDayFee)}</div>
                             </div>
                           </div>
