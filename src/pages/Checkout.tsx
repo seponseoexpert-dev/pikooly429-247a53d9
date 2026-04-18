@@ -75,6 +75,7 @@ const Checkout = () => {
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
   const [couponLoading, setCouponLoading] = useState(false);
+  const [deliveryType, setDeliveryType] = useState<"same_day" | "next_day">("same_day");
   const [form, setForm] = useState({
     fullName: "",
     billingCountry: "",
@@ -243,28 +244,39 @@ const Checkout = () => {
     enabled: items.length > 0,
   });
 
-  const activeDistrict = districts.find((d) => d.id === selectedDistrict);
+  const activeDistrict: any = districts.find((d: any) => d.id === selectedDistrict);
 
-  // Calculate delivery fee & label: use highest category-specific fee, fallback to default
-  const { deliveryFee, deliveryLabel } = useMemo(() => {
-    if (!activeDistrict) return { deliveryFee: 0, deliveryLabel: "" };
-    const defaultFee = activeDistrict.delivery_fee ?? 0;
-    const defaultLabel = activeDistrict.delivery_label || "Standard Delivery";
+  // Helper: pick fee field based on delivery type
+  const pickFee = (row: any, type: "same_day" | "next_day") => {
+    if (!row) return 0;
+    if (type === "same_day") return Number(row.same_day_fee ?? row.delivery_fee ?? 0);
+    return Number(row.next_day_fee ?? 0);
+  };
 
-    if (!selectedDistrict || productCategories.length === 0) return { deliveryFee: defaultFee, deliveryLabel: defaultLabel };
+  // Calculate fee for both options (so both can be shown side by side)
+  const computeFee = (type: "same_day" | "next_day") => {
+    if (!activeDistrict) return 0;
+    const defaultFee = pickFee(activeDistrict, type);
 
+    if (!selectedDistrict || productCategories.length === 0) return defaultFee;
     const districtCatFees = categoryFees.filter((cf: any) => cf.district_id === selectedDistrict);
-    if (districtCatFees.length === 0) return { deliveryFee: defaultFee, deliveryLabel: defaultLabel };
+    if (districtCatFees.length === 0) return defaultFee;
 
     const catIds = productCategories.map((p: any) => p.category_id).filter(Boolean);
     const applicableFees = districtCatFees.filter((cf: any) => catIds.includes(cf.category_id));
-
-    if (applicableFees.length === 0) return { deliveryFee: defaultFee, deliveryLabel: defaultLabel };
+    if (applicableFees.length === 0) return defaultFee;
 
     // Use the highest fee among matching categories
-    const highest = applicableFees.reduce((max: any, cf: any) => cf.delivery_fee > max.delivery_fee ? cf : max, applicableFees[0]);
-    return { deliveryFee: highest.delivery_fee, deliveryLabel: highest.delivery_label || defaultLabel };
-  }, [activeDistrict, selectedDistrict, categoryFees, productCategories]);
+    return applicableFees.reduce((max: number, cf: any) => Math.max(max, pickFee(cf, type)), 0);
+  };
+
+  const sameDayFee = useMemo(() => computeFee("same_day"), [activeDistrict, selectedDistrict, categoryFees, productCategories]);
+  const nextDayFee = useMemo(() => computeFee("next_day"), [activeDistrict, selectedDistrict, categoryFees, productCategories]);
+
+  const deliveryFee = deliveryType === "same_day" ? sameDayFee : nextDayFee;
+  const deliveryLabel = deliveryType === "same_day"
+    ? (activeDistrict?.same_day_label || "Same Day Delivery")
+    : (activeDistrict?.next_day_label || "Next Day Delivery");
 
   // Coupon discount calculation
   const couponDiscount = appliedCoupon

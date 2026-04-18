@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Save, Trash2, Truck, ChevronDown, ChevronUp, Tag } from "lucide-react";
+import { Plus, Save, Trash2, Truck, ChevronDown, ChevronUp, Tag, Zap, Calendar } from "lucide-react";
 import { useCurrency } from "@/hooks/useCurrency";
 
 interface District {
@@ -13,6 +13,10 @@ interface District {
   name: string;
   delivery_fee: number;
   delivery_label: string;
+  same_day_fee: number;
+  next_day_fee: number;
+  same_day_label: string;
+  next_day_label: string;
   is_active: boolean;
   display_order: number;
 }
@@ -23,16 +27,32 @@ interface CategoryFee {
   category_id: string;
   delivery_fee: number;
   delivery_label: string;
+  same_day_fee: number;
+  next_day_fee: number;
 }
+
+const emptyForm = {
+  name: "",
+  same_day_fee: "",
+  next_day_fee: "",
+  same_day_label: "Same Day Delivery",
+  next_day_label: "Next Day Delivery",
+};
+
+const emptyCatForm = {
+  category_id: "",
+  same_day_fee: "",
+  next_day_fee: "",
+};
 
 const AdminShipping = () => {
   const { formatCurrency } = useCurrency();
   const { toast } = useToast();
   const qc = useQueryClient();
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState({ name: "", delivery_fee: "", delivery_label: "Standard Delivery" });
+  const [form, setForm] = useState(emptyForm);
   const [expandedDistrict, setExpandedDistrict] = useState<string | null>(null);
-  const [catFeeForm, setCatFeeForm] = useState({ category_id: "", delivery_fee: "", delivery_label: "Standard Delivery" });
+  const [catFeeForm, setCatFeeForm] = useState(emptyCatForm);
 
   const { data: districts = [], isLoading } = useQuery({
     queryKey: ["admin-shipping-districts"],
@@ -71,10 +91,17 @@ const AdminShipping = () => {
 
   const saveMutation = useMutation({
     mutationFn: async (values: typeof form & { id?: string }) => {
+      const sameDay = parseFloat(values.same_day_fee) || 0;
+      const nextDay = parseFloat(values.next_day_fee) || 0;
       const payload = {
         name: values.name.trim(),
-        delivery_fee: parseFloat(values.delivery_fee) || 0,
-        delivery_label: values.delivery_label.trim() || "Standard Delivery",
+        // Keep legacy fields in sync (use same_day as default fallback)
+        delivery_fee: sameDay,
+        delivery_label: values.same_day_label.trim() || "Same Day Delivery",
+        same_day_fee: sameDay,
+        next_day_fee: nextDay,
+        same_day_label: values.same_day_label.trim() || "Same Day Delivery",
+        next_day_label: values.next_day_label.trim() || "Next Day Delivery",
       };
       if (values.id) {
         const { error } = await supabase.from("shipping_districts").update(payload).eq("id", values.id);
@@ -87,7 +114,7 @@ const AdminShipping = () => {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-shipping-districts"] });
       toast({ title: "District saved ✓" });
-      setForm({ name: "", delivery_fee: "", delivery_label: "Standard Delivery" });
+      setForm(emptyForm);
       setEditingId(null);
     },
     onError: (e: any) => toast({ title: "Error", description: e.message, variant: "destructive" }),
@@ -115,12 +142,16 @@ const AdminShipping = () => {
 
   // Category fee mutations
   const saveCatFeeMutation = useMutation({
-    mutationFn: async (values: { district_id: string; category_id: string; delivery_fee: string; delivery_label: string; id?: string }) => {
+    mutationFn: async (values: { district_id: string; category_id: string; same_day_fee: string; next_day_fee: string; id?: string }) => {
+      const sameDay = parseFloat(values.same_day_fee) || 0;
+      const nextDay = parseFloat(values.next_day_fee) || 0;
       const payload = {
         district_id: values.district_id,
         category_id: values.category_id,
-        delivery_fee: parseFloat(values.delivery_fee) || 0,
-        delivery_label: values.delivery_label.trim() || "Standard Delivery",
+        delivery_fee: sameDay,
+        delivery_label: "Same Day Delivery",
+        same_day_fee: sameDay,
+        next_day_fee: nextDay,
       };
       if (values.id) {
         const { error } = await supabase.from("shipping_category_fees").update(payload).eq("id", values.id);
@@ -133,7 +164,7 @@ const AdminShipping = () => {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-shipping-category-fees"] });
       toast({ title: "Category fee saved ✓" });
-      setCatFeeForm({ category_id: "", delivery_fee: "", delivery_label: "Standard Delivery" });
+      setCatFeeForm(emptyCatForm);
     },
     onError: (e: any) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
@@ -152,7 +183,13 @@ const AdminShipping = () => {
 
   const handleEdit = (d: District) => {
     setEditingId(d.id);
-    setForm({ name: d.name, delivery_fee: String(d.delivery_fee), delivery_label: d.delivery_label });
+    setForm({
+      name: d.name,
+      same_day_fee: String(d.same_day_fee ?? d.delivery_fee ?? 0),
+      next_day_fee: String(d.next_day_fee ?? 0),
+      same_day_label: d.same_day_label || "Same Day Delivery",
+      next_day_label: d.next_day_label || "Next Day Delivery",
+    });
   };
 
   const handleSave = () => {
@@ -181,7 +218,7 @@ const AdminShipping = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl sm:text-2xl font-display font-bold">Shipping Districts</h2>
-          <p className="text-muted-foreground text-sm">Manage delivery areas, fees & category-specific pricing</p>
+          <p className="text-muted-foreground text-sm">Same Day & Next Day delivery fees per district</p>
         </div>
       </div>
 
@@ -191,10 +228,24 @@ const AdminShipping = () => {
           <Truck className="h-4 w-4 text-primary" />
           {editingId ? "Edit District" : "Add New District"}
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <Input placeholder="District Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-          <Input placeholder="Default Delivery Fee (৳)" type="number" value={form.delivery_fee} onChange={(e) => setForm({ ...form, delivery_fee: e.target.value })} />
-          <Input placeholder="Delivery Label" value={form.delivery_label} onChange={(e) => setForm({ ...form, delivery_label: e.target.value })} />
+        <div className="space-y-3">
+          <Input placeholder="District Name (e.g., Dhaka)" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
+                <Zap className="h-3 w-3 text-amber-500" /> Same Day Fee (৳)
+              </label>
+              <Input placeholder="e.g., 150" type="number" value={form.same_day_fee} onChange={(e) => setForm({ ...form, same_day_fee: e.target.value })} />
+              <Input placeholder="Label" value={form.same_day_label} onChange={(e) => setForm({ ...form, same_day_label: e.target.value })} className="text-xs" />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
+                <Calendar className="h-3 w-3 text-blue-500" /> Next Day Fee (৳)
+              </label>
+              <Input placeholder="e.g., 80" type="number" value={form.next_day_fee} onChange={(e) => setForm({ ...form, next_day_fee: e.target.value })} />
+              <Input placeholder="Label" value={form.next_day_label} onChange={(e) => setForm({ ...form, next_day_label: e.target.value })} className="text-xs" />
+            </div>
+          </div>
         </div>
         <div className="flex gap-2 mt-3">
           <Button size="sm" onClick={handleSave} disabled={saveMutation.isPending}>
@@ -202,7 +253,7 @@ const AdminShipping = () => {
             {editingId ? "Update" : "Add"}
           </Button>
           {editingId && (
-            <Button size="sm" variant="outline" onClick={() => { setEditingId(null); setForm({ name: "", delivery_fee: "", delivery_label: "Standard Delivery" }); }}>
+            <Button size="sm" variant="outline" onClick={() => { setEditingId(null); setForm(emptyForm); }}>
               Cancel
             </Button>
           )}
@@ -226,20 +277,26 @@ const AdminShipping = () => {
             return (
               <div key={d.id} className="bg-card border rounded-lg overflow-hidden">
                 {/* District row */}
-                <div className="flex items-center gap-3 p-3">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 p-3">
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-sm">{d.name}</div>
-                    <div className="text-xs text-muted-foreground">
-                      Default: {formatCurrency(d.delivery_fee)} · {d.delivery_label}
+                    <div className="text-xs text-muted-foreground flex flex-wrap gap-x-3 gap-y-0.5 mt-0.5">
+                      <span className="inline-flex items-center gap-1">
+                        <Zap className="h-3 w-3 text-amber-500" />
+                        Same Day: {formatCurrency(d.same_day_fee ?? d.delivery_fee ?? 0)}
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <Calendar className="h-3 w-3 text-blue-500" />
+                        Next Day: {formatCurrency(d.next_day_fee ?? 0)}
+                      </span>
                       {districtCatFees.length > 0 && (
-                        <span className="ml-2 text-primary">({districtCatFees.length} category override{districtCatFees.length > 1 ? "s" : ""})</span>
+                        <span className="text-primary">({districtCatFees.length} category override{districtCatFees.length > 1 ? "s" : ""})</span>
                       )}
                     </div>
                   </div>
                   <Switch
                     checked={d.is_active}
                     onCheckedChange={(checked) => toggleMutation.mutate({ id: d.id, is_active: checked })}
-                    className="hidden sm:block"
                   />
                   <Button size="sm" variant="outline" onClick={() => setExpandedDistrict(isExpanded ? null : d.id)}>
                     <Tag className="h-3.5 w-3.5 mr-1" />
@@ -257,18 +314,22 @@ const AdminShipping = () => {
                   <div className="border-t bg-muted/30 p-3 space-y-3">
                     <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Category-Specific Delivery Fees</h4>
                     <p className="text-xs text-muted-foreground">
-                      যদি কোনো ক্যাটেগরির জন্য আলাদা ডেলিভারি ফি সেট করেন, সেটা ডিফল্ট ফি এর বদলে ব্যবহার হবে।
+                      যদি কোনো ক্যাটেগরির জন্য আলাদা Same Day / Next Day ফি সেট করেন, সেটা ডিফল্ট ফি এর বদলে ব্যবহার হবে।
                     </p>
 
                     {/* Existing category fees */}
                     {districtCatFees.length > 0 && (
                       <div className="space-y-1.5">
                         {districtCatFees.map((cf) => (
-                          <div key={cf.id} className="flex items-center gap-2 bg-background rounded-md px-3 py-2 text-sm">
+                          <div key={cf.id} className="flex flex-wrap items-center gap-2 bg-background rounded-md px-3 py-2 text-sm">
                             <Tag className="h-3.5 w-3.5 text-primary shrink-0" />
-                            <span className="font-medium flex-1 truncate">{getCategoryName(cf.category_id)}</span>
-                            <span className="text-muted-foreground">{formatCurrency(cf.delivery_fee)}</span>
-                            <span className="text-xs text-muted-foreground hidden sm:block">{cf.delivery_label}</span>
+                            <span className="font-medium flex-1 min-w-0 truncate">{getCategoryName(cf.category_id)}</span>
+                            <span className="text-xs inline-flex items-center gap-1 text-amber-600 dark:text-amber-400">
+                              <Zap className="h-3 w-3" /> {formatCurrency(cf.same_day_fee ?? cf.delivery_fee ?? 0)}
+                            </span>
+                            <span className="text-xs inline-flex items-center gap-1 text-blue-600 dark:text-blue-400">
+                              <Calendar className="h-3 w-3" /> {formatCurrency(cf.next_day_fee ?? 0)}
+                            </span>
                             <Button size="sm" variant="ghost" className="text-destructive h-7 w-7 p-0" onClick={() => deleteCatFeeMutation.mutate(cf.id)}>
                               <Trash2 className="h-3.5 w-3.5" />
                             </Button>
@@ -291,17 +352,18 @@ const AdminShipping = () => {
                           ))}
                         </select>
                         <Input
-                          placeholder="Fee (৳)"
+                          placeholder="Same Day Fee (৳)"
                           type="number"
                           className="h-9"
-                          value={catFeeForm.delivery_fee}
-                          onChange={(e) => setCatFeeForm({ ...catFeeForm, delivery_fee: e.target.value })}
+                          value={catFeeForm.same_day_fee}
+                          onChange={(e) => setCatFeeForm({ ...catFeeForm, same_day_fee: e.target.value })}
                         />
                         <Input
-                          placeholder="Label"
+                          placeholder="Next Day Fee (৳)"
+                          type="number"
                           className="h-9"
-                          value={catFeeForm.delivery_label}
-                          onChange={(e) => setCatFeeForm({ ...catFeeForm, delivery_label: e.target.value })}
+                          value={catFeeForm.next_day_fee}
+                          onChange={(e) => setCatFeeForm({ ...catFeeForm, next_day_fee: e.target.value })}
                         />
                         <Button size="sm" className="h-9" onClick={() => handleSaveCatFee(d.id)} disabled={saveCatFeeMutation.isPending}>
                           <Plus className="h-3.5 w-3.5 mr-1" /> Add
