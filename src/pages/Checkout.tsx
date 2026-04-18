@@ -396,6 +396,7 @@ const Checkout = () => {
         delivery_date: form.deliveryDate || null,
         delivery_time: form.deliveryTime || null,
         delivery_type: deliveryType,
+        delivery_slot: deliveryType,
         payment_method: form.paymentMethod,
         subtotal: totalPrice,
         delivery_fee: deliveryFee,
