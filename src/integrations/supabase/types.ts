@@ -853,7 +853,6 @@ export type Database = {
           delivery_address: string
           delivery_date: string | null
           delivery_fee: number
-          delivery_slot: string | null
           delivery_time: string | null
           delivery_type: string | null
           discount: number
@@ -880,7 +879,6 @@ export type Database = {
           delivery_address: string
           delivery_date?: string | null
           delivery_fee?: number
-          delivery_slot?: string | null
           delivery_time?: string | null
           delivery_type?: string | null
           discount?: number
@@ -907,7 +905,6 @@ export type Database = {
           delivery_address?: string
           delivery_date?: string | null
           delivery_fee?: number
-          delivery_slot?: string | null
           delivery_time?: string | null
           delivery_type?: string | null
           discount?: number
@@ -1555,11 +1552,7 @@ export type Database = {
           delivery_fee: number
           delivery_label: string | null
           district_id: string
-          evening_slot_fee: number
-          evening_slot_label: string | null
           id: string
-          morning_slot_fee: number
-          morning_slot_label: string | null
           next_day_fee: number
           same_day_fee: number
           updated_at: string
@@ -1570,11 +1563,7 @@ export type Database = {
           delivery_fee?: number
           delivery_label?: string | null
           district_id: string
-          evening_slot_fee?: number
-          evening_slot_label?: string | null
           id?: string
-          morning_slot_fee?: number
-          morning_slot_label?: string | null
           next_day_fee?: number
           same_day_fee?: number
           updated_at?: string
@@ -1585,11 +1574,7 @@ export type Database = {
           delivery_fee?: number
           delivery_label?: string | null
           district_id?: string
-          evening_slot_fee?: number
-          evening_slot_label?: string | null
           id?: string
-          morning_slot_fee?: number
-          morning_slot_label?: string | null
           next_day_fee?: number
           same_day_fee?: number
           updated_at?: string
@@ -1617,12 +1602,8 @@ export type Database = {
           delivery_fee: number
           delivery_label: string | null
           display_order: number
-          evening_slot_fee: number
-          evening_slot_label: string | null
           id: string
           is_active: boolean
-          morning_slot_fee: number
-          morning_slot_label: string | null
           name: string
           next_day_fee: number
           next_day_label: string | null
@@ -1635,12 +1616,8 @@ export type Database = {
           delivery_fee?: number
           delivery_label?: string | null
           display_order?: number
-          evening_slot_fee?: number
-          evening_slot_label?: string | null
           id?: string
           is_active?: boolean
-          morning_slot_fee?: number
-          morning_slot_label?: string | null
           name: string
           next_day_fee?: number
           next_day_label?: string | null
@@ -1653,12 +1630,8 @@ export type Database = {
           delivery_fee?: number
           delivery_label?: string | null
           display_order?: number
-          evening_slot_fee?: number
-          evening_slot_label?: string | null
           id?: string
           is_active?: boolean
-          morning_slot_fee?: number
-          morning_slot_label?: string | null
           name?: string
           next_day_fee?: number
           next_day_label?: string | null
