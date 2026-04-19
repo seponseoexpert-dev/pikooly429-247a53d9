@@ -7,6 +7,7 @@ import TailoredOccasions from "@/components/home/TailoredOccasions";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import SEOHead from "@/components/seo/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
+import freeDeliveryBanner from "@/assets/free-delivery-banner.png";
 
 // Lazy load all below-fold sections
 const OfferBanners = lazy(() => import("@/components/home/OfferBanners"));
@@ -94,6 +95,14 @@ const Index = () => {
         jsonLd={combinedJsonLd}
       />
       <HeroSection />
+      <section className="container mx-auto px-3 sm:px-4 pt-3 sm:pt-4">
+        <img
+          src={freeDeliveryBanner}
+          alt="Free delivery on eligible time slots"
+          className="w-full h-auto rounded-xl sm:rounded-2xl object-cover"
+          loading="eager"
+        />
+      </section>
       <CategoryGrid />
       <div className="deferred-section">
         <Suspense fallback={<LazyFallback />}>
