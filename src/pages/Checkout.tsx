@@ -966,7 +966,7 @@ const Checkout = () => {
                                     return `${fmt(d1)} – ${fmt(d2)}`;
                                   })()}
                                 </span>
-                                {" "}· Steadfast, Pathao & couriers
+                                {" "}· Steadfast, Pathao & others couriers
                               </div>
                               <div className="text-base font-bold text-primary mt-1">{formatPrice(nextDayFee)}</div>
                             </div>
