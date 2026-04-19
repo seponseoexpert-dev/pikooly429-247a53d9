@@ -922,10 +922,7 @@ const Checkout = () => {
                               <div className="text-[11px] text-muted-foreground mt-0.5">
                                 Bike, CNG & Private Car ·{" "}
                                 <span className="font-semibold text-foreground">
-                                  {(() => {
-                                    const t = new Date();
-                                    return `Today, ${t.toLocaleDateString("en-US", { month: "short", day: "numeric" })} by 11:30 PM`;
-                                  })()}
+                                  Delivery within 2 hours
                                 </span>
                               </div>
                               <div className="text-base font-bold text-primary mt-1">{formatPrice(sameDayFee)}</div>
