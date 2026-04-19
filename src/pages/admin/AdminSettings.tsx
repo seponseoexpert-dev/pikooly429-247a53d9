@@ -216,6 +216,9 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "company_logo", label: "Logo (128PX, 43PX)", type: "image_upload" },
     { key: "company_favicon", label: "Fav Icon (120PX, 120PX)", type: "image_upload" },
     { key: "footer_logo", label: "Footer Logo (144PX, 48PX)", type: "image_upload" },
+    { key: "homepage_banner_image", label: "Homepage Banner (Below Hero)", type: "image_upload", fullWidth: true },
+    { key: "homepage_banner_link", label: "Homepage Banner Link (optional)", placeholder: "/shop or https://..." },
+    { key: "homepage_banner_enabled", label: "Show Homepage Banner", type: "switch" },
   ],
   sliders: [], // Handled by custom SlidersSection component
   outlets: [
