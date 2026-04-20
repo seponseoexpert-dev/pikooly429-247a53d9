@@ -21,7 +21,7 @@ const ProductDetail = () => {
   const { formatPrice } = useMultiCurrency();
   const [qty, setQty] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [activeTab, setActiveTab] = useState<"specification" | "description" | "reviews">("specification");
+  const [activeTab, setActiveTab] = useState<"description" | "instructions" | "delivery" | "reviews">("description");
   const [customImages, setCustomImages] = useState<File[]>([]);
   const [customText, setCustomText] = useState("");
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -463,8 +463,9 @@ const ProductDetail = () => {
 
         <div className="flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide pb-1 mb-5 sm:mb-6">
           {[
-            { key: "specification" as const, label: "Specification" },
             { key: "description" as const, label: "Description" },
+            { key: "instructions" as const, label: "Instructions" },
+            { key: "delivery" as const, label: "Delivery Info" },
             { key: "reviews" as const, label: `Reviews (${product.review_count || 0})` },
           ].map((tab) => (
             <button
@@ -482,35 +483,6 @@ const ProductDetail = () => {
         </div>
 
         <div>
-          {activeTab === "specification" && (
-            <div>
-              {(() => {
-                const specs = product.specifications as Array<{ item: string; value: string }> | null;
-                if (!specs || specs.length === 0) {
-                  return <p className="text-sm text-muted-foreground">No specifications available.</p>;
-                }
-                return (
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-border">
-                        <th className="text-left py-3 font-semibold text-foreground w-1/2">Item</th>
-                        <th className="text-left py-3 font-semibold text-foreground">Quantity</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {specs.map((spec, i) => (
-                        <tr key={i} className="border-b border-border last:border-0">
-                          <td className="py-3 text-foreground">{spec.item}</td>
-                          <td className="py-3 text-muted-foreground">{spec.value}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                );
-              })()}
-            </div>
-          )}
-
           {activeTab === "description" && (
             <div>
               {product.description ? (
@@ -518,6 +490,50 @@ const ProductDetail = () => {
               ) : (
                 <p className="text-sm text-muted-foreground">No description available.</p>
               )}
+              {(() => {
+                const specs = product.specifications as Array<{ item: string; value: string }> | null;
+                if (!specs || specs.length === 0) return null;
+                return (
+                  <div className="mt-5">
+                    <p className="text-sm sm:text-base font-semibold text-foreground mb-2">Product Details:</p>
+                    <ul className="list-disc pl-5 space-y-1 text-sm sm:text-base text-foreground">
+                      {specs.map((spec, i) => (
+                        <li key={i}><span className="font-medium">{spec.item}:</span> {spec.value}</li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
+          {activeTab === "instructions" && (
+            <div className="text-sm sm:text-base text-foreground space-y-3">
+              <p className="font-semibold">Care Instructions:</p>
+              <ul className="list-disc pl-5 space-y-1.5 text-muted-foreground">
+                <li>Keep flowers away from direct sunlight, heat, and drafts.</li>
+                <li>Trim stems at an angle every 2 days for longer freshness.</li>
+                <li>Change the water daily and keep the vase clean.</li>
+                <li>Remove any wilted petals or leaves to maintain bouquet beauty.</li>
+                <li>For cakes & food items, refrigerate immediately and consume within recommended time.</li>
+                <li>Handle personalized & fragile gifts with care while unboxing.</li>
+              </ul>
+            </div>
+          )}
+
+          {activeTab === "delivery" && (
+            <div className="text-sm sm:text-base text-foreground space-y-3">
+              <p className="font-semibold">Delivery Information:</p>
+              <ul className="list-disc pl-5 space-y-1.5 text-muted-foreground">
+                {product.delivery_time && (
+                  <li><span className="font-medium text-foreground">Estimated Delivery:</span> {product.delivery_time}</li>
+                )}
+                <li>Same Day Delivery available within Dhaka City (Order before 6 PM).</li>
+                <li>Next Day Delivery available across Bangladesh via Steadfast, Pathao & other couriers.</li>
+                <li>Free delivery on eligible time slots and selected areas.</li>
+                <li>Delivery charges may vary based on location and selected delivery speed.</li>
+                <li>For urgent or midnight delivery, please contact our support team.</li>
+              </ul>
             </div>
           )}
 
