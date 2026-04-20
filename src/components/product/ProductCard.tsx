@@ -56,9 +56,11 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
           </span>
         )}
         {product.delivery_time && (
-          <span className="absolute bottom-2 left-2 sm:bottom-2.5 sm:left-2.5 px-2 py-1 text-[9px] sm:text-[10px] font-medium bg-background/90 backdrop-blur-sm text-foreground rounded-lg flex items-center gap-1 shadow-sm">
-            <Clock size={10} />
-            {product.delivery_time}
+          <span className="absolute bottom-2 left-2 sm:bottom-2.5 sm:left-2.5 pl-1 pr-2 py-0.5 text-[9px] sm:text-[10px] font-semibold bg-background/95 backdrop-blur-sm text-foreground rounded-full flex items-center gap-1 shadow-md border border-border/50">
+            <span className="flex items-center justify-center w-4 h-4 rounded-full bg-primary text-primary-foreground">
+              <Clock size={9} strokeWidth={2.5} />
+            </span>
+            <span className="truncate max-w-[100px]">{product.delivery_time}</span>
           </span>
         )}
       </Link>
