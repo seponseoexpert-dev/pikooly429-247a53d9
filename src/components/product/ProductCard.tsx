@@ -94,9 +94,9 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
         {/* Rating row */}
         {rating > 0 ? (
           <div className="flex items-center gap-1">
-            <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-amber-50 dark:bg-amber-500/10">
-              <Star size={10} className="fill-amber-500 text-amber-500" />
-              <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400">{rating.toFixed(1)}</span>
+            <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-primary/10">
+              <Star size={10} className="fill-primary text-primary" />
+              <span className="text-[10px] font-bold text-primary">{rating.toFixed(1)}</span>
             </div>
           </div>
         ) : (
