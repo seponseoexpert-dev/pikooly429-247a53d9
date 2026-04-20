@@ -21,7 +21,7 @@ const ProductDetail = () => {
   const { formatPrice } = useMultiCurrency();
   const [qty, setQty] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [activeTab, setActiveTab] = useState<"specification" | "description" | "reviews">("specification");
+  const [activeTab, setActiveTab] = useState<"description" | "instructions" | "delivery" | "reviews">("description");
   const [customImages, setCustomImages] = useState<File[]>([]);
   const [customText, setCustomText] = useState("");
   const [lightboxOpen, setLightboxOpen] = useState(false);
