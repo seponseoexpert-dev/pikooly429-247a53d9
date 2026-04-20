@@ -48,6 +48,7 @@ const AdminProducts = () => {
     allow_custom_image: false, allow_custom_text: false,
     specifications: [] as Array<{ item: string; value: string }>,
     seo_title: "", seo_description: "", delivery_time: "",
+    instructions: "", delivery_info: "",
   };
   const [form, setForm] = useState(defaultForm);
 
@@ -107,6 +108,7 @@ const AdminProducts = () => {
       specifications: specs,
       seo_title: (p as any).seo_title || "", seo_description: (p as any).seo_description || "",
       delivery_time: (p as any).delivery_time || "",
+      instructions: (p as any).instructions || "", delivery_info: (p as any).delivery_info || "",
     });
     setImageFile(null);
     setDialogOpen(true);
@@ -147,6 +149,7 @@ const AdminProducts = () => {
       specifications: specs.length > 0 ? specs : null,
       seo_title: form.seo_title.trim() || null, seo_description: form.seo_description.trim() || null,
       delivery_time: form.delivery_time.trim() || null,
+      instructions: form.instructions || null, delivery_info: form.delivery_info || null,
     };
 
     let productId: string | null = null;
@@ -321,6 +324,14 @@ const AdminProducts = () => {
               <div className="space-y-2">
                 <Label>Long Description</Label>
                 <RichTextEditor value={form.description} onChange={(html) => setForm({ ...form, description: html })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Instructions <span className="text-xs text-muted-foreground font-normal">(Care/usage instructions — leave empty for default)</span></Label>
+                <RichTextEditor value={form.instructions} onChange={(html) => setForm({ ...form, instructions: html })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Delivery Info <span className="text-xs text-muted-foreground font-normal">(Custom delivery details — leave empty for default)</span></Label>
+                <RichTextEditor value={form.delivery_info} onChange={(html) => setForm({ ...form, delivery_info: html })} />
               </div>
               <div className="space-y-2">
                 <Label>Image</Label>

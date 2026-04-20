@@ -509,31 +509,49 @@ const ProductDetail = () => {
 
           {activeTab === "instructions" && (
             <div className="text-sm sm:text-base text-foreground space-y-3">
-              <p className="font-semibold">Care Instructions:</p>
-              <ul className="list-disc pl-5 space-y-1.5 text-muted-foreground">
-                <li>Keep flowers away from direct sunlight, heat, and drafts.</li>
-                <li>Trim stems at an angle every 2 days for longer freshness.</li>
-                <li>Change the water daily and keep the vase clean.</li>
-                <li>Remove any wilted petals or leaves to maintain bouquet beauty.</li>
-                <li>For cakes & food items, refrigerate immediately and consume within recommended time.</li>
-                <li>Handle personalized & fragile gifts with care while unboxing.</li>
-              </ul>
+              {(product as any).instructions ? (
+                <div
+                  className="rich-text-content text-muted-foreground"
+                  dangerouslySetInnerHTML={{ __html: (product as any).instructions }}
+                />
+              ) : (
+                <>
+                  <p className="font-semibold">Care Instructions:</p>
+                  <ul className="list-disc pl-5 space-y-1.5 text-muted-foreground">
+                    <li>Keep flowers away from direct sunlight, heat, and drafts.</li>
+                    <li>Trim stems at an angle every 2 days for longer freshness.</li>
+                    <li>Change the water daily and keep the vase clean.</li>
+                    <li>Remove any wilted petals or leaves to maintain bouquet beauty.</li>
+                    <li>For cakes & food items, refrigerate immediately and consume within recommended time.</li>
+                    <li>Handle personalized & fragile gifts with care while unboxing.</li>
+                  </ul>
+                </>
+              )}
             </div>
           )}
 
           {activeTab === "delivery" && (
             <div className="text-sm sm:text-base text-foreground space-y-3">
-              <p className="font-semibold">Delivery Information:</p>
-              <ul className="list-disc pl-5 space-y-1.5 text-muted-foreground">
-                {product.delivery_time && (
-                  <li><span className="font-medium text-foreground">Estimated Delivery:</span> {product.delivery_time}</li>
-                )}
-                <li>Same Day Delivery available within Dhaka City (Order before 6 PM).</li>
-                <li>Next Day Delivery available across Bangladesh via Steadfast, Pathao & other couriers.</li>
-                <li>Free delivery on eligible time slots and selected areas.</li>
-                <li>Delivery charges may vary based on location and selected delivery speed.</li>
-                <li>For urgent or midnight delivery, please contact our support team.</li>
-              </ul>
+              {(product as any).delivery_info ? (
+                <div
+                  className="rich-text-content text-muted-foreground"
+                  dangerouslySetInnerHTML={{ __html: (product as any).delivery_info }}
+                />
+              ) : (
+                <>
+                  <p className="font-semibold">Delivery Information:</p>
+                  <ul className="list-disc pl-5 space-y-1.5 text-muted-foreground">
+                    {product.delivery_time && (
+                      <li><span className="font-medium text-foreground">Estimated Delivery:</span> {product.delivery_time}</li>
+                    )}
+                    <li>Same Day Delivery available within Dhaka City (Order before 6 PM).</li>
+                    <li>Next Day Delivery available across Bangladesh via Steadfast, Pathao & other couriers.</li>
+                    <li>Free delivery on eligible time slots and selected areas.</li>
+                    <li>Delivery charges may vary based on location and selected delivery speed.</li>
+                    <li>For urgent or midnight delivery, please contact our support team.</li>
+                  </ul>
+                </>
+              )}
             </div>
           )}
 
