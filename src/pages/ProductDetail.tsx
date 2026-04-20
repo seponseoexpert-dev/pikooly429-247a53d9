@@ -457,9 +457,11 @@ const ProductDetail = () => {
         </div>
       </div>
 
-      {/* Tabbed Section */}
-      <div className="mt-6 sm:mt-10 md:mt-12 border border-border/40 rounded-xl bg-card overflow-hidden">
-        <div className="grid grid-cols-3 border-b border-border">
+      {/* About the product Section - FNP style */}
+      <div className="mt-6 sm:mt-10 md:mt-12">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-foreground mb-4 sm:mb-5">About the product</h2>
+
+        <div className="flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide pb-1 mb-5 sm:mb-6">
           {[
             { key: "specification" as const, label: "Specification" },
             { key: "description" as const, label: "Description" },
@@ -468,10 +470,10 @@ const ProductDetail = () => {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`py-3 text-[11px] sm:text-xs md:text-sm font-medium text-center transition-all border-b-2 ${
+              className={`whitespace-nowrap px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-semibold border transition-all ${
                 activeTab === tab.key
-                  ? "border-primary text-primary bg-primary/5"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
+                  ? "border-primary bg-primary/5 text-foreground"
+                  : "border-border bg-card text-muted-foreground hover:text-foreground hover:border-foreground/30"
               }`}
             >
               {tab.label}
@@ -479,11 +481,9 @@ const ProductDetail = () => {
           ))}
         </div>
 
-        <div className="p-4 sm:p-6 md:p-8">
+        <div>
           {activeTab === "specification" && (
             <div>
-              <h3 className="text-lg font-bold text-foreground mb-1">Specification</h3>
-              <div className="w-12 h-0.5 bg-primary mb-4" />
               {(() => {
                 const specs = product.specifications as Array<{ item: string; value: string }> | null;
                 if (!specs || specs.length === 0) {
@@ -513,10 +513,8 @@ const ProductDetail = () => {
 
           {activeTab === "description" && (
             <div>
-              <h3 className="text-lg font-bold text-foreground mb-1">Description</h3>
-              <div className="w-12 h-0.5 bg-primary mb-4" />
               {product.description ? (
-                <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: product.description }} />
+                <div className="prose prose-sm sm:prose-base dark:prose-invert max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: product.description }} />
               ) : (
                 <p className="text-sm text-muted-foreground">No description available.</p>
               )}
