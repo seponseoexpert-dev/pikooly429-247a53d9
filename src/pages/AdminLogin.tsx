@@ -174,7 +174,7 @@ const AdminLogin = () => {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="admin@pikoolyflora.com"
+                    placeholder="Enter Your Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-10"
