@@ -221,7 +221,7 @@ const AdminProducts = () => {
           <DialogTrigger asChild>
             <Button onClick={() => { resetForm(); setDialogOpen(true); }}><Plus className="h-4 w-4 mr-2" />Add Product</Button>
           </DialogTrigger>
-          <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
+          <DialogContent className="w-[calc(100vw-1rem)] max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden p-3 sm:p-6">
             <DialogHeader>
               <DialogTitle>{editing ? "Edit Product" : "New Product"}</DialogTitle>
             </DialogHeader>
@@ -418,7 +418,7 @@ const AdminProducts = () => {
                 </div>
               </div>
 
-              <div className="flex gap-6">
+              <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-4 sm:gap-6">
                 <div className="flex items-center gap-2">
                   <Switch checked={form.is_active} onCheckedChange={(c) => setForm({ ...form, is_active: c })} />
                   <Label>Active</Label>
