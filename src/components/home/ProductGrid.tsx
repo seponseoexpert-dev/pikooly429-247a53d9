@@ -97,22 +97,20 @@ const ProductGrid = memo(() => {
           <p className="text-muted-foreground text-sm">No products found in this category</p>
         </div>
       ) : (
-        <>
-          <div className="hidden lg:grid grid-cols-5 gap-4">
-            {trendingProducts.slice(0, 5).map((product: any) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-          <div className="lg:hidden">
-            <ProductCarousel>
-              {trendingProducts.slice(0, 10).map((product: any) => (
-                <div key={product.id} className={`flex-shrink-0 snap-start ${cardWidthClass}`}>
-                  <ProductCard product={product} />
-                </div>
-              ))}
-            </ProductCarousel>
-          </div>
-        </>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-3.5 md:gap-4">
+          {trendingProducts.slice(0, 10).map((product: any, idx: number) => {
+            // Mobile: show 4 (2x2). sm: 6 (2 rows of 3). md: 8 (2 rows of 4). lg: 10 (2 rows of 5).
+            const hideClass =
+              idx >= 4 && idx < 6 ? "hidden sm:block" :
+              idx >= 6 && idx < 8 ? "hidden md:block" :
+              idx >= 8 ? "hidden lg:block" : "";
+            return (
+              <div key={product.id} className={hideClass}>
+                <ProductCard product={product} />
+              </div>
+            );
+          })}
+        </div>
       )}
     </section>
   );
