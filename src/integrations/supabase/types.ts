@@ -1273,11 +1273,13 @@ export type Database = {
           allow_custom_text: boolean
           category_id: string | null
           created_at: string
+          delivery_info: string | null
           delivery_time: string | null
           description: string | null
           id: string
           image_url: string | null
           images: string[] | null
+          instructions: string | null
           is_active: boolean
           is_featured: boolean
           name: string
@@ -1300,11 +1302,13 @@ export type Database = {
           allow_custom_text?: boolean
           category_id?: string | null
           created_at?: string
+          delivery_info?: string | null
           delivery_time?: string | null
           description?: string | null
           id?: string
           image_url?: string | null
           images?: string[] | null
+          instructions?: string | null
           is_active?: boolean
           is_featured?: boolean
           name: string
@@ -1327,11 +1331,13 @@ export type Database = {
           allow_custom_text?: boolean
           category_id?: string | null
           created_at?: string
+          delivery_info?: string | null
           delivery_time?: string | null
           description?: string | null
           id?: string
           image_url?: string | null
           images?: string[] | null
+          instructions?: string | null
           is_active?: boolean
           is_featured?: boolean
           name?: string
