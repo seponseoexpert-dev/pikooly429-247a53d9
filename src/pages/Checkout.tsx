@@ -664,24 +664,24 @@ const Checkout = () => {
         </div>
 
         {/* Step indicator */}
-        <div className="mb-6 sm:mb-8 max-w-2xl mx-auto">
-          <div className="flex items-center justify-between gap-2 sm:gap-3">
+        <div className="mb-6 sm:mb-8 max-w-2xl mx-auto px-2">
+          <div className="flex items-center justify-between gap-1 sm:gap-3">
             {[
               { n: 1, label: "Billing", done: billingStepDone, active: !billingStepDone },
               { n: 2, label: "Delivery", done: deliveryStepDone, active: billingStepDone && !deliveryStepDone },
               { n: 3, label: "Payment", done: paymentStepDone && billingStepDone && deliveryStepDone, active: deliveryStepDone && !(paymentStepDone && deliveryStepDone) },
             ].map((s, idx, arr) => (
-              <div key={s.n} className="flex items-center flex-1">
-                <div className={cn("luxe-step flex-shrink-0", s.done ? "is-done" : s.active ? "is-active" : "")}>
-                  <span className="num">{s.done ? <Check size={14} strokeWidth={3} /> : s.n}</span>
-                  <span className="label hidden xs:inline sm:inline">{s.label}</span>
-                </div>
-                {idx < arr.length - 1 && (
+              <div key={s.n} className={cn("flex items-center", idx === 0 ? "flex-shrink-0" : "flex-1")}>
+                {idx > 0 && (
                   <div className={cn(
-                    "flex-1 h-px mx-2 sm:mx-3 transition-colors duration-500",
-                    s.done ? "bg-[hsl(var(--gold)/0.5)]" : "bg-border"
+                    "flex-1 h-px mx-1.5 sm:mx-3 transition-colors duration-500",
+                    s.done || s.active ? "bg-[hsl(var(--gold)/0.5)]" : "bg-border"
                   )} />
                 )}
+                <div className={cn("luxe-step flex-shrink-0", s.done ? "is-done" : s.active ? "is-active" : "")}>
+                  <span className="num">{s.done ? <Check size={14} strokeWidth={3} /> : s.n}</span>
+                  <span className="label hidden sm:inline">{s.label}</span>
+                </div>
               </div>
             ))}
           </div>
