@@ -274,6 +274,29 @@ const Checkout = () => {
   const sameDayFee = useMemo(() => computeFee("same_day"), [activeDistrict, selectedDistrict, categoryFees, productCategories]);
   const nextDayFee = useMemo(() => computeFee("next_day"), [activeDistrict, selectedDistrict, categoryFees, productCategories]);
 
+  // Availability: an option is available only if admin has configured a fee (> 0) for it.
+  // Free same-day (fee = 0) is allowed when explicitly set via the district's same_day_fee/delivery_fee.
+  const sameDayAvailable = useMemo(() => {
+    if (!activeDistrict) return false;
+    const raw = activeDistrict.same_day_fee ?? activeDistrict.delivery_fee;
+    return raw !== null && raw !== undefined;
+  }, [activeDistrict]);
+  const nextDayAvailable = useMemo(() => {
+    if (!activeDistrict) return false;
+    const raw = activeDistrict.next_day_fee;
+    return raw !== null && raw !== undefined && Number(raw) > 0;
+  }, [activeDistrict]);
+
+  // Auto-select the only available option when district changes
+  useEffect(() => {
+    if (!activeDistrict) return;
+    if (deliveryType === "same_day" && !sameDayAvailable && nextDayAvailable) {
+      setDeliveryType("next_day");
+    } else if (deliveryType === "next_day" && !nextDayAvailable && sameDayAvailable) {
+      setDeliveryType("same_day");
+    }
+  }, [activeDistrict, sameDayAvailable, nextDayAvailable, deliveryType]);
+
   const deliveryFee = deliveryType === "same_day" ? sameDayFee : nextDayFee;
 
   const deliveryLabel =
