@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Lock, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
+import SEOHead from "@/components/seo/SEOHead";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
@@ -66,6 +67,7 @@ const ResetPassword = () => {
 
   return (
     <main className="min-h-[70vh] flex items-center justify-center px-4 py-10 pb-24 md:pb-10">
+      <SEOHead title="Reset Password — Pikooly" description="Set a new password for your Pikooly account." noindex />
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-display font-bold text-foreground">Set New Password</h1>
