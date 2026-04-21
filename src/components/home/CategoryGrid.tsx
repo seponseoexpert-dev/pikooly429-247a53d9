@@ -98,27 +98,29 @@ const CategoryItem = ({ cat, idx, variant }: { cat: Category; idx: number; varia
     : "flex flex-col items-center gap-2.5 flex-1 max-w-[130px]";
 
   const iconBoxClass = variant === "mobile"
-    ? "w-full aspect-square rounded-[18px] bg-muted/70 flex items-center justify-center p-2 shadow-sm"
-    : "w-full aspect-square rounded-[20px] bg-muted/70 flex items-center justify-center p-2.5 transition-all duration-200 hover:scale-[1.03] hover:shadow-md";
+    ? "relative w-full aspect-square rounded-[20px] bg-gradient-to-br from-[hsl(var(--ivory))] to-[hsl(var(--gold-light))] flex items-center justify-center p-2 shadow-soft border border-border/50 transition-all duration-700 ease-luxe group-hover:border-[hsl(var(--gold)/0.5)] group-hover:shadow-luxe overflow-hidden"
+    : "relative w-full aspect-square rounded-[22px] bg-gradient-to-br from-[hsl(var(--ivory))] to-[hsl(var(--gold-light))] flex items-center justify-center p-2.5 shadow-soft border border-border/50 transition-all duration-700 ease-luxe group-hover:border-[hsl(var(--gold)/0.5)] group-hover:shadow-luxe group-hover:-translate-y-0.5 overflow-hidden";
 
   const imgSize = variant === "mobile" ? 80 : 120;
   const cloudinaryWidth = variant === "mobile" ? 100 : 150;
   const imgMaxClass = variant === "mobile" ? "max-h-[85%] max-w-[85%]" : "max-h-[88%] max-w-[88%]";
 
   const textClass = variant === "mobile"
-    ? "w-full text-center text-[11px] sm:text-xs font-medium leading-tight line-clamp-2 text-foreground/80"
-    : "w-full text-center text-[13px] font-medium leading-tight line-clamp-2 text-foreground/80 transition-colors group-hover:text-foreground";
+    ? "w-full text-center text-[11px] sm:text-xs font-medium leading-tight line-clamp-2 text-foreground/85 group-hover:text-primary transition-colors duration-500"
+    : "w-full text-center text-[13px] font-medium leading-tight line-clamp-2 text-foreground/85 transition-colors duration-500 group-hover:text-primary";
 
   return (
     <Link to={`/product-category/${cat.slug}`} className={`group ${containerClass}`}>
       <div className={iconBoxClass}>
+        {/* Decorative gold radial glow on hover */}
+        <span aria-hidden className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-luxe" style={{ background: "radial-gradient(circle at center, hsl(var(--gold)/0.15) 0%, transparent 65%)" }} />
         <img
           src={getOptimizedCloudinaryUrl(cat.image_url || "/placeholder.svg", cloudinaryWidth)}
           alt={cat.name}
           width={imgSize}
           height={imgSize}
           decoding="async"
-          className={`h-auto w-auto object-contain transition-transform duration-200 group-hover:scale-[1.04] ${imgMaxClass}`}
+          className={`relative h-auto w-auto object-contain transition-transform duration-700 ease-luxe group-hover:scale-[1.08] ${imgMaxClass}`}
           loading={idx < 4 ? "eager" : "lazy"}
           fetchPriority={idx < 2 ? "high" : undefined}
         />
