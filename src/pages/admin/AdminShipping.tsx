@@ -7,6 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Save, Trash2, Truck, ChevronDown, ChevronUp, Tag, Zap, Calendar } from "lucide-react";
 import { useCurrency } from "@/hooks/useCurrency";
+import { cn } from "@/lib/utils";
 
 interface District {
   id: string;
