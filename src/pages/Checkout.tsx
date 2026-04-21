@@ -278,7 +278,7 @@ const Checkout = () => {
   // A fee of 0 means free delivery, not unavailable.
   const sameDayAvailable = useMemo(() => {
     if (!activeDistrict) return false;
-    const raw = activeDistrict.same_day_fee ?? activeDistrict.delivery_fee;
+    const raw = activeDistrict.same_day_fee;
     return raw !== null && raw !== undefined;
   }, [activeDistrict]);
   const nextDayAvailable = useMemo(() => {
