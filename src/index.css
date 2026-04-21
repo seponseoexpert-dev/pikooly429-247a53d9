@@ -340,39 +340,51 @@
 
 @layer utilities {
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent;
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-luxe);
   }
+  .text-gold {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-gold);
+  }
+
+  .shadow-luxe { box-shadow: var(--shadow-luxe); }
+  .shadow-soft { box-shadow: var(--shadow-md); }
+  .shadow-elevated { box-shadow: var(--shadow-xl); }
+  .shadow-gold-glow { box-shadow: var(--shadow-gold); }
+
+  .ease-luxe { transition-timing-function: var(--ease-luxe); }
+  .ease-spring { transition-timing-function: var(--ease-spring); }
 
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
 
-  .safe-area-bottom {
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-  }
-
-  .safe-area-top {
-    padding-top: env(safe-area-inset-top, 0px);
-  }
+  .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .safe-area-top { padding-top: env(safe-area-inset-top, 0px); }
 
   @media (pointer: coarse) {
-    .touch-target {
-      min-height: 44px;
-      min-width: 44px;
-    }
+    .touch-target { min-height: 44px; min-width: 44px; }
   }
 
-  .scroll-smooth-ios {
-    -webkit-overflow-scrolling: touch;
-  }
+  .scroll-smooth-ios { -webkit-overflow-scrolling: touch; }
 
   .deferred-section {
     content-visibility: auto;
     contain-intrinsic-size: 1px 640px;
+  }
+
+  /* Subtle entrance for sections in viewport */
+  .reveal-up {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.9s var(--ease-luxe), transform 0.9s var(--ease-luxe);
+  }
+  .reveal-up.in-view, .reveal-up:where(.in) {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
