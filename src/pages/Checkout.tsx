@@ -653,9 +653,14 @@ const Checkout = () => {
       />
       <div>
         {/* Header */}
-        <div className="text-center mb-5 sm:mb-7">
+        <div className="text-center mb-5 sm:mb-7 px-2">
           <span className="gold-rule mb-2.5">Secure Checkout</span>
-          <h1 className="display-heading text-foreground" style={{ fontSize: "clamp(1.5rem, 3vw + 0.5rem, 2.5rem)" }}>Complete Your Order</h1>
+          <h1
+            className="display-heading text-foreground break-words"
+            style={{ fontSize: "clamp(1.375rem, 4.5vw + 0.25rem, 2.5rem)", letterSpacing: "-0.02em", lineHeight: 1.15 }}
+          >
+            Complete Your Order
+          </h1>
         </div>
 
         {/* Step indicator */}
