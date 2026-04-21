@@ -91,11 +91,17 @@ const AdminShipping = () => {
 
   const saveMutation = useMutation({
     mutationFn: async (values: typeof form & { id?: string }) => {
-      const sameDay = parseFloat(values.same_day_fee) || 0;
-      const nextDay = parseFloat(values.next_day_fee) || 0;
-      const payload = {
+      // Empty string => option NOT available (null). 0 => available & free.
+      const sameDayRaw = values.same_day_fee.trim();
+      const nextDayRaw = values.next_day_fee.trim();
+      const sameDay = sameDayRaw === "" ? null : (parseFloat(sameDayRaw) || 0);
+      const nextDay = nextDayRaw === "" ? null : (parseFloat(nextDayRaw) || 0);
+      if (sameDay === null && nextDay === null) {
+        throw new Error("At least one delivery option (Same Day or Next Day) must have a fee");
+      }
+      const payload: any = {
         name: values.name.trim(),
-        delivery_fee: sameDay,
+        delivery_fee: sameDay ?? 0,
         delivery_label: values.same_day_label.trim() || "Same Day Delivery",
         same_day_fee: sameDay,
         same_day_label: values.same_day_label.trim() || "Same Day Delivery",
