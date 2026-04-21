@@ -688,11 +688,11 @@ const Checkout = () => {
             <div className="lg:col-span-2 space-y-5 sm:space-y-8">
               {/* Billing Details */}
               {gatewaySettings.checkout_billing_visible !== "false" && (
-              <section className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-border">
-                <h2 className="text-base sm:text-lg font-bold mb-4 sm:mb-6 flex items-center gap-2">
-                  <CreditCard size={20} className="text-primary" />
-                  Billing Details
-                </h2>
+              <section className="luxe-panel p-4 sm:p-6">
+                <div className="luxe-panel-header mb-4 sm:mb-6">
+                  <span className="icon-wrap"><CreditCard size={17} /></span>
+                  <span>Billing Details</span>
+                </div>
                 <div className="space-y-5">
                   <div>
                     <Label htmlFor="fullName">Full Name <span className="text-destructive">*</span></Label>
@@ -774,11 +774,11 @@ const Checkout = () => {
               )}
 
               {/* Delivery Information */}
-              <section className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-border">
-                <h2 className="text-base sm:text-lg font-bold mb-4 sm:mb-6 flex items-center gap-2">
-                  <Truck size={20} className="text-primary" />
-                  Delivery Information
-                </h2>
+              <section className="luxe-panel p-4 sm:p-6">
+                <div className="luxe-panel-header mb-4 sm:mb-6">
+                  <span className="icon-wrap"><Truck size={17} /></span>
+                  <span>Delivery Information</span>
+                </div>
                 <div className="space-y-5">
                   <div>
                     <Label htmlFor="recipientName">Recipient Name <span className="text-destructive">*</span></Label>
@@ -843,8 +843,11 @@ const Checkout = () => {
               </section>
 
               {/* Payment Method */}
-              <section className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-border">
-                <h2 className="text-base sm:text-lg font-bold mb-3 sm:mb-4">Payment Method</h2>
+              <section className="luxe-panel p-4 sm:p-6">
+                <div className="luxe-panel-header mb-3 sm:mb-4">
+                  <span className="icon-wrap"><ShieldCheck size={17} /></span>
+                  <span>Payment Method</span>
+                </div>
                 <div className="space-y-2.5">
                   {enabledPaymentMethods.length === 0 ? (
                     <p className="text-sm text-muted-foreground text-center py-4">No payment methods available.</p>
