@@ -68,14 +68,17 @@ const ProductGrid = memo(() => {
   const cardWidthClass = "w-[44vw] sm:w-[180px] md:w-[200px] lg:w-[210px] xl:w-[220px]";
 
   return (
-    <section className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Products" style={{ contain: "layout style", minHeight: "420px" }}>
-      <div className="flex items-center justify-between mb-4 sm:mb-5">
+    <section className="py-6 sm:py-8 md:py-12 lg:py-14 section-container" aria-label="Products" style={{ contain: "layout style", minHeight: "420px" }}>
+      <div className="flex items-end justify-between mb-5 sm:mb-7 gap-4">
         <div>
-          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground">Trending Items</h2>
-          <div className="w-12 h-[3px] bg-primary mt-1.5 rounded-full" />
+          <span className="eyebrow mb-2">Trending Now</span>
+          <h2 className="display-heading text-foreground mt-1.5" style={{ fontSize: "clamp(1.5rem, 3vw + 0.5rem, 2.5rem)" }}>
+            Curated For You
+          </h2>
+          <div className="w-16 h-[2px] bg-gradient-gold mt-2.5 rounded-full" />
         </div>
-        <Link to="/shop" className="text-sm text-muted-foreground hover:text-foreground font-medium transition-colors">
-          View More »
+        <Link to="/shop" className="btn-outline-luxe text-xs sm:text-sm shrink-0 px-4 sm:px-5 py-2 sm:py-2.5">
+          View All
         </Link>
       </div>
 

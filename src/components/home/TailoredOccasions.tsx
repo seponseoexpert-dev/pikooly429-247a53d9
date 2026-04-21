@@ -107,15 +107,18 @@ const TailoredOccasions = memo(() => {
   if (occasionCategories.length === 0 && !isLoading) return null;
 
   return (
-    <section className="bg-gradient-to-b from-[#faf9f6] to-white py-6 sm:py-10 md:py-12" aria-label="Tailored For Your Occasions">
+    <section className="bg-gradient-to-b from-[hsl(var(--ivory))] via-[hsl(var(--cream))] to-background py-8 sm:py-12 md:py-14" aria-label="Tailored For Your Occasions">
       <div className="section-container">
         {/* Title */}
-        <h2 className="font-serif text-[22px] sm:text-2xl md:text-[28px] font-bold text-foreground mb-1 tracking-tight leading-tight">
-          Tailored For Your Occasions
-        </h2>
-        <p className="text-muted-foreground text-[13px] sm:text-sm mb-5 sm:mb-6">
-          Find the perfect gift for every special moment
-        </p>
+        <div className="text-center mb-6 sm:mb-8">
+          <span className="gold-rule mb-2.5">Hand-Picked</span>
+          <h2 className="display-heading text-foreground" style={{ fontSize: "clamp(1.5rem, 3vw + 0.5rem, 2.5rem)" }}>
+            Tailored For Your Occasions
+          </h2>
+          <p className="text-muted-foreground text-[13px] sm:text-sm mt-2">
+            Find the perfect gift for every special moment
+          </p>
+        </div>
 
         {/* Premium Tabs */}
         {occasionCategories.length > 0 && (
@@ -205,13 +208,13 @@ const TailoredOccasions = memo(() => {
 
         {/* CTA */}
         {filteredProducts.length > 0 && (
-          <div className="mt-6 sm:mt-8 text-center">
+          <div className="mt-7 sm:mt-9 text-center">
             <Link
               to={viewAllLink}
-              className="flex items-center justify-center w-full sm:w-auto sm:inline-flex gap-1.5 px-8 py-3.5 border-2 border-[#8a9a5b] text-[#5a6b2e] rounded-xl text-sm font-semibold hover:bg-[#6b7c3e] hover:text-white hover:border-[#6b7c3e] transition-all duration-300 shadow-sm hover:shadow-md"
+              className="btn-luxe inline-flex items-center gap-2 text-xs sm:text-sm tracking-[0.16em] uppercase"
             >
               {viewAllText}
-              <ChevronRight size={16} strokeWidth={2.5} />
+              <ChevronRight size={14} strokeWidth={2.5} />
             </Link>
           </div>
         )}
