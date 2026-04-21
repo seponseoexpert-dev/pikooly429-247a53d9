@@ -618,23 +618,69 @@ const Checkout = () => {
 
   if (items.length === 0) {
     return (
-      <main className="section-container py-6 pb-24 md:pb-10">
-        <div className="text-center py-20">
-          <ShoppingBag size={64} className="mx-auto mb-4 text-muted-foreground/30" />
-          <h2 className="text-xl font-bold mb-2">Your cart is empty</h2>
-          <p className="text-muted-foreground mb-6">Add products to checkout</p>
-          <Button onClick={() => navigate("/shop")} className="rounded-full">
-            Go to Shop
+      <main className="section-container py-10 pb-24 md:pb-16">
+        <SEOHead
+          title="Checkout — Pikooly"
+          description="Securely complete your order on Pikooly. Fast same-day & next-day delivery, multiple payment methods, and gift personalization."
+          noindex
+        />
+        <div className="max-w-md mx-auto text-center py-12 luxe-panel p-10">
+          <div className="w-20 h-20 mx-auto mb-5 rounded-full flex items-center justify-center bg-[hsl(var(--gold-light))] border border-[hsl(var(--gold)/0.3)]">
+            <ShoppingBag size={32} className="text-[hsl(var(--gold-deep))]" />
+          </div>
+          <span className="eyebrow">Empty Cart</span>
+          <h2 className="display-heading text-2xl mt-2 mb-2">Nothing to checkout yet</h2>
+          <p className="text-muted-foreground mb-6 text-sm">Add a few thoughtful gifts to begin.</p>
+          <Button onClick={() => navigate("/shop")} className="btn-luxe">
+            Explore the Collection
           </Button>
         </div>
       </main>
     );
   }
 
+  // Step indicator state derived from form completeness
+  const billingStepDone = !!(form.fullName.trim() && form.phone.trim());
+  const deliveryStepDone = !!(form.recipientName.trim() && form.recipientPhone.trim() && form.address.trim() && selectedDistrict);
+  const paymentStepDone = !!form.paymentMethod;
+
   return (
     <main className="section-container py-4 md:py-8 pb-24 md:pb-10">
+      <SEOHead
+        title="Secure Checkout — Pikooly"
+        description="Securely complete your order on Pikooly. Fast same-day & next-day delivery, multiple payment methods (bKash, Nagad, Cards), and free gift personalization."
+        noindex
+      />
       <div>
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-bold mb-5 sm:mb-8 text-center">YOUR ORDER</h1>
+        {/* Header */}
+        <div className="text-center mb-5 sm:mb-7">
+          <span className="gold-rule mb-2.5">Secure Checkout</span>
+          <h1 className="display-heading text-foreground" style={{ fontSize: "clamp(1.5rem, 3vw + 0.5rem, 2.5rem)" }}>Complete Your Order</h1>
+        </div>
+
+        {/* Step indicator */}
+        <div className="mb-6 sm:mb-8 max-w-2xl mx-auto">
+          <div className="flex items-center justify-between gap-2 sm:gap-3">
+            {[
+              { n: 1, label: "Billing", done: billingStepDone, active: !billingStepDone },
+              { n: 2, label: "Delivery", done: deliveryStepDone, active: billingStepDone && !deliveryStepDone },
+              { n: 3, label: "Payment", done: paymentStepDone && billingStepDone && deliveryStepDone, active: deliveryStepDone && !(paymentStepDone && deliveryStepDone) },
+            ].map((s, idx, arr) => (
+              <div key={s.n} className="flex items-center flex-1">
+                <div className={cn("luxe-step flex-shrink-0", s.done ? "is-done" : s.active ? "is-active" : "")}>
+                  <span className="num">{s.done ? <Check size={14} strokeWidth={3} /> : s.n}</span>
+                  <span className="label hidden xs:inline sm:inline">{s.label}</span>
+                </div>
+                {idx < arr.length - 1 && (
+                  <div className={cn(
+                    "flex-1 h-px mx-2 sm:mx-3 transition-colors duration-500",
+                    s.done ? "bg-[hsl(var(--gold)/0.5)]" : "bg-border"
+                  )} />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-8">
