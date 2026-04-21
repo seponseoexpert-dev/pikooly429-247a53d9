@@ -12,10 +12,13 @@ const AboutSection = () => {
   const fullContent = (settings.about_short_text || "") + (settings.about_full_text || "");
 
   return (
-    <section className="py-6 sm:py-8 md:py-10 lg:py-12 section-container" aria-label="About PikoolyFlora" style={{ contain: "layout style", minHeight: "180px" }}>
-      <h2 className="section-heading font-display font-bold text-foreground mb-3 sm:mb-4">
-        {title}
-      </h2>
+    <section className="py-8 sm:py-10 md:py-14 lg:py-16 section-container" aria-label="About PikoolyFlora" style={{ contain: "layout style", minHeight: "180px" }}>
+      <div className="mb-4 sm:mb-5">
+        <span className="gold-rule mb-2.5">About Us</span>
+        <h2 className="display-heading text-foreground mt-2" style={{ fontSize: "clamp(1.5rem, 3vw + 0.5rem, 2.5rem)" }}>
+          {title}
+        </h2>
+      </div>
       <div
         className={`text-[13px] sm:text-sm md:text-[15px] lg:text-base text-muted-foreground leading-relaxed sm:leading-[1.8] rich-text-content ${!expanded ? "line-clamp-5" : ""}`}
         dangerouslySetInnerHTML={{ __html: fullContent }}

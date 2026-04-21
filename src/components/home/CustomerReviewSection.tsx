@@ -178,9 +178,9 @@ const CustomerReviewSection = () => {
 
   return (
     <section className="py-6 sm:py-8 md:py-12 lg:py-14 section-container" aria-label="Customer Reviews" style={{ contain: "layout style" }}>
-      <div className="flex flex-col items-center gap-1.5 mb-6 md:mb-8 md:flex-row md:justify-between">
-        <div className="hidden md:block md:flex-1" />
-        <h2 className="section-heading font-display font-semibold text-foreground text-center">
+      <div className="flex flex-col items-center gap-2 mb-7 md:mb-10 text-center">
+        <span className="gold-rule mb-1">Loved By Many</span>
+        <h2 className="display-heading text-foreground" style={{ fontSize: "clamp(1.5rem, 3vw + 0.5rem, 2.5rem)" }}>
           Customer Reviews
         </h2>
         <div className="md:flex-1 flex md:justify-end">

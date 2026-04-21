@@ -104,31 +104,35 @@ const Footer = memo(() => {
 
   return (
     <footer className="relative pb-[72px] md:pb-0 overflow-hidden" style={{ contain: "layout style" }}>
-      {/* Newsletter */}
-      <div className="bg-foreground">
-        <div className="section-container py-8 sm:py-10">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-5">
+      {/* Newsletter — Luxe band with gold accents */}
+      <div className="relative bg-foreground overflow-hidden">
+        <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--gold)/0.55)] to-transparent" />
+        <span aria-hidden className="pointer-events-none absolute -top-32 -right-32 w-96 h-96 rounded-full opacity-20" style={{ background: "radial-gradient(circle, hsl(var(--gold)/0.5), transparent 70%)" }} />
+        <div className="section-container py-10 sm:py-14 relative z-10">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             <div className="text-center sm:text-left">
-              <h3 className="text-base sm:text-lg font-display font-semibold text-background">
+              <span className="eyebrow mb-2.5 text-[hsl(var(--gold))]">Stay In Touch</span>
+              <h3 className="display-heading text-background mt-1.5" style={{ fontSize: "clamp(1.25rem, 2.4vw + 0.5rem, 2rem)" }}>
                 {t("subscribe_title")}
               </h3>
-              <p className="text-xs sm:text-sm text-background/50 mt-1">
+              <p className="text-xs sm:text-sm text-background/55 mt-2 max-w-md">
                 {t("subscribe_subtitle")}
               </p>
             </div>
-            <form onSubmit={handleSubscribe} className="flex w-full sm:w-auto max-w-sm">
+            <form onSubmit={handleSubscribe} className="flex w-full sm:w-auto max-w-md">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t("enter_email")}
                 required
-                className="flex-1 sm:w-56 h-11 rounded-l-lg border-0 bg-background/10 px-4 text-sm text-background placeholder:text-background/40 focus:outline-none focus:ring-2 focus:ring-background/20"
+                className="flex-1 sm:w-72 h-12 rounded-l-full border-0 bg-background/10 px-5 text-sm text-background placeholder:text-background/40 focus:outline-none focus:ring-2 focus:ring-[hsl(var(--gold))]"
               />
               <button
                 type="submit"
                 disabled={submitting}
-                className="h-11 px-5 rounded-r-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center gap-1.5"
+                className="h-12 px-6 rounded-r-full text-foreground text-sm font-semibold transition-all disabled:opacity-50 flex items-center gap-1.5 hover:opacity-95 active:scale-[0.98]"
+                style={{ background: "var(--gradient-gold)" }}
               >
                 <Send size={14} />
                 <span className="hidden sm:inline">{t("subscribe")}</span>
@@ -139,7 +143,8 @@ const Footer = memo(() => {
       </div>
 
       {/* Main Footer */}
-      <div className="bg-foreground/95">
+      <div className="bg-foreground/95 relative">
+        <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--gold)/0.25)] to-transparent" />
         <div className="section-container py-10 sm:py-12 lg:py-16">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4 lg:gap-12">
             {/* Brand */}
@@ -169,7 +174,7 @@ const Footer = memo(() => {
                     href={socialLinks.length > 0 ? (socialLinks[i] as any)?.url || "#" : "#"}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-8 h-8 rounded-lg bg-background/8 flex items-center justify-center text-background/50 hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+                    className="w-9 h-9 rounded-full bg-background/10 border border-background/10 flex items-center justify-center text-background/60 hover:bg-[hsl(var(--gold))] hover:text-foreground hover:border-[hsl(var(--gold))] hover:scale-110 transition-all duration-500 ease-luxe"
                     aria-label={label}
                   >
                     <Icon size={14} />
@@ -180,7 +185,7 @@ const Footer = memo(() => {
 
             {/* Quick Links */}
             <div>
-              <h4 className="text-[11px] font-semibold uppercase tracking-[0.15em] text-background/30 mb-4">
+              <h4 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--gold))] mb-4">
                 {t("quick_links")}
               </h4>
               <ul className="space-y-2.5">
@@ -188,8 +193,9 @@ const Footer = memo(() => {
                   <li key={i}>
                     <Link
                       to={link.url || "#"}
-                      className="text-sm text-background/50 hover:text-background transition-colors"
+                      className="text-sm text-background/60 hover:text-[hsl(var(--gold))] transition-colors duration-300 inline-flex items-center gap-1.5 group"
                     >
+                      <span className="w-0 h-px bg-[hsl(var(--gold))] group-hover:w-3 transition-all duration-500 ease-luxe" />
                       {link.label}
                     </Link>
                   </li>
@@ -199,7 +205,7 @@ const Footer = memo(() => {
 
             {/* Categories */}
             <div>
-              <h4 className="text-[11px] font-semibold uppercase tracking-[0.15em] text-background/30 mb-4">
+              <h4 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--gold))] mb-4">
                 {t("categories")}
               </h4>
               <ul className="space-y-2.5">
@@ -207,8 +213,9 @@ const Footer = memo(() => {
                   <li key={i}>
                     <Link
                       to={link.url || "/shop"}
-                      className="text-sm text-background/50 hover:text-background transition-colors"
+                      className="text-sm text-background/60 hover:text-[hsl(var(--gold))] transition-colors duration-300 inline-flex items-center gap-1.5 group"
                     >
+                      <span className="w-0 h-px bg-[hsl(var(--gold))] group-hover:w-3 transition-all duration-500 ease-luxe" />
                       {link.label}
                     </Link>
                   </li>
@@ -218,25 +225,25 @@ const Footer = memo(() => {
 
             {/* Contact */}
             <div>
-              <h4 className="text-[11px] font-semibold uppercase tracking-[0.15em] text-background/30 mb-4">
+              <h4 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--gold))] mb-4">
                 {t("contact_us")}
               </h4>
               <ul className="space-y-3">
                 <li>
-                  <a href={`tel:${phone}`} className="flex items-start gap-2.5 text-sm text-background/50 hover:text-background transition-colors">
-                    <Phone size={14} className="mt-0.5 shrink-0 text-primary" />
+                  <a href={`tel:${phone}`} className="flex items-start gap-2.5 text-sm text-background/60 hover:text-[hsl(var(--gold))] transition-colors duration-300">
+                    <Phone size={14} className="mt-0.5 shrink-0 text-[hsl(var(--gold))]" />
                     <span>{phone}</span>
                   </a>
                 </li>
                 <li>
-                  <a href={`mailto:${storeEmail}`} className="flex items-start gap-2.5 text-sm text-background/50 hover:text-background transition-colors">
-                    <Mail size={14} className="mt-0.5 shrink-0 text-primary" />
+                  <a href={`mailto:${storeEmail}`} className="flex items-start gap-2.5 text-sm text-background/60 hover:text-[hsl(var(--gold))] transition-colors duration-300">
+                    <Mail size={14} className="mt-0.5 shrink-0 text-[hsl(var(--gold))]" />
                     <span>{storeEmail}</span>
                   </a>
                 </li>
                 {address && (
-                  <li className="flex items-start gap-2.5 text-sm text-background/50">
-                    <MapPin size={14} className="mt-0.5 shrink-0 text-primary" />
+                  <li className="flex items-start gap-2.5 text-sm text-background/60">
+                    <MapPin size={14} className="mt-0.5 shrink-0 text-[hsl(var(--gold))]" />
                     <span>{address}</span>
                   </li>
                 )}
@@ -246,7 +253,8 @@ const Footer = memo(() => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-background/8">
+        <div className="border-t border-background/10 relative">
+          <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--gold)/0.30)] to-transparent" />
           <div className="section-container py-4">
             <div className="flex flex-col items-center gap-2.5">
               {showPaymentStrip && (

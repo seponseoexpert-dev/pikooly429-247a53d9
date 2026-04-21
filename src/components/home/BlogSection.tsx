@@ -31,10 +31,15 @@ const BlogSection = () => {
   };
 
   return (
-    <section className="py-8 md:py-12 section-container" style={{ contain: "layout style" }}>
-      <div className="flex items-center justify-between mb-5">
-        <h2 className="section-heading font-display font-semibold text-foreground">Latest from Blog</h2>
-        <Link to="/blog" className="text-sm text-primary font-medium hover:underline inline-flex items-center gap-1">
+    <section className="py-8 md:py-14 section-container" style={{ contain: "layout style" }}>
+      <div className="flex items-end justify-between mb-6 gap-4">
+        <div>
+          <span className="eyebrow mb-2">Stories & Inspiration</span>
+          <h2 className="display-heading text-foreground mt-1.5" style={{ fontSize: "clamp(1.5rem, 3vw + 0.5rem, 2.5rem)" }}>
+            From Our Journal
+          </h2>
+        </div>
+        <Link to="/blog" className="btn-outline-luxe text-xs sm:text-sm shrink-0 px-4 sm:px-5 py-2 sm:py-2.5 inline-flex items-center gap-1.5">
           View All <ArrowRight size={14} />
         </Link>
       </div>

@@ -44,10 +44,13 @@ const CelebrationsCalendar = memo(() => {
   };
 
   return (
-    <section className="py-4 sm:py-6 md:py-8 section-container" style={{ contain: "layout style" }}>
-      <h2 className="section-heading font-display font-bold text-foreground mb-3 sm:mb-4 md:mb-6 text-lg sm:text-xl md:text-2xl">
-        Celebrations Calendar
-      </h2>
+    <section className="py-6 sm:py-9 md:py-12 section-container" style={{ contain: "layout style" }}>
+      <div className="text-center mb-5 sm:mb-7">
+        <span className="gold-rule mb-2.5">Mark Your Date</span>
+        <h2 className="display-heading text-foreground" style={{ fontSize: "clamp(1.5rem, 3vw + 0.5rem, 2.5rem)" }}>
+          Celebrations Calendar
+        </h2>
+      </div>
 
       <div className="relative">
         <div

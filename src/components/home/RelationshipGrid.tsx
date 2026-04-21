@@ -21,32 +21,36 @@ const RelationshipGrid = memo(() => {
   if (items.length === 0) return null;
 
   return (
-    <section className="py-4 sm:py-5 md:py-6 lg:py-8 section-container" style={{ contain: "layout style" }}>
-      <h2 className="section-heading font-display font-semibold text-foreground mb-4 sm:mb-5">
-        For Every Relationship
-      </h2>
+    <section className="py-6 sm:py-8 md:py-10 lg:py-12 section-container" style={{ contain: "layout style" }}>
+      <div className="text-center mb-6 sm:mb-8">
+        <span className="gold-rule mb-2.5">For Every Bond</span>
+        <h2 className="display-heading text-foreground" style={{ fontSize: "clamp(1.5rem, 3vw + 0.5rem, 2.5rem)" }}>
+          For Every Relationship
+        </h2>
+      </div>
 
       {/* Single-row horizontal scroll on mobile/tablet */}
       <div className="lg:hidden -mx-4 px-4">
-        <div className="flex flex-nowrap gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory">
+        <div className="flex flex-nowrap gap-4 sm:gap-5 overflow-x-auto scrollbar-hide pb-3 snap-x snap-mandatory">
           {items.map((item: any) => (
             <Link
               key={item.id}
               to={item.link || `/product-category/${item.slug}`}
-              className="flex flex-col items-center gap-2 group snap-start shrink-0"
+              className="flex flex-col items-center gap-2.5 group snap-start shrink-0"
             >
-              <div className="w-[80px] h-[80px] sm:w-[90px] sm:h-[90px] md:w-[100px] md:h-[100px] rounded-xl overflow-hidden bg-card shadow-[0_2px_12px_-3px_rgba(0,0,0,0.12)] group-hover:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.18)] transition-all duration-300">
+              <div className="relative w-[84px] h-[84px] sm:w-[94px] sm:h-[94px] md:w-[104px] md:h-[104px] rounded-full overflow-hidden bg-card border border-[hsl(var(--gold)/0.25)] shadow-soft group-hover:shadow-luxe group-hover:border-[hsl(var(--gold)/0.6)] transition-all duration-700 ease-luxe">
+                <span aria-hidden className="absolute inset-0 ring-1 ring-inset ring-[hsl(var(--gold)/0.15)] rounded-full pointer-events-none z-10" />
                 <img
                   src={item.image_url || "/placeholder.svg"}
                   alt={item.name}
-                  width={100}
-                  height={100}
+                  width={104}
+                  height={104}
                   decoding="async"
                   loading="lazy"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-700 ease-luxe group-hover:scale-110"
                 />
               </div>
-              <span className="text-[10px] sm:text-[11px] font-medium text-foreground/80 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-1 w-[80px] sm:w-[90px] md:w-[100px]">
+              <span className="text-[11px] sm:text-[12px] font-semibold text-foreground/85 group-hover:text-primary transition-colors duration-500 text-center leading-tight line-clamp-1 w-[84px] sm:w-[94px] md:w-[104px]">
                 {item.name}
               </span>
             </Link>
@@ -55,25 +59,26 @@ const RelationshipGrid = memo(() => {
       </div>
 
       {/* Desktop: single-row scroll */}
-      <div className="hidden lg:flex gap-6 xl:gap-8 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory">
+      <div className="hidden lg:flex justify-center gap-7 xl:gap-9 overflow-x-auto scrollbar-hide pb-3 snap-x snap-mandatory">
         {items.map((item: any) => (
           <Link
             key={item.id}
             to={item.link || `/product-category/${item.slug}`}
-            className="flex flex-col items-center gap-2 group snap-start shrink-0"
+            className="flex flex-col items-center gap-2.5 group snap-start shrink-0"
           >
-            <div className="w-[110px] h-[110px] xl:w-[120px] xl:h-[120px] rounded-xl overflow-hidden bg-card shadow-[0_2px_12px_-3px_rgba(0,0,0,0.12)] group-hover:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.18)] transition-all duration-300 group-hover:scale-[1.03]">
+            <div className="relative w-[114px] h-[114px] xl:w-[124px] xl:h-[124px] rounded-full overflow-hidden bg-card border border-[hsl(var(--gold)/0.25)] shadow-soft group-hover:shadow-luxe group-hover:border-[hsl(var(--gold)/0.6)] transition-all duration-700 ease-luxe group-hover:-translate-y-1">
+              <span aria-hidden className="absolute inset-0 ring-1 ring-inset ring-[hsl(var(--gold)/0.15)] rounded-full pointer-events-none z-10" />
               <img
                 src={item.image_url || "/placeholder.svg"}
                 alt={item.name}
-                width={120}
-                height={120}
+                width={124}
+                height={124}
                 decoding="async"
                 loading="lazy"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-700 ease-luxe group-hover:scale-110"
               />
             </div>
-            <span className="text-xs font-medium text-foreground/80 group-hover:text-foreground transition-colors text-center leading-tight line-clamp-1 max-w-[110px] xl:max-w-[120px]">
+            <span className="text-[13px] font-semibold text-foreground/85 group-hover:text-primary transition-colors duration-500 text-center leading-tight line-clamp-1 max-w-[114px] xl:max-w-[124px]">
               {item.name}
             </span>
           </Link>
