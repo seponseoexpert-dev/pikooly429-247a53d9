@@ -350,12 +350,21 @@
     font-family: 'Lora', serif;
     letter-spacing: -0.01em;
     color: hsl(var(--foreground));
+    min-width: 0;
+  }
+  .luxe-panel-header > span:not(.icon-wrap) {
+    @apply min-w-0 truncate;
   }
   .luxe-panel-header .icon-wrap {
-    @apply inline-flex items-center justify-center w-9 h-9 rounded-full;
+    @apply inline-flex items-center justify-center rounded-full flex-shrink-0;
+    width: 2rem;
+    height: 2rem;
     background: hsl(var(--gold-light));
     color: hsl(var(--gold-deep, var(--gold)));
     border: 1px solid hsl(var(--gold) / 0.25);
+  }
+  @media (min-width: 640px) {
+    .luxe-panel-header .icon-wrap { width: 2.25rem; height: 2.25rem; }
   }
 
   /* Stepper */
