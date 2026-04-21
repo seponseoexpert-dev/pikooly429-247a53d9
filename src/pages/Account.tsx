@@ -12,6 +12,7 @@ import RecentOrders from "@/components/account/RecentOrders";
 import SavedAddresses from "@/components/account/SavedAddresses";
 import WishlistSection from "@/components/account/WishlistSection";
 import WalletSection from "@/components/account/WalletSection";
+import SEOHead from "@/components/seo/SEOHead";
 
 const Account = () => {
   const { user, loading, signOut } = useAuth();
@@ -85,6 +86,7 @@ const Account = () => {
 
   return (
     <main className="section-container py-4 sm:py-6 pb-24 md:pb-10 space-y-4 sm:space-y-5">
+      <SEOHead title="My Account — Pikooly" description="Manage your Pikooly account, orders, addresses, wishlist and wallet balance." noindex />
       {/* Profile Header with Avatar */}
       <ProfileHeader
         userId={user.id}

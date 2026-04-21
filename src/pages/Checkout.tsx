@@ -14,12 +14,13 @@ import { Separator } from "@/components/ui/separator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { toast } from "sonner";
-import { Loader2, ShoppingBag, Truck, CreditCard, Minus, Plus, X, Ticket, Check, ChevronsUpDown, Banknote, Wallet, Smartphone, CalendarDays, Clock } from "lucide-react";
+import { Loader2, ShoppingBag, Truck, CreditCard, Minus, Plus, X, Ticket, Check, ChevronsUpDown, Banknote, Wallet, Smartphone, CalendarDays, Clock, MapPin, Sparkles, ShieldCheck } from "lucide-react";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { cn } from "@/lib/utils";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { shouldSendMail, shouldSendSms, shouldSendPush, shouldSendAdminMail, sendBrowserPush } from "@/lib/notificationHelper";
 import { SameDayAnimation, NextDayAnimation } from "@/components/checkout/DeliveryAnimations";
+import SEOHead from "@/components/seo/SEOHead";
 
 const countryPhoneCodes: Record<string, string> = {
   "Afghanistan": "+93", "Albania": "+355", "Algeria": "+213", "Andorra": "+376", "Angola": "+244",
@@ -617,23 +618,69 @@ const Checkout = () => {
 
   if (items.length === 0) {
     return (
-      <main className="section-container py-6 pb-24 md:pb-10">
-        <div className="text-center py-20">
-          <ShoppingBag size={64} className="mx-auto mb-4 text-muted-foreground/30" />
-          <h2 className="text-xl font-bold mb-2">Your cart is empty</h2>
-          <p className="text-muted-foreground mb-6">Add products to checkout</p>
-          <Button onClick={() => navigate("/shop")} className="rounded-full">
-            Go to Shop
+      <main className="section-container py-10 pb-24 md:pb-16">
+        <SEOHead
+          title="Checkout — Pikooly"
+          description="Securely complete your order on Pikooly. Fast same-day & next-day delivery, multiple payment methods, and gift personalization."
+          noindex
+        />
+        <div className="max-w-md mx-auto text-center py-12 luxe-panel p-10">
+          <div className="w-20 h-20 mx-auto mb-5 rounded-full flex items-center justify-center bg-[hsl(var(--gold-light))] border border-[hsl(var(--gold)/0.3)]">
+            <ShoppingBag size={32} className="text-[hsl(var(--gold-deep))]" />
+          </div>
+          <span className="eyebrow">Empty Cart</span>
+          <h2 className="display-heading text-2xl mt-2 mb-2">Nothing to checkout yet</h2>
+          <p className="text-muted-foreground mb-6 text-sm">Add a few thoughtful gifts to begin.</p>
+          <Button onClick={() => navigate("/shop")} className="btn-luxe">
+            Explore the Collection
           </Button>
         </div>
       </main>
     );
   }
 
+  // Step indicator state derived from form completeness
+  const billingStepDone = !!(form.fullName.trim() && form.phone.trim());
+  const deliveryStepDone = !!(form.recipientName.trim() && form.recipientPhone.trim() && form.address.trim() && selectedDistrict);
+  const paymentStepDone = !!form.paymentMethod;
+
   return (
     <main className="section-container py-4 md:py-8 pb-24 md:pb-10">
+      <SEOHead
+        title="Secure Checkout — Pikooly"
+        description="Securely complete your order on Pikooly. Fast same-day & next-day delivery, multiple payment methods (bKash, Nagad, Cards), and free gift personalization."
+        noindex
+      />
       <div>
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-bold mb-5 sm:mb-8 text-center">YOUR ORDER</h1>
+        {/* Header */}
+        <div className="text-center mb-5 sm:mb-7">
+          <span className="gold-rule mb-2.5">Secure Checkout</span>
+          <h1 className="display-heading text-foreground" style={{ fontSize: "clamp(1.5rem, 3vw + 0.5rem, 2.5rem)" }}>Complete Your Order</h1>
+        </div>
+
+        {/* Step indicator */}
+        <div className="mb-6 sm:mb-8 max-w-2xl mx-auto">
+          <div className="flex items-center justify-between gap-2 sm:gap-3">
+            {[
+              { n: 1, label: "Billing", done: billingStepDone, active: !billingStepDone },
+              { n: 2, label: "Delivery", done: deliveryStepDone, active: billingStepDone && !deliveryStepDone },
+              { n: 3, label: "Payment", done: paymentStepDone && billingStepDone && deliveryStepDone, active: deliveryStepDone && !(paymentStepDone && deliveryStepDone) },
+            ].map((s, idx, arr) => (
+              <div key={s.n} className="flex items-center flex-1">
+                <div className={cn("luxe-step flex-shrink-0", s.done ? "is-done" : s.active ? "is-active" : "")}>
+                  <span className="num">{s.done ? <Check size={14} strokeWidth={3} /> : s.n}</span>
+                  <span className="label hidden xs:inline sm:inline">{s.label}</span>
+                </div>
+                {idx < arr.length - 1 && (
+                  <div className={cn(
+                    "flex-1 h-px mx-2 sm:mx-3 transition-colors duration-500",
+                    s.done ? "bg-[hsl(var(--gold)/0.5)]" : "bg-border"
+                  )} />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-8">
@@ -641,11 +688,11 @@ const Checkout = () => {
             <div className="lg:col-span-2 space-y-5 sm:space-y-8">
               {/* Billing Details */}
               {gatewaySettings.checkout_billing_visible !== "false" && (
-              <section className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-border">
-                <h2 className="text-base sm:text-lg font-bold mb-4 sm:mb-6 flex items-center gap-2">
-                  <CreditCard size={20} className="text-primary" />
-                  Billing Details
-                </h2>
+              <section className="luxe-panel p-4 sm:p-6">
+                <div className="luxe-panel-header mb-4 sm:mb-6">
+                  <span className="icon-wrap"><CreditCard size={17} /></span>
+                  <span>Billing Details</span>
+                </div>
                 <div className="space-y-5">
                   <div>
                     <Label htmlFor="fullName">Full Name <span className="text-destructive">*</span></Label>
@@ -727,11 +774,11 @@ const Checkout = () => {
               )}
 
               {/* Delivery Information */}
-              <section className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-border">
-                <h2 className="text-base sm:text-lg font-bold mb-4 sm:mb-6 flex items-center gap-2">
-                  <Truck size={20} className="text-primary" />
-                  Delivery Information
-                </h2>
+              <section className="luxe-panel p-4 sm:p-6">
+                <div className="luxe-panel-header mb-4 sm:mb-6">
+                  <span className="icon-wrap"><Truck size={17} /></span>
+                  <span>Delivery Information</span>
+                </div>
                 <div className="space-y-5">
                   <div>
                     <Label htmlFor="recipientName">Recipient Name <span className="text-destructive">*</span></Label>
@@ -796,8 +843,11 @@ const Checkout = () => {
               </section>
 
               {/* Payment Method */}
-              <section className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-border">
-                <h2 className="text-base sm:text-lg font-bold mb-3 sm:mb-4">Payment Method</h2>
+              <section className="luxe-panel p-4 sm:p-6">
+                <div className="luxe-panel-header mb-3 sm:mb-4">
+                  <span className="icon-wrap"><ShieldCheck size={17} /></span>
+                  <span>Payment Method</span>
+                </div>
                 <div className="space-y-2.5">
                   {enabledPaymentMethods.length === 0 ? (
                     <p className="text-sm text-muted-foreground text-center py-4">No payment methods available.</p>
@@ -839,246 +889,252 @@ const Checkout = () => {
 
             {/* Right - Order Summary */}
             <div className="lg:col-span-1">
-              <div className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-border sticky top-28">
-                <h2 className="text-sm font-bold mb-3 sm:mb-4 uppercase tracking-wide">Product</h2>
-                
-                <div className="space-y-4 max-h-[300px] overflow-y-auto">
-                  {items.map((item) => (
-                    <div key={item.product.id} className="flex gap-3 items-start">
-                      <img src={(item.product as any).image_url || item.product.image} alt={item.product.name} className="w-14 h-14 object-cover rounded-lg bg-muted" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium leading-tight">{item.product.name}</p>
-                        <div className="flex items-center gap-2 mt-1.5">
-                          <button type="button" onClick={() => removeItem(item.product.id)} className="text-muted-foreground hover:text-destructive"><X size={14} /></button>
-                          <div className="flex items-center border rounded-full">
-                            <button type="button" onClick={() => updateQuantity(item.product.id, Math.max(1, item.quantity - 1))} className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground"><Minus size={12} /></button>
-                            <span className="text-xs font-medium w-6 text-center">{item.quantity}</span>
-                            <button type="button" onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground"><Plus size={12} /></button>
-                          </div>
-                        </div>
-                        {item.customImages && item.customImages.length > 0 && (
-                          <div className="flex gap-1 mt-1.5 flex-wrap">
-                            {item.customImages.map((file, fi) => (
-                              <img key={fi} src={URL.createObjectURL(file)} alt={`Custom ${fi + 1}`} className="w-8 h-8 rounded object-cover border border-border" />
-                            ))}
-                          </div>
-                        )}
-                        <p className="text-sm text-muted-foreground mt-1">{formatPrice(item.product.price * item.quantity)}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-
-                <Separator className="my-4" />
-
-
-                {/* Shipping District */}
-                <div>
-                  <Label className="text-sm font-semibold">
-                    Shipping District <span className="text-destructive">*</span>
-                  </Label>
-                  <Popover open={districtOpen} onOpenChange={setDistrictOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        aria-expanded={districtOpen}
-                        className="w-full mt-1.5 justify-between font-normal h-10"
-                      >
-                        {activeDistrict ? activeDistrict.name : "Select district"}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[--radix-popover-trigger-width] p-0 z-[60] bg-popover" align="start">
-                      <Command>
-                        <CommandInput placeholder="Search district..." />
-                        <CommandList className="max-h-[200px]">
-                          <CommandEmpty>No district found.</CommandEmpty>
-                          <CommandGroup>
-                            {districts.map((d) => (
-                              <CommandItem
-                                key={d.id}
-                                value={d.name}
-                                onSelect={() => {
-                                  setSelectedDistrict(d.id);
-                                  setDistrictOpen(false);
-                                }}
-                              >
-                                <Check className={cn("mr-2 h-4 w-4", selectedDistrict === d.id ? "opacity-100" : "opacity-0")} />
-                                {d.name}
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-
-                  {activeDistrict && (sameDayAvailable || nextDayAvailable) && (
-                    <div className="mt-3 space-y-2">
-                      <p className="text-xs font-semibold text-muted-foreground">
-                        {sameDayAvailable && nextDayAvailable ? "Choose Delivery Speed" : "Delivery Option"}
-                      </p>
-                      <div className={cn(
-                        "grid gap-2",
-                        sameDayAvailable && nextDayAvailable ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1"
-                      )}>
-                        {/* Same Day */}
-                        {sameDayAvailable && (
-                          <button
-                            type="button"
-                            onClick={() => setDeliveryType("same_day")}
-                            className={cn(
-                              "relative text-left rounded-xl border-2 p-3 transition-all",
-                              deliveryType === "same_day"
-                                ? "border-primary bg-primary/5 shadow-sm"
-                                : "border-border bg-background hover:border-primary/40"
-                            )}
-                          >
-                            <div className="flex items-start gap-2">
-                              <div className={cn(
-                                "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center",
-                                deliveryType === "same_day" ? "border-primary" : "border-muted-foreground/40"
-                              )}>
-                                {deliveryType === "same_day" && <div className="w-2 h-2 rounded-full bg-primary" />}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-1.5 text-sm font-semibold">
-                                  <SameDayAnimation />
-                                  {activeDistrict.same_day_label || "Same Day Delivery"}
-                                </div>
-                                <div className="text-[11px] text-muted-foreground mt-0.5">
-                                  Bike, CNG & Private Car ·{" "}
-                                  <span className="font-semibold text-foreground">
-                                    Delivery within 2 hours
-                                  </span>
-                                </div>
-                                <div className="text-base font-bold text-primary mt-1">{formatPrice(sameDayFee)}</div>
-                              </div>
-                            </div>
-                          </button>
-                        )}
-
-                        {/* Next Day */}
-                        {nextDayAvailable && (
-                          <button
-                            type="button"
-                            onClick={() => setDeliveryType("next_day")}
-                            className={cn(
-                              "relative text-left rounded-xl border-2 p-3 transition-all",
-                              deliveryType === "next_day"
-                                ? "border-primary bg-primary/5 shadow-sm"
-                                : "border-border bg-background hover:border-primary/40"
-                            )}
-                          >
-                            <div className="flex items-start gap-2">
-                              <div className={cn(
-                                "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center",
-                                deliveryType === "next_day" ? "border-primary" : "border-muted-foreground/40"
-                              )}>
-                                {deliveryType === "next_day" && <div className="w-2 h-2 rounded-full bg-primary" />}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-1.5 text-sm font-semibold">
-                                  <NextDayAnimation />
-                                  {activeDistrict.next_day_label || "Next Day Delivery"}
-                                </div>
-                                <div className="text-[11px] text-muted-foreground mt-0.5">
-                                  Delivery between{" "}
-                                  <span className="font-semibold text-foreground">
-                                    {(() => {
-                                      const d1 = new Date(); d1.setDate(d1.getDate() + 1);
-                                      const d2 = new Date(); d2.setDate(d2.getDate() + 2);
-                                      const fmt = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-                                      return `${fmt(d1)} – ${fmt(d2)}`;
-                                    })()}
-                                  </span>
-                                  {" "}· Steadfast, Pathao & others couriers
-                                </div>
-                                <div className="text-base font-bold text-primary mt-1">{formatPrice(nextDayFee)}</div>
-                              </div>
-                            </div>
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <Separator className="my-4" />
-
-                {/* Coupon Code */}
-                <div>
-                  <Label className="text-sm font-semibold flex items-center gap-1.5">
-                    <Ticket size={14} className="text-primary" />
-                    Coupon Code
-                  </Label>
-                  {appliedCoupon ? (
-                    <div className="mt-1.5 flex items-center justify-between bg-primary/10 rounded-lg px-3 py-2.5 border border-primary/20">
-                      <div className="flex items-center gap-2">
-                        <Check size={16} className="text-primary" />
-                        <span className="text-sm font-semibold text-primary">{appliedCoupon.code}</span>
-                        <span className="text-xs text-muted-foreground">
-                          (-{appliedCoupon.discount_type === "percentage" ? `${appliedCoupon.discount_value}%` : `৳${appliedCoupon.discount_value}`})
-                        </span>
-                      </div>
-                      <button type="button" onClick={handleRemoveCoupon} className="text-muted-foreground hover:text-destructive">
-                        <X size={16} />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="mt-1.5 flex gap-2">
-                      <Input
-                        placeholder="Enter code"
-                        value={couponCode}
-                        onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                        className="uppercase text-sm"
-                        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleApplyCoupon(); } }}
-                      />
-                      <Button type="button" variant="outline" size="sm" onClick={handleApplyCoupon} disabled={couponLoading || !couponCode.trim()} className="shrink-0 px-4">
-                        {couponLoading ? <Loader2 size={14} className="animate-spin" /> : "Apply"}
-                      </Button>
-                    </div>
-                  )}
-                </div>
-
-                <Separator className="my-4" />
-
-                {/* Summary */}
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Subtotal</span>
-                    <span>{formatPrice(totalPrice)}</span>
+              <div className="luxe-panel p-4 sm:p-6 sticky top-28 overflow-hidden">
+                {/* Decorative gold corner */}
+                <div className="absolute top-0 right-0 w-24 h-24 bg-[hsl(var(--gold)/0.06)] rounded-full blur-2xl pointer-events-none" />
+                <div className="relative">
+                  <div className="luxe-panel-header mb-4 sm:mb-5">
+                    <span className="icon-wrap"><Sparkles size={16} /></span>
+                    <span>Order Summary</span>
                   </div>
-                  {activeDistrict && (
+
+                  <div className="space-y-4 max-h-[280px] overflow-y-auto pr-1 -mr-1 scrollbar-hide">
+                    {items.map((item) => (
+                      <div key={item.product.id} className="flex gap-3 items-start group">
+                        <div className="relative shrink-0">
+                          <img src={(item.product as any).image_url || item.product.image} alt={item.product.name} className="w-16 h-16 object-cover rounded-xl bg-muted shadow-sm" />
+                          <span className="absolute -top-1.5 -right-1.5 w-5 h-5 text-[10px] font-bold rounded-full bg-foreground text-background flex items-center justify-center tabular-nums">{item.quantity}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[13px] font-semibold leading-snug line-clamp-2 text-foreground">{item.product.name}</p>
+                          <div className="flex items-center gap-2 mt-1.5">
+                            <div className="flex items-center bg-muted/60 rounded-full">
+                              <button type="button" onClick={() => updateQuantity(item.product.id, Math.max(1, item.quantity - 1))} className="w-6 h-6 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"><Minus size={11} /></button>
+                              <span className="text-[11px] font-bold w-5 text-center tabular-nums">{item.quantity}</span>
+                              <button type="button" onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="w-6 h-6 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"><Plus size={11} /></button>
+                            </div>
+                            <button type="button" onClick={() => removeItem(item.product.id)} className="text-muted-foreground hover:text-destructive ml-auto" aria-label="Remove item"><X size={13} /></button>
+                          </div>
+                          {item.customImages && item.customImages.length > 0 && (
+                            <div className="flex gap-1 mt-1.5 flex-wrap">
+                              {item.customImages.map((file, fi) => (
+                                <img key={fi} src={URL.createObjectURL(file)} alt={`Custom ${fi + 1}`} className="w-7 h-7 rounded object-cover border border-border" />
+                              ))}
+                            </div>
+                          )}
+                          <p className="text-[13px] font-semibold text-primary mt-1 tabular-nums">{formatPrice(item.product.price * item.quantity)}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="gold-divider my-5" />
+
+                  {/* Shipping District */}
+                  <div>
+                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                      <MapPin size={12} className="text-[hsl(var(--gold-deep))]" />
+                      Shipping District <span className="text-destructive">*</span>
+                    </Label>
+                    <Popover open={districtOpen} onOpenChange={setDistrictOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={districtOpen}
+                          className="w-full mt-2 justify-between font-normal h-11 rounded-xl border-border/70 hover:border-[hsl(var(--gold)/0.4)] transition-colors"
+                        >
+                          {activeDistrict ? activeDistrict.name : "Select district"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[--radix-popover-trigger-width] p-0 z-[60] bg-popover" align="start">
+                        <Command>
+                          <CommandInput placeholder="Search district..." />
+                          <CommandList className="max-h-[200px]">
+                            <CommandEmpty>No district found.</CommandEmpty>
+                            <CommandGroup>
+                              {districts.map((d) => (
+                                <CommandItem
+                                  key={d.id}
+                                  value={d.name}
+                                  onSelect={() => {
+                                    setSelectedDistrict(d.id);
+                                    setDistrictOpen(false);
+                                  }}
+                                >
+                                  <Check className={cn("mr-2 h-4 w-4", selectedDistrict === d.id ? "opacity-100" : "opacity-0")} />
+                                  {d.name}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+
+                    {activeDistrict && (sameDayAvailable || nextDayAvailable) && (
+                      <div className="mt-4 space-y-2.5">
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[hsl(var(--gold-deep))]">
+                          {sameDayAvailable && nextDayAvailable ? "Choose Delivery Speed" : "Delivery Option"}
+                        </p>
+                        <div className={cn(
+                          "grid gap-2.5",
+                          sameDayAvailable && nextDayAvailable ? "grid-cols-1" : "grid-cols-1"
+                        )}>
+                          {/* Same Day */}
+                          {sameDayAvailable && (
+                            <button
+                              type="button"
+                              onClick={() => setDeliveryType("same_day")}
+                              className={cn("luxe-option text-left", deliveryType === "same_day" && "is-selected")}
+                            >
+                              <div className="relative flex items-start gap-3">
+                                <div className={cn(
+                                  "mt-0.5 w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-colors",
+                                  deliveryType === "same_day" ? "border-primary bg-primary/10" : "border-muted-foreground/40"
+                                )}>
+                                  {deliveryType === "same_day" && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center justify-between gap-2">
+                                    <div className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+                                      <SameDayAnimation />
+                                      {activeDistrict.same_day_label || "Same Day Delivery"}
+                                    </div>
+                                    <div className="text-sm font-bold text-primary tabular-nums">{formatPrice(sameDayFee)}</div>
+                                  </div>
+                                  <div className="text-[11px] text-muted-foreground mt-1">
+                                    Bike, CNG & Private Car ·{" "}
+                                    <span className="font-semibold text-foreground">Delivery within 2 hours</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </button>
+                          )}
+
+                          {/* Next Day */}
+                          {nextDayAvailable && (
+                            <button
+                              type="button"
+                              onClick={() => setDeliveryType("next_day")}
+                              className={cn("luxe-option text-left", deliveryType === "next_day" && "is-selected")}
+                            >
+                              <div className="relative flex items-start gap-3">
+                                <div className={cn(
+                                  "mt-0.5 w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-colors",
+                                  deliveryType === "next_day" ? "border-primary bg-primary/10" : "border-muted-foreground/40"
+                                )}>
+                                  {deliveryType === "next_day" && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center justify-between gap-2">
+                                    <div className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+                                      <NextDayAnimation />
+                                      {activeDistrict.next_day_label || "Next Day Delivery"}
+                                    </div>
+                                    <div className="text-sm font-bold text-primary tabular-nums">{formatPrice(nextDayFee)}</div>
+                                  </div>
+                                  <div className="text-[11px] text-muted-foreground mt-1">
+                                    Delivery between{" "}
+                                    <span className="font-semibold text-foreground">
+                                      {(() => {
+                                        const d1 = new Date(); d1.setDate(d1.getDate() + 1);
+                                        const d2 = new Date(); d2.setDate(d2.getDate() + 2);
+                                        const fmt = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+                                        return `${fmt(d1)} – ${fmt(d2)}`;
+                                      })()}
+                                    </span>
+                                    {" "}· Steadfast, Pathao & others couriers
+                                  </div>
+                                </div>
+                              </div>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="gold-divider my-5" />
+
+                  {/* Coupon Code */}
+                  <div>
+                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                      <Ticket size={12} className="text-[hsl(var(--gold-deep))]" />
+                      Coupon Code
+                    </Label>
+                    {appliedCoupon ? (
+                      <div className="luxe-ticket mt-2">
+                        <div className="flex items-center gap-2">
+                          <Check size={15} className="text-[hsl(var(--gold-deep))]" />
+                          <span className="text-sm font-bold text-foreground tracking-wider">{appliedCoupon.code}</span>
+                          <span className="text-xs text-muted-foreground tabular-nums">
+                            (-{appliedCoupon.discount_type === "percentage" ? `${appliedCoupon.discount_value}%` : `৳${appliedCoupon.discount_value}`})
+                          </span>
+                        </div>
+                        <button type="button" onClick={handleRemoveCoupon} className="text-muted-foreground hover:text-destructive transition-colors">
+                          <X size={15} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="mt-2 flex gap-2">
+                        <Input
+                          placeholder="Enter code"
+                          value={couponCode}
+                          onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                          className="uppercase text-sm tracking-wider rounded-xl border-border/70 focus-visible:ring-[hsl(var(--gold)/0.5)]"
+                          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleApplyCoupon(); } }}
+                        />
+                        <Button type="button" variant="outline" size="sm" onClick={handleApplyCoupon} disabled={couponLoading || !couponCode.trim()} className="shrink-0 px-4 rounded-xl border-[hsl(var(--gold)/0.4)] hover:bg-[hsl(var(--gold-light))] hover:border-[hsl(var(--gold)/0.6)] transition-colors">
+                          {couponLoading ? <Loader2 size={14} className="animate-spin" /> : "Apply"}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="gold-divider my-5" />
+
+                  {/* Summary */}
+                  <div className="space-y-2.5 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Delivery</span>
-                      <span>{formatPrice(deliveryFee)}</span>
+                      <span className="text-muted-foreground">Subtotal</span>
+                      <span className="font-medium tabular-nums">{formatPrice(totalPrice)}</span>
                     </div>
-                  )}
-                  {couponDiscount > 0 && (
-                    <div className="flex justify-between text-primary">
-                      <span>Discount</span>
-                      <span>-{formatPrice(couponDiscount)}</span>
-                    </div>
-                  )}
+                    {activeDistrict && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Delivery</span>
+                        <span className="font-medium tabular-nums">{formatPrice(deliveryFee)}</span>
+                      </div>
+                    )}
+                    {couponDiscount > 0 && (
+                      <div className="flex justify-between text-[hsl(var(--gold-deep))]">
+                        <span className="font-semibold">Discount</span>
+                        <span className="font-semibold tabular-nums">-{formatPrice(couponDiscount)}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="gold-divider my-4" />
+
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Total</span>
+                    <span className="text-2xl sm:text-3xl font-bold text-primary tabular-nums" style={{ fontFamily: "'Lora', serif" }}>{formatPrice(grandTotal)}</span>
+                  </div>
+
+                  <Button type="submit" className="btn-luxe w-full mt-5 h-12 sm:h-13 text-sm sm:text-base" disabled={loading}>
+                    {loading ? (
+                      <><Loader2 className="animate-spin mr-2" size={18} /> Processing…</>
+                    ) : (
+                      <>Place Order · <span className="tabular-nums ml-1">{formatPrice(grandTotal)}</span></>
+                    )}
+                  </Button>
+
+                  <p className="text-[11px] text-center text-muted-foreground mt-3 flex items-center justify-center gap-1.5">
+                    <ShieldCheck size={12} className="text-[hsl(var(--gold-deep))]" />
+                    Secure SSL checkout · 100% safe payments
+                  </p>
                 </div>
-
-                <Separator className="my-3" />
-
-                <div className="flex justify-between text-lg font-bold">
-                  <span>Total</span>
-                  <span className="text-primary">{formatPrice(grandTotal)}</span>
-                </div>
-
-                <Button type="submit" className="w-full mt-6 rounded-full h-12 text-base font-semibold" disabled={loading}>
-                  {loading ? (
-                    <><Loader2 className="animate-spin mr-2" size={18} /> Processing...</>
-                  ) : (
-                    `Place Order — ${formatPrice(grandTotal)}`
-                  )}
-                </Button>
               </div>
             </div>
           </div>

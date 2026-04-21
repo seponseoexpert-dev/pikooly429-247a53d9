@@ -4,6 +4,7 @@ import { Search, ArrowLeft, X, Clock, TrendingUp, ArrowUpRight, Mic } from "luci
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
+import SEOHead from "@/components/seo/SEOHead";
 
 const sanitizeSearchTerm = (value: string) =>
   value.replace(/&amp;|&#38;|&#038;/gi, "&").replace(/&nbsp;/gi, " ").replace(/<[^>]*>/g, " ").replace(/[,%()']/g, " ").replace(/\s+/g, " ").trim().slice(0, 60);
@@ -164,6 +165,7 @@ const SearchPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead title="Search — Pikooly" description="Search Pikooly's collection of flowers, gifts, cakes and more." noindex />
       {/* Search Header - sticky, FNP style */}
       <div className="sticky top-0 z-50 bg-card safe-area-top">
         <div className="px-3 py-3 sm:px-4 md:px-6">

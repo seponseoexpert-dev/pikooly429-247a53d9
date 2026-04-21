@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Separator } from "@/components/ui/separator";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
+import SEOHead from "@/components/seo/SEOHead";
 
 const trackingSteps = [
   { key: "pending", label: "Order Placed", icon: Clock },
@@ -68,6 +69,7 @@ const OrderSuccess = () => {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-primary/5 via-background to-background pt-10 sm:pt-16 pb-32 md:pb-10">
+      <SEOHead title="Order Confirmed — Pikooly" description="Thank you! Your order has been placed successfully. Track your delivery status here." noindex />
       <div className="container mx-auto px-4 max-w-xl">
         {/* Success Animation */}
         <motion.div

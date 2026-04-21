@@ -7,6 +7,7 @@ import { ProductCardSkeleton } from "@/components/ui/skeletons";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import SEOHead from "@/components/seo/SEOHead";
 
 const normalizeSearchText = (value: string | null | undefined) =>
   (value || "")
@@ -256,6 +257,11 @@ const Shop = () => {
 
   return (
     <main className="section-container py-3 sm:py-4 md:py-6 lg:py-8 pb-24 md:pb-10">
+      <SEOHead
+        title={`${activeCategoryName || "Shop"} — Pikooly`}
+        description={`Shop ${activeCategoryName || "premium flowers, gifts and cakes"} online at Pikooly. Same-day delivery across Bangladesh.`}
+        canonical={typeof window !== "undefined" ? window.location.href : undefined}
+      />
       <div className="flex items-center justify-between gap-2 mb-3 sm:mb-5 md:mb-6">
         <nav className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground shrink-0">
           <Link to="/" className="hover:text-primary transition-colors">Home</Link>

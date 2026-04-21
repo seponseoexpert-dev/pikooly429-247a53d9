@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Loader2, CheckCircle, XCircle, AlertTriangle, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
+import SEOHead from "@/components/seo/SEOHead";
 
 const EpsCallback = () => {
   const [searchParams] = useSearchParams();
@@ -88,6 +89,7 @@ const EpsCallback = () => {
 
   return (
     <main className="min-h-screen flex items-center justify-center pb-24">
+      <SEOHead title="Payment Verification — Pikooly" description="Verifying your payment status. Please wait." noindex />
       <div className="text-center space-y-6 max-w-md mx-auto px-4">
         {result === "success" && (
           <>

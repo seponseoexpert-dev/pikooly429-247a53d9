@@ -25,15 +25,23 @@ const CartDrawer = () => {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-card z-[70] shadow-2xl flex flex-col"
+            className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-card z-[70] shadow-luxe flex flex-col border-l border-border/60"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-gradient-to-r from-primary/5 to-transparent">
-              <h2 className="font-display text-lg sm:text-xl font-bold flex items-center gap-2.5 text-foreground">
-                <ShoppingBag size={20} className="text-primary" /> Your Cart
-                <span className="ml-1 text-xs font-semibold bg-primary text-primary-foreground rounded-full px-2 py-0.5">{totalItems}</span>
-              </h2>
-              <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-muted rounded-full transition-colors">
+            <div className="relative flex items-center justify-between px-5 py-4 border-b border-border/70 bg-gradient-to-r from-primary/5 via-transparent to-transparent">
+              <div className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-[hsl(var(--gold)/0.45)] to-transparent" />
+              <div className="flex items-center gap-2.5">
+                <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-[hsl(var(--gold-light))] border border-[hsl(var(--gold)/0.3)] text-[hsl(var(--gold-deep))]">
+                  <ShoppingBag size={17} />
+                </span>
+                <div>
+                  <p className="eyebrow text-[10px]">Your Selection</p>
+                  <h2 className="font-display text-base sm:text-lg font-semibold text-foreground leading-none mt-0.5">
+                    Cart <span className="text-muted-foreground font-normal">· {totalItems}</span>
+                  </h2>
+                </div>
+              </div>
+              <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-muted rounded-full transition-colors ease-luxe">
                 <X size={20} />
               </button>
             </div>
@@ -114,19 +122,23 @@ const CartDrawer = () => {
 
             {/* Footer */}
             {items.length > 0 && (
-              <div className="p-4 border-t border-border bg-gradient-to-t from-secondary/30 to-transparent space-y-3">
-                <div className="flex justify-between items-center text-base sm:text-lg font-bold">
-                  <span className="text-muted-foreground">Subtotal</span>
-                  <span className="text-primary text-lg sm:text-xl">{formatPrice(totalPrice)}</span>
+              <div className="p-4 border-t border-border bg-gradient-to-t from-secondary/40 via-transparent to-transparent space-y-3 relative">
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--gold)/0.4)] to-transparent" />
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="eyebrow text-[10px]">Subtotal</p>
+                    <p className="text-[11px] text-muted-foreground">Taxes & delivery at checkout</p>
+                  </div>
+                  <span className="text-primary text-xl sm:text-2xl font-bold tabular-nums" style={{ fontFamily: "'Lora', serif" }}>{formatPrice(totalPrice)}</span>
                 </div>
-                <Link to="/checkout" onClick={() => setIsOpen(false)}>
-                  <Button className="w-full rounded-full h-12 text-sm sm:text-base font-bold tracking-wide shadow-md hover:shadow-lg transition-shadow">
+                <Link to="/checkout" onClick={() => setIsOpen(false)} className="block">
+                  <Button className="btn-luxe w-full h-12 text-sm sm:text-base">
                     Proceed to Checkout
                   </Button>
                 </Link>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="w-full text-center text-sm text-muted-foreground hover:text-foreground transition-colors py-1"
+                  className="w-full text-center text-xs text-muted-foreground hover:text-foreground transition-colors py-1 uppercase tracking-[0.2em] font-semibold"
                 >
                   Continue Shopping
                 </button>

@@ -7,6 +7,7 @@ import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { Search, Package, Truck, CheckCircle, Clock, XCircle, Loader2, MapPin, CreditCard, CalendarDays, Gift } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import SEOHead from "@/components/seo/SEOHead";
 
 const trackingSteps = [
   { key: "pending", label: "Order Placed", desc: "Your order has been received", icon: Clock },
@@ -72,6 +73,7 @@ const TrackOrder = () => {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-primary/5 via-background to-background pt-6 pb-32 md:pb-10">
+      <SEOHead title="Track Your Order — Pikooly" description="Track the real-time status of your Pikooly order — from confirmation to doorstep delivery." canonical={typeof window !== "undefined" ? window.location.href : undefined} />
       <div className="container mx-auto px-4 max-w-lg">
         {/* Hero Section */}
         <motion.div
