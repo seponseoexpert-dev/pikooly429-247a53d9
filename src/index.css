@@ -336,6 +336,84 @@
     transition: opacity 0.6s var(--ease-luxe);
   }
   .premium-image:hover::after { opacity: 1; }
+
+  /* Luxury panel — used on cart, checkout, account sections */
+  .luxe-panel {
+    @apply relative bg-card rounded-2xl border border-border/70;
+    box-shadow: var(--shadow-md);
+    transition: box-shadow 0.5s var(--ease-luxe), border-color 0.4s ease;
+  }
+  .luxe-panel:hover { border-color: hsl(var(--gold) / 0.25); }
+
+  .luxe-panel-header {
+    @apply flex items-center gap-2.5 text-base sm:text-lg font-semibold;
+    font-family: 'Lora', serif;
+    letter-spacing: -0.01em;
+    color: hsl(var(--foreground));
+  }
+  .luxe-panel-header .icon-wrap {
+    @apply inline-flex items-center justify-center w-9 h-9 rounded-full;
+    background: hsl(var(--gold-light));
+    color: hsl(var(--gold-deep, var(--gold)));
+    border: 1px solid hsl(var(--gold) / 0.25);
+  }
+
+  /* Stepper */
+  .luxe-step {
+    @apply relative flex items-center gap-2 text-xs sm:text-sm font-semibold;
+  }
+  .luxe-step .num {
+    @apply inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full text-xs font-bold transition-all;
+    background: hsl(var(--muted));
+    color: hsl(var(--muted-foreground));
+    border: 1.5px solid hsl(var(--border));
+  }
+  .luxe-step.is-active .num {
+    background: var(--gradient-luxe);
+    color: hsl(var(--primary-foreground));
+    border-color: hsl(var(--primary) / 0.4);
+    box-shadow: 0 4px 14px -4px hsl(var(--primary) / 0.45);
+  }
+  .luxe-step.is-done .num {
+    background: hsl(var(--gold-light));
+    color: hsl(var(--gold-deep, var(--gold)));
+    border-color: hsl(var(--gold) / 0.5);
+  }
+  .luxe-step .label { color: hsl(var(--muted-foreground)); }
+  .luxe-step.is-active .label, .luxe-step.is-done .label {
+    color: hsl(var(--foreground));
+  }
+
+  /* Delivery / payment selectable card */
+  .luxe-option {
+    @apply relative rounded-2xl border bg-background p-3.5 sm:p-4 cursor-pointer transition-all;
+    border-color: hsl(var(--border));
+    transition: all 0.4s var(--ease-luxe);
+  }
+  .luxe-option:hover {
+    border-color: hsl(var(--gold) / 0.45);
+    box-shadow: var(--shadow-md);
+  }
+  .luxe-option.is-selected {
+    border-color: hsl(var(--primary) / 0.85);
+    background: linear-gradient(180deg, hsl(var(--ivory)) 0%, hsl(var(--card)) 100%);
+    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.2), var(--shadow-md);
+  }
+  .luxe-option.is-selected::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(135deg, hsl(var(--gold) / 0.06), transparent 60%);
+  }
+
+  /* Animated coupon ticket */
+  .luxe-ticket {
+    @apply relative rounded-xl px-3.5 py-2.5 flex items-center justify-between;
+    background: linear-gradient(135deg, hsl(var(--gold-light)) 0%, hsl(var(--ivory)) 100%);
+    border: 1px dashed hsl(var(--gold) / 0.55);
+  }
 }
 
 @layer utilities {
