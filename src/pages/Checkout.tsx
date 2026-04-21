@@ -665,22 +665,31 @@ const Checkout = () => {
 
         {/* Step indicator */}
         <div className="mb-6 sm:mb-8 max-w-2xl mx-auto px-2">
-          <div className="flex items-center justify-between gap-1 sm:gap-3">
+          <div className="relative flex items-center">
+            {/* Connecting line */}
+            <div className="absolute left-[12%] right-[12%] top-1/2 -translate-y-1/2 h-px bg-border z-0">
+              <div
+                className="h-full bg-[hsl(var(--gold)/0.55)] transition-all duration-500"
+                style={{
+                  width: paymentStepDone && billingStepDone && deliveryStepDone
+                    ? "100%"
+                    : deliveryStepDone
+                    ? "50%"
+                    : billingStepDone
+                    ? "0%"
+                    : "0%",
+                }}
+              />
+            </div>
             {[
               { n: 1, label: "Billing", done: billingStepDone, active: !billingStepDone },
               { n: 2, label: "Delivery", done: deliveryStepDone, active: billingStepDone && !deliveryStepDone },
               { n: 3, label: "Payment", done: paymentStepDone && billingStepDone && deliveryStepDone, active: deliveryStepDone && !(paymentStepDone && deliveryStepDone) },
-            ].map((s, idx, arr) => (
-              <div key={s.n} className={cn("flex items-center", idx === 0 ? "flex-shrink-0" : "flex-1")}>
-                {idx > 0 && (
-                  <div className={cn(
-                    "flex-1 h-px mx-1.5 sm:mx-3 transition-colors duration-500",
-                    s.done || s.active ? "bg-[hsl(var(--gold)/0.5)]" : "bg-border"
-                  )} />
-                )}
-                <div className={cn("luxe-step flex-shrink-0", s.done ? "is-done" : s.active ? "is-active" : "")}>
+            ].map((s) => (
+              <div key={s.n} className="flex-1 flex justify-center relative z-10">
+                <div className={cn("luxe-step flex-col sm:flex-row gap-1 sm:gap-2", s.done ? "is-done" : s.active ? "is-active" : "")}>
                   <span className="num">{s.done ? <Check size={14} strokeWidth={3} /> : s.n}</span>
-                  <span className="label hidden sm:inline">{s.label}</span>
+                  <span className="label text-[10px] sm:text-sm">{s.label}</span>
                 </div>
               </div>
             ))}
