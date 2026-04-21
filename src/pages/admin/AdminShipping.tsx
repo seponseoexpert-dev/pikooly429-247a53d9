@@ -14,8 +14,8 @@ interface District {
   name: string;
   delivery_fee: number;
   delivery_label: string;
-  same_day_fee: number;
-  next_day_fee: number;
+  same_day_fee: number | null;
+  next_day_fee: number | null;
   same_day_label: string;
   next_day_label: string;
   is_active: boolean;
@@ -28,8 +28,8 @@ interface CategoryFee {
   category_id: string;
   delivery_fee: number;
   delivery_label: string;
-  same_day_fee: number;
-  next_day_fee: number;
+  same_day_fee: number | null;
+  next_day_fee: number | null;
 }
 
 const emptyForm = {
@@ -148,13 +148,20 @@ const AdminShipping = () => {
 
   const saveCatFeeMutation = useMutation({
     mutationFn: async (values: { district_id: string; category_id: string; same_day_fee: string; next_day_fee: string; id?: string }) => {
-      const sameDay = parseFloat(values.same_day_fee) || 0;
-      const nextDay = parseFloat(values.next_day_fee) || 0;
+      const sameDayRaw = values.same_day_fee.trim();
+      const nextDayRaw = values.next_day_fee.trim();
+      const sameDay = sameDayRaw === "" ? null : (parseFloat(sameDayRaw) || 0);
+      const nextDay = nextDayRaw === "" ? null : (parseFloat(nextDayRaw) || 0);
+
+      if (sameDay === null && nextDay === null) {
+        throw new Error("At least one delivery option must have a fee");
+      }
+
       const payload = {
         district_id: values.district_id,
         category_id: values.category_id,
-        delivery_fee: sameDay,
-        delivery_label: "Same Day Delivery",
+        delivery_fee: sameDay ?? nextDay ?? 0,
+        delivery_label: sameDay !== null ? "Same Day Delivery" : "Next Day Delivery",
         same_day_fee: sameDay,
         next_day_fee: nextDay,
       };
@@ -339,10 +346,10 @@ const AdminShipping = () => {
                             <Tag className="h-3.5 w-3.5 text-primary shrink-0" />
                             <span className="font-medium flex-1 min-w-0 truncate">{getCategoryName(cf.category_id)}</span>
                             <span className="text-xs inline-flex items-center gap-1 text-amber-600 dark:text-amber-400">
-                              <Zap className="h-3 w-3" /> {formatCurrency(cf.same_day_fee ?? 0)}
+                              <Zap className="h-3 w-3" /> {cf.same_day_fee === null ? "N/A" : formatCurrency(cf.same_day_fee)}
                             </span>
                             <span className="text-xs inline-flex items-center gap-1 text-blue-600 dark:text-blue-400">
-                              <Calendar className="h-3 w-3" /> {formatCurrency(cf.next_day_fee ?? 0)}
+                              <Calendar className="h-3 w-3" /> {cf.next_day_fee === null ? "N/A" : formatCurrency(cf.next_day_fee)}
                             </span>
                             <Button size="sm" variant="ghost" className="text-destructive h-7 w-7 p-0" onClick={() => deleteCatFeeMutation.mutate(cf.id)}>
                               <Trash2 className="h-3.5 w-3.5" />
@@ -366,14 +373,14 @@ const AdminShipping = () => {
                           ))}
                         </select>
                         <Input
-                          placeholder="Same Day Fee"
+                          placeholder="Same Day Fee or blank"
                           type="number"
                           className="h-9"
                           value={catFeeForm.same_day_fee}
                           onChange={(e) => setCatFeeForm({ ...catFeeForm, same_day_fee: e.target.value })}
                         />
                         <Input
-                          placeholder="Next Day Fee"
+                          placeholder="Next Day Fee or blank"
                           type="number"
                           className="h-9"
                           value={catFeeForm.next_day_fee}
