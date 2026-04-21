@@ -350,23 +350,23 @@ const ProductDetail = () => {
         )}
 
         <div className="flex flex-col">
-          <h1 className="text-sm sm:text-base md:text-lg lg:text-xl font-display font-bold text-foreground mb-2 leading-snug line-clamp-3">
+          <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-display font-medium text-foreground mb-2.5 leading-tight tracking-tight line-clamp-3">
             {product.name}
           </h1>
 
-          <div className="flex items-center gap-1 mb-2">
+          <div className="flex items-center gap-1 mb-3">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} size={14} className={i < Math.floor(product.rating || 0) ? "fill-amber-400 text-amber-400" : "text-border"} />
+              <Star key={i} size={14} className={i < Math.floor(product.rating || 0) ? "fill-[hsl(var(--gold))] text-[hsl(var(--gold))]" : "text-border"} />
             ))}
             <span className="text-xs text-muted-foreground ml-1">({product.review_count || 0} Reviews)</span>
           </div>
 
-          <div className="flex items-center gap-3 mb-3">
-            <span className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground">{formatPrice(product.price)}</span>
+          <div className="flex items-center gap-3 mb-4 pb-4 border-b border-border/60">
+            <span className="text-2xl sm:text-3xl md:text-4xl font-display font-semibold text-foreground tracking-tight tabular-nums">{formatPrice(product.price)}</span>
             {product.original_price && product.original_price > product.price && (
               <>
-                <span className="text-sm sm:text-base text-muted-foreground line-through">{formatPrice(product.original_price)}</span>
-                <span className="text-xs sm:text-sm text-primary font-semibold bg-primary/10 px-2 py-0.5 rounded-full">
+                <span className="text-sm sm:text-base text-muted-foreground line-through tabular-nums">{formatPrice(product.original_price)}</span>
+                <span className="chip-luxe">
                   {Math.round((1 - product.price / product.original_price) * 100)}% off
                 </span>
               </>
@@ -415,12 +415,16 @@ const ProductDetail = () => {
           </div>
 
           <div className="flex gap-3 mb-3">
-            <Button size="lg" className="flex-1 h-12 sm:h-[52px] text-sm font-semibold rounded-xl" onClick={handleAddToCart}>
-              <ShoppingBag size={18} /> ADD TO CART
+            <Button size="lg" variant="outline" className="flex-1 h-12 sm:h-[52px] text-xs sm:text-sm font-semibold rounded-full tracking-[0.14em] uppercase border-foreground/20 hover:border-[hsl(var(--gold)/0.6)] hover:bg-[hsl(var(--gold-light))] transition-all duration-500" onClick={handleAddToCart}>
+              <ShoppingBag size={16} /> Add to Cart
             </Button>
-            <Button size="lg" className="flex-1 h-12 sm:h-[52px] text-sm font-semibold rounded-xl bg-accent hover:bg-accent/90 text-accent-foreground" onClick={handleBuyNow}>
-              BUY NOW
-            </Button>
+            <button
+              className="flex-1 h-12 sm:h-[52px] text-xs sm:text-sm font-semibold rounded-full tracking-[0.14em] uppercase text-primary-foreground transition-all duration-500 ease-luxe hover:shadow-luxe active:scale-[0.98] relative overflow-hidden"
+              style={{ background: "var(--gradient-luxe)" }}
+              onClick={handleBuyNow}
+            >
+              Buy Now
+            </button>
           </div>
 
           {whatsappUrl && (
@@ -458,8 +462,11 @@ const ProductDetail = () => {
       </div>
 
       {/* About the product Section - FNP style */}
-      <div className="mt-6 sm:mt-10 md:mt-12">
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-foreground mb-4 sm:mb-5">About the product</h2>
+      <div className="mt-8 sm:mt-12 md:mt-14">
+        <div className="mb-5 sm:mb-6">
+          <span className="eyebrow mb-2">Details</span>
+          <h2 className="display-heading text-foreground mt-1.5" style={{ fontSize: "clamp(1.25rem, 2.4vw + 0.5rem, 2rem)" }}>About the product</h2>
+        </div>
 
         <div className="flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide pb-1 mb-5 sm:mb-6">
           {[
@@ -562,8 +569,11 @@ const ProductDetail = () => {
       </div>
 
       {related.length > 0 && (
-        <section className="mt-6 sm:mt-10 md:mt-12">
-          <h2 className="text-base sm:text-lg md:text-xl font-display font-bold mb-3 sm:mb-4">You May Also Like</h2>
+        <section className="mt-8 sm:mt-12 md:mt-14">
+          <div className="mb-5">
+            <span className="eyebrow mb-2">More to Love</span>
+            <h2 className="display-heading text-foreground mt-1.5" style={{ fontSize: "clamp(1.25rem, 2.4vw + 0.5rem, 2rem)" }}>You May Also Like</h2>
+          </div>
           <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
             {related.map((p: any, i: number) => (
               <div key={p.id} className="min-w-[44vw] w-[44vw] sm:min-w-[180px] sm:w-[180px] md:min-w-[200px] md:w-[200px] lg:min-w-[220px] lg:w-[220px] flex-shrink-0 snap-start">
