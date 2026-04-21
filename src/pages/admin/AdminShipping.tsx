@@ -189,9 +189,9 @@ const AdminShipping = () => {
     setEditingId(d.id);
     setForm({
       name: d.name,
-      same_day_fee: String(d.same_day_fee ?? 0),
+      same_day_fee: d.same_day_fee === null || d.same_day_fee === undefined ? "" : String(d.same_day_fee),
       same_day_label: d.same_day_label || "Same Day Delivery",
-      next_day_fee: String(d.next_day_fee ?? 0),
+      next_day_fee: d.next_day_fee === null || d.next_day_fee === undefined ? "" : String(d.next_day_fee),
       next_day_label: d.next_day_label || "Next Day Delivery",
     });
   };
