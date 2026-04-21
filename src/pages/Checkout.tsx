@@ -274,6 +274,29 @@ const Checkout = () => {
   const sameDayFee = useMemo(() => computeFee("same_day"), [activeDistrict, selectedDistrict, categoryFees, productCategories]);
   const nextDayFee = useMemo(() => computeFee("next_day"), [activeDistrict, selectedDistrict, categoryFees, productCategories]);
 
+  // Availability: an option is available only if admin has configured a fee (> 0) for it.
+  // Free same-day (fee = 0) is allowed when explicitly set via the district's same_day_fee/delivery_fee.
+  const sameDayAvailable = useMemo(() => {
+    if (!activeDistrict) return false;
+    const raw = activeDistrict.same_day_fee ?? activeDistrict.delivery_fee;
+    return raw !== null && raw !== undefined;
+  }, [activeDistrict]);
+  const nextDayAvailable = useMemo(() => {
+    if (!activeDistrict) return false;
+    const raw = activeDistrict.next_day_fee;
+    return raw !== null && raw !== undefined && Number(raw) > 0;
+  }, [activeDistrict]);
+
+  // Auto-select the only available option when district changes
+  useEffect(() => {
+    if (!activeDistrict) return;
+    if (deliveryType === "same_day" && !sameDayAvailable && nextDayAvailable) {
+      setDeliveryType("next_day");
+    } else if (deliveryType === "next_day" && !nextDayAvailable && sameDayAvailable) {
+      setDeliveryType("same_day");
+    }
+  }, [activeDistrict, sameDayAvailable, nextDayAvailable, deliveryType]);
+
   const deliveryFee = deliveryType === "same_day" ? sameDayFee : nextDayFee;
 
   const deliveryLabel =
@@ -892,83 +915,92 @@ const Checkout = () => {
                     </PopoverContent>
                   </Popover>
 
-                  {activeDistrict && (
+                  {activeDistrict && (sameDayAvailable || nextDayAvailable) && (
                     <div className="mt-3 space-y-2">
-                      <p className="text-xs font-semibold text-muted-foreground">Choose Delivery Speed</p>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <p className="text-xs font-semibold text-muted-foreground">
+                        {sameDayAvailable && nextDayAvailable ? "Choose Delivery Speed" : "Delivery Option"}
+                      </p>
+                      <div className={cn(
+                        "grid gap-2",
+                        sameDayAvailable && nextDayAvailable ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1"
+                      )}>
                         {/* Same Day */}
-                        <button
-                          type="button"
-                          onClick={() => setDeliveryType("same_day")}
-                          className={cn(
-                            "relative text-left rounded-xl border-2 p-3 transition-all",
-                            deliveryType === "same_day"
-                              ? "border-primary bg-primary/5 shadow-sm"
-                              : "border-border bg-background hover:border-primary/40"
-                          )}
-                        >
-                          <div className="flex items-start gap-2">
-                            <div className={cn(
-                              "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center",
-                              deliveryType === "same_day" ? "border-primary" : "border-muted-foreground/40"
-                            )}>
-                              {deliveryType === "same_day" && <div className="w-2 h-2 rounded-full bg-primary" />}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-1.5 text-sm font-semibold">
-                                <SameDayAnimation />
-                                {activeDistrict.same_day_label || "Same Day Delivery"}
+                        {sameDayAvailable && (
+                          <button
+                            type="button"
+                            onClick={() => setDeliveryType("same_day")}
+                            className={cn(
+                              "relative text-left rounded-xl border-2 p-3 transition-all",
+                              deliveryType === "same_day"
+                                ? "border-primary bg-primary/5 shadow-sm"
+                                : "border-border bg-background hover:border-primary/40"
+                            )}
+                          >
+                            <div className="flex items-start gap-2">
+                              <div className={cn(
+                                "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center",
+                                deliveryType === "same_day" ? "border-primary" : "border-muted-foreground/40"
+                              )}>
+                                {deliveryType === "same_day" && <div className="w-2 h-2 rounded-full bg-primary" />}
                               </div>
-                              <div className="text-[11px] text-muted-foreground mt-0.5">
-                                Bike, CNG & Private Car ·{" "}
-                                <span className="font-semibold text-foreground">
-                                  Delivery within 2 hours
-                                </span>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-1.5 text-sm font-semibold">
+                                  <SameDayAnimation />
+                                  {activeDistrict.same_day_label || "Same Day Delivery"}
+                                </div>
+                                <div className="text-[11px] text-muted-foreground mt-0.5">
+                                  Bike, CNG & Private Car ·{" "}
+                                  <span className="font-semibold text-foreground">
+                                    Delivery within 2 hours
+                                  </span>
+                                </div>
+                                <div className="text-base font-bold text-primary mt-1">{formatPrice(sameDayFee)}</div>
                               </div>
-                              <div className="text-base font-bold text-primary mt-1">{formatPrice(sameDayFee)}</div>
                             </div>
-                          </div>
-                        </button>
+                          </button>
+                        )}
 
                         {/* Next Day */}
-                        <button
-                          type="button"
-                          onClick={() => setDeliveryType("next_day")}
-                          className={cn(
-                            "relative text-left rounded-xl border-2 p-3 transition-all",
-                            deliveryType === "next_day"
-                              ? "border-primary bg-primary/5 shadow-sm"
-                              : "border-border bg-background hover:border-primary/40"
-                          )}
-                        >
-                          <div className="flex items-start gap-2">
-                            <div className={cn(
-                              "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center",
-                              deliveryType === "next_day" ? "border-primary" : "border-muted-foreground/40"
-                            )}>
-                              {deliveryType === "next_day" && <div className="w-2 h-2 rounded-full bg-primary" />}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-1.5 text-sm font-semibold">
-                                <NextDayAnimation />
-                                {activeDistrict.next_day_label || "Next Day Delivery"}
+                        {nextDayAvailable && (
+                          <button
+                            type="button"
+                            onClick={() => setDeliveryType("next_day")}
+                            className={cn(
+                              "relative text-left rounded-xl border-2 p-3 transition-all",
+                              deliveryType === "next_day"
+                                ? "border-primary bg-primary/5 shadow-sm"
+                                : "border-border bg-background hover:border-primary/40"
+                            )}
+                          >
+                            <div className="flex items-start gap-2">
+                              <div className={cn(
+                                "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center",
+                                deliveryType === "next_day" ? "border-primary" : "border-muted-foreground/40"
+                              )}>
+                                {deliveryType === "next_day" && <div className="w-2 h-2 rounded-full bg-primary" />}
                               </div>
-                              <div className="text-[11px] text-muted-foreground mt-0.5">
-                                Delivery between{" "}
-                                <span className="font-semibold text-foreground">
-                                  {(() => {
-                                    const d1 = new Date(); d1.setDate(d1.getDate() + 1);
-                                    const d2 = new Date(); d2.setDate(d2.getDate() + 2);
-                                    const fmt = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-                                    return `${fmt(d1)} – ${fmt(d2)}`;
-                                  })()}
-                                </span>
-                                {" "}· Steadfast, Pathao & others couriers
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-1.5 text-sm font-semibold">
+                                  <NextDayAnimation />
+                                  {activeDistrict.next_day_label || "Next Day Delivery"}
+                                </div>
+                                <div className="text-[11px] text-muted-foreground mt-0.5">
+                                  Delivery between{" "}
+                                  <span className="font-semibold text-foreground">
+                                    {(() => {
+                                      const d1 = new Date(); d1.setDate(d1.getDate() + 1);
+                                      const d2 = new Date(); d2.setDate(d2.getDate() + 2);
+                                      const fmt = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+                                      return `${fmt(d1)} – ${fmt(d2)}`;
+                                    })()}
+                                  </span>
+                                  {" "}· Steadfast, Pathao & others couriers
+                                </div>
+                                <div className="text-base font-bold text-primary mt-1">{formatPrice(nextDayFee)}</div>
                               </div>
-                              <div className="text-base font-bold text-primary mt-1">{formatPrice(nextDayFee)}</div>
                             </div>
-                          </div>
-                        </button>
+                          </button>
+                        )}
                       </div>
                     </div>
                   )}
