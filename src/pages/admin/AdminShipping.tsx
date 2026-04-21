@@ -234,19 +234,22 @@ const AdminShipping = () => {
         </h3>
         <div className="space-y-3">
           <Input placeholder="District Name (e.g., Dhaka)" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          <div className="rounded-md bg-muted/50 border border-dashed border-border px-3 py-2 text-xs text-muted-foreground">
+            💡 <strong>Tip:</strong> Leave a fee field <em>empty</em> if that delivery option is NOT available in this district. Enter <code className="px-1 bg-background rounded">0</code> to offer it for FREE.
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
-                <Zap className="h-3 w-3 text-amber-500" /> Same Day Fee (৳)
+                <Zap className="h-3 w-3 text-amber-500" /> Same Day Fee (৳) <span className="text-[10px] text-muted-foreground/70 font-normal">— blank = unavailable</span>
               </label>
-              <Input placeholder="e.g., 150" type="number" value={form.same_day_fee} onChange={(e) => setForm({ ...form, same_day_fee: e.target.value })} />
+              <Input placeholder="Empty = not available" type="number" value={form.same_day_fee} onChange={(e) => setForm({ ...form, same_day_fee: e.target.value })} />
               <Input placeholder="Label" value={form.same_day_label} onChange={(e) => setForm({ ...form, same_day_label: e.target.value })} className="text-xs" />
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
-                <Calendar className="h-3 w-3 text-blue-500" /> Next Day Fee (৳)
+                <Calendar className="h-3 w-3 text-blue-500" /> Next Day Fee (৳) <span className="text-[10px] text-muted-foreground/70 font-normal">— blank = unavailable</span>
               </label>
-              <Input placeholder="e.g., 80" type="number" value={form.next_day_fee} onChange={(e) => setForm({ ...form, next_day_fee: e.target.value })} />
+              <Input placeholder="Empty = not available" type="number" value={form.next_day_fee} onChange={(e) => setForm({ ...form, next_day_fee: e.target.value })} />
               <Input placeholder="Label" value={form.next_day_label} onChange={(e) => setForm({ ...form, next_day_label: e.target.value })} className="text-xs" />
             </div>
           </div>
