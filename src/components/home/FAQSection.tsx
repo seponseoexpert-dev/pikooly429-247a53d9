@@ -34,8 +34,9 @@ const FAQSection = () => {
   return (
     <section ref={ref} className="py-4 sm:py-6 md:py-8 lg:py-10 section-container" aria-label="Frequently Asked Questions">
       <div className="max-w-3xl mx-auto">
-        <div className="mb-5 sm:mb-6 md:mb-8 text-center">
-          <h2 className="section-heading font-display font-semibold text-foreground mb-1 sm:mb-2">
+        <div className="mb-6 sm:mb-8 md:mb-10 text-center">
+          <span className="gold-rule mb-2.5">Need Help?</span>
+          <h2 className="display-heading text-foreground" style={{ fontSize: "clamp(1.5rem, 3vw + 0.5rem, 2.5rem)" }}>
             {sectionTitle}
           </h2>
           <p className="text-muted-foreground text-xs sm:text-sm">
