@@ -7,6 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Save, Trash2, Truck, ChevronDown, ChevronUp, Tag, Zap, Calendar } from "lucide-react";
 import { useCurrency } from "@/hooks/useCurrency";
+import { cn } from "@/lib/utils";
 
 interface District {
   id: string;
@@ -91,11 +92,17 @@ const AdminShipping = () => {
 
   const saveMutation = useMutation({
     mutationFn: async (values: typeof form & { id?: string }) => {
-      const sameDay = parseFloat(values.same_day_fee) || 0;
-      const nextDay = parseFloat(values.next_day_fee) || 0;
-      const payload = {
+      // Empty string => option NOT available (null). 0 => available & free.
+      const sameDayRaw = values.same_day_fee.trim();
+      const nextDayRaw = values.next_day_fee.trim();
+      const sameDay = sameDayRaw === "" ? null : (parseFloat(sameDayRaw) || 0);
+      const nextDay = nextDayRaw === "" ? null : (parseFloat(nextDayRaw) || 0);
+      if (sameDay === null && nextDay === null) {
+        throw new Error("At least one delivery option (Same Day or Next Day) must have a fee");
+      }
+      const payload: any = {
         name: values.name.trim(),
-        delivery_fee: sameDay,
+        delivery_fee: sameDay ?? 0,
         delivery_label: values.same_day_label.trim() || "Same Day Delivery",
         same_day_fee: sameDay,
         same_day_label: values.same_day_label.trim() || "Same Day Delivery",
@@ -183,9 +190,9 @@ const AdminShipping = () => {
     setEditingId(d.id);
     setForm({
       name: d.name,
-      same_day_fee: String(d.same_day_fee ?? 0),
+      same_day_fee: d.same_day_fee === null || d.same_day_fee === undefined ? "" : String(d.same_day_fee),
       same_day_label: d.same_day_label || "Same Day Delivery",
-      next_day_fee: String(d.next_day_fee ?? 0),
+      next_day_fee: d.next_day_fee === null || d.next_day_fee === undefined ? "" : String(d.next_day_fee),
       next_day_label: d.next_day_label || "Next Day Delivery",
     });
   };
@@ -228,19 +235,22 @@ const AdminShipping = () => {
         </h3>
         <div className="space-y-3">
           <Input placeholder="District Name (e.g., Dhaka)" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          <div className="rounded-md bg-muted/50 border border-dashed border-border px-3 py-2 text-xs text-muted-foreground">
+            💡 <strong>Tip:</strong> Leave a fee field <em>empty</em> if that delivery option is NOT available in this district. Enter <code className="px-1 bg-background rounded">0</code> to offer it for FREE.
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
-                <Zap className="h-3 w-3 text-amber-500" /> Same Day Fee (৳)
+                <Zap className="h-3 w-3 text-amber-500" /> Same Day Fee (৳) <span className="text-[10px] text-muted-foreground/70 font-normal">— blank = unavailable</span>
               </label>
-              <Input placeholder="e.g., 150" type="number" value={form.same_day_fee} onChange={(e) => setForm({ ...form, same_day_fee: e.target.value })} />
+              <Input placeholder="Empty = not available" type="number" value={form.same_day_fee} onChange={(e) => setForm({ ...form, same_day_fee: e.target.value })} />
               <Input placeholder="Label" value={form.same_day_label} onChange={(e) => setForm({ ...form, same_day_label: e.target.value })} className="text-xs" />
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
-                <Calendar className="h-3 w-3 text-blue-500" /> Next Day Fee (৳)
+                <Calendar className="h-3 w-3 text-blue-500" /> Next Day Fee (৳) <span className="text-[10px] text-muted-foreground/70 font-normal">— blank = unavailable</span>
               </label>
-              <Input placeholder="e.g., 80" type="number" value={form.next_day_fee} onChange={(e) => setForm({ ...form, next_day_fee: e.target.value })} />
+              <Input placeholder="Empty = not available" type="number" value={form.next_day_fee} onChange={(e) => setForm({ ...form, next_day_fee: e.target.value })} />
               <Input placeholder="Label" value={form.next_day_label} onChange={(e) => setForm({ ...form, next_day_label: e.target.value })} className="text-xs" />
             </div>
           </div>
@@ -279,13 +289,19 @@ const AdminShipping = () => {
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-sm">{d.name}</div>
                     <div className="text-xs text-muted-foreground flex flex-wrap gap-x-3 gap-y-0.5 mt-0.5">
-                      <span className="inline-flex items-center gap-1">
+                      <span className={cn(
+                        "inline-flex items-center gap-1",
+                        (d.same_day_fee === null || d.same_day_fee === undefined) && "text-muted-foreground/50 line-through"
+                      )}>
                         <Zap className="h-3 w-3 text-amber-500" />
-                        Same Day: {formatCurrency(d.same_day_fee ?? 0)}
+                        Same Day: {(d.same_day_fee === null || d.same_day_fee === undefined) ? "N/A" : formatCurrency(d.same_day_fee)}
                       </span>
-                      <span className="inline-flex items-center gap-1">
+                      <span className={cn(
+                        "inline-flex items-center gap-1",
+                        (d.next_day_fee === null || d.next_day_fee === undefined) && "text-muted-foreground/50 line-through"
+                      )}>
                         <Calendar className="h-3 w-3 text-blue-500" />
-                        Next Day: {formatCurrency(d.next_day_fee ?? 0)}
+                        Next Day: {(d.next_day_fee === null || d.next_day_fee === undefined) ? "N/A" : formatCurrency(d.next_day_fee)}
                       </span>
                       {districtCatFees.length > 0 && (
                         <span className="text-primary">({districtCatFees.length} category override{districtCatFees.length > 1 ? "s" : ""})</span>
