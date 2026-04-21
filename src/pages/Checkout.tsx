@@ -912,17 +912,17 @@ const Checkout = () => {
                     <span>Order Summary</span>
                   </div>
 
-                  <div className="space-y-4 max-h-[280px] overflow-y-auto pr-1 -mr-1 scrollbar-hide">
+                  <div className="space-y-3 max-h-[320px] overflow-y-auto pr-1 -mr-1 scrollbar-hide">
                     {items.map((item) => (
-                      <div key={item.product.id} className="flex gap-3 items-start group">
+                      <div key={item.product.id} className="flex gap-3 items-start group p-3 rounded-xl border border-border/60 bg-[hsl(var(--ivory))]/40 hover:border-[hsl(var(--gold)/0.35)] transition-colors">
                         <div className="relative shrink-0">
-                          <img src={(item.product as any).image_url || item.product.image} alt={item.product.name} className="w-16 h-16 object-cover rounded-xl bg-muted shadow-sm" />
+                          <img src={(item.product as any).image_url || item.product.image} alt={item.product.name} className="w-16 h-16 object-cover rounded-lg bg-muted shadow-sm" />
                           <span className="absolute -top-1.5 -right-1.5 w-5 h-5 text-[10px] font-bold rounded-full bg-foreground text-background flex items-center justify-center tabular-nums">{item.quantity}</span>
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-[13px] font-semibold leading-snug line-clamp-2 text-foreground">{item.product.name}</p>
                           <div className="flex items-center gap-2 mt-1.5">
-                            <div className="flex items-center bg-muted/60 rounded-full">
+                            <div className="flex items-center bg-background border border-border/70 rounded-full">
                               <button type="button" onClick={() => updateQuantity(item.product.id, Math.max(1, item.quantity - 1))} className="w-6 h-6 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"><Minus size={11} /></button>
                               <span className="text-[11px] font-bold w-5 text-center tabular-nums">{item.quantity}</span>
                               <button type="button" onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="w-6 h-6 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"><Plus size={11} /></button>
