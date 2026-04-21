@@ -664,24 +664,33 @@ const Checkout = () => {
         </div>
 
         {/* Step indicator */}
-        <div className="mb-6 sm:mb-8 max-w-2xl mx-auto">
-          <div className="flex items-center justify-between gap-2 sm:gap-3">
+        <div className="mb-6 sm:mb-8 max-w-2xl mx-auto px-2">
+          <div className="relative flex items-center">
+            {/* Connecting line */}
+            <div className="absolute left-[12%] right-[12%] top-1/2 -translate-y-1/2 h-px bg-border z-0">
+              <div
+                className="h-full bg-[hsl(var(--gold)/0.55)] transition-all duration-500"
+                style={{
+                  width: paymentStepDone && billingStepDone && deliveryStepDone
+                    ? "100%"
+                    : deliveryStepDone
+                    ? "50%"
+                    : billingStepDone
+                    ? "0%"
+                    : "0%",
+                }}
+              />
+            </div>
             {[
               { n: 1, label: "Billing", done: billingStepDone, active: !billingStepDone },
               { n: 2, label: "Delivery", done: deliveryStepDone, active: billingStepDone && !deliveryStepDone },
               { n: 3, label: "Payment", done: paymentStepDone && billingStepDone && deliveryStepDone, active: deliveryStepDone && !(paymentStepDone && deliveryStepDone) },
-            ].map((s, idx, arr) => (
-              <div key={s.n} className="flex items-center flex-1">
-                <div className={cn("luxe-step flex-shrink-0", s.done ? "is-done" : s.active ? "is-active" : "")}>
+            ].map((s) => (
+              <div key={s.n} className="flex-1 flex justify-center relative z-10">
+                <div className={cn("luxe-step flex-col sm:flex-row gap-1 sm:gap-2", s.done ? "is-done" : s.active ? "is-active" : "")}>
                   <span className="num">{s.done ? <Check size={14} strokeWidth={3} /> : s.n}</span>
-                  <span className="label hidden xs:inline sm:inline">{s.label}</span>
+                  <span className="label text-[10px] sm:text-sm">{s.label}</span>
                 </div>
-                {idx < arr.length - 1 && (
-                  <div className={cn(
-                    "flex-1 h-px mx-2 sm:mx-3 transition-colors duration-500",
-                    s.done ? "bg-[hsl(var(--gold)/0.5)]" : "bg-border"
-                  )} />
-                )}
               </div>
             ))}
           </div>
@@ -903,17 +912,17 @@ const Checkout = () => {
                     <span>Order Summary</span>
                   </div>
 
-                  <div className="space-y-4 max-h-[280px] overflow-y-auto pr-1 -mr-1 scrollbar-hide">
+                  <div className="space-y-3 max-h-[320px] overflow-y-auto pr-1 -mr-1 scrollbar-hide">
                     {items.map((item) => (
-                      <div key={item.product.id} className="flex gap-3 items-start group">
+                      <div key={item.product.id} className="flex gap-3 items-start group p-3 rounded-xl border border-border/60 bg-[hsl(var(--ivory))]/40 hover:border-[hsl(var(--gold)/0.35)] transition-colors">
                         <div className="relative shrink-0">
-                          <img src={(item.product as any).image_url || item.product.image} alt={item.product.name} className="w-16 h-16 object-cover rounded-xl bg-muted shadow-sm" />
+                          <img src={(item.product as any).image_url || item.product.image} alt={item.product.name} className="w-16 h-16 object-cover rounded-lg bg-muted shadow-sm" />
                           <span className="absolute -top-1.5 -right-1.5 w-5 h-5 text-[10px] font-bold rounded-full bg-foreground text-background flex items-center justify-center tabular-nums">{item.quantity}</span>
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-[13px] font-semibold leading-snug line-clamp-2 text-foreground">{item.product.name}</p>
                           <div className="flex items-center gap-2 mt-1.5">
-                            <div className="flex items-center bg-muted/60 rounded-full">
+                            <div className="flex items-center bg-background border border-border/70 rounded-full">
                               <button type="button" onClick={() => updateQuantity(item.product.id, Math.max(1, item.quantity - 1))} className="w-6 h-6 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"><Minus size={11} /></button>
                               <span className="text-[11px] font-bold w-5 text-center tabular-nums">{item.quantity}</span>
                               <button type="button" onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="w-6 h-6 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"><Plus size={11} /></button>
