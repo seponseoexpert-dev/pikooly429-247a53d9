@@ -288,13 +288,19 @@ const AdminShipping = () => {
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-sm">{d.name}</div>
                     <div className="text-xs text-muted-foreground flex flex-wrap gap-x-3 gap-y-0.5 mt-0.5">
-                      <span className="inline-flex items-center gap-1">
+                      <span className={cn(
+                        "inline-flex items-center gap-1",
+                        (d.same_day_fee === null || d.same_day_fee === undefined) && "text-muted-foreground/50 line-through"
+                      )}>
                         <Zap className="h-3 w-3 text-amber-500" />
-                        Same Day: {formatCurrency(d.same_day_fee ?? 0)}
+                        Same Day: {(d.same_day_fee === null || d.same_day_fee === undefined) ? "N/A" : formatCurrency(d.same_day_fee)}
                       </span>
-                      <span className="inline-flex items-center gap-1">
+                      <span className={cn(
+                        "inline-flex items-center gap-1",
+                        (d.next_day_fee === null || d.next_day_fee === undefined) && "text-muted-foreground/50 line-through"
+                      )}>
                         <Calendar className="h-3 w-3 text-blue-500" />
-                        Next Day: {formatCurrency(d.next_day_fee ?? 0)}
+                        Next Day: {(d.next_day_fee === null || d.next_day_fee === undefined) ? "N/A" : formatCurrency(d.next_day_fee)}
                       </span>
                       {districtCatFees.length > 0 && (
                         <span className="text-primary">({districtCatFees.length} category override{districtCatFees.length > 1 ? "s" : ""})</span>
