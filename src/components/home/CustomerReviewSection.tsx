@@ -177,8 +177,8 @@ const CustomerReviewSection = () => {
   if (!isLoading && reviews.length === 0) return null;
 
   return (
-    <section className="py-6 sm:py-8 md:py-12 lg:py-14 section-container" aria-label="Customer Reviews" style={{ contain: "layout style" }}>
-      <div className="flex flex-col items-center gap-2 mb-7 md:mb-10 text-center">
+    <section className="py-4 sm:py-6 md:py-8 section-container" aria-label="Customer Reviews" style={{ contain: "layout style" }}>
+      <div className="flex flex-col items-center gap-2 mb-4 md:mb-6 text-center">
         <span className="gold-rule mb-1">Loved By Many</span>
         <h2 className="display-heading text-foreground" style={{ fontSize: "clamp(1.5rem, 3vw + 0.5rem, 2.5rem)" }}>
           Customer Reviews
