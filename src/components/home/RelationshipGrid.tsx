@@ -35,9 +35,9 @@ const RelationshipGrid = memo(() => {
             <Link
               key={item.id}
               to={item.link || `/product-category/${item.slug}`}
-              className="flex flex-col gap-2 group snap-start shrink-0"
+              className="flex flex-col gap-2 group snap-start shrink-0 w-[calc((100vw-2.75rem)/2)] min-w-[calc((100vw-2.75rem)/2)] sm:w-[160px] sm:min-w-[160px] md:w-[180px] md:min-w-[180px] lg:w-[200px] lg:min-w-[200px]"
             >
-              <div className="relative w-[140px] h-[140px] sm:w-[160px] sm:h-[160px] md:w-[180px] md:h-[180px] lg:w-[200px] lg:h-[200px] rounded-2xl overflow-hidden bg-muted/40 transition-all duration-500 group-hover:shadow-md">
+              <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-muted/40 transition-all duration-500 group-hover:shadow-md">
                 <img
                   src={item.image_url || "/placeholder.svg"}
                   alt={item.name}
@@ -48,7 +48,7 @@ const RelationshipGrid = memo(() => {
                   className="w-full h-full object-cover transition-transform duration-700 ease-luxe group-hover:scale-105"
                 />
               </div>
-              <span className="text-sm sm:text-base font-medium text-foreground/90 group-hover:text-primary transition-colors duration-300 text-left leading-tight line-clamp-1 w-[140px] sm:w-[160px] md:w-[180px] lg:w-[200px]">
+              <span className="w-full text-sm sm:text-base font-medium text-foreground/90 group-hover:text-primary transition-colors duration-300 text-left leading-tight line-clamp-1">
                 {item.name}
               </span>
             </Link>
