@@ -48,7 +48,7 @@ const RelationshipGrid = memo(() => {
                   className="w-full h-full object-cover transition-transform duration-700 ease-luxe group-hover:scale-105"
                 />
               </div>
-              <span className="w-full text-sm sm:text-base font-medium text-foreground/90 group-hover:text-primary transition-colors duration-300 text-left leading-tight line-clamp-1">
+              <span className="w-full text-sm sm:text-base font-medium text-foreground/90 group-hover:text-primary transition-colors duration-300 text-center leading-tight line-clamp-1">
                 {item.name}
               </span>
             </Link>
