@@ -84,9 +84,20 @@ const ProductGrid = memo(() => {
 
       {productsLoading ? (
         <div className="py-4">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+          {/* Mobile: horizontal scroll skeleton */}
+          <div className="flex gap-3 overflow-x-auto sm:hidden scrollbar-hide -mx-4 px-4 snap-x snap-mandatory">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i}>
+              <div key={`m-${i}`} className="shrink-0 w-[60%] snap-start">
+                <div className="aspect-square rounded-xl bg-muted animate-pulse" />
+                <div className="mt-2 h-3 w-3/4 rounded bg-muted animate-pulse" />
+                <div className="mt-1.5 h-3 w-1/2 rounded bg-muted animate-pulse" />
+              </div>
+            ))}
+          </div>
+          {/* Tablet/Desktop skeleton grid */}
+          <div className="hidden sm:grid grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={`d-${i}`}>
                 <div className="aspect-square rounded-xl bg-muted animate-pulse" />
                 <div className="mt-2 h-3 w-3/4 rounded bg-muted animate-pulse" />
                 <div className="mt-1.5 h-3 w-1/2 rounded bg-muted animate-pulse" />
@@ -100,20 +111,29 @@ const ProductGrid = memo(() => {
           <p className="text-muted-foreground text-sm">No products found in this category</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-3.5 md:gap-4">
-          {trendingProducts.slice(0, 10).map((product: any, idx: number) => {
-            // Mobile: show 4 (2x2). sm: 6 (2 rows of 3). md: 8 (2 rows of 4). lg: 10 (2 rows of 5).
-            const hideClass =
-              idx >= 4 && idx < 6 ? "hidden sm:block" :
-              idx >= 6 && idx < 8 ? "hidden md:block" :
-              idx >= 8 ? "hidden lg:block" : "";
-            return (
-              <div key={product.id} className={hideClass}>
+        <>
+          {/* Mobile: single horizontal scrolling row */}
+          <div className="flex gap-3 overflow-x-auto sm:hidden scrollbar-hide -mx-4 px-4 snap-x snap-mandatory pb-2">
+            {trendingProducts.slice(0, 10).map((product: any) => (
+              <div key={product.id} className="shrink-0 w-[60%] snap-start">
                 <ProductCard product={product} />
               </div>
-            );
-          })}
-        </div>
+            ))}
+          </div>
+          {/* Tablet & Desktop: grid */}
+          <div className="hidden sm:grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-3.5 md:gap-4">
+            {trendingProducts.slice(0, 10).map((product: any, idx: number) => {
+              const hideClass =
+                idx >= 6 && idx < 8 ? "hidden md:block" :
+                idx >= 8 ? "hidden lg:block" : "";
+              return (
+                <div key={product.id} className={hideClass}>
+                  <ProductCard product={product} />
+                </div>
+              );
+            })}
+          </div>
+        </>
       )}
     </section>
   );
