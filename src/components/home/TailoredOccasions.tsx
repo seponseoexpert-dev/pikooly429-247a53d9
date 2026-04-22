@@ -1,11 +1,10 @@
 import { useState, useMemo, useEffect, memo, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Gift, Star, ChevronRight, ShoppingCart, Clock } from "lucide-react";
+import { Gift, ChevronRight } from "lucide-react";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
-import { useCart } from "@/contexts/CartContext";
-import { getOptimizedCloudinaryUrl } from "@/lib/imageUtils";
+import ProductCard from "@/components/product/ProductCard";
 
 const TailoredOccasions = memo(() => {
   const [activeSlug, setActiveSlug] = useState("");
@@ -197,9 +196,9 @@ const TailoredOccasions = memo(() => {
                 <div
                   key={product.id}
                   style={{ animationDelay: `${i * 60}ms` }}
-                  className="w-[43vw] min-w-[43vw] max-w-[43vw] sm:w-[200px] sm:min-w-[200px] sm:max-w-[200px] md:w-[220px] md:min-w-[220px] md:max-w-[220px] lg:w-[240px] lg:min-w-[240px] lg:max-w-[240px] snap-start shrink-0 motion-safe:animate-fade-in-up"
+                  className="w-[60%] min-w-[60%] max-w-[60%] sm:w-[200px] sm:min-w-[200px] sm:max-w-[200px] md:w-[220px] md:min-w-[220px] md:max-w-[220px] lg:w-[240px] lg:min-w-[240px] lg:max-w-[240px] snap-start shrink-0 motion-safe:animate-fade-in-up"
                 >
-                  <ProductCard product={product} formatPrice={formatPrice} />
+                  <ProductCard product={product} />
                 </div>
               ))}
             </div>
@@ -223,113 +222,6 @@ const TailoredOccasions = memo(() => {
   );
 });
 
-/* FNP-style horizontal product card with Buy Now + Cart */
-const ProductCard = memo(({ product, formatPrice }: { product: any; formatPrice: (n: number) => string }) => {
-  const imgSrc = getOptimizedCloudinaryUrl(product.image_url || "/placeholder.svg", 300);
-  const linkTo = `/product/${product.slug || product.id}`;
-  const navigate = useNavigate();
-  const { addItem } = useCart();
-
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    addItem({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      originalPrice: product.original_price,
-      image: imgSrc,
-      category: product.categories?.name || "",
-      inStock: product.stock > 0,
-      rating: product.rating,
-    });
-  };
-
-  const handleBuyNow = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    addItem(
-      {
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        originalPrice: product.original_price,
-        image: imgSrc,
-        category: product.categories?.name || "",
-        inStock: product.stock > 0,
-        rating: product.rating,
-      },
-      undefined,
-      true
-    );
-    navigate("/checkout");
-  };
-
-  return (
-    <Link
-      to={linkTo}
-      className="group bg-white rounded-lg overflow-hidden flex flex-col border-2 border-border hover:border-primary/40 transition-all duration-300 shadow-sm hover:shadow-md"
-    >
-      {/* Image */}
-      <div className="relative aspect-square overflow-hidden bg-muted/10 p-2 sm:p-3">
-        <img
-          src={imgSrc}
-          alt={product.name}
-          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
-          loading="lazy"
-          decoding="async"
-          width={300}
-          height={300}
-        />
-        {/* Delivery badge */}
-        {product.delivery_time && (
-          <span className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm text-[11px] font-medium px-3 py-1.5 rounded-full flex items-center gap-1.5 text-foreground/80 shadow-md">
-            <Clock size={13} strokeWidth={2} className="text-foreground/60" />
-            {product.delivery_time}
-          </span>
-        )}
-      </div>
-
-      {/* Info */}
-      <div className="px-2.5 pt-2 pb-3 flex flex-col gap-1 flex-1">
-        {/* Product name */}
-        <h3 className="font-sans text-[12px] sm:text-[13px] font-semibold text-foreground leading-snug line-clamp-2 min-h-[32px]">
-          {product.name}
-        </h3>
-
-        {/* Price */}
-        <div className="flex items-baseline gap-1.5 mt-0.5">
-          <span className="text-[14px] sm:text-[16px] font-bold text-foreground">
-            {formatPrice(product.price)}
-          </span>
-          {product.original_price && product.original_price > product.price && (
-            <span className="text-[10px] sm:text-[11px] text-muted-foreground line-through">
-              {formatPrice(product.original_price)}
-            </span>
-          )}
-        </div>
-
-        {/* Buy Now + Cart buttons */}
-        <div className="flex items-center gap-1.5 mt-1.5">
-          <button
-            onClick={handleBuyNow}
-            className="flex-1 bg-[#5a6b2e] hover:bg-[#4a5a24] text-white text-[11px] sm:text-[12px] font-semibold py-2 px-3 rounded-full transition-all duration-200 active:scale-95"
-          >
-            Buy Now
-          </button>
-          <button
-            onClick={handleAddToCart}
-            className="w-9 h-9 flex items-center justify-center rounded-full border-2 border-[#5a6b2e] text-[#5a6b2e] hover:bg-[#5a6b2e] hover:text-white transition-all duration-200 active:scale-95 shrink-0"
-          >
-            <ShoppingCart size={15} strokeWidth={2} />
-          </button>
-        </div>
-      </div>
-    </Link>
-  );
-});
-
 TailoredOccasions.displayName = "TailoredOccasions";
-ProductCard.displayName = "ProductCard";
 
 export default TailoredOccasions;
