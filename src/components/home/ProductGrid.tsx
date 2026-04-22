@@ -112,10 +112,10 @@ const ProductGrid = memo(() => {
         </div>
       ) : (
         <>
-          {/* Mobile: 2-column grid (matches Shop page) */}
-          <div className="grid grid-cols-2 gap-3 sm:hidden">
-            {trendingProducts.slice(0, 8).map((product: any) => (
-              <div key={product.id}>
+          {/* Mobile: single horizontal scrolling row */}
+          <div className="flex gap-3 overflow-x-auto sm:hidden scrollbar-hide -mx-4 px-4 snap-x snap-mandatory pb-2">
+            {trendingProducts.slice(0, 10).map((product: any) => (
+              <div key={product.id} className="shrink-0 w-[60%] snap-start">
                 <ProductCard product={product} />
               </div>
             ))}
