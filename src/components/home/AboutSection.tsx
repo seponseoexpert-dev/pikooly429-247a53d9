@@ -13,9 +13,8 @@ const AboutSection = () => {
 
   return (
     <section className="py-4 sm:py-6 md:py-8 section-container" aria-label="About PikoolyFlora" style={{ contain: "layout style", minHeight: "180px" }}>
-      <div className="mb-4 sm:mb-5">
-        <span className="gold-rule mb-2.5">About Us</span>
-        <h2 className="display-heading text-foreground mt-2" style={{ fontSize: "clamp(1.5rem, 3vw + 0.5rem, 2.5rem)" }}>
+      <div className="mb-3 sm:mb-4">
+        <h2 className="display-heading text-foreground font-bold leading-tight" style={{ fontSize: "clamp(1.25rem, 2vw + 0.5rem, 1.75rem)" }}>
           {title}
         </h2>
       </div>

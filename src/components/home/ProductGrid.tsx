@@ -71,10 +71,10 @@ const ProductGrid = memo(() => {
     <section className="py-3 sm:py-4 md:py-6 section-container" aria-label="Products" style={{ contain: "layout style", minHeight: "420px" }}>
       <div className="flex items-end justify-between mb-3 sm:mb-5 gap-4">
         <div>
-          <h2 className="display-heading text-foreground" style={{ fontSize: "clamp(1.5rem, 3vw + 0.5rem, 2.5rem)" }}>
+          <h2 className="display-heading text-foreground font-bold leading-tight" style={{ fontSize: "clamp(1.25rem, 2vw + 0.5rem, 1.75rem)" }}>
             Trending Now
           </h2>
-          <div className="w-16 h-[2px] bg-gradient-gold mt-2.5 rounded-full" />
+          <div className="w-12 h-[2px] bg-gradient-gold mt-2 rounded-full" />
         </div>
         <Link to="/shop" className="btn-outline-luxe text-xs sm:text-sm shrink-0 px-4 sm:px-5 py-2 sm:py-2.5">
           View All
