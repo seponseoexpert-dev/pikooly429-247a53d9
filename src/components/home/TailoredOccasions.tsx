@@ -3,13 +3,12 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Gift, ChevronRight } from "lucide-react";
-import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import ProductCard from "@/components/product/ProductCard";
+import { getOptimizedCloudinaryUrl } from "@/lib/imageUtils";
 
 const TailoredOccasions = memo(() => {
   const [activeSlug, setActiveSlug] = useState("");
   const [animKey, setAnimKey] = useState(0);
-  const { formatPrice } = useMultiCurrency();
 
   const handleTabChange = useCallback((slug: string) => {
     if (slug !== activeSlug) {
