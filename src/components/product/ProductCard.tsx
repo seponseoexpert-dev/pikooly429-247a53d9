@@ -111,23 +111,25 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
           )}
         </div>
 
-        {/* Split action button */}
-        <button
-          onClick={handleBuyNow}
-          className="mt-3 flex items-stretch rounded-lg border border-primary/40 overflow-hidden hover:border-primary hover:shadow-sm active:scale-[0.98] transition-all duration-300 group/btn"
+        {/* Split action button - coral/pink accent */}
+        <div
+          className="mt-3 flex items-stretch rounded-lg border border-[hsl(345_85%_60%)]/40 overflow-hidden hover:border-[hsl(345_85%_60%)] hover:shadow-sm transition-all duration-300"
         >
-          <span className="flex-1 py-2 text-primary font-semibold text-[12px] sm:text-[13px] text-center group-hover/btn:bg-primary/5 transition-colors">
+          <button
+            onClick={handleBuyNow}
+            className="flex-1 py-2 text-[hsl(345_85%_58%)] font-semibold text-[12px] sm:text-[13px] text-center hover:bg-[hsl(345_85%_60%)]/5 active:scale-[0.98] transition-all"
+          >
             Shop Now
-          </span>
-          <span
+          </button>
+          <span className="w-px bg-[hsl(345_85%_60%)]/30 my-1.5" />
+          <button
             onClick={handleAddToCart}
-            role="button"
             aria-label="Add to Cart"
-            className="px-3 flex items-center justify-center border-l border-primary/40 text-primary group-hover/btn:bg-primary/5 transition-colors"
+            className="px-3.5 flex items-center justify-center text-[hsl(345_85%_58%)] hover:bg-[hsl(345_85%_60%)]/5 active:scale-[0.95] transition-all"
           >
             <ShoppingCart size={15} strokeWidth={2} />
-          </span>
-        </button>
+          </button>
+        </div>
       </div>
     </article>
   );
