@@ -68,8 +68,8 @@ const ProductGrid = memo(() => {
   const cardWidthClass = "w-[44vw] sm:w-[180px] md:w-[200px] lg:w-[210px] xl:w-[220px]";
 
   return (
-    <section className="py-6 sm:py-8 md:py-12 lg:py-14 section-container" aria-label="Products" style={{ contain: "layout style", minHeight: "420px" }}>
-      <div className="flex items-end justify-between mb-5 sm:mb-7 gap-4">
+    <section className="py-3 sm:py-4 md:py-6 section-container" aria-label="Products" style={{ contain: "layout style", minHeight: "420px" }}>
+      <div className="flex items-end justify-between mb-3 sm:mb-5 gap-4">
         <div>
           <h2 className="display-heading text-foreground" style={{ fontSize: "clamp(1.5rem, 3vw + 0.5rem, 2.5rem)" }}>
             Trending Now
