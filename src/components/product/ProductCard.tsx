@@ -52,9 +52,9 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
   };
 
   return (
-    <article className="group relative flex flex-col h-full bg-card rounded-2xl border border-border/60 overflow-hidden transition-all duration-500 ease-luxe hover:border-primary/30 hover:shadow-lg">
+    <article className="group relative flex flex-col h-full bg-white rounded-xl border border-[hsl(0_0%_92%)] overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-shadow duration-300">
       {/* Image */}
-      <Link to={linkTo} className="block relative overflow-hidden aspect-square bg-muted/20">
+      <Link to={linkTo} className="block relative overflow-hidden aspect-square bg-[hsl(0_0%_98%)]">
         <img
           src={imgSrc}
           alt={product.name}
@@ -69,65 +69,63 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
         {/* Wishlist heart - top right */}
         <button
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); setLiked(!liked); }}
-          className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-card/95 backdrop-blur-sm border border-border/60 flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 shadow-sm z-10"
+          className="absolute top-2 right-2 w-7 h-7 rounded-full bg-white border border-[hsl(0_0%_90%)] flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 z-10"
           aria-label="Add to Wishlist"
         >
-          <Heart size={14} className={liked ? "fill-primary text-primary" : "text-foreground/60"} strokeWidth={2} />
+          <Heart size={13} className={liked ? "fill-[hsl(345_85%_58%)] text-[hsl(345_85%_58%)]" : "text-[hsl(0_0%_30%)]"} strokeWidth={1.8} />
         </button>
       </Link>
 
       {/* Content */}
-      <div className="p-3 sm:p-3.5 flex flex-col flex-1">
+      <div className="p-2.5 sm:p-3 flex flex-col flex-1">
         {/* Title */}
         <Link to={linkTo}>
-          <h3 className="font-medium text-[13px] sm:text-[14px] text-foreground line-clamp-1 group-hover:text-primary transition-colors duration-300 leading-snug">
+          <h3 className="text-[12.5px] sm:text-[13.5px] text-[hsl(0_0%_15%)] line-clamp-1 leading-snug font-normal">
             {product.name}
           </h3>
         </Link>
 
         {/* Price */}
-        <div className="mt-1.5 flex items-baseline gap-2">
+        <div className="mt-1.5 flex items-baseline gap-1.5">
           {origPrice && origPrice > product.price && (
-            <span className="text-[12px] sm:text-[13px] text-muted-foreground/70 line-through tabular-nums">
+            <span className="text-[11.5px] sm:text-[13px] text-[hsl(0_0%_55%)] line-through tabular-nums font-normal">
               {formatPrice(origPrice)}
             </span>
           )}
-          <span className="font-bold text-foreground text-[15px] sm:text-[16px] tabular-nums">
+          <span className="font-bold text-[hsl(0_0%_10%)] text-[14px] sm:text-[15.5px] tabular-nums">
             {formatPrice(product.price)}
           </span>
         </div>
 
         {/* Rating + sold */}
-        <div className="mt-1.5 flex items-center gap-1.5 text-[11px] sm:text-[12px]">
+        <div className="mt-1 flex items-center gap-1.5 text-[11px] sm:text-[12px]">
           <div className="flex items-center gap-1">
-            <Star size={12} className="fill-[hsl(142_70%_42%)] text-[hsl(142_70%_42%)]" strokeWidth={0} />
-            <span className="font-semibold text-foreground tabular-nums">{rating > 0 ? rating.toFixed(1) : "—"}</span>
+            <Star size={13} className="fill-[hsl(142_71%_40%)] text-[hsl(142_71%_40%)]" strokeWidth={0} />
+            <span className="font-semibold text-[hsl(0_0%_15%)] tabular-nums">{rating > 0 ? rating.toFixed(1) : "—"}</span>
           </div>
           {sold > 0 && (
             <>
-              <span className="text-border">|</span>
-              <span className="text-muted-foreground tabular-nums">{sold} sold</span>
+              <span className="text-[hsl(0_0%_82%)]">|</span>
+              <span className="text-[hsl(0_0%_45%)] tabular-nums">{sold} sold</span>
             </>
           )}
         </div>
 
-        {/* Split action button - coral/pink accent */}
-        <div
-          className="mt-3 flex items-stretch rounded-lg border border-[hsl(345_85%_60%)]/40 overflow-hidden hover:border-[hsl(345_85%_60%)] hover:shadow-sm transition-all duration-300"
-        >
+        {/* Split action button - coral/pink outlined */}
+        <div className="mt-2.5 flex items-stretch rounded-md border border-[hsl(345_85%_70%)] bg-white overflow-hidden hover:border-[hsl(345_85%_60%)] transition-colors duration-300">
           <button
             onClick={handleBuyNow}
-            className="flex-1 py-2 text-[hsl(345_85%_58%)] font-semibold text-[12px] sm:text-[13px] text-center hover:bg-[hsl(345_85%_60%)]/5 active:scale-[0.98] transition-all"
+            className="flex-1 py-1.5 sm:py-2 text-[hsl(345_82%_55%)] font-semibold text-[12px] sm:text-[13px] text-center hover:bg-[hsl(345_85%_97%)] active:scale-[0.98] transition-all"
           >
             Shop Now
           </button>
-          <span className="w-px bg-[hsl(345_85%_60%)]/30 my-1.5" />
+          <span className="w-px bg-[hsl(345_85%_70%)] my-1" />
           <button
             onClick={handleAddToCart}
             aria-label="Add to Cart"
-            className="px-3.5 flex items-center justify-center text-[hsl(345_85%_58%)] hover:bg-[hsl(345_85%_60%)]/5 active:scale-[0.95] transition-all"
+            className="px-3 sm:px-4 flex items-center justify-center text-[hsl(345_82%_55%)] hover:bg-[hsl(345_85%_97%)] active:scale-[0.95] transition-all"
           >
-            <ShoppingCart size={15} strokeWidth={2} />
+            <ShoppingCart size={15} strokeWidth={1.8} />
           </button>
         </div>
       </div>
