@@ -28,14 +28,14 @@ const RelationshipGrid = memo(() => {
         </h2>
       </div>
 
-      {/* Horizontal scroll on all sizes */}
+      {/* Horizontal scroll: 3 cards visible + 4th peek (FNP style) */}
       <div className="-mx-4 px-4">
         <div className="flex flex-nowrap gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory">
           {items.map((item: any) => (
             <Link
               key={item.id}
               to={item.link || `/product-category/${item.slug}`}
-              className="flex flex-col gap-2 group snap-start shrink-0 w-[calc((100vw-2.75rem)/2)] min-w-[calc((100vw-2.75rem)/2)] sm:w-[160px] sm:min-w-[160px] md:w-[180px] md:min-w-[180px] lg:w-[200px] lg:min-w-[200px]"
+              className="flex flex-col gap-1.5 group snap-start shrink-0 w-[28vw] min-w-[28vw] sm:w-[140px] sm:min-w-[140px] md:w-[160px] md:min-w-[160px] lg:w-[180px] lg:min-w-[180px] max-w-[200px]"
             >
               <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-muted/40 transition-all duration-500 group-hover:shadow-md">
                 <img
