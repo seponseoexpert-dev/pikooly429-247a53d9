@@ -12,7 +12,7 @@ const AboutSection = () => {
   const fullContent = (settings.about_short_text || "") + (settings.about_full_text || "");
 
   return (
-    <section className="py-8 sm:py-10 md:py-14 lg:py-16 section-container" aria-label="About PikoolyFlora" style={{ contain: "layout style", minHeight: "180px" }}>
+    <section className="py-4 sm:py-6 md:py-8 section-container" aria-label="About PikoolyFlora" style={{ contain: "layout style", minHeight: "180px" }}>
       <div className="mb-4 sm:mb-5">
         <span className="gold-rule mb-2.5">About Us</span>
         <h2 className="display-heading text-foreground mt-2" style={{ fontSize: "clamp(1.5rem, 3vw + 0.5rem, 2.5rem)" }}>
