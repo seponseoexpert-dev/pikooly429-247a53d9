@@ -178,16 +178,13 @@ const CustomerReviewSection = () => {
 
   return (
     <section className="py-4 sm:py-6 md:py-8 section-container" aria-label="Customer Reviews" style={{ contain: "layout style" }}>
-      <div className="flex flex-col items-center gap-2 mb-4 md:mb-6 text-center">
-        <span className="gold-rule mb-1">Loved By Many</span>
-        <h2 className="display-heading text-foreground" style={{ fontSize: "clamp(1.5rem, 3vw + 0.5rem, 2.5rem)" }}>
+      <div className="flex items-end justify-between gap-4 mb-3 sm:mb-5">
+        <h2 className="display-heading text-foreground font-bold leading-tight" style={{ fontSize: "clamp(1.25rem, 2vw + 0.5rem, 1.75rem)" }}>
           Customer Reviews
         </h2>
-        <div className="md:flex-1 flex md:justify-end">
-          <a href="/reviews" className="text-xs md:text-sm font-medium text-primary hover:underline transition-colors">
-            Show All Reviews
-          </a>
-        </div>
+        <a href="/reviews" className="text-xs md:text-sm font-medium text-primary hover:underline transition-colors shrink-0">
+          Show All
+        </a>
       </div>
 
       {isLoading ? (
