@@ -21,8 +21,8 @@ const RelationshipGrid = memo(() => {
   if (items.length === 0) return null;
 
   return (
-    <section className="py-6 sm:py-8 md:py-10 lg:py-12 section-container" style={{ contain: "layout style" }}>
-      <div className="mb-4 sm:mb-6">
+    <section className="py-3 sm:py-4 md:py-5 section-container" style={{ contain: "layout style" }}>
+      <div className="mb-3 sm:mb-4">
         <h2 className="font-bold text-foreground text-left" style={{ fontSize: "clamp(1.25rem, 2.5vw + 0.5rem, 2rem)" }}>
           For Every Relationship
         </h2>
