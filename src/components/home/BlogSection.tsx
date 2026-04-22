@@ -31,8 +31,8 @@ const BlogSection = () => {
   };
 
   return (
-    <section className="py-8 md:py-14 section-container" style={{ contain: "layout style" }}>
-      <div className="flex items-end justify-between mb-6 gap-4">
+    <section className="py-4 md:py-7 section-container" style={{ contain: "layout style" }}>
+      <div className="flex items-end justify-between mb-4 gap-4">
         <div>
           <span className="eyebrow mb-2">Stories & Inspiration</span>
           <h2 className="display-heading text-foreground mt-1.5" style={{ fontSize: "clamp(1.5rem, 3vw + 0.5rem, 2.5rem)" }}>
