@@ -190,7 +190,7 @@ const TailoredOccasions = memo(() => {
         ) : (
           <div key={animKey} className="motion-safe:animate-fade-in-up">
             {/* Horizontal scroll - FNP style */}
-            <div className="flex gap-2.5 sm:gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
+            <div className="flex gap-2.5 sm:gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
               {filteredProducts.slice(0, 12).map((product: any, i: number) => (
                 <div
                   key={product.id}
