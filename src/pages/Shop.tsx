@@ -57,12 +57,14 @@ const Shop = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("*, categories(name, slug), subcategories(name, slug), product_categories(category_id, categories(name, slug)), product_subcategories(subcategory_id, subcategories(name, slug))")
+        .select("id, name, slug, price, original_price, image_url, rating, review_count, stock, is_featured, is_active, delivery_time, short_description, tags, category_id, subcategory_id, created_at, categories(name, slug), subcategories(name, slug), product_categories(category_id, categories(name, slug)), product_subcategories(subcategory_id, subcategories(name, slug))")
         .eq("is_active", true)
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .limit(300);
       if (error) throw error;
       return data;
     },
+    staleTime: 5 * 60 * 1000,
     placeholderData: (prev) => prev,
   });
 
@@ -71,12 +73,13 @@ const Shop = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("categories")
-        .select("*")
+        .select("id, name, slug, image_url, description, short_description, long_description, seo_title, faq, display_order, category_type, category_types, show_in_header, show_in_homepage")
         .eq("is_active", true)
         .order("display_order");
       if (error) throw error;
       return data;
     },
+    staleTime: 10 * 60 * 1000,
     placeholderData: (prev) => prev,
   });
 
