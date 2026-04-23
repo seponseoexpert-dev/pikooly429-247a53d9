@@ -1,9 +1,10 @@
 import { useCart } from "@/contexts/CartContext";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Star, Heart, Zap, Clock, Calendar } from "lucide-react";
+import { ShoppingCart, Star, Heart } from "lucide-react";
 import { useState, memo, useMemo } from "react";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { getOptimizedCloudinaryUrl } from "@/lib/imageUtils";
+import { parseDeliveryBadge } from "@/lib/deliveryBadge";
 
 interface ProductCardProps {
   product: {
