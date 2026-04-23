@@ -304,6 +304,15 @@ const ProductDetail = () => {
               onClick={() => setLightboxOpen(true)}
             >
               <img src={currentImg} alt={product.name} className="w-full h-full object-contain p-2 sm:p-3" loading="eager" fetchPriority="high" />
+              {/* Delivery time badge */}
+              {deliveryBadge && (
+                <div className={`absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-gradient-to-br ${deliveryBadge.gradient} ${deliveryBadge.glow} backdrop-blur-sm ring-1 ring-white/30 pointer-events-none`}>
+                  <deliveryBadge.Icon size={13} className="text-white" strokeWidth={2.5} />
+                  <span className="text-[11px] sm:text-xs font-bold text-white uppercase tracking-wide leading-none whitespace-nowrap">
+                    {deliveryBadge.label}
+                  </span>
+                </div>
+              )}
               {/* Zoom overlay on hover (desktop only) */}
               {isZooming && (
                 <div
