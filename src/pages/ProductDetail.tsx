@@ -63,6 +63,7 @@ const ProductDetail = () => {
       return data;
     },
     enabled: !!id,
+    staleTime: 5 * 60 * 1000,
     placeholderData: (prev) => prev,
   });
 
@@ -71,7 +72,7 @@ const ProductDetail = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("*, categories(name, slug)")
+        .select("id, name, slug, price, original_price, image_url, rating, review_count, stock, delivery_time, categories(name, slug)")
         .eq("is_active", true)
         .eq("category_id", product!.category_id!)
         .neq("id", product!.id)
@@ -80,6 +81,7 @@ const ProductDetail = () => {
       return data;
     },
     enabled: !!product?.category_id,
+    staleTime: 5 * 60 * 1000,
     placeholderData: (prev) => prev,
   });
 
