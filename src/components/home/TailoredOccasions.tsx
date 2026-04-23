@@ -118,50 +118,58 @@ const TailoredOccasions = memo(() => {
           </p>
         </div>
 
-        {/* Premium Tabs */}
+        {/* Premium Tabs - clean FNP-style strip */}
         {occasionCategories.length > 0 && (
-          <div className="relative mb-6">
-            <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#d5d5c8] to-transparent" />
-            <div className="flex overflow-x-auto scrollbar-hide gap-0.5">
+          <div className="relative mb-6 sm:mb-7">
+            {/* Bottom hairline */}
+            <div className="absolute bottom-0 left-0 right-0 h-px bg-[hsl(var(--border))]" />
+            <div className="flex overflow-x-auto scrollbar-hide gap-1 sm:gap-2 -mx-4 px-4 sm:mx-0 sm:px-0">
               {occasionCategories.map((cat) => {
                 const isActive = activeSlug === cat.slug;
                 return (
                   <button
                     key={cat.slug}
                     onClick={() => handleTabChange(cat.slug)}
-                    className={`flex flex-col items-center gap-1.5 px-5 sm:px-7 md:px-8 pt-3.5 pb-3 shrink-0 transition-all duration-300 relative rounded-t-xl
-                      ${isActive
-                        ? "bg-gradient-to-b from-[#f0ede4] to-[#e8e4d8] shadow-[0_-2px_10px_rgba(107,124,62,0.1)]"
-                        : "hover:bg-[#f5f3ee]/60"
-                      }`}
+                    aria-pressed={isActive}
+                    className="group relative flex flex-col items-center gap-2 pt-2 pb-3 px-2 sm:px-3 shrink-0 w-[78px] sm:w-[92px] transition-colors duration-200"
                   >
-                    {/* Active indicator bar with glow */}
-                    {isActive && (
-                      <div className="absolute bottom-0 left-1.5 right-1.5 h-[3px] bg-gradient-to-r from-[#8a9a5b] via-[#a3b56e] to-[#6b7c3e] rounded-full z-10 shadow-[0_0_6px_rgba(138,154,91,0.4)]" />
-                    )}
-                    {/* Icon with colorful circle background */}
-                    <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-300 ${
-                      isActive 
-                        ? "bg-gradient-to-br from-[#e8f0d8] to-[#d4e0bc] shadow-[0_2px_8px_rgba(138,154,91,0.25)] scale-110" 
-                        : "bg-[#f5f3ee] group-hover:bg-[#eee]"
-                    }`}>
+                    {/* Icon circle */}
+                    <div
+                      className={`relative w-[58px] h-[58px] sm:w-[64px] sm:h-[64px] rounded-full flex items-center justify-center transition-all duration-300 ${
+                        isActive
+                          ? "bg-[hsl(var(--ivory))] ring-2 ring-[hsl(var(--primary))] shadow-[0_4px_14px_-4px_hsl(var(--primary)/0.35)]"
+                          : "bg-[hsl(var(--muted))] ring-1 ring-[hsl(var(--border))] group-hover:ring-[hsl(var(--primary)/0.4)]"
+                      }`}
+                    >
                       {cat.image_url ? (
                         <img
-                          src={getOptimizedCloudinaryUrl(cat.image_url, 60)}
+                          src={getOptimizedCloudinaryUrl(cat.image_url, 96)}
                           alt={cat.name}
-                          className={`w-7 h-7 sm:w-8 sm:h-8 object-contain transition-all duration-300 drop-shadow-sm ${isActive ? "drop-shadow-md" : ""}`}
+                          className="w-9 h-9 sm:w-10 sm:h-10 object-contain"
                           loading="lazy"
                           decoding="async"
-                          width={32}
-                          height={32}
+                          width={40}
+                          height={40}
                         />
                       ) : (
-                        <Gift size={22} strokeWidth={1.5} className={`transition-colors duration-300 ${isActive ? "text-[#5a6b2e]" : "text-muted-foreground"}`} />
+                        <Gift size={22} strokeWidth={1.5} className={isActive ? "text-[hsl(var(--primary))]" : "text-muted-foreground"} />
                       )}
                     </div>
-                    <span className={`text-[11px] sm:text-[12.5px] whitespace-nowrap leading-tight transition-all duration-200 ${isActive ? "font-bold text-[#3d4a24]" : "font-medium text-muted-foreground"}`}>
+                    {/* Label */}
+                    <span
+                      className={`text-[11px] sm:text-[12px] leading-tight text-center line-clamp-1 transition-colors duration-200 ${
+                        isActive ? "font-semibold text-[hsl(var(--primary))]" : "font-medium text-foreground/70 group-hover:text-foreground"
+                      }`}
+                    >
                       {cat.name}
                     </span>
+                    {/* Active underline */}
+                    <span
+                      aria-hidden
+                      className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] rounded-full bg-[hsl(var(--primary))] transition-all duration-300 ${
+                        isActive ? "w-8 opacity-100" : "w-0 opacity-0"
+                      }`}
+                    />
                   </button>
                 );
               })}
