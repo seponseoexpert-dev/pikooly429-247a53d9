@@ -213,22 +213,7 @@ const ProductDetail = () => {
   const currentImg = allImages[selectedImage] || mainImg;
 
   // Delivery badge based on product.delivery_time
-  const deliveryBadge = (() => {
-    const txt = (product.delivery_time || "").toLowerCase().trim();
-    if (!txt) return null;
-    if (/\b(30|40|45|60)\s*(min|minute)/i.test(txt) || txt.includes("express") || txt.includes("instant")) {
-      const match = txt.match(/\b(\d{2,3})\s*(min|minute)/i);
-      const mins = match ? match[1] : "40";
-      return { label: `${mins} Min`, Icon: Zap, gradient: "from-[hsl(28_95%_55%)] to-[hsl(14_92%_52%)]", glow: "shadow-[0_2px_8px_hsl(20_92%_52%/0.45)]" };
-    }
-    if (txt.includes("same")) {
-      return { label: "Same Day", Icon: Clock, gradient: "from-[hsl(142_71%_42%)] to-[hsl(160_75%_38%)]", glow: "shadow-[0_2px_8px_hsl(150_71%_38%/0.4)]" };
-    }
-    if (txt.includes("next") || txt.includes("tomorrow")) {
-      return { label: "Next Day", Icon: Calendar, gradient: "from-[hsl(220_85%_56%)] to-[hsl(245_82%_58%)]", glow: "shadow-[0_2px_8px_hsl(230_82%_55%/0.4)]" };
-    }
-    return { label: product.delivery_time!, Icon: Clock, gradient: "from-[hsl(0_0%_25%)] to-[hsl(0_0%_15%)]", glow: "shadow-[0_2px_6px_rgba(0,0,0,0.25)]" };
-  })();
+  const deliveryBadge = parseDeliveryBadge(product.delivery_time);
 
   const cartProduct = {
     id: product.id,
