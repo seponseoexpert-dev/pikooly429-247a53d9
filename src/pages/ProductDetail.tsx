@@ -389,15 +389,19 @@ const ProductDetail = () => {
                 <Type size={18} className="text-primary" />
                 <span className="text-sm font-semibold text-foreground">Add Personalised Text</span>
               </div>
-              <input
-                type="text"
-                value={customText}
-                onChange={(e) => setCustomText(e.target.value.slice(0, 50))}
-                placeholder="Enter Name for Personalization"
-                className="w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
-                maxLength={50}
-              />
-              <p className="text-[11px] text-muted-foreground mt-1.5">{customText.length}/50 characters</p>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={customText}
+                  onChange={(e) => setCustomText(e.target.value.slice(0, 12))}
+                  placeholder="Enter Name For Personalisation"
+                  className="w-full border border-border rounded-lg pl-3 pr-14 py-2.5 text-base bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                  maxLength={12}
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground tabular-nums">
+                  {customText.length}/12
+                </span>
+              </div>
             </div>
           )}
 
