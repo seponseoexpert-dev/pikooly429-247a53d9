@@ -219,6 +219,51 @@ const Checkout = () => {
     },
   });
 
+  // Fetch product delivery_time for each cart item (to validate same/next day)
+  const { data: productDeliveryInfo = [] } = useQuery({
+    queryKey: ["checkout-product-delivery", items.map((i) => i.product.id).join(",")],
+    queryFn: async () => {
+      if (items.length === 0) return [];
+      const productIds = items.map((i) => i.product.id);
+      const { data, error } = await supabase
+        .from("products")
+        .select("id, name, delivery_time")
+        .in("id", productIds);
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: items.length > 0,
+  });
+
+  // Classify each product: supports same_day if delivery_time mentions "same"; otherwise next_day only
+  const productSupports = useMemo(() => {
+    const map = new Map<string, { name: string; sameDay: boolean; nextDay: boolean; label: string }>();
+    productDeliveryInfo.forEach((p: any) => {
+      const txt = (p.delivery_time || "").toLowerCase().trim();
+      // Default: if no delivery_time set, allow both (admin hasn't restricted)
+      const hasInfo = txt.length > 0;
+      const sameDay = !hasInfo || txt.includes("same");
+      const nextDay = !hasInfo || txt.includes("next") || txt.includes("day") || !txt.includes("same");
+      map.set(p.id, { name: p.name, sameDay, nextDay, label: p.delivery_time || "" });
+    });
+    return map;
+  }, [productDeliveryInfo]);
+
+  // Find products that don't support the selected delivery type
+  const incompatibleItems = useMemo(() => {
+    return items
+      .map((i) => {
+        const info = productSupports.get(i.product.id);
+        if (!info) return null;
+        const ok = deliveryType === "same_day" ? info.sameDay : info.nextDay;
+        if (ok) return null;
+        return { id: i.product.id, name: i.product.name, label: info.label };
+      })
+      .filter(Boolean) as Array<{ id: string; name: string; label: string }>;
+  }, [items, productSupports, deliveryType]);
+
+  const hasDeliveryMismatch = incompatibleItems.length > 0;
+
   // Fetch all category_ids for cart products (via product_categories many-to-many)
   const { data: productCategories = [] } = useQuery({
     queryKey: ["checkout-product-categories", items.map((i) => i.product.id).join(",")],
