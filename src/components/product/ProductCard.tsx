@@ -1,7 +1,7 @@
 import { useCart } from "@/contexts/CartContext";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, Star, Heart } from "lucide-react";
-import { useState, memo, useMemo } from "react";
+import { useState, memo, useMemo, useCallback } from "react";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { getOptimizedCloudinaryUrl } from "@/lib/imageUtils";
 import { parseDeliveryBadge } from "@/lib/deliveryBadge";
@@ -34,7 +34,7 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
   const [liked, setLiked] = useState(false);
   const origPrice = product.original_price ?? product.originalPrice;
   const rawImg = product.image_url || product.image || "/placeholder.svg";
-  const imgSrc = useMemo(() => getOptimizedCloudinaryUrl(rawImg, 400), [rawImg]);
+  const imgSrc = useMemo(() => getOptimizedCloudinaryUrl(rawImg, 360), [rawImg]);
   const linkTo = `/product/${product.slug || product.id}`;
   const rating = product.rating ?? 0;
   const sold = product.review_count ?? 0;
@@ -42,18 +42,24 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
   // Parse delivery_time → choose badge style (Same Day / 40 Min / Next Day)
   const deliveryBadge = useMemo(() => parseDeliveryBadge(product.delivery_time), [product.delivery_time]);
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+  const handleAddToCart = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     addItem({ id: product.id, name: product.name, price: product.price, image: imgSrc, category: product.category || "", inStock: product.stock !== 0 });
-  };
+  }, [addItem, product.id, product.name, product.price, imgSrc, product.category, product.stock]);
 
-  const handleBuyNow = (e: React.MouseEvent) => {
+  const handleBuyNow = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     addItem({ id: product.id, name: product.name, price: product.price, image: imgSrc, category: product.category || "", inStock: product.stock !== 0 }, undefined, true);
     navigate("/checkout");
-  };
+  }, [addItem, navigate, product.id, product.name, product.price, imgSrc, product.category, product.stock]);
+
+  const toggleLiked = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setLiked((v) => !v);
+  }, []);
 
   return (
     <article className="group relative flex flex-col h-full bg-white rounded-xl border border-[hsl(0_0%_92%)] overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-shadow duration-300">
@@ -84,7 +90,7 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
 
         {/* Wishlist heart - top right */}
         <button
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setLiked(!liked); }}
+          onClick={toggleLiked}
           className="absolute top-2 right-2 w-7 h-7 rounded-full bg-white border border-[hsl(0_0%_90%)] flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 z-10"
           aria-label="Add to Wishlist"
         >
