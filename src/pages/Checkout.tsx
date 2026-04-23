@@ -713,39 +713,6 @@ const Checkout = () => {
           </h1>
         </div>
 
-        {/* Step indicator */}
-        <div className="mb-6 sm:mb-8 max-w-2xl mx-auto px-2">
-          <div className="relative flex items-center">
-            {/* Connecting line */}
-            <div className="absolute left-[12%] right-[12%] top-1/2 -translate-y-1/2 h-px bg-border z-0">
-              <div
-                className="h-full bg-[hsl(var(--gold)/0.55)] transition-all duration-500"
-                style={{
-                  width: paymentStepDone && billingStepDone && deliveryStepDone
-                    ? "100%"
-                    : deliveryStepDone
-                    ? "50%"
-                    : billingStepDone
-                    ? "0%"
-                    : "0%",
-                }}
-              />
-            </div>
-            {[
-              { n: 1, label: "Billing", done: billingStepDone, active: !billingStepDone },
-              { n: 2, label: "Delivery", done: deliveryStepDone, active: billingStepDone && !deliveryStepDone },
-              { n: 3, label: "Payment", done: paymentStepDone && billingStepDone && deliveryStepDone, active: deliveryStepDone && !(paymentStepDone && deliveryStepDone) },
-            ].map((s) => (
-              <div key={s.n} className="flex-1 flex justify-center relative z-10">
-                <div className={cn("luxe-step flex-col sm:flex-row gap-1 sm:gap-2", s.done ? "is-done" : s.active ? "is-active" : "")}>
-                  <span className="num">{s.done ? <Check size={14} strokeWidth={3} /> : s.n}</span>
-                  <span className="label text-[10px] sm:text-sm">{s.label}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-8">
             {/* Left - Billing & Delivery */}
