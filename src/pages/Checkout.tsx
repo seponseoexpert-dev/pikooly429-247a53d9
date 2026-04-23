@@ -14,7 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { toast } from "sonner";
-import { Loader2, ShoppingBag, Truck, CreditCard, Minus, Plus, X, Ticket, Check, ChevronsUpDown, Banknote, Wallet, Smartphone, CalendarDays, Clock, MapPin, Sparkles, ShieldCheck } from "lucide-react";
+import { Loader2, ShoppingBag, Truck, CreditCard, Minus, Plus, X, Ticket, Check, ChevronsUpDown, Banknote, Wallet, Smartphone, CalendarDays, Clock, MapPin, Sparkles, ShieldCheck, AlertTriangle } from "lucide-react";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { cn } from "@/lib/utils";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -439,6 +439,11 @@ const Checkout = () => {
 
     if (items.length === 0) {
       toast.error("Your cart is empty");
+      return;
+    }
+
+    if (hasDeliveryMismatch) {
+      toast.error(`${incompatibleItems.length} item(s) don't support ${deliveryType === "same_day" ? "Same Day" : "Next Day"} delivery. Please switch delivery option or remove them.`);
       return;
     }
 
@@ -1111,13 +1116,37 @@ const Checkout = () => {
                             </button>
                           )}
                         </div>
+
+                        {/* Delivery mismatch warning */}
+                        {hasDeliveryMismatch && (
+                          <div className="mt-3 p-3 rounded-xl border border-destructive/40 bg-destructive/5">
+                            <div className="flex items-start gap-2">
+                              <AlertTriangle size={16} className="text-destructive shrink-0 mt-0.5" />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-[12px] font-semibold text-destructive leading-tight">
+                                  {incompatibleItems.length === 1 ? "1 item is" : `${incompatibleItems.length} items are`} not available for {deliveryType === "same_day" ? "Same Day" : "Next Day"} delivery
+                                </p>
+                                <ul className="mt-1.5 space-y-0.5">
+                                  {incompatibleItems.slice(0, 3).map((it) => (
+                                    <li key={it.id} className="text-[11px] text-foreground/80 flex items-center justify-between gap-2">
+                                      <span className="truncate">• {it.name}</span>
+                                      {it.label && <span className="text-muted-foreground shrink-0 text-[10px]">{it.label}</span>}
+                                    </li>
+                                  ))}
+                                  {incompatibleItems.length > 3 && (
+                                    <li className="text-[11px] text-muted-foreground">+{incompatibleItems.length - 3} more</li>
+                                  )}
+                                </ul>
+                                <p className="text-[11px] text-muted-foreground mt-2">
+                                  Switch delivery option above, or remove these items from cart to continue.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
-
-                  <div className="gold-divider my-5" />
-
-                  {/* Coupon Code */}
                   <div>
                     <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                       <Ticket size={12} className="text-[hsl(var(--gold-deep))]" />
