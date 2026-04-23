@@ -105,25 +105,21 @@ const TailoredOccasions = memo(() => {
   if (occasionCategories.length === 0 && !isLoading) return null;
 
   return (
-    <section className="bg-gradient-to-b from-[hsl(var(--ivory))] via-[hsl(var(--cream))] to-background py-8 sm:py-12 md:py-14" aria-label="Tailored For Your Occasions">
+    <section className="bg-background py-6 sm:py-10 md:py-12" aria-label="Tailored For Your Occasions">
       <div className="section-container">
-        {/* Title */}
-        <div className="text-center mb-6 sm:mb-8">
-          <span className="gold-rule mb-2.5">Hand-Picked</span>
-          <h2 className="display-heading text-foreground" style={{ fontSize: "clamp(1.5rem, 3vw + 0.5rem, 2.5rem)" }}>
+        {/* Title - FNP style: bold, left-aligned, no eyebrow */}
+        <div className="mb-3 sm:mb-4">
+          <h2 className="font-bold text-foreground tracking-tight" style={{ fontSize: "clamp(1.25rem, 2.2vw + 0.5rem, 2rem)" }}>
             Tailored For Your Occasions
           </h2>
-          <p className="text-muted-foreground text-[13px] sm:text-sm mt-2">
-            Find the perfect gift for every special moment
-          </p>
         </div>
 
-        {/* Premium Tabs - clean FNP-style strip */}
+        {/* FNP-style folder-tab strip */}
         {occasionCategories.length > 0 && (
-          <div className="relative mb-6 sm:mb-7">
-            {/* Bottom hairline */}
+          <div className="relative mb-4 sm:mb-5">
+            {/* Bottom hairline that the active tab sits on */}
             <div className="absolute bottom-0 left-0 right-0 h-px bg-[hsl(var(--border))]" />
-            <div className="flex overflow-x-auto scrollbar-hide gap-1 sm:gap-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+            <div className="flex overflow-x-auto scrollbar-hide gap-0 -mx-4 px-4 sm:mx-0 sm:px-0">
               {occasionCategories.map((cat) => {
                 const isActive = activeSlug === cat.slug;
                 return (
@@ -131,45 +127,36 @@ const TailoredOccasions = memo(() => {
                     key={cat.slug}
                     onClick={() => handleTabChange(cat.slug)}
                     aria-pressed={isActive}
-                    className="group relative flex flex-col items-center gap-2 pt-2 pb-3 px-2 sm:px-3 shrink-0 w-[78px] sm:w-[92px] transition-colors duration-200"
+                    className={`group relative flex flex-col items-center justify-end gap-1.5 pt-3 pb-3 px-3 sm:px-4 shrink-0 w-[88px] sm:w-[110px] transition-colors duration-200 ${
+                      isActive
+                        ? "bg-[hsl(var(--ivory))] rounded-t-xl border-t-2 border-x border-[hsl(var(--primary))] border-b-0 -mb-px"
+                        : "border-b border-transparent"
+                    }`}
                   >
-                    {/* Icon circle */}
-                    <div
-                      className={`relative w-[58px] h-[58px] sm:w-[64px] sm:h-[64px] rounded-full flex items-center justify-center transition-all duration-300 ${
-                        isActive
-                          ? "bg-[hsl(var(--ivory))] ring-2 ring-[hsl(var(--primary))] shadow-[0_4px_14px_-4px_hsl(var(--primary)/0.35)]"
-                          : "bg-[hsl(var(--muted))] ring-1 ring-[hsl(var(--border))] group-hover:ring-[hsl(var(--primary)/0.4)]"
-                      }`}
-                    >
+                    {/* Icon */}
+                    <div className="flex items-center justify-center h-9 sm:h-10">
                       {cat.image_url ? (
                         <img
                           src={getOptimizedCloudinaryUrl(cat.image_url, 96)}
                           alt={cat.name}
-                          className="w-9 h-9 sm:w-10 sm:h-10 object-contain"
+                          className={`w-8 h-8 sm:w-9 sm:h-9 object-contain transition-opacity ${isActive ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}
                           loading="lazy"
                           decoding="async"
-                          width={40}
-                          height={40}
+                          width={36}
+                          height={36}
                         />
                       ) : (
-                        <Gift size={22} strokeWidth={1.5} className={isActive ? "text-[hsl(var(--primary))]" : "text-muted-foreground"} />
+                        <Gift size={26} strokeWidth={1.5} className={isActive ? "text-[hsl(var(--primary))]" : "text-foreground/70"} />
                       )}
                     </div>
                     {/* Label */}
                     <span
-                      className={`text-[11px] sm:text-[12px] leading-tight text-center line-clamp-1 transition-colors duration-200 ${
-                        isActive ? "font-semibold text-[hsl(var(--primary))]" : "font-medium text-foreground/70 group-hover:text-foreground"
+                      className={`text-[12px] sm:text-[13px] leading-tight text-center line-clamp-1 transition-colors duration-200 ${
+                        isActive ? "font-semibold text-[hsl(var(--primary))]" : "font-medium text-foreground/75 group-hover:text-foreground"
                       }`}
                     >
                       {cat.name}
                     </span>
-                    {/* Active underline */}
-                    <span
-                      aria-hidden
-                      className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] rounded-full bg-[hsl(var(--primary))] transition-all duration-300 ${
-                        isActive ? "w-8 opacity-100" : "w-0 opacity-0"
-                      }`}
-                    />
                   </button>
                 );
               })}
