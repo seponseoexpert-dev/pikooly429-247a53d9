@@ -88,12 +88,13 @@ const Shop = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("subcategories")
-        .select("*")
+        .select("id, name, slug, category_id, image_url, description, short_description, long_description, seo_title, faq, display_order, show_in_tailored")
         .eq("is_active", true)
         .order("display_order");
       if (error) throw error;
       return data as any[];
     },
+    staleTime: 10 * 60 * 1000,
     placeholderData: (prev) => prev,
   });
 
