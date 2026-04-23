@@ -104,6 +104,18 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
           sizes="(max-width: 480px) 46vw, (max-width: 768px) 30vw, (max-width: 1024px) 22vw, 18vw"
         />
 
+        {/* Delivery time badge - top left */}
+        {deliveryBadge && (
+          <div
+            className={`absolute top-2 left-2 z-10 inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 sm:py-[3px] rounded-md bg-gradient-to-br ${deliveryBadge.gradient} ${deliveryBadge.glow} backdrop-blur-sm ring-1 ring-white/30`}
+          >
+            <deliveryBadge.Icon size={9} className="text-white sm:w-2.5 sm:h-2.5" strokeWidth={2.5} />
+            <span className="text-[9px] sm:text-[10px] font-bold text-white uppercase tracking-wide leading-none whitespace-nowrap">
+              {deliveryBadge.label}
+            </span>
+          </div>
+        )}
+
         {/* Wishlist heart - top right */}
         <button
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); setLiked(!liked); }}
