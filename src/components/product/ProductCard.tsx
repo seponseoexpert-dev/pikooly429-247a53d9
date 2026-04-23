@@ -58,7 +58,7 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
   return (
     <article className="group relative flex flex-col h-full bg-white rounded-xl border border-[hsl(0_0%_92%)] overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-shadow duration-300">
       {/* Image */}
-      <Link to={linkTo} className="block relative overflow-hidden aspect-square bg-[hsl(0_0%_98%)]">
+      <Link to={linkTo} className="block relative overflow-hidden aspect-[4/5] bg-[hsl(0_0%_98%)]">
         <img
           src={imgSrc}
           alt={product.name}
