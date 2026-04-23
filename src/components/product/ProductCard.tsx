@@ -90,7 +90,7 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
 
         {/* Wishlist heart - top right */}
         <button
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setLiked(!liked); }}
+          onClick={toggleLiked}
           className="absolute top-2 right-2 w-7 h-7 rounded-full bg-white border border-[hsl(0_0%_90%)] flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 z-10"
           aria-label="Add to Wishlist"
         >
