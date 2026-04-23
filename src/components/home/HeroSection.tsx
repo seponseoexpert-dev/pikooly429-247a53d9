@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { getOptimizedCloudinaryUrl } from "@/lib/imageUtils";
 
 interface Slide {
   id: string;
@@ -36,19 +37,20 @@ const HeroSection = memo(() => {
     placeholderData: (prev) => prev,
   });
 
-  // Preload LCP image as early as possible
+  // Preload LCP image as early as possible (CDN-optimised, mobile-sized)
   useEffect(() => {
     if (slides.length > 0) {
-      const firstImg = slides[0]?.bg_image_url || slides[0]?.image_url;
-      if (firstImg) {
-        const existing = document.querySelector(`link[href="${firstImg}"]`);
+      const rawImg = slides[0]?.bg_image_url || slides[0]?.image_url;
+      if (rawImg) {
+        const isMobile = window.innerWidth < 640;
+        const optImg = getOptimizedCloudinaryUrl(rawImg, isMobile ? 720 : 1280);
+        const existing = document.querySelector(`link[href="${optImg}"]`);
         if (!existing) {
           const link = document.createElement("link");
           link.rel = "preload";
           link.as = "image";
-          link.href = firstImg;
+          link.href = optImg;
           (link as any).fetchPriority = "high";
-          // Insert at top of head for earliest discovery
           document.head.insertBefore(link, document.head.firstChild);
         }
       }
@@ -108,7 +110,7 @@ const HeroSection = memo(() => {
               aria-label={slide?.title || "Banner"}
             >
               <img
-                src={slide.bg_image_url!}
+                src={getOptimizedCloudinaryUrl(slide.bg_image_url!, typeof window !== "undefined" && window.innerWidth < 640 ? 720 : 1280)}
                 alt={slide?.title || "Banner"}
                 className="absolute inset-0 h-full w-full object-cover"
                 fetchPriority="high"
@@ -153,7 +155,7 @@ const HeroSection = memo(() => {
                   <div className="relative">
                     <span aria-hidden className="absolute -inset-2 rounded-[28px] bg-gradient-gold opacity-25 blur-xl" />
                     <img
-                      src={slide.image_url}
+                      src={getOptimizedCloudinaryUrl(slide.image_url, 600)}
                       alt={slide.title}
                       width={400}
                       height={400}
