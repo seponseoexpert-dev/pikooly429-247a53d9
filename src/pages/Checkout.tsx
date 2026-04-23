@@ -1210,7 +1210,7 @@ const Checkout = () => {
                     <span className="text-2xl sm:text-3xl font-bold text-primary tabular-nums" style={{ fontFamily: "'Lora', serif" }}>{formatPrice(grandTotal)}</span>
                   </div>
 
-                  <Button type="submit" className="btn-luxe w-full mt-5 h-12 sm:h-13 text-sm sm:text-base" disabled={loading}>
+                  <Button type="submit" className="btn-luxe w-full mt-5 h-12 sm:h-13 text-sm sm:text-base" disabled={loading || hasDeliveryMismatch}>
                     {loading ? (
                       <><Loader2 className="animate-spin mr-2" size={18} /> Processing…</>
                     ) : (
