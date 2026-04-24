@@ -504,14 +504,17 @@ const Checkout = () => {
             }
           }
         }
+        const lineUnit = item.product.price + (item.variant?.size?.extraPrice || 0);
         orderItems.push({
           order_id: order.id,
-          product_id: item.product.id,
+          product_id: item.product.id.startsWith("bouquet-") ? null : item.product.id,
           product_name: item.product.name,
           quantity: item.quantity,
-          price: item.product.price,
-          total: item.product.price * item.quantity,
+          price: lineUnit,
+          total: lineUnit * item.quantity,
           custom_images: customImageUrls.length > 0 ? customImageUrls : undefined,
+          selected_size: item.variant?.size?.name || null,
+          selected_color: item.variant?.color?.name || null,
         });
       }
 
