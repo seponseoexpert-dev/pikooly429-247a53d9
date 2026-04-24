@@ -256,22 +256,51 @@ const ProductDetail = () => {
   // Delivery badge based on product.delivery_time
   const deliveryBadge = parseDeliveryBadge(product.delivery_time);
 
+  const variantSuffixParts: string[] = [];
+  if (selectedSize) variantSuffixParts.push(selectedSize.name);
+  if (selectedColor) variantSuffixParts.push(selectedColor.name);
+  const variantSuffix = variantSuffixParts.length ? ` — ${variantSuffixParts.join(" / ")}` : "";
+
   const cartProduct = {
     id: product.id,
-    name: customText.trim() ? `${product.name} (Personalized: ${customText.trim()})` : product.name,
-    price: product.price,
+    name: (customText.trim() ? `${product.name} (Personalized: ${customText.trim()})` : product.name) + variantSuffix,
+    price: effectivePrice,
     originalPrice: product.original_price ?? undefined,
     image: mainImg,
     category: product.categories?.slug || "",
     inStock: product.stock > 0,
   };
 
+  const buildVariantPayload = (): VariantSelection | undefined => {
+    if (!selectedSize && !selectedColor) return undefined;
+    return {
+      size: selectedSize ? { name: selectedSize.name, extraPrice: Number(selectedSize.extra_price || 0) } : undefined,
+      color: selectedColor ? { name: selectedColor.name, hex: selectedColor.hex_code } : undefined,
+    };
+  };
+
+  const validateVariants = () => {
+    if (sizes.length > 0 && !selectedSizeId) {
+      toast.error("Please select a size");
+      return false;
+    }
+    if (colors.length > 0 && !selectedColorId) {
+      toast.error("Please select a color");
+      return false;
+    }
+    return true;
+  };
+
   const handleAddToCart = () => {
-    for (let i = 0; i < qty; i++) addItem(cartProduct, customImages.length ? customImages : undefined);
+    if (!validateVariants()) return;
+    const variant = buildVariantPayload();
+    for (let i = 0; i < qty; i++) addItem(cartProduct, customImages.length ? customImages : undefined, false, variant);
   };
 
   const handleBuyNow = () => {
-    for (let i = 0; i < qty; i++) addItem(cartProduct, customImages.length ? customImages : undefined, true);
+    if (!validateVariants()) return;
+    const variant = buildVariantPayload();
+    for (let i = 0; i < qty; i++) addItem(cartProduct, customImages.length ? customImages : undefined, true, variant);
     navigate("/checkout");
   };
 
