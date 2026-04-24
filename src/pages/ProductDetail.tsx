@@ -29,6 +29,8 @@ const ProductDetail = () => {
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
   const [isZooming, setIsZooming] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [selectedSizeId, setSelectedSizeId] = useState<string | null>(null);
+  const [selectedColorId, setSelectedColorId] = useState<string | null>(null);
 
   const handleCopyLink = useCallback(() => {
     navigator.clipboard.writeText(window.location.href);
@@ -85,6 +87,43 @@ const ProductDetail = () => {
     placeholderData: (prev) => prev,
   });
 
+  // Fetch product sizes & colors variants
+  const { data: sizes = [] } = useQuery({
+    queryKey: ["product-sizes", product?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("product_sizes")
+        .select("*")
+        .eq("product_id", product!.id)
+        .eq("is_active", true)
+        .order("display_order");
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!product?.id,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const { data: colors = [] } = useQuery({
+    queryKey: ["product-colors", product?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("product_colors")
+        .select("*")
+        .eq("product_id", product!.id)
+        .eq("is_active", true)
+        .order("display_order");
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!product?.id,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const selectedSize = sizes.find((s: any) => s.id === selectedSizeId);
+  const selectedColor = colors.find((c: any) => c.id === selectedColorId);
+  const sizeExtra = Number(selectedSize?.extra_price || 0);
+  const effectivePrice = (product?.price || 0) + sizeExtra;
   // Check product-level personalization flags first, fallback to category
   const allowCustomImage = !!(product as any)?.allow_custom_image || !!(product?.categories as any)?.allow_custom_image;
   const allowCustomText = !!(product as any)?.allow_custom_text || !!(product?.categories as any)?.allow_custom_text;
