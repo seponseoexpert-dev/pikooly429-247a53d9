@@ -110,8 +110,8 @@ const Blog = () => {
 
       <div className="section-container py-6 md:py-10">
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
-            {Array.from({ length: 6 }).map((_, i) => <BlogCardSkeleton key={i} />)}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
+            {Array.from({ length: 8 }).map((_, i) => <BlogCardSkeleton key={i} />)}
           </div>
         ) : filtered.length === 0 ? (
           <p className="text-muted-foreground text-center py-12">No blog posts yet.</p>
