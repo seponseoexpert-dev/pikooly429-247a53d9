@@ -112,7 +112,7 @@ const ProductDeliveryControl = ({
       {/* Next Day Districts */}
       <div className="space-y-2">
         <Label className="flex items-center gap-1.5 text-xs font-semibold">
-          <Calendar className="h-3.5 w-3.5 text-blue-600" />
+          <Calendar className="h-3.5 w-3.5 text-[hsl(220_85%_56%)]" />
           Next Day Delivery — Available Districts
         </Label>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 border border-border rounded-md p-3 max-h-44 overflow-y-auto bg-background">
