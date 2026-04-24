@@ -1,5 +1,5 @@
 import { X, Plus, Minus, ShoppingBag, Trash2, ImagePlus } from "lucide-react";
-import { useCart } from "@/contexts/CartContext";
+import { useCart, buildVariantKey } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -60,9 +60,12 @@ const CartDrawer = () => {
                   </Button>
                 </div>
               ) : (
-                items.map((item, index) => (
+                items.map((item, index) => {
+                  const variantKey = buildVariantKey(item.variant);
+                  const lineUnit = item.product.price + (item.variant?.size?.extraPrice || 0);
+                  return (
                   <motion.div
-                    key={item.product.id}
+                    key={`${item.product.id}-${variantKey}`}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
@@ -83,7 +86,25 @@ const CartDrawer = () => {
                             {item.product.name}
                           </h4>
                         </Link>
-                        <p className="text-primary font-bold text-sm sm:text-base mt-1">{formatPrice(item.product.price)}</p>
+                        {(item.variant?.size || item.variant?.color) && (
+                          <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                            {item.variant.size && (
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-semibold uppercase tracking-wide">
+                                {item.variant.size.name}
+                              </span>
+                            )}
+                            {item.variant.color && (
+                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-muted text-foreground text-[10px] font-semibold">
+                                <span
+                                  className="w-2.5 h-2.5 rounded-full ring-1 ring-border"
+                                  style={{ backgroundColor: item.variant.color.hex }}
+                                />
+                                {item.variant.color.name}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        <p className="text-primary font-bold text-sm sm:text-base mt-1">{formatPrice(lineUnit)}</p>
                         {item.customImages && item.customImages.length > 0 && (
                           <p className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1">
                             <ImagePlus size={12} className="text-primary" /> {item.customImages.length} custom photo(s)
@@ -93,21 +114,21 @@ const CartDrawer = () => {
                       <div className="flex items-center justify-between mt-2">
                         <div className="flex items-center gap-1.5 bg-card rounded-full border border-border px-1 py-0.5">
                           <button
-                            onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                            onClick={() => updateQuantity(item.product.id, item.quantity - 1, variantKey)}
                             className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
                           >
                             <Minus size={14} />
                           </button>
                           <span className="text-sm font-bold w-6 text-center">{item.quantity}</span>
                           <button
-                            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                            onClick={() => updateQuantity(item.product.id, item.quantity + 1, variantKey)}
                             className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
                           >
                             <Plus size={14} />
                           </button>
                         </div>
                         <button
-                          onClick={() => removeItem(item.product.id)}
+                          onClick={() => removeItem(item.product.id, variantKey)}
                           className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-full transition-colors"
                           aria-label="Remove item"
                         >
@@ -116,7 +137,8 @@ const CartDrawer = () => {
                       </div>
                     </div>
                   </motion.div>
-                ))
+                  );
+                })
               )}
             </div>
 

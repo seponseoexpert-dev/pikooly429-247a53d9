@@ -1,8 +1,9 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import SEOHead from "@/components/seo/SEOHead";
-import { useCart } from "@/contexts/CartContext";
+import { toast } from "sonner";
+import { useCart, VariantSelection } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, Heart, Minus, Plus, Star, Phone, MessageCircle, Type, X, ChevronLeft, ChevronRight, Facebook, Twitter, Link2, Check } from "lucide-react";
+import { ShoppingBag, Heart, Minus, Plus, Star, Phone, MessageCircle, Type, X, ChevronLeft, ChevronRight, Facebook, Twitter, Link2, Check, Ruler, Palette } from "lucide-react";
 import { parseDeliveryBadge } from "@/lib/deliveryBadge";
 import { useState, useMemo, useCallback } from "react";
 import ProductCard from "@/components/product/ProductCard";
@@ -29,6 +30,8 @@ const ProductDetail = () => {
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
   const [isZooming, setIsZooming] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [selectedSizeId, setSelectedSizeId] = useState<string | null>(null);
+  const [selectedColorId, setSelectedColorId] = useState<string | null>(null);
 
   const handleCopyLink = useCallback(() => {
     navigator.clipboard.writeText(window.location.href);
@@ -85,6 +88,43 @@ const ProductDetail = () => {
     placeholderData: (prev) => prev,
   });
 
+  // Fetch product sizes & colors variants
+  const { data: sizes = [] } = useQuery({
+    queryKey: ["product-sizes", product?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("product_sizes")
+        .select("*")
+        .eq("product_id", product!.id)
+        .eq("is_active", true)
+        .order("display_order");
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!product?.id,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const { data: colors = [] } = useQuery({
+    queryKey: ["product-colors", product?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("product_colors")
+        .select("*")
+        .eq("product_id", product!.id)
+        .eq("is_active", true)
+        .order("display_order");
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!product?.id,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const selectedSize = sizes.find((s: any) => s.id === selectedSizeId);
+  const selectedColor = colors.find((c: any) => c.id === selectedColorId);
+  const sizeExtra = Number(selectedSize?.extra_price || 0);
+  const effectivePrice = (product?.price || 0) + sizeExtra;
   // Check product-level personalization flags first, fallback to category
   const allowCustomImage = !!(product as any)?.allow_custom_image || !!(product?.categories as any)?.allow_custom_image;
   const allowCustomText = !!(product as any)?.allow_custom_text || !!(product?.categories as any)?.allow_custom_text;
@@ -217,22 +257,51 @@ const ProductDetail = () => {
   // Delivery badge based on product.delivery_time
   const deliveryBadge = parseDeliveryBadge(product.delivery_time);
 
+  const variantSuffixParts: string[] = [];
+  if (selectedSize) variantSuffixParts.push(selectedSize.name);
+  if (selectedColor) variantSuffixParts.push(selectedColor.name);
+  const variantSuffix = variantSuffixParts.length ? ` — ${variantSuffixParts.join(" / ")}` : "";
+
   const cartProduct = {
     id: product.id,
-    name: customText.trim() ? `${product.name} (Personalized: ${customText.trim()})` : product.name,
-    price: product.price,
+    name: (customText.trim() ? `${product.name} (Personalized: ${customText.trim()})` : product.name) + variantSuffix,
+    price: effectivePrice,
     originalPrice: product.original_price ?? undefined,
     image: mainImg,
     category: product.categories?.slug || "",
     inStock: product.stock > 0,
   };
 
+  const buildVariantPayload = (): VariantSelection | undefined => {
+    if (!selectedSize && !selectedColor) return undefined;
+    return {
+      size: selectedSize ? { name: selectedSize.name, extraPrice: Number(selectedSize.extra_price || 0) } : undefined,
+      color: selectedColor ? { name: selectedColor.name, hex: selectedColor.hex_code } : undefined,
+    };
+  };
+
+  const validateVariants = () => {
+    if (sizes.length > 0 && !selectedSizeId) {
+      toast.error("Please select a size");
+      return false;
+    }
+    if (colors.length > 0 && !selectedColorId) {
+      toast.error("Please select a color");
+      return false;
+    }
+    return true;
+  };
+
   const handleAddToCart = () => {
-    for (let i = 0; i < qty; i++) addItem(cartProduct, customImages.length ? customImages : undefined);
+    if (!validateVariants()) return;
+    const variant = buildVariantPayload();
+    for (let i = 0; i < qty; i++) addItem(cartProduct, customImages.length ? customImages : undefined, false, variant);
   };
 
   const handleBuyNow = () => {
-    for (let i = 0; i < qty; i++) addItem(cartProduct, customImages.length ? customImages : undefined, true);
+    if (!validateVariants()) return;
+    const variant = buildVariantPayload();
+    for (let i = 0; i < qty; i++) addItem(cartProduct, customImages.length ? customImages : undefined, true, variant);
     navigate("/checkout");
   };
 
@@ -384,16 +453,92 @@ const ProductDetail = () => {
           </div>
 
           <div className="flex items-center gap-3 mb-4 pb-4 border-b border-border/60">
-            <span className="text-2xl sm:text-3xl md:text-4xl font-display font-semibold text-foreground tracking-tight tabular-nums">{formatPrice(product.price)}</span>
+            <span className="text-2xl sm:text-3xl md:text-4xl font-display font-semibold text-foreground tracking-tight tabular-nums">{formatPrice(effectivePrice)}</span>
             {product.original_price && product.original_price > product.price && (
               <>
-                <span className="text-sm sm:text-base text-muted-foreground line-through tabular-nums">{formatPrice(product.original_price)}</span>
+                <span className="text-sm sm:text-base text-muted-foreground line-through tabular-nums">{formatPrice(product.original_price + sizeExtra)}</span>
                 <span className="chip-luxe">
                   {Math.round((1 - product.price / product.original_price) * 100)}% off
                 </span>
               </>
             )}
           </div>
+
+          {/* Size selector */}
+          {sizes.length > 0 && (
+            <div className="mb-5">
+              <div className="flex items-center justify-between mb-2.5">
+                <span className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                  <Ruler size={15} className="text-primary" /> Size
+                </span>
+                {selectedSize && (
+                  <span className="text-xs text-muted-foreground">
+                    {sizeExtra > 0 ? `+ ${formatPrice(sizeExtra)}` : "Included"}
+                  </span>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {sizes.map((s: any) => {
+                  const active = selectedSizeId === s.id;
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => setSelectedSizeId(active ? null : s.id)}
+                      className={`min-w-[58px] px-3.5 py-2 rounded-lg text-sm font-medium border-2 transition-all ${
+                        active
+                          ? "border-primary bg-primary/5 text-primary shadow-sm"
+                          : "border-border bg-background text-foreground hover:border-primary/50"
+                      }`}
+                    >
+                      {s.name}
+                      {Number(s.extra_price) > 0 && (
+                        <span className="ml-1 text-[10px] opacity-70">+{Number(s.extra_price)}</span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Color swatches */}
+          {colors.length > 0 && (
+            <div className="mb-5">
+              <div className="flex items-center justify-between mb-2.5">
+                <span className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                  <Palette size={15} className="text-primary" /> Color
+                </span>
+                {selectedColor && (
+                  <span className="text-xs text-muted-foreground">{selectedColor.name}</span>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {colors.map((c: any) => {
+                  const active = selectedColorId === c.id;
+                  return (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => setSelectedColorId(active ? null : c.id)}
+                      title={c.name}
+                      aria-label={c.name}
+                      className={`relative w-9 h-9 rounded-full transition-all ${
+                        active
+                          ? "ring-2 ring-primary ring-offset-2 ring-offset-background scale-110"
+                          : "ring-1 ring-border hover:scale-105"
+                      }`}
+                      style={{ backgroundColor: c.hex_code }}
+                    >
+                      {active && (
+                        <Check size={14} className="absolute inset-0 m-auto text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]" strokeWidth={3} />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {(product.short_description || product.description) && (
             <div className="text-sm text-muted-foreground mb-5 leading-relaxed prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: product.short_description || product.description || "" }} />
