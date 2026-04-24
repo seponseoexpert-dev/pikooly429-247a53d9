@@ -56,7 +56,7 @@ const OfferBanners = memo(() => {
               >
                 {/* Full-image mode when only bg_image_url is set with no text content */}
                 {!hasContent && b.bg_image_url ? (
-                  <div className="relative rounded-2xl overflow-hidden h-[160px] sm:h-[170px] md:h-[180px] shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] border border-border/30 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.15)] transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]">
+                  <div className="relative rounded-2xl overflow-hidden h-[90px] sm:h-[100px] md:h-[110px] shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] border border-border/30 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.15)] transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]">
                     <img
                       src={b.bg_image_url}
                       alt=""
@@ -67,7 +67,7 @@ const OfferBanners = memo(() => {
                   </div>
                 ) : (
                    <div
-                    className="relative rounded-2xl overflow-hidden h-[160px] sm:h-[170px] md:h-[180px] shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] border border-border/30 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.15)] transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]"
+                    className="relative rounded-2xl overflow-hidden h-[90px] sm:h-[100px] md:h-[110px] shadow-[0_1px_4px_0_hsl(var(--foreground)/0.06)] border border-border/30 hover:shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.15)] transition-all duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]"
                     style={{
                       background: b.bg_image_url
                         ? `url(${b.bg_image_url}) center/cover no-repeat`
