@@ -312,9 +312,17 @@ const AdminCategories = () => {
                     );
                   })}
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Select one or more types. If none selected, will show only in the default "Category" section.
-                </p>
+                <div className="rounded-md border border-amber-300/60 bg-amber-50 dark:bg-amber-950/30 p-3 space-y-1.5">
+                  <p className="text-xs font-semibold text-amber-900 dark:text-amber-200">
+                    💡 How it works (একাধিক জায়গায় দেখাতে চাইলে):
+                  </p>
+                  <ul className="text-xs text-amber-900/90 dark:text-amber-100/90 space-y-1 list-disc pl-4">
+                    <li>Want it in <b>Homepage Category Grid</b>? → Tick <b>Category</b> + turn ON <b>Show in Homepage</b></li>
+                    <li>Want it in <b>Tailored Tabs</b>? → Tick <b>Tailored</b></li>
+                    <li>Want it in <b>BOTH places</b>? → Tick <b>Category</b> AND <b>Tailored</b> together ✅</li>
+                    <li>Want it in <b>Header Menu</b>? → Turn ON <b>Show in Header Menu</b> (independent of type)</li>
+                  </ul>
+                </div>
               </div>
               <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
                 <div className="flex items-center gap-2">
