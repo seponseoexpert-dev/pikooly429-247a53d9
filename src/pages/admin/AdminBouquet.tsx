@@ -8,13 +8,13 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Pencil, Trash2, Flower2, Package, Ruler, FileText } from "lucide-react";
+import { Plus, Pencil, Trash2, Flower2, Package, Ruler, FileText, Palette } from "lucide-react";
 import PageContentEditor from "@/components/admin/PageContentEditor";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { useState } from "react";
 import { toast } from "sonner";
 
-type ItemType = "flowers" | "materials" | "sizes";
+type ItemType = "flowers" | "materials" | "sizes" | "colors";
 
 interface FormData {
   name: string;
@@ -22,11 +22,12 @@ interface FormData {
   price: number;
   extra_price?: number;
   description?: string;
+  hex_code?: string;
   is_active: boolean;
   display_order: number;
 }
 
-const defaultForm: FormData = { name: "", image_url: "", price: 0, is_active: true, display_order: 0 };
+const defaultForm: FormData = { name: "", image_url: "", price: 0, hex_code: "#ec4899", is_active: true, display_order: 0 };
 
 const AdminBouquet = () => {
   const qc = useQueryClient();
@@ -35,7 +36,7 @@ const AdminBouquet = () => {
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState<FormData>(defaultForm);
 
-  const tableName = `bouquet_${tab}` as "bouquet_flowers" | "bouquet_materials" | "bouquet_sizes";
+  const tableName = `bouquet_${tab}` as "bouquet_flowers" | "bouquet_materials" | "bouquet_sizes" | "bouquet_colors";
 
   const { data: items = [], isLoading } = useQuery({
     queryKey: ["bouquet", tab],
@@ -57,6 +58,8 @@ const AdminBouquet = () => {
       if (tab === "sizes") {
         payload.extra_price = form.extra_price || 0;
         payload.description = form.description || null;
+      } else if (tab === "colors") {
+        payload.hex_code = form.hex_code || "#cccccc";
       } else {
         payload.price = form.price;
       }
@@ -100,14 +103,15 @@ const AdminBouquet = () => {
       price: item.price || 0,
       extra_price: item.extra_price || 0,
       description: item.description || "",
+      hex_code: item.hex_code || "#ec4899",
       is_active: item.is_active,
       display_order: item.display_order,
     });
     setDialogOpen(true);
   };
 
-  const tabLabels = { flowers: "Flowers", materials: "Materials", sizes: "Sizes" };
-  const tabIcons = { flowers: Flower2, materials: Package, sizes: Ruler };
+  const tabLabels: Record<ItemType, string> = { flowers: "Flowers", materials: "Materials", sizes: "Sizes", colors: "Colors" };
+  const tabIcons: Record<ItemType, any> = { flowers: Flower2, materials: Package, sizes: Ruler, colors: Palette };
 
   return (
       <div className="space-y-6">
