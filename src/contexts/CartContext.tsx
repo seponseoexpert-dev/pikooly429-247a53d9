@@ -12,18 +12,24 @@ interface Product {
   inStock: boolean;
 }
 
+export interface VariantSelection {
+  size?: { name: string; extraPrice: number };
+  color?: { name: string; hex: string };
+}
+
 interface CartItem {
   product: Product;
   quantity: number;
   customImages?: File[];
+  variant?: VariantSelection;
 }
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (product: Product, customImages?: File[], skipDrawer?: boolean) => void;
-  removeItem: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  updateCustomImages: (productId: string, images: File[]) => void;
+  addItem: (product: Product, customImages?: File[], skipDrawer?: boolean, variant?: VariantSelection) => void;
+  removeItem: (productId: string, variantKey?: string) => void;
+  updateQuantity: (productId: string, quantity: number, variantKey?: string) => void;
+  updateCustomImages: (productId: string, images: File[], variantKey?: string) => void;
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
@@ -33,53 +39,76 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+// Build a unique key combining product id + variant so the same product with
+// different size/color sit as separate cart lines.
+export const buildVariantKey = (variant?: VariantSelection) =>
+  `${variant?.size?.name || ""}|${variant?.color?.name || ""}`;
+
+const matchKey = (item: CartItem, productId: string, variantKey?: string) => {
+  if (item.product.id !== productId) return false;
+  if (variantKey === undefined) return true;
+  return buildVariantKey(item.variant) === variantKey;
+};
+
+const lineUnitPrice = (item: CartItem) =>
+  item.product.price + (item.variant?.size?.extraPrice || 0);
+
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
-  const addItem = useCallback((product: Product, customImages?: File[], skipDrawer?: boolean) => {
-    setItems((prev) => {
-      const existing = prev.find((i) => i.product.id === product.id);
-      if (existing) {
-        return prev.map((i) =>
-          i.product.id === product.id
-            ? {
-                ...i,
-                quantity: i.quantity + 1,
-                customImages: customImages?.length ? customImages : i.customImages,
-              }
-            : i
+  const addItem = useCallback(
+    (product: Product, customImages?: File[], skipDrawer?: boolean, variant?: VariantSelection) => {
+      const newKey = buildVariantKey(variant);
+      setItems((prev) => {
+        const existing = prev.find(
+          (i) => i.product.id === product.id && buildVariantKey(i.variant) === newKey
         );
-      }
-      return [...prev, { product, quantity: 1, customImages }];
-    });
-    if (!skipDrawer) setIsOpen(true);
+        if (existing) {
+          return prev.map((i) =>
+            i.product.id === product.id && buildVariantKey(i.variant) === newKey
+              ? {
+                  ...i,
+                  quantity: i.quantity + 1,
+                  customImages: customImages?.length ? customImages : i.customImages,
+                }
+              : i
+          );
+        }
+        return [...prev, { product, quantity: 1, customImages, variant }];
+      });
+      if (!skipDrawer) setIsOpen(true);
+    },
+    []
+  );
+
+  const removeItem = useCallback((productId: string, variantKey?: string) => {
+    setItems((prev) => prev.filter((i) => !matchKey(i, productId, variantKey)));
   }, []);
 
-  const removeItem = useCallback((productId: string) => {
-    setItems((prev) => prev.filter((i) => i.product.id !== productId));
-  }, []);
-
-  const updateQuantity = useCallback((productId: string, quantity: number) => {
+  const updateQuantity = useCallback((productId: string, quantity: number, variantKey?: string) => {
     if (quantity <= 0) {
-      setItems((prev) => prev.filter((i) => i.product.id !== productId));
+      setItems((prev) => prev.filter((i) => !matchKey(i, productId, variantKey)));
       return;
     }
     setItems((prev) =>
-      prev.map((i) => (i.product.id === productId ? { ...i, quantity } : i))
+      prev.map((i) => (matchKey(i, productId, variantKey) ? { ...i, quantity } : i))
     );
   }, []);
 
-  const updateCustomImages = useCallback((productId: string, images: File[]) => {
-    setItems((prev) =>
-      prev.map((i) => (i.product.id === productId ? { ...i, customImages: images } : i))
-    );
-  }, []);
+  const updateCustomImages = useCallback(
+    (productId: string, images: File[], variantKey?: string) => {
+      setItems((prev) =>
+        prev.map((i) => (matchKey(i, productId, variantKey) ? { ...i, customImages: images } : i))
+      );
+    },
+    []
+  );
 
   const clearCart = useCallback(() => setItems([]), []);
 
   const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
-  const totalPrice = items.reduce((sum, i) => sum + i.product.price * i.quantity, 0);
+  const totalPrice = items.reduce((sum, i) => sum + lineUnitPrice(i) * i.quantity, 0);
 
   return (
     <CartContext.Provider

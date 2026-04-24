@@ -101,6 +101,39 @@ export type Database = {
         }
         Relationships: []
       }
+      bouquet_colors: {
+        Row: {
+          created_at: string
+          display_order: number
+          hex_code: string
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          hex_code?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          hex_code?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bouquet_flowers: {
         Row: {
           created_at: string
@@ -175,6 +208,7 @@ export type Database = {
           id: string
           material_id: string | null
           order_id: string | null
+          selected_color: string | null
           size_id: string | null
           total_price: number
         }
@@ -185,6 +219,7 @@ export type Database = {
           id?: string
           material_id?: string | null
           order_id?: string | null
+          selected_color?: string | null
           size_id?: string | null
           total_price?: number
         }
@@ -195,6 +230,7 @@ export type Database = {
           id?: string
           material_id?: string | null
           order_id?: string | null
+          selected_color?: string | null
           size_id?: string | null
           total_price?: number
         }
@@ -801,6 +837,8 @@ export type Database = {
           product_id: string | null
           product_name: string
           quantity: number
+          selected_color: string | null
+          selected_size: string | null
           total: number
         }
         Insert: {
@@ -812,6 +850,8 @@ export type Database = {
           product_id?: string | null
           product_name: string
           quantity?: number
+          selected_color?: string | null
+          selected_size?: string | null
           total?: number
         }
         Update: {
@@ -823,6 +863,8 @@ export type Database = {
           product_id?: string | null
           product_name?: string
           quantity?: number
+          selected_color?: string | null
+          selected_size?: string | null
           total?: number
         }
         Relationships: [
@@ -1224,6 +1266,97 @@ export type Database = {
           },
           {
             foreignKeyName: "product_categories_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_colors: {
+        Row: {
+          created_at: string
+          display_order: number
+          hex_code: string
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          product_id: string
+          stock: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          hex_code?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          product_id: string
+          stock?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          hex_code?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          product_id?: string
+          stock?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_colors_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_sizes: {
+        Row: {
+          created_at: string
+          display_order: number
+          extra_price: number
+          id: string
+          is_active: boolean
+          name: string
+          product_id: string
+          stock: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          extra_price?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          product_id: string
+          stock?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          extra_price?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          product_id?: string
+          stock?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_sizes_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
