@@ -37,8 +37,24 @@ const BouquetBuilder = () => {
   const [designImages, setDesignImages] = useState<File[]>([]);
   const [designPreviews, setDesignPreviews] = useState<string[]>([]);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [selectedColorId, setSelectedColorId] = useState<string | null>(null);
   const [giftMessage, setGiftMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { data: bouquetColors = [] } = useQuery({
+    queryKey: ["bouquet-colors-public"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("bouquet_colors")
+        .select("*")
+        .eq("is_active", true)
+        .order("display_order");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const selectedColor = bouquetColors.find((c: any) => c.id === selectedColorId);
 
   const { data: flowers = [] } = useQuery({
     queryKey: ["bouquet-flowers"],
