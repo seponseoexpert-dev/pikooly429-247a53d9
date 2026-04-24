@@ -1,8 +1,8 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import SEOHead from "@/components/seo/SEOHead";
-import { useCart } from "@/contexts/CartContext";
+import { useCart, VariantSelection } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, Heart, Minus, Plus, Star, Phone, MessageCircle, Type, X, ChevronLeft, ChevronRight, Facebook, Twitter, Link2, Check } from "lucide-react";
+import { ShoppingBag, Heart, Minus, Plus, Star, Phone, MessageCircle, Type, X, ChevronLeft, ChevronRight, Facebook, Twitter, Link2, Check, Ruler, Palette } from "lucide-react";
 import { parseDeliveryBadge } from "@/lib/deliveryBadge";
 import { useState, useMemo, useCallback } from "react";
 import ProductCard from "@/components/product/ProductCard";
