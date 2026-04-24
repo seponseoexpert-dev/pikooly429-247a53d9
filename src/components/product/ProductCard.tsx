@@ -157,10 +157,10 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
           )}
         </div>
 
-        {/* Earliest Delivery line — FNP-style green text with subtle separator */}
+        {/* Earliest Delivery line — FNP-style bold prominent green text */}
         <div className="mt-2 pt-2 border-t border-[hsl(0_0%_94%)]">
-          <p className="text-[11px] sm:text-[12px] text-[hsl(142_71%_36%)] font-medium leading-tight">
-            Earliest Delivery : <span className="font-semibold">{earliestLabel}</span>
+          <p className="text-[13px] sm:text-[14.5px] text-[hsl(142_71%_32%)] font-bold leading-tight tracking-tight">
+            Earliest Delivery : <span className="font-extrabold">{earliestLabel}</span>
           </p>
         </div>
 
