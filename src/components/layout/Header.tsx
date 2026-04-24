@@ -351,7 +351,7 @@ const Header = () => {
 
           {/* === NAV BAR (Desktop/Tablet) === */}
           <div ref={navRef} className="relative hidden md:block border-t border-border/30">
-            <nav className="flex items-center overflow-x-auto scrollbar-hide justify-start lg:justify-start xl:justify-center">
+            <nav className="flex items-center overflow-x-auto scrollbar-hide justify-start">
               {/* Dynamic categories */}
               {categories.map((cat) => {
                 const subs = subsByCategory[cat.id] || [];
