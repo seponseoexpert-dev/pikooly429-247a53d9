@@ -316,9 +316,15 @@ const AdminCategories = () => {
                   একাধিক টাইপ সিলেক্ট করতে পারবেন। কোনোটি সিলেক্ট না করলে শুধু ডিফল্ট "Category" সেকশনে দেখাবে।
                 </p>
               </div>
-              <div className="flex items-center gap-2">
-                <Switch checked={form.show_in_homepage} onCheckedChange={(checked) => setForm({ ...form, show_in_homepage: checked })} />
-                <Label>Show in Homepage</Label>
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+                <div className="flex items-center gap-2">
+                  <Switch checked={form.show_in_homepage} onCheckedChange={(checked) => setForm({ ...form, show_in_homepage: checked })} />
+                  <Label>Show in Homepage</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch checked={form.show_in_header} onCheckedChange={(checked) => setForm({ ...form, show_in_header: checked })} />
+                  <Label>Show in Header Menu</Label>
+                </div>
               </div>
               {/* FAQ Section */}
               <div className="space-y-3 border-t pt-4">
