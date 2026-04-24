@@ -157,6 +157,13 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
           )}
         </div>
 
+        {/* Earliest Delivery line — FNP-style green text with subtle separator */}
+        <div className="mt-2 pt-2 border-t border-[hsl(0_0%_94%)]">
+          <p className="text-[11px] sm:text-[12px] text-[hsl(142_71%_36%)] font-medium leading-tight">
+            Earliest Delivery : <span className="font-semibold">{earliestLabel}</span>
+          </p>
+        </div>
+
         {/* Split action button - coral/pink outlined */}
         <div className="mt-2.5 flex items-stretch rounded-md border border-[hsl(345_85%_70%)] bg-white overflow-hidden hover:border-[hsl(345_85%_60%)] transition-colors duration-300">
           <button
