@@ -141,6 +141,8 @@ const CartDrawer = () => {
                   );
                 })
               )}
+
+              {items.length > 0 && <CartDeliveryGroups compact />}
             </div>
 
             {/* Footer */}
