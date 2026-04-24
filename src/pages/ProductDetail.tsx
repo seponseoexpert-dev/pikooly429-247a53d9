@@ -5,6 +5,7 @@ import { useCart, VariantSelection } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Heart, Minus, Plus, Star, Phone, MessageCircle, Type, X, ChevronLeft, ChevronRight, Facebook, Twitter, Link2, Check, Ruler, Palette } from "lucide-react";
 import { parseDeliveryBadge } from "@/lib/deliveryBadge";
+import DeliveryChecker from "@/components/product/DeliveryChecker";
 import { useState, useMemo, useCallback } from "react";
 import ProductCard from "@/components/product/ProductCard";
 import { ProductDetailSkeleton } from "@/components/ui/skeletons";
@@ -570,6 +571,17 @@ const ProductDetail = () => {
                 <Plus size={14} />
               </button>
             </div>
+          </div>
+
+          {/* Delivery availability checker */}
+          <div className="mb-4">
+            <DeliveryChecker
+              product={{
+                same_day_districts: (product as any).same_day_districts,
+                next_day_districts: (product as any).next_day_districts,
+                standard_delivery_days: (product as any).standard_delivery_days,
+              }}
+            />
           </div>
 
           <div className="flex gap-3 mb-3">
