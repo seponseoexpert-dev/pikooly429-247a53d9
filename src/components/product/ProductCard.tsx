@@ -30,9 +30,7 @@ interface ProductCardProps {
 }
 
 const ProductCard = memo(({ product }: ProductCardProps) => {
-  const { addItem } = useCart();
   const { formatPrice } = useMultiCurrency();
-  const navigate = useNavigate();
   const [liked, setLiked] = useState(false);
   const [district, setDistrict] = useState<string | null>(() =>
     typeof window !== "undefined" ? localStorage.getItem(PREFERRED_DISTRICT_KEY) : null
@@ -56,36 +54,18 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
   const rawImg = product.image_url || product.image || "/placeholder.svg";
   const imgSrc = useMemo(() => getOptimizedCloudinaryUrl(rawImg, 360), [rawImg]);
   const linkTo = `/product/${product.slug || product.id}`;
-  const rating = product.rating ?? 0;
-  const sold = product.review_count ?? 0;
 
   // Earliest delivery label — uses saved district if any, else fastest possible
   const earliestLabel = useMemo(
     () =>
       getEarliestDeliveryLabel(
         {
-          // ProductCardProps doesn't carry the district arrays; fall back to time text
-          // We let getEarliestDeliveryLabel use standard_delivery_days default
           standard_delivery_days: undefined,
         },
         district
       ),
     [district]
   );
-
-
-  const handleAddToCart = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    addItem({ id: product.id, name: product.name, price: product.price, image: imgSrc, category: product.category || "", inStock: product.stock !== 0 });
-  }, [addItem, product.id, product.name, product.price, imgSrc, product.category, product.stock]);
-
-  const handleBuyNow = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    addItem({ id: product.id, name: product.name, price: product.price, image: imgSrc, category: product.category || "", inStock: product.stock !== 0 }, undefined, true);
-    navigate("/checkout");
-  }, [addItem, navigate, product.id, product.name, product.price, imgSrc, product.category, product.stock]);
 
   const toggleLiked = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
