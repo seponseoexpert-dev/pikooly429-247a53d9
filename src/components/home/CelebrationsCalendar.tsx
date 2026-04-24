@@ -1,21 +1,29 @@
 import { memo, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import type { Tables } from "@/integrations/supabase/types";
 
 const PASTEL_COLORS = [
   "#f8d7da", "#d6eaf8", "#fef9e7", "#d5f5e3",
   "#f5eef8", "#fdebd0", "#d1f2eb", "#fadbd8",
 ];
 
-// Parse "11TH APR" to render superscript TH/ST/ND/RD
+type CelebrationItem = Tables<"celebrations">;
+
 const DateLabel = ({ label }: { label: string }) => {
   const match = label.match(/^(\d+)(ST|ND|RD|TH)\s+(.+)$/i);
-  if (!match) return <span>{label}</span>;
+
+  if (!match) {
+    return <span>{label.toUpperCase()}</span>;
+  }
+
   return (
     <span>
-      {match[1]}<sup className="text-[7px] sm:text-[8px]">{match[2].toUpperCase()}</sup> {match[3].toUpperCase()}
+      {match[1]}
+      <sup className="text-[7px] sm:text-[8px] align-super">{match[2].toUpperCase()}</sup>{" "}
+      {match[3].toUpperCase()}
     </span>
   );
 };
@@ -23,7 +31,7 @@ const DateLabel = ({ label }: { label: string }) => {
 const CelebrationsCalendar = memo(() => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const { data: celebrations = [] } = useQuery({
+  const { data: celebrations = [] } = useQuery<CelebrationItem[]>({
     queryKey: ["celebrations-calendar"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -31,6 +39,7 @@ const CelebrationsCalendar = memo(() => {
         .select("*")
         .eq("is_active", true)
         .order("display_order");
+
       if (error) throw error;
       return data;
     },
@@ -39,14 +48,17 @@ const CelebrationsCalendar = memo(() => {
 
   if (celebrations.length === 0) return null;
 
-  const scroll = (dir: number) => {
-    scrollRef.current?.scrollBy({ left: dir * 280, behavior: "smooth" });
+  const scroll = (direction: number) => {
+    scrollRef.current?.scrollBy({ left: direction * 320, behavior: "smooth" });
   };
 
   return (
-    <section className="py-3 sm:py-5 md:py-7 section-container" style={{ contain: "layout style" }}>
+    <section className="section-container py-2 sm:py-4 md:py-5" style={{ contain: "layout style" }}>
       <div className="mb-3 sm:mb-4">
-        <h2 className="display-heading text-foreground font-bold leading-tight" style={{ fontSize: "clamp(1.25rem, 2vw + 0.5rem, 1.75rem)" }}>
+        <h2
+          className="display-heading text-foreground font-bold leading-tight"
+          style={{ fontSize: "clamp(1.2rem, 1.5vw + 0.9rem, 1.95rem)" }}
+        >
           Celebrations Calendar
         </h2>
       </div>
@@ -54,61 +66,70 @@ const CelebrationsCalendar = memo(() => {
       <div className="relative">
         <div
           ref={scrollRef}
-          className="flex md:grid md:grid-cols-5 gap-3 sm:gap-4 overflow-x-auto md:overflow-visible scrollbar-hide scroll-smooth-ios pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory"
+          className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth-ios pb-2 -mx-4 px-4 snap-x snap-mandatory sm:mx-0 sm:px-0 md:grid md:grid-cols-5 md:gap-4 md:overflow-visible"
         >
-          {celebrations.map((c: any, index: number) => {
-            const bgColor = c.bg_color || PASTEL_COLORS[index % PASTEL_COLORS.length];
+          {celebrations.map((celebration, index) => {
+            const bgColor = celebration.bg_color || PASTEL_COLORS[index % PASTEL_COLORS.length];
 
             const card = (
-              <div className="w-[42vw] min-w-[42vw] sm:w-[30vw] sm:min-w-[30vw] md:w-auto md:min-w-0 md:max-w-none flex-shrink-0 snap-start group">
+              <div className="group w-[43vw] min-w-[43vw] flex-shrink-0 snap-start sm:w-[29vw] sm:min-w-[29vw] md:w-full md:min-w-0">
                 <div
-                  className="relative rounded-xl sm:rounded-2xl overflow-hidden aspect-square transition-all duration-500 ease-out group-hover:shadow-lg group-hover:scale-[1.02]"
+                  className="relative aspect-[4/5] overflow-hidden rounded-[22px] transition-transform duration-300 ease-out group-hover:scale-[1.02]"
                   style={{ backgroundColor: bgColor }}
                 >
-                  <div className="absolute top-0 left-0 right-0 z-10">
+                  <div className="absolute inset-x-0 top-0 z-10 flex justify-center px-3 pt-0">
                     <div
-                      className="mx-auto w-[75%] text-center py-1 sm:py-1.5 rounded-b-lg sm:rounded-b-xl"
-                      style={{ backgroundColor: "rgba(255,255,255,0.65)", backdropFilter: "blur(6px)" }}
+                      className="w-full rounded-b-[16px] py-2 text-center"
+                      style={{ backgroundColor: "rgba(255,255,255,0.7)", backdropFilter: "blur(6px)" }}
                     >
-                      <span className="text-[10px] sm:text-[11px] md:text-xs font-bold text-foreground tracking-wide">
-                        <DateLabel label={c.date_label} />
+                      <span className="text-[10px] font-bold tracking-wide text-foreground sm:text-[11px] md:text-xs">
+                        <DateLabel label={celebration.date_label} />
                       </span>
                     </div>
                   </div>
 
                   <img
-                    src={c.image_url || "/placeholder.svg"}
-                    alt={c.name}
-                    width={240}
-                    height={240}
-                    className="w-full h-full object-cover"
+                    src={celebration.image_url || "/placeholder.svg"}
+                    alt={celebration.name}
+                    width={280}
+                    height={350}
+                    className="h-full w-full object-cover"
                     loading="lazy"
                     decoding="async"
-                    sizes="(max-width: 640px) 42vw, (max-width: 768px) 30vw, (max-width: 1024px) 24vw, (max-width: 1280px) 18vw, 16vw"
+                    sizes="(max-width: 640px) 43vw, (max-width: 768px) 29vw, (max-width: 1200px) 18vw, 16vw"
                   />
                 </div>
-                <p className="text-[11px] sm:text-xs md:text-sm font-medium text-foreground/80 text-center mt-1.5 sm:mt-2 group-hover:text-primary transition-colors line-clamp-1">
-                  {c.name}
+
+                <p className="mt-2 text-center text-[12px] font-medium text-foreground transition-colors group-hover:text-primary sm:text-sm">
+                  {celebration.name}
                 </p>
               </div>
             );
 
-            return c.link ? (
-              <Link key={c.id} to={c.link} className="flex-shrink-0 md:flex-shrink snap-start">
+            return celebration.link ? (
+              <Link key={celebration.id} to={celebration.link} className="block md:min-w-0">
                 {card}
               </Link>
             ) : (
-              <div key={c.id} className="flex-shrink-0 md:flex-shrink snap-start">{card}</div>
+              <div key={celebration.id} className="md:min-w-0">
+                {card}
+              </div>
             );
           })}
         </div>
 
         {celebrations.length > 5 && (
           <>
-            <button onClick={() => scroll(-1)} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/3 w-9 h-9 rounded-full bg-card/90 shadow-md flex items-center justify-center hover:bg-muted active:scale-95 transition-all z-10 hidden sm:flex md:hidden">
+            <button
+              onClick={() => scroll(-1)}
+              className="absolute left-0 top-1/2 z-10 hidden h-9 w-9 -translate-x-1/3 -translate-y-1/2 items-center justify-center rounded-full bg-card/90 shadow-md transition-all hover:bg-muted active:scale-95 sm:flex md:hidden"
+            >
               <ChevronLeft size={18} />
             </button>
-            <button onClick={() => scroll(1)} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/3 w-9 h-9 rounded-full bg-card/90 shadow-md flex items-center justify-center hover:bg-muted active:scale-95 transition-all z-10 hidden sm:flex md:hidden">
+            <button
+              onClick={() => scroll(1)}
+              className="absolute right-0 top-1/2 z-10 hidden h-9 w-9 translate-x-1/3 -translate-y-1/2 items-center justify-center rounded-full bg-card/90 shadow-md transition-all hover:bg-muted active:scale-95 sm:flex md:hidden"
+            >
               <ChevronRight size={18} />
             </button>
           </>
@@ -119,4 +140,5 @@ const CelebrationsCalendar = memo(() => {
 });
 
 CelebrationsCalendar.displayName = "CelebrationsCalendar";
+
 export default CelebrationsCalendar;

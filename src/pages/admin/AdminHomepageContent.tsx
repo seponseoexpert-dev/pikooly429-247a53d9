@@ -291,12 +291,12 @@ const AdminHomepageContent = () => {
             table="celebrations"
             queryKey="admin-celebrations"
             title="Celebrations Calendar"
-            defaultValues={{ name: "", date_label: "", image_url: "", link: "", bg_color: "", display_order: 0, is_active: true }}
+              defaultValues={{ name: "", date_label: "", image_url: "", link: "", bg_color: "", display_order: 0, is_active: true }}
             fields={[
               { key: "name", label: "Name *", type: "text", placeholder: "Women's Day" },
               { key: "date_label", label: "Date Label *", type: "text", placeholder: "8TH MAR" },
-              { key: "image_url", label: "Image URL", type: "url", placeholder: "https://..." },
-              { key: "bg_color", label: "Background Color", type: "text", placeholder: "#f8d7da (pink), #d6eaf8 (blue)" },
+                { key: "image_url", label: "Image", type: "image", placeholder: "Upload celebration image", bucket: "images" },
+                { key: "bg_color", label: "Background Color", type: "color", placeholder: "#f8d7da (pink), #d6eaf8 (blue)" },
               { key: "link", label: "Link", type: "url", placeholder: "/product-category/womens-day" },
             ]}
           />
