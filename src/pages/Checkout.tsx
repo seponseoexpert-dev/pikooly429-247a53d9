@@ -941,21 +941,37 @@ const Checkout = () => {
                   </div>
 
                   <div className="space-y-3 max-h-[320px] overflow-y-auto pr-1 -mr-1 scrollbar-hide">
-                    {items.map((item) => (
-                      <div key={item.product.id} className="flex gap-3 items-start group p-3 rounded-xl border border-border/60 bg-[hsl(var(--ivory))]/40 hover:border-[hsl(var(--gold)/0.35)] transition-colors">
+                    {items.map((item) => {
+                      const variantKey = [item.variant?.size?.name || "", item.variant?.color?.name || ""].join("|");
+                      const lineUnit = item.product.price + (item.variant?.size?.extraPrice || 0);
+                      return (
+                      <div key={`${item.product.id}-${variantKey}`} className="flex gap-3 items-start group p-3 rounded-xl border border-border/60 bg-[hsl(var(--ivory))]/40 hover:border-[hsl(var(--gold)/0.35)] transition-colors">
                         <div className="relative shrink-0">
                           <img src={(item.product as any).image_url || item.product.image} alt={item.product.name} className="w-16 h-16 object-cover rounded-lg bg-muted shadow-sm" />
                           <span className="absolute -top-1.5 -right-1.5 w-5 h-5 text-[10px] font-bold rounded-full bg-foreground text-background flex items-center justify-center tabular-nums">{item.quantity}</span>
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-[13px] font-semibold leading-snug line-clamp-2 text-foreground">{item.product.name}</p>
+                          {(item.variant?.size || item.variant?.color) && (
+                            <div className="flex flex-wrap items-center gap-1 mt-0.5">
+                              {item.variant?.size && (
+                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-semibold uppercase tracking-wide">{item.variant.size.name}</span>
+                              )}
+                              {item.variant?.color && (
+                                <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-muted text-foreground font-semibold">
+                                  <span className="w-2 h-2 rounded-full ring-1 ring-border" style={{ backgroundColor: item.variant.color.hex }} />
+                                  {item.variant.color.name}
+                                </span>
+                              )}
+                            </div>
+                          )}
                           <div className="flex items-center gap-2 mt-1.5">
                             <div className="flex items-center bg-background border border-border/70 rounded-full">
-                              <button type="button" onClick={() => updateQuantity(item.product.id, Math.max(1, item.quantity - 1))} className="w-6 h-6 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"><Minus size={11} /></button>
+                              <button type="button" onClick={() => updateQuantity(item.product.id, Math.max(1, item.quantity - 1), variantKey)} className="w-6 h-6 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"><Minus size={11} /></button>
                               <span className="text-[11px] font-bold w-5 text-center tabular-nums">{item.quantity}</span>
-                              <button type="button" onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="w-6 h-6 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"><Plus size={11} /></button>
+                              <button type="button" onClick={() => updateQuantity(item.product.id, item.quantity + 1, variantKey)} className="w-6 h-6 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"><Plus size={11} /></button>
                             </div>
-                            <button type="button" onClick={() => removeItem(item.product.id)} className="text-muted-foreground hover:text-destructive ml-auto" aria-label="Remove item"><X size={13} /></button>
+                            <button type="button" onClick={() => removeItem(item.product.id, variantKey)} className="text-muted-foreground hover:text-destructive ml-auto" aria-label="Remove item"><X size={13} /></button>
                           </div>
                           {item.customImages && item.customImages.length > 0 && (
                             <div className="flex gap-1 mt-1.5 flex-wrap">
@@ -964,10 +980,11 @@ const Checkout = () => {
                               ))}
                             </div>
                           )}
-                          <p className="text-[13px] font-semibold text-primary mt-1 tabular-nums">{formatPrice(item.product.price * item.quantity)}</p>
+                          <p className="text-[13px] font-semibold text-primary mt-1 tabular-nums">{formatPrice(lineUnit * item.quantity)}</p>
                         </div>
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
 
                   <div className="gold-divider my-5" />
