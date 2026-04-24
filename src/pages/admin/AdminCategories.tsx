@@ -440,8 +440,8 @@ const AdminCategories = () => {
             </div>
             <div className="flex items-center gap-2">
               <Switch checked={subForm.show_in_tailored} onCheckedChange={(c) => setSubForm({ ...subForm, show_in_tailored: c })} />
-              <Label>Show as Trending Tab on Homepage</Label>
-              <span className="text-xs text-muted-foreground">(adds this subcategory as a tab in "Trending Now")</span>
+              <Label>Show in Tailored Occasions</Label>
+              <span className="text-xs text-muted-foreground">(adds this subcategory as a tab on homepage)</span>
             </div>
             {/* FAQ Section */}
             <div className="space-y-3 border-t pt-4">
