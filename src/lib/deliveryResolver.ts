@@ -77,3 +77,50 @@ export function deliveryGroupLabel(speed: DeliverySpeed): string {
   if (speed === "next_day") return "Next Day Delivery (Tomorrow)";
   return "Standard Delivery";
 }
+
+/**
+ * Format a Date as short label: "Today", "Tomorrow", or "27 Apr".
+ */
+export function formatEarliestDate(date: Date): string {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const target = new Date(date);
+  target.setHours(0, 0, 0, 0);
+  const diffDays = Math.round((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  if (diffDays <= 0) return "Today";
+  if (diffDays === 1) return "Tomorrow";
+  return target.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+}
+
+/**
+ * Compute the earliest delivery date label for a product card.
+ * - If `districtName` is provided & matches Same Day → Today
+ * - Matches Next Day → Tomorrow
+ * - Otherwise → today + standard_delivery_days
+ * - If no district provided, returns the FASTEST possible date the product
+ *   supports (based on whether same_day_districts / next_day_districts are non-empty).
+ */
+export function getEarliestDeliveryLabel(
+  product: ProductDeliveryConfig,
+  districtName?: string | null
+): string {
+  const sameDay = product.same_day_districts ?? [];
+  const nextDay = product.next_day_districts ?? [];
+  const stdDays = Math.max(0, product.standard_delivery_days ?? 3);
+  const today = new Date();
+
+  if (districtName) {
+    if (sameDay.includes(districtName)) return "Today";
+    if (nextDay.includes(districtName)) return "Tomorrow";
+    const d = new Date(today);
+    d.setDate(d.getDate() + stdDays);
+    return formatEarliestDate(d);
+  }
+
+  // No district selected → show fastest possible
+  if (sameDay.length > 0) return "Today";
+  if (nextDay.length > 0) return "Tomorrow";
+  const d = new Date(today);
+  d.setDate(d.getDate() + stdDays);
+  return formatEarliestDate(d);
+}
