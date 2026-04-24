@@ -150,6 +150,23 @@ const AdminBouquet = () => {
                       <Textarea value={form.description || ""} onChange={(e) => setForm({ ...form, description: e.target.value })} />
                     </div>
                   </>
+                ) : tab === "colors" ? (
+                  <div>
+                    <Label>Color (Hex)</Label>
+                    <div className="flex items-center gap-2 border border-border rounded-md h-10 px-2 bg-background">
+                      <input
+                        type="color"
+                        value={form.hex_code || "#ec4899"}
+                        onChange={(e) => setForm({ ...form, hex_code: e.target.value })}
+                        className="h-7 w-9 rounded cursor-pointer border-0 p-0 bg-transparent"
+                      />
+                      <Input
+                        value={form.hex_code || ""}
+                        onChange={(e) => setForm({ ...form, hex_code: e.target.value })}
+                        className="border-0 px-1 text-sm h-8 focus-visible:ring-0"
+                      />
+                    </div>
+                  </div>
                 ) : (
                   <div>
                     <Label>Price (৳)</Label>
@@ -175,7 +192,7 @@ const AdminBouquet = () => {
         <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
           <div className="overflow-x-auto -mx-1 px-1 mb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <TabsList className="inline-flex w-max">
-              {(["flowers", "materials", "sizes"] as ItemType[]).map((t) => {
+              {(["flowers", "materials", "sizes", "colors"] as ItemType[]).map((t) => {
                 const Icon = tabIcons[t];
                 return (
                   <TabsTrigger key={t} value={t} className="gap-1.5 whitespace-nowrap">
@@ -189,15 +206,15 @@ const AdminBouquet = () => {
             </TabsList>
           </div>
 
-          {(["flowers", "materials", "sizes"] as ItemType[]).map((t) => (
+          {(["flowers", "materials", "sizes", "colors"] as ItemType[]).map((t) => (
             <TabsContent key={t} value={t}>
               <div className="border rounded-lg overflow-hidden">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Image</TableHead>
+                      <TableHead>{t === "colors" ? "Swatch" : "Image"}</TableHead>
                       <TableHead>Name</TableHead>
-                      <TableHead>{t === "sizes" ? "Extra Price" : "Price"}</TableHead>
+                      <TableHead>{t === "sizes" ? "Extra Price" : t === "colors" ? "Hex" : "Price"}</TableHead>
                       <TableHead>Order</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Actions</TableHead>
@@ -212,14 +229,21 @@ const AdminBouquet = () => {
                       items.map((item: any) => (
                         <TableRow key={item.id}>
                           <TableCell>
-                            {item.image_url ? (
+                            {t === "colors" ? (
+                              <span
+                                className="inline-block w-10 h-10 rounded-full border-2 border-border shadow-sm"
+                                style={{ backgroundColor: item.hex_code || "#cccccc" }}
+                              />
+                            ) : item.image_url ? (
                               <img src={item.image_url} alt={item.name} className="w-12 h-12 rounded-lg object-cover" />
                             ) : (
                               <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center text-muted-foreground text-xs">No img</div>
                             )}
                           </TableCell>
                           <TableCell className="font-medium">{item.name}</TableCell>
-                          <TableCell>৳{t === "sizes" ? item.extra_price : item.price}</TableCell>
+                          <TableCell>
+                            {t === "sizes" ? `৳${item.extra_price}` : t === "colors" ? <code className="text-xs">{item.hex_code}</code> : `৳${item.price}`}
+                          </TableCell>
                           <TableCell>{item.display_order}</TableCell>
                           <TableCell>
                             <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${item.is_active ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
