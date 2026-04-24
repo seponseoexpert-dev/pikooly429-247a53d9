@@ -1179,6 +1179,11 @@ const Checkout = () => {
 
                   <div className="gold-divider my-5" />
 
+                  {/* Per-product Delivery Breakdown */}
+                  <div className="mb-4">
+                    <CartDeliveryGroups compact />
+                  </div>
+
                   {/* Summary */}
                   <div className="space-y-2.5 text-sm">
                     <div className="flex justify-between">
