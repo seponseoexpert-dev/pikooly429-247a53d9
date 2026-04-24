@@ -21,6 +21,7 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { shouldSendMail, shouldSendSms, shouldSendPush, shouldSendAdminMail, sendBrowserPush } from "@/lib/notificationHelper";
 import { SameDayAnimation, NextDayAnimation } from "@/components/checkout/DeliveryAnimations";
 import SEOHead from "@/components/seo/SEOHead";
+import CartDeliveryGroups from "@/components/cart/CartDeliveryGroups";
 
 const countryPhoneCodes: Record<string, string> = {
   "Afghanistan": "+93", "Albania": "+355", "Algeria": "+213", "Andorra": "+376", "Angola": "+244",
