@@ -1,5 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import SEOHead from "@/components/seo/SEOHead";
+import { toast } from "sonner";
 import { useCart, VariantSelection } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Heart, Minus, Plus, Star, Phone, MessageCircle, Type, X, ChevronLeft, ChevronRight, Facebook, Twitter, Link2, Check, Ruler, Palette } from "lucide-react";
@@ -452,16 +453,92 @@ const ProductDetail = () => {
           </div>
 
           <div className="flex items-center gap-3 mb-4 pb-4 border-b border-border/60">
-            <span className="text-2xl sm:text-3xl md:text-4xl font-display font-semibold text-foreground tracking-tight tabular-nums">{formatPrice(product.price)}</span>
+            <span className="text-2xl sm:text-3xl md:text-4xl font-display font-semibold text-foreground tracking-tight tabular-nums">{formatPrice(effectivePrice)}</span>
             {product.original_price && product.original_price > product.price && (
               <>
-                <span className="text-sm sm:text-base text-muted-foreground line-through tabular-nums">{formatPrice(product.original_price)}</span>
+                <span className="text-sm sm:text-base text-muted-foreground line-through tabular-nums">{formatPrice(product.original_price + sizeExtra)}</span>
                 <span className="chip-luxe">
                   {Math.round((1 - product.price / product.original_price) * 100)}% off
                 </span>
               </>
             )}
           </div>
+
+          {/* Size selector */}
+          {sizes.length > 0 && (
+            <div className="mb-5">
+              <div className="flex items-center justify-between mb-2.5">
+                <span className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                  <Ruler size={15} className="text-primary" /> Size
+                </span>
+                {selectedSize && (
+                  <span className="text-xs text-muted-foreground">
+                    {sizeExtra > 0 ? `+ ${formatPrice(sizeExtra)}` : "Included"}
+                  </span>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {sizes.map((s: any) => {
+                  const active = selectedSizeId === s.id;
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => setSelectedSizeId(active ? null : s.id)}
+                      className={`min-w-[58px] px-3.5 py-2 rounded-lg text-sm font-medium border-2 transition-all ${
+                        active
+                          ? "border-primary bg-primary/5 text-primary shadow-sm"
+                          : "border-border bg-background text-foreground hover:border-primary/50"
+                      }`}
+                    >
+                      {s.name}
+                      {Number(s.extra_price) > 0 && (
+                        <span className="ml-1 text-[10px] opacity-70">+{Number(s.extra_price)}</span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Color swatches */}
+          {colors.length > 0 && (
+            <div className="mb-5">
+              <div className="flex items-center justify-between mb-2.5">
+                <span className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                  <Palette size={15} className="text-primary" /> Color
+                </span>
+                {selectedColor && (
+                  <span className="text-xs text-muted-foreground">{selectedColor.name}</span>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {colors.map((c: any) => {
+                  const active = selectedColorId === c.id;
+                  return (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => setSelectedColorId(active ? null : c.id)}
+                      title={c.name}
+                      aria-label={c.name}
+                      className={`relative w-9 h-9 rounded-full transition-all ${
+                        active
+                          ? "ring-2 ring-primary ring-offset-2 ring-offset-background scale-110"
+                          : "ring-1 ring-border hover:scale-105"
+                      }`}
+                      style={{ backgroundColor: c.hex_code }}
+                    >
+                      {active && (
+                        <Check size={14} className="absolute inset-0 m-auto text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]" strokeWidth={3} />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {(product.short_description || product.description) && (
             <div className="text-sm text-muted-foreground mb-5 leading-relaxed prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: product.short_description || product.description || "" }} />
