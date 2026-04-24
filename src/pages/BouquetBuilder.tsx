@@ -434,9 +434,18 @@ const BouquetBuilder = () => {
               )}
 
               {selectedSizeItem && (
-                <div className="bg-card border border-border rounded-xl p-4">
-                  <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2"><Ruler className="h-4 w-4 text-primary" /> Size</h3>
-                  <span className="text-sm text-foreground">{selectedSizeItem.name} — {selectedSizeItem.description}</span>
+                <div className="bg-card border border-border rounded-xl p-4 space-y-2">
+                  <h3 className="font-semibold text-foreground flex items-center gap-2"><Ruler className="h-4 w-4 text-primary" /> Size & Color</h3>
+                  <div className="text-sm text-foreground">{selectedSizeItem.name} — {selectedSizeItem.description}</div>
+                  {selectedColor && (
+                    <div className="flex items-center gap-2 text-sm text-foreground">
+                      <span
+                        className="w-4 h-4 rounded-full border border-border"
+                        style={{ backgroundColor: selectedColor.hex_code }}
+                      />
+                      <span>Color: <span className="font-medium">{selectedColor.name}</span></span>
+                    </div>
+                  )}
                 </div>
               )}
 
