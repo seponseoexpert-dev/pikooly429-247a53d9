@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/contexts/CartContext";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { useNavigate, Link } from "react-router-dom";
-import { Check, ChevronRight, ChevronLeft, Flower2, Upload, Ruler, MessageSquare, ShoppingCart, ImagePlus, X } from "lucide-react";
+import { Check, ChevronRight, ChevronLeft, Flower2, Upload, Ruler, MessageSquare, ShoppingCart, ImagePlus, X, Palette } from "lucide-react";
 import SEOHead from "@/components/seo/SEOHead";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import PageBottomSEO from "@/components/seo/PageBottomSEO";
@@ -14,10 +14,10 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 const STEPS = [
-  { id: 1, label: "Choose Flowers", icon: Flower2 },
-  { id: 2, label: "Upload Design", icon: Upload },
-  { id: 3, label: "Choose Size", icon: Ruler },
-  { id: 4, label: "Review & Order", icon: MessageSquare },
+  { id: 1, label: "Flowers", icon: Flower2 },
+  { id: 2, label: "Design", icon: Upload },
+  { id: 3, label: "Size & Color", icon: Ruler },
+  { id: 4, label: "Review", icon: MessageSquare },
 ];
 
 const FIXED_SIZES = [
@@ -142,12 +142,19 @@ const BouquetBuilder = () => {
   const canProceed = () => {
     if (step === 1) return selectedFlowersList.length > 0;
     if (step === 2) return true; // design upload is optional
-    if (step === 3) return !!selectedSize;
+    if (step === 3) {
+      if (!selectedSize) return false;
+      // If admin has configured colors, require selection
+      if (bouquetColors.length > 0 && !selectedColorId) return false;
+      return true;
+    }
     return true;
   };
 
   const handleOrder = () => {
-    const bouquetName = `Custom Bouquet (${selectedFlowersList.map((f) => `${f.name} x${f.qty}`).join(", ")})`;
+    const sizeLabel = selectedSizeItem ? ` ${selectedSizeItem.name}` : "";
+    const colorLabel = selectedColor ? ` - ${selectedColor.name}` : "";
+    const bouquetName = `Custom Bouquet${sizeLabel}${colorLabel} (${selectedFlowersList.map((f) => `${f.name} x${f.qty}`).join(", ")})`;
     addItem({
       id: `bouquet-${Date.now()}`,
       name: bouquetName,
@@ -155,7 +162,9 @@ const BouquetBuilder = () => {
       image: selectedFlowersList[0]?.image_url || "/placeholder.svg",
       category: "Custom Bouquet",
       inStock: true,
-    }, undefined, true);
+    }, undefined, true, selectedColor ? {
+      color: { name: selectedColor.name, hex: selectedColor.hex_code },
+    } : undefined);
     navigate("/checkout");
   };
 
