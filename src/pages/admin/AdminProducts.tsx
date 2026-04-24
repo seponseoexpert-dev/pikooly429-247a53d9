@@ -264,10 +264,25 @@ const AdminProducts = () => {
                   <Input type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: parseInt(e.target.value) || 0 })} />
                 </div>
                 <div className="space-y-2 col-span-2 sm:col-span-1">
-                  <Label>Delivery Time</Label>
+                  <Label>Delivery Time (Display Badge)</Label>
                   <Input value={form.delivery_time} onChange={(e) => setForm({ ...form, delivery_time: e.target.value })} placeholder="e.g. 2 Hours" />
                 </div>
               </div>
+
+              {/* Per-product delivery control */}
+              <ProductDeliveryControl
+                sameDayDistricts={form.same_day_districts}
+                nextDayDistricts={form.next_day_districts}
+                standardDeliveryDays={form.standard_delivery_days}
+                onChange={(next) =>
+                  setForm({
+                    ...form,
+                    same_day_districts: next.same_day_districts,
+                    next_day_districts: next.next_day_districts,
+                    standard_delivery_days: next.standard_delivery_days,
+                  })
+                }
+              />
 
               {/* Categories with Checkboxes */}
               <div className="space-y-3">
