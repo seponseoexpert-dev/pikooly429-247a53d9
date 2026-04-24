@@ -1,6 +1,5 @@
-import { useCart } from "@/contexts/CartContext";
-import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Star, Heart } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Heart } from "lucide-react";
 import { useState, memo, useMemo, useCallback, useEffect } from "react";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { getOptimizedCloudinaryUrl } from "@/lib/imageUtils";
@@ -31,9 +30,7 @@ interface ProductCardProps {
 }
 
 const ProductCard = memo(({ product }: ProductCardProps) => {
-  const { addItem } = useCart();
   const { formatPrice } = useMultiCurrency();
-  const navigate = useNavigate();
   const [liked, setLiked] = useState(false);
   const [district, setDistrict] = useState<string | null>(() =>
     typeof window !== "undefined" ? localStorage.getItem(PREFERRED_DISTRICT_KEY) : null
@@ -57,36 +54,18 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
   const rawImg = product.image_url || product.image || "/placeholder.svg";
   const imgSrc = useMemo(() => getOptimizedCloudinaryUrl(rawImg, 360), [rawImg]);
   const linkTo = `/product/${product.slug || product.id}`;
-  const rating = product.rating ?? 0;
-  const sold = product.review_count ?? 0;
 
   // Earliest delivery label — uses saved district if any, else fastest possible
   const earliestLabel = useMemo(
     () =>
       getEarliestDeliveryLabel(
         {
-          // ProductCardProps doesn't carry the district arrays; fall back to time text
-          // We let getEarliestDeliveryLabel use standard_delivery_days default
           standard_delivery_days: undefined,
         },
         district
       ),
     [district]
   );
-
-
-  const handleAddToCart = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    addItem({ id: product.id, name: product.name, price: product.price, image: imgSrc, category: product.category || "", inStock: product.stock !== 0 });
-  }, [addItem, product.id, product.name, product.price, imgSrc, product.category, product.stock]);
-
-  const handleBuyNow = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    addItem({ id: product.id, name: product.name, price: product.price, image: imgSrc, category: product.category || "", inStock: product.stock !== 0 }, undefined, true);
-    navigate("/checkout");
-  }, [addItem, navigate, product.id, product.name, product.price, imgSrc, product.category, product.stock]);
 
   const toggleLiked = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -122,65 +101,36 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
         </button>
       </Link>
 
-      {/* Content */}
-      <div className="p-2.5 sm:p-3 flex flex-col flex-1">
-        {/* Title */}
+      {/* Content — FNP style: clean, no buttons, no rating row */}
+      <div className="p-3 sm:p-3.5 flex flex-col flex-1">
+        {/* Title — 2 lines like FNP */}
         <Link to={linkTo}>
-          <h3 className="text-[12.5px] sm:text-[13.5px] text-[hsl(0_0%_15%)] line-clamp-1 leading-snug font-normal">
+          <h3 className="text-[14px] sm:text-[15.5px] text-[hsl(0_0%_15%)] line-clamp-2 leading-snug font-normal min-h-[2.6em]">
             {product.name}
           </h3>
         </Link>
 
-        {/* Price */}
-        <div className="mt-1.5 flex items-baseline gap-1.5">
+        {/* Price row with inline % OFF badge — FNP style */}
+        <div className="mt-1.5 flex items-baseline flex-wrap gap-x-2 gap-y-1">
           {origPrice && origPrice > product.price && (
-            <span className="text-[11.5px] sm:text-[13px] text-[hsl(0_0%_55%)] line-through tabular-nums font-normal">
+            <span className="text-[13px] sm:text-[14px] text-[hsl(0_0%_55%)] line-through tabular-nums font-normal">
               {formatPrice(origPrice)}
             </span>
           )}
-          <span className="font-bold text-[hsl(0_0%_10%)] text-[14px] sm:text-[15.5px] tabular-nums">
+          <span className="font-bold text-[hsl(0_0%_10%)] text-[17px] sm:text-[19px] tabular-nums">
             {formatPrice(product.price)}
           </span>
-        </div>
-
-        {/* Rating + sold */}
-        <div className="mt-1 flex items-center gap-1.5 text-[11px] sm:text-[12px]">
-          <div className="flex items-center gap-1">
-            <Star size={13} className="fill-[hsl(142_71%_40%)] text-[hsl(142_71%_40%)]" strokeWidth={0} />
-            <span className="font-semibold text-[hsl(0_0%_15%)] tabular-nums">{rating > 0 ? rating.toFixed(1) : "—"}</span>
-          </div>
-          {sold > 0 && (
-            <>
-              <span className="text-[hsl(0_0%_82%)]">|</span>
-              <span className="text-[hsl(0_0%_45%)] tabular-nums">{sold} sold</span>
-            </>
+          {origPrice && origPrice > product.price && (
+            <span className="text-[11px] sm:text-[12px] font-bold text-[hsl(142_71%_32%)] bg-[hsl(142_71%_92%)] px-1.5 py-0.5 rounded-sm tabular-nums">
+              {Math.round(((origPrice - product.price) / origPrice) * 100)}% OFF
+            </span>
           )}
         </div>
 
-        {/* Earliest Delivery line — FNP-style: single-line, bold, prominent green */}
-        <div className="mt-2 pt-2 border-t border-[hsl(0_0%_94%)]">
-          <p className="text-[12px] sm:text-[13.5px] text-[hsl(142_71%_32%)] font-bold leading-tight tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">
-            Earliest Delivery : <span className="font-extrabold">{earliestLabel}</span>
-          </p>
-        </div>
-
-        {/* Split action button - coral/pink outlined */}
-        <div className="mt-2.5 flex items-stretch rounded-md border border-[hsl(345_85%_70%)] bg-white overflow-hidden hover:border-[hsl(345_85%_60%)] transition-colors duration-300">
-          <button
-            onClick={handleBuyNow}
-            className="flex-1 py-1.5 sm:py-2 text-[hsl(345_82%_55%)] font-semibold text-[12px] sm:text-[13px] text-center hover:bg-[hsl(345_85%_97%)] active:scale-[0.98] transition-all"
-          >
-            Shop Now
-          </button>
-          <span className="w-px bg-[hsl(345_85%_70%)] my-1" />
-          <button
-            onClick={handleAddToCart}
-            aria-label="Add to Cart"
-            className="px-3 sm:px-4 flex items-center justify-center text-[hsl(345_82%_55%)] hover:bg-[hsl(345_85%_97%)] active:scale-[0.95] transition-all"
-          >
-            <ShoppingCart size={15} strokeWidth={1.8} />
-          </button>
-        </div>
+        {/* Earliest Delivery line — FNP-style: blue, bold, no border */}
+        <p className="mt-2 text-[13px] sm:text-[14px] text-[hsl(210_85%_45%)] font-semibold leading-tight whitespace-nowrap overflow-hidden text-ellipsis">
+          Earliest Delivery : <span className="font-bold">{earliestLabel}</span>
+        </p>
       </div>
     </article>
   );
