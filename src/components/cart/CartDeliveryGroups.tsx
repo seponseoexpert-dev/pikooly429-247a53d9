@@ -90,6 +90,7 @@ const CartDeliveryGroups = ({ compact = false }: { compact?: boolean }) => {
   const handleSelect = (name: string) => {
     setSelected(name);
     if (typeof window !== "undefined") localStorage.setItem(STORAGE_KEY, name);
+      window.dispatchEvent(new Event("delivery-district-changed"));
   };
 
   const district = districts.find((d) => d.name === selected);
