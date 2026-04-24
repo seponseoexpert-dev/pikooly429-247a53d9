@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Search, Package } from "lucide-react";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
+import ProductVariantsManager, { saveProductVariants } from "@/components/admin/ProductVariantsManager";
 import { useCurrency } from "@/hooks/useCurrency";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -164,6 +165,11 @@ const AdminProducts = () => {
       if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); setSaving(false); return; }
       productId = data.id;
       toast({ title: "Product created" });
+    }
+
+    // Sync variants (sizes + colors)
+    if (productId) {
+      await saveProductVariants(productId);
     }
 
     // Sync junction tables
@@ -374,6 +380,9 @@ const AdminProducts = () => {
                   </div>
                 ))}
               </div>
+              {/* Variants */}
+              <ProductVariantsManager productId={editing?.id || null} />
+
               {/* SEO Section */}
               <div className="space-y-4 border-t pt-4 mt-2">
                 <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">🔍 SEO Settings</h3>
