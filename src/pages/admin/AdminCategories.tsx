@@ -313,7 +313,7 @@ const AdminCategories = () => {
                   })}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  একাধিক টাইপ সিলেক্ট করতে পারবেন। কোনোটি সিলেক্ট না করলে শুধু ডিফল্ট "Category" সেকশনে দেখাবে।
+                  Select one or more types. If none selected, will show only in the default "Category" section.
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
@@ -440,8 +440,8 @@ const AdminCategories = () => {
             </div>
             <div className="flex items-center gap-2">
               <Switch checked={subForm.show_in_tailored} onCheckedChange={(c) => setSubForm({ ...subForm, show_in_tailored: c })} />
-              <Label>Show in Tailored Occasions</Label>
-              <span className="text-xs text-muted-foreground">(হোমপেজে দেখাবে)</span>
+              <Label>Show as Trending Tab on Homepage</Label>
+              <span className="text-xs text-muted-foreground">(adds this subcategory as a tab in "Trending Now")</span>
             </div>
             {/* FAQ Section */}
             <div className="space-y-3 border-t pt-4">
