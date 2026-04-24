@@ -157,6 +157,9 @@ const AdminProducts = () => {
       seo_title: form.seo_title.trim() || null, seo_description: form.seo_description.trim() || null,
       delivery_time: form.delivery_time.trim() || null,
       instructions: form.instructions || null, delivery_info: form.delivery_info || null,
+      same_day_districts: form.same_day_districts,
+      next_day_districts: form.next_day_districts,
+      standard_delivery_days: form.standard_delivery_days,
     };
 
     let productId: string | null = null;
