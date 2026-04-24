@@ -464,78 +464,65 @@ const ProductDetail = () => {
             )}
           </div>
 
-          {/* Size selector */}
-          {sizes.length > 0 && (
-            <div className="mb-5">
-              <div className="flex items-center justify-between mb-2.5">
-                <span className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                  <Ruler size={15} className="text-primary" /> Size
-                </span>
-                {selectedSize && (
-                  <span className="text-xs text-muted-foreground">
-                    {sizeExtra > 0 ? `+ ${formatPrice(sizeExtra)}` : "Included"}
-                  </span>
-                )}
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {sizes.map((s: any) => {
-                  const active = selectedSizeId === s.id;
-                  return (
-                    <button
-                      key={s.id}
-                      type="button"
-                      onClick={() => setSelectedSizeId(active ? null : s.id)}
-                      className={`min-w-[58px] px-3.5 py-2 rounded-lg text-sm font-medium border-2 transition-all ${
-                        active
-                          ? "border-primary bg-primary/5 text-primary shadow-sm"
-                          : "border-border bg-background text-foreground hover:border-primary/50"
-                      }`}
+          {/* Variants — clean "ADD SOMETHING EXTRA" style table */}
+          {(sizes.length > 0 || colors.length > 0) && (
+            <div className="mb-5 border-y border-border/70 py-4">
+              <p className="text-[11px] font-semibold tracking-[0.12em] uppercase text-muted-foreground mb-3">
+                Add Something Extra
+              </p>
+              <div className="divide-y divide-border/50">
+                {sizes.length > 0 && (
+                  <div className="grid grid-cols-[110px_1fr] sm:grid-cols-[140px_1fr] items-center gap-3 py-2.5">
+                    <label htmlFor="variant-size" className="text-sm font-serif text-foreground/90 flex items-center gap-1.5">
+                      <Ruler size={14} className="text-primary/70" /> Size
+                    </label>
+                    <select
+                      id="variant-size"
+                      value={selectedSizeId || ""}
+                      onChange={(e) => setSelectedSizeId(e.target.value || null)}
+                      className="w-full h-10 rounded-md border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition"
                     >
-                      {s.name}
-                      {Number(s.extra_price) > 0 && (
-                        <span className="ml-1 text-[10px] opacity-70">+{Number(s.extra_price)}</span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+                      <option value="">Select Size</option>
+                      {sizes.map((s: any) => (
+                        <option key={s.id} value={s.id}>
+                          {s.name}
+                          {Number(s.extra_price) > 0 ? ` (+${formatPrice(Number(s.extra_price))})` : ""}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
 
-          {/* Color swatches */}
-          {colors.length > 0 && (
-            <div className="mb-5">
-              <div className="flex items-center justify-between mb-2.5">
-                <span className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                  <Palette size={15} className="text-primary" /> Color
-                </span>
-                {selectedColor && (
-                  <span className="text-xs text-muted-foreground">{selectedColor.name}</span>
-                )}
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {colors.map((c: any) => {
-                  const active = selectedColorId === c.id;
-                  return (
-                    <button
-                      key={c.id}
-                      type="button"
-                      onClick={() => setSelectedColorId(active ? null : c.id)}
-                      title={c.name}
-                      aria-label={c.name}
-                      className={`relative w-9 h-9 rounded-full transition-all ${
-                        active
-                          ? "ring-2 ring-primary ring-offset-2 ring-offset-background scale-110"
-                          : "ring-1 ring-border hover:scale-105"
-                      }`}
-                      style={{ backgroundColor: c.hex_code }}
-                    >
-                      {active && (
-                        <Check size={14} className="absolute inset-0 m-auto text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]" strokeWidth={3} />
+                {colors.length > 0 && (
+                  <div className="grid grid-cols-[110px_1fr] sm:grid-cols-[140px_1fr] items-center gap-3 py-2.5">
+                    <label htmlFor="variant-color" className="text-sm font-serif text-foreground/90 flex items-center gap-1.5">
+                      <Palette size={14} className="text-primary/70" /> Color
+                    </label>
+                    <div className="relative">
+                      <select
+                        id="variant-color"
+                        value={selectedColorId || ""}
+                        onChange={(e) => setSelectedColorId(e.target.value || null)}
+                        className="w-full h-10 rounded-md border border-border bg-background pl-3 pr-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition appearance-auto"
+                        style={selectedColor ? { paddingLeft: "2rem" } : undefined}
+                      >
+                        <option value="">Select Color</option>
+                        {colors.map((c: any) => (
+                          <option key={c.id} value={c.id}>
+                            {c.name}
+                          </option>
+                        ))}
+                      </select>
+                      {selectedColor && (
+                        <span
+                          aria-hidden
+                          className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full ring-1 ring-border"
+                          style={{ backgroundColor: selectedColor.hex_code }}
+                        />
                       )}
-                    </button>
-                  );
-                })}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
