@@ -44,7 +44,8 @@ const Header = () => {
         .select("id, name, slug, image_url, category_type, category_types")
         .eq("is_active", true)
         .eq("show_in_header", true)
-        .order("display_order");
+        .order("display_order", { ascending: true })
+        .order("name", { ascending: true });
       if (error) throw error;
       // Header respects ONLY the "Show in Header Menu" toggle — no type filtering
       return data || [];
