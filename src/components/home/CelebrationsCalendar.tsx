@@ -54,13 +54,13 @@ const CelebrationsCalendar = memo(() => {
       <div className="relative">
         <div
           ref={scrollRef}
-          className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide scroll-smooth-ios pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory"
+          className="flex md:grid md:grid-cols-5 gap-3 sm:gap-4 overflow-x-auto md:overflow-visible scrollbar-hide scroll-smooth-ios pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory"
         >
           {celebrations.map((c: any, index: number) => {
             const bgColor = c.bg_color || PASTEL_COLORS[index % PASTEL_COLORS.length];
 
             const card = (
-              <div className="w-[42vw] min-w-[42vw] sm:w-[30vw] sm:min-w-[30vw] md:w-[24vw] md:min-w-[24vw] lg:w-[18vw] lg:min-w-[18vw] xl:w-[16vw] xl:min-w-[16vw] max-w-[240px] flex-shrink-0 snap-start group">
+              <div className="w-[42vw] min-w-[42vw] sm:w-[30vw] sm:min-w-[30vw] md:w-auto md:min-w-0 md:max-w-none flex-shrink-0 snap-start group">
                 <div
                   className="relative rounded-xl sm:rounded-2xl overflow-hidden aspect-square transition-all duration-500 ease-out group-hover:shadow-lg group-hover:scale-[1.02]"
                   style={{ backgroundColor: bgColor }}
@@ -94,21 +94,21 @@ const CelebrationsCalendar = memo(() => {
             );
 
             return c.link ? (
-              <Link key={c.id} to={c.link} className="flex-shrink-0 snap-start">
+              <Link key={c.id} to={c.link} className="flex-shrink-0 md:flex-shrink snap-start">
                 {card}
               </Link>
             ) : (
-              <div key={c.id} className="flex-shrink-0 snap-start">{card}</div>
+              <div key={c.id} className="flex-shrink-0 md:flex-shrink snap-start">{card}</div>
             );
           })}
         </div>
 
-        {celebrations.length > 3 && (
+        {celebrations.length > 5 && (
           <>
-            <button onClick={() => scroll(-1)} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/3 w-9 h-9 rounded-full bg-card/90 shadow-md flex items-center justify-center hover:bg-muted active:scale-95 transition-all z-10 hidden sm:flex">
+            <button onClick={() => scroll(-1)} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/3 w-9 h-9 rounded-full bg-card/90 shadow-md flex items-center justify-center hover:bg-muted active:scale-95 transition-all z-10 hidden sm:flex md:hidden">
               <ChevronLeft size={18} />
             </button>
-            <button onClick={() => scroll(1)} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/3 w-9 h-9 rounded-full bg-card/90 shadow-md flex items-center justify-center hover:bg-muted active:scale-95 transition-all z-10 hidden sm:flex">
+            <button onClick={() => scroll(1)} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/3 w-9 h-9 rounded-full bg-card/90 shadow-md flex items-center justify-center hover:bg-muted active:scale-95 transition-all z-10 hidden sm:flex md:hidden">
               <ChevronRight size={18} />
             </button>
           </>
