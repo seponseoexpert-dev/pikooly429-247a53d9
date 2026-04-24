@@ -35,6 +35,24 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
   const { formatPrice } = useMultiCurrency();
   const navigate = useNavigate();
   const [liked, setLiked] = useState(false);
+  const [district, setDistrict] = useState<string | null>(() =>
+    typeof window !== "undefined" ? localStorage.getItem(PREFERRED_DISTRICT_KEY) : null
+  );
+
+  // Sync when district changes elsewhere on the page (Product detail / Cart)
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === PREFERRED_DISTRICT_KEY) setDistrict(e.newValue);
+    };
+    const onCustom = () => setDistrict(localStorage.getItem(PREFERRED_DISTRICT_KEY));
+    window.addEventListener("storage", onStorage);
+    window.addEventListener("delivery-district-changed", onCustom);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("delivery-district-changed", onCustom);
+    };
+  }, []);
+
   const origPrice = product.original_price ?? product.originalPrice;
   const rawImg = product.image_url || product.image || "/placeholder.svg";
   const imgSrc = useMemo(() => getOptimizedCloudinaryUrl(rawImg, 360), [rawImg]);
@@ -42,8 +60,20 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
   const rating = product.rating ?? 0;
   const sold = product.review_count ?? 0;
 
-  // Parse delivery_time → choose badge style (Same Day / 40 Min / Next Day)
-  const deliveryBadge = useMemo(() => parseDeliveryBadge(product.delivery_time), [product.delivery_time]);
+  // Earliest delivery label — uses saved district if any, else fastest possible
+  const earliestLabel = useMemo(
+    () =>
+      getEarliestDeliveryLabel(
+        {
+          // ProductCardProps doesn't carry the district arrays; fall back to time text
+          // We let getEarliestDeliveryLabel use standard_delivery_days default
+          standard_delivery_days: undefined,
+        },
+        district
+      ),
+    [district]
+  );
+
 
   const handleAddToCart = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
