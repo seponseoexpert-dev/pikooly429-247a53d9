@@ -15,6 +15,7 @@ import { toast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Search, Package } from "lucide-react";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import ProductVariantsManager, { saveProductVariants } from "@/components/admin/ProductVariantsManager";
+import ProductDeliveryControl from "@/components/admin/ProductDeliveryControl";
 import { useCurrency } from "@/hooks/useCurrency";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -50,6 +51,9 @@ const AdminProducts = () => {
     specifications: [] as Array<{ item: string; value: string }>,
     seo_title: "", seo_description: "", delivery_time: "",
     instructions: "", delivery_info: "",
+    same_day_districts: [] as string[],
+    next_day_districts: [] as string[],
+    standard_delivery_days: 3,
   };
   const [form, setForm] = useState(defaultForm);
 
@@ -110,6 +114,9 @@ const AdminProducts = () => {
       seo_title: (p as any).seo_title || "", seo_description: (p as any).seo_description || "",
       delivery_time: (p as any).delivery_time || "",
       instructions: (p as any).instructions || "", delivery_info: (p as any).delivery_info || "",
+      same_day_districts: (p as any).same_day_districts || [],
+      next_day_districts: (p as any).next_day_districts || [],
+      standard_delivery_days: (p as any).standard_delivery_days ?? 3,
     });
     setImageFile(null);
     setDialogOpen(true);
@@ -151,6 +158,9 @@ const AdminProducts = () => {
       seo_title: form.seo_title.trim() || null, seo_description: form.seo_description.trim() || null,
       delivery_time: form.delivery_time.trim() || null,
       instructions: form.instructions || null, delivery_info: form.delivery_info || null,
+      same_day_districts: form.same_day_districts,
+      next_day_districts: form.next_day_districts,
+      standard_delivery_days: form.standard_delivery_days,
     };
 
     let productId: string | null = null;
@@ -254,10 +264,25 @@ const AdminProducts = () => {
                   <Input type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: parseInt(e.target.value) || 0 })} />
                 </div>
                 <div className="space-y-2 col-span-2 sm:col-span-1">
-                  <Label>Delivery Time</Label>
+                  <Label>Delivery Time (Display Badge)</Label>
                   <Input value={form.delivery_time} onChange={(e) => setForm({ ...form, delivery_time: e.target.value })} placeholder="e.g. 2 Hours" />
                 </div>
               </div>
+
+              {/* Per-product delivery control */}
+              <ProductDeliveryControl
+                sameDayDistricts={form.same_day_districts}
+                nextDayDistricts={form.next_day_districts}
+                standardDeliveryDays={form.standard_delivery_days}
+                onChange={(next) =>
+                  setForm({
+                    ...form,
+                    same_day_districts: next.same_day_districts,
+                    next_day_districts: next.next_day_districts,
+                    standard_delivery_days: next.standard_delivery_days,
+                  })
+                }
+              />
 
               {/* Categories with Checkboxes */}
               <div className="space-y-3">
