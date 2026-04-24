@@ -113,6 +113,9 @@ const AdminProducts = () => {
       seo_title: (p as any).seo_title || "", seo_description: (p as any).seo_description || "",
       delivery_time: (p as any).delivery_time || "",
       instructions: (p as any).instructions || "", delivery_info: (p as any).delivery_info || "",
+      same_day_districts: (p as any).same_day_districts || [],
+      next_day_districts: (p as any).next_day_districts || [],
+      standard_delivery_days: (p as any).standard_delivery_days ?? 3,
     });
     setImageFile(null);
     setDialogOpen(true);
