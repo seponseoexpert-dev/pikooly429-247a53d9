@@ -15,6 +15,7 @@ import { toast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Search, Package } from "lucide-react";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import ProductVariantsManager, { saveProductVariants } from "@/components/admin/ProductVariantsManager";
+import ProductDeliveryControl from "@/components/admin/ProductDeliveryControl";
 import { useCurrency } from "@/hooks/useCurrency";
 import type { Tables } from "@/integrations/supabase/types";
 
