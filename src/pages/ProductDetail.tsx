@@ -5,6 +5,7 @@ import { useCart, VariantSelection } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Heart, Minus, Plus, Star, Phone, MessageCircle, Type, X, ChevronLeft, ChevronRight, Facebook, Twitter, Link2, Check, Ruler, Palette } from "lucide-react";
 import { parseDeliveryBadge } from "@/lib/deliveryBadge";
+import DeliveryChecker from "@/components/product/DeliveryChecker";
 import { useState, useMemo, useCallback } from "react";
 import ProductCard from "@/components/product/ProductCard";
 import { ProductDetailSkeleton } from "@/components/ui/skeletons";
