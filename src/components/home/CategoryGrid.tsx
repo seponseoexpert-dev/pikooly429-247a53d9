@@ -24,7 +24,8 @@ const CategoryGrid = memo(() => {
       if (error) throw error;
       return (data || []).filter((c: any) => {
         const types: string[] = (c.category_types && c.category_types.length > 0) ? c.category_types : [c.category_type].filter(Boolean);
-        return !types.includes("tailored");
+        // Strict: only show categories explicitly marked as "category" type
+        return types.includes("category");
       });
     },
     staleTime: 5 * 60 * 1000,

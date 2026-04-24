@@ -37,11 +37,9 @@ const AllGifts = () => {
 
   const getTypes = (c: any): string[] =>
     (c.category_types && c.category_types.length > 0) ? c.category_types : [c.category_type].filter(Boolean);
+  // Strict separation: a category appears in a tab only if explicitly marked with that type
   const occasions = categories.filter((c: any) => getTypes(c).includes("occasion"));
-  const categoryItems = categories.filter((c: any) => {
-    const t = getTypes(c);
-    return !t.includes("occasion") && !t.includes("tailored");
-  });
+  const categoryItems = categories.filter((c: any) => getTypes(c).includes("category"));
 
   const getSubsForCat = (catId: string) =>
     subcategories.filter((s: any) => s.category_id === catId);

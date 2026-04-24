@@ -46,10 +46,8 @@ const Header = () => {
         .eq("show_in_header", true)
         .order("display_order");
       if (error) throw error;
-      return (data || []).filter((c: any) => {
-        const types: string[] = (c.category_types && c.category_types.length > 0) ? c.category_types : [c.category_type].filter(Boolean);
-        return !types.includes("tailored");
-      });
+      // Header respects ONLY the "Show in Header Menu" toggle — no type filtering
+      return data || [];
     },
     staleTime: 10 * 60 * 1000,
     placeholderData: (prev) => prev,

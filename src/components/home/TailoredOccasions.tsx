@@ -21,11 +21,12 @@ const TailoredOccasions = memo(() => {
   const { data: occasionCategories = [] } = useQuery({
     queryKey: ["homepage-occasion-categories"],
     queryFn: async () => {
+      // Tailored section: include any category marked with "tailored" type,
+      // regardless of "Show in Homepage" toggle (Tailored tick is itself the intent)
       const { data, error } = await supabase
         .from("categories")
         .select("id, name, slug, image_url, category_type, category_types")
         .eq("is_active", true)
-        .eq("show_in_homepage", true)
         .order("display_order");
       if (error) throw error;
       return (data || []).filter((c: any) => {
