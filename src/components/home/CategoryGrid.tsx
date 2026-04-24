@@ -68,7 +68,7 @@ const CategoryGrid = memo(() => {
   const desktopItems = categories.slice(0, 9);
 
   return (
-    <section className="py-3 sm:py-4 lg:py-6" aria-label="Shop by Category" style={{ contain: "layout style", minHeight: "280px" }}>
+    <section className="py-2 sm:py-3 lg:py-4" aria-label="Shop by Category" style={{ contain: "layout style" }}>
       {/* Mobile: 2 rows × 4 columns */}
       <div className="grid grid-cols-4 gap-x-3 gap-y-4 px-4 md:hidden">
         {mobileItems.map((cat, idx) => (
