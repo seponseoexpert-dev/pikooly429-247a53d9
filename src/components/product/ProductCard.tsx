@@ -1,10 +1,13 @@
 import { useCart } from "@/contexts/CartContext";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, Star, Heart } from "lucide-react";
-import { useState, memo, useMemo, useCallback } from "react";
+import { useState, memo, useMemo, useCallback, useEffect } from "react";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { getOptimizedCloudinaryUrl } from "@/lib/imageUtils";
-import { parseDeliveryBadge } from "@/lib/deliveryBadge";
+import { getEarliestDeliveryLabel } from "@/lib/deliveryResolver";
+
+const PREFERRED_DISTRICT_KEY = "preferred_delivery_district";
+
 
 interface ProductCardProps {
   product: {
