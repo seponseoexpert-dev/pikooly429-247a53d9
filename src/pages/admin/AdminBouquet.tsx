@@ -8,13 +8,13 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Pencil, Trash2, Flower2, Package, Ruler, FileText } from "lucide-react";
+import { Plus, Pencil, Trash2, Flower2, Package, Ruler, FileText, Palette } from "lucide-react";
 import PageContentEditor from "@/components/admin/PageContentEditor";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { useState } from "react";
 import { toast } from "sonner";
 
-type ItemType = "flowers" | "materials" | "sizes";
+type ItemType = "flowers" | "materials" | "sizes" | "colors";
 
 interface FormData {
   name: string;
@@ -22,11 +22,12 @@ interface FormData {
   price: number;
   extra_price?: number;
   description?: string;
+  hex_code?: string;
   is_active: boolean;
   display_order: number;
 }
 
-const defaultForm: FormData = { name: "", image_url: "", price: 0, is_active: true, display_order: 0 };
+const defaultForm: FormData = { name: "", image_url: "", price: 0, hex_code: "#ec4899", is_active: true, display_order: 0 };
 
 const AdminBouquet = () => {
   const qc = useQueryClient();
@@ -35,7 +36,7 @@ const AdminBouquet = () => {
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState<FormData>(defaultForm);
 
-  const tableName = `bouquet_${tab}` as "bouquet_flowers" | "bouquet_materials" | "bouquet_sizes";
+  const tableName = `bouquet_${tab}` as "bouquet_flowers" | "bouquet_materials" | "bouquet_sizes" | "bouquet_colors";
 
   const { data: items = [], isLoading } = useQuery({
     queryKey: ["bouquet", tab],
@@ -57,6 +58,8 @@ const AdminBouquet = () => {
       if (tab === "sizes") {
         payload.extra_price = form.extra_price || 0;
         payload.description = form.description || null;
+      } else if (tab === "colors") {
+        payload.hex_code = form.hex_code || "#cccccc";
       } else {
         payload.price = form.price;
       }
@@ -100,14 +103,15 @@ const AdminBouquet = () => {
       price: item.price || 0,
       extra_price: item.extra_price || 0,
       description: item.description || "",
+      hex_code: item.hex_code || "#ec4899",
       is_active: item.is_active,
       display_order: item.display_order,
     });
     setDialogOpen(true);
   };
 
-  const tabLabels = { flowers: "Flowers", materials: "Materials", sizes: "Sizes" };
-  const tabIcons = { flowers: Flower2, materials: Package, sizes: Ruler };
+  const tabLabels: Record<ItemType, string> = { flowers: "Flowers", materials: "Materials", sizes: "Sizes", colors: "Colors" };
+  const tabIcons: Record<ItemType, any> = { flowers: Flower2, materials: Package, sizes: Ruler, colors: Palette };
 
   return (
       <div className="space-y-6">
@@ -146,6 +150,23 @@ const AdminBouquet = () => {
                       <Textarea value={form.description || ""} onChange={(e) => setForm({ ...form, description: e.target.value })} />
                     </div>
                   </>
+                ) : tab === "colors" ? (
+                  <div>
+                    <Label>Color (Hex)</Label>
+                    <div className="flex items-center gap-2 border border-border rounded-md h-10 px-2 bg-background">
+                      <input
+                        type="color"
+                        value={form.hex_code || "#ec4899"}
+                        onChange={(e) => setForm({ ...form, hex_code: e.target.value })}
+                        className="h-7 w-9 rounded cursor-pointer border-0 p-0 bg-transparent"
+                      />
+                      <Input
+                        value={form.hex_code || ""}
+                        onChange={(e) => setForm({ ...form, hex_code: e.target.value })}
+                        className="border-0 px-1 text-sm h-8 focus-visible:ring-0"
+                      />
+                    </div>
+                  </div>
                 ) : (
                   <div>
                     <Label>Price (৳)</Label>
@@ -171,7 +192,7 @@ const AdminBouquet = () => {
         <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
           <div className="overflow-x-auto -mx-1 px-1 mb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <TabsList className="inline-flex w-max">
-              {(["flowers", "materials", "sizes"] as ItemType[]).map((t) => {
+              {(["flowers", "materials", "sizes", "colors"] as ItemType[]).map((t) => {
                 const Icon = tabIcons[t];
                 return (
                   <TabsTrigger key={t} value={t} className="gap-1.5 whitespace-nowrap">
@@ -185,15 +206,15 @@ const AdminBouquet = () => {
             </TabsList>
           </div>
 
-          {(["flowers", "materials", "sizes"] as ItemType[]).map((t) => (
+          {(["flowers", "materials", "sizes", "colors"] as ItemType[]).map((t) => (
             <TabsContent key={t} value={t}>
               <div className="border rounded-lg overflow-hidden">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Image</TableHead>
+                      <TableHead>{t === "colors" ? "Swatch" : "Image"}</TableHead>
                       <TableHead>Name</TableHead>
-                      <TableHead>{t === "sizes" ? "Extra Price" : "Price"}</TableHead>
+                      <TableHead>{t === "sizes" ? "Extra Price" : t === "colors" ? "Hex" : "Price"}</TableHead>
                       <TableHead>Order</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Actions</TableHead>
@@ -208,14 +229,21 @@ const AdminBouquet = () => {
                       items.map((item: any) => (
                         <TableRow key={item.id}>
                           <TableCell>
-                            {item.image_url ? (
+                            {t === "colors" ? (
+                              <span
+                                className="inline-block w-10 h-10 rounded-full border-2 border-border shadow-sm"
+                                style={{ backgroundColor: item.hex_code || "#cccccc" }}
+                              />
+                            ) : item.image_url ? (
                               <img src={item.image_url} alt={item.name} className="w-12 h-12 rounded-lg object-cover" />
                             ) : (
                               <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center text-muted-foreground text-xs">No img</div>
                             )}
                           </TableCell>
                           <TableCell className="font-medium">{item.name}</TableCell>
-                          <TableCell>৳{t === "sizes" ? item.extra_price : item.price}</TableCell>
+                          <TableCell>
+                            {t === "sizes" ? `৳${item.extra_price}` : t === "colors" ? <code className="text-xs">{item.hex_code}</code> : `৳${item.price}`}
+                          </TableCell>
                           <TableCell>{item.display_order}</TableCell>
                           <TableCell>
                             <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${item.is_active ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
