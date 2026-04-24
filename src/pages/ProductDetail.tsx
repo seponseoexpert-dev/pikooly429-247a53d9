@@ -572,6 +572,17 @@ const ProductDetail = () => {
             </div>
           </div>
 
+          {/* Delivery availability checker */}
+          <div className="mb-4">
+            <DeliveryChecker
+              product={{
+                same_day_districts: (product as any).same_day_districts,
+                next_day_districts: (product as any).next_day_districts,
+                standard_delivery_days: (product as any).standard_delivery_days,
+              }}
+            />
+          </div>
+
           <div className="flex gap-3 mb-3">
             <Button size="lg" variant="outline" className="flex-1 h-12 sm:h-[52px] text-xs sm:text-sm font-semibold rounded-full tracking-[0.14em] uppercase border-foreground/20 hover:border-[hsl(var(--gold)/0.6)] hover:bg-[hsl(var(--gold-light))] transition-all duration-500" onClick={handleAddToCart}>
               <ShoppingBag size={16} /> Add to Cart
