@@ -1416,15 +1416,18 @@ export type Database = {
           is_active: boolean
           is_featured: boolean
           name: string
+          next_day_districts: string[]
           original_price: number | null
           price: number
           rating: number | null
           review_count: number | null
+          same_day_districts: string[]
           seo_description: string | null
           seo_title: string | null
           short_description: string | null
           slug: string
           specifications: Json | null
+          standard_delivery_days: number
           stock: number
           subcategory_id: string | null
           tags: string[] | null
@@ -1445,15 +1448,18 @@ export type Database = {
           is_active?: boolean
           is_featured?: boolean
           name: string
+          next_day_districts?: string[]
           original_price?: number | null
           price?: number
           rating?: number | null
           review_count?: number | null
+          same_day_districts?: string[]
           seo_description?: string | null
           seo_title?: string | null
           short_description?: string | null
           slug: string
           specifications?: Json | null
+          standard_delivery_days?: number
           stock?: number
           subcategory_id?: string | null
           tags?: string[] | null
@@ -1474,15 +1480,18 @@ export type Database = {
           is_active?: boolean
           is_featured?: boolean
           name?: string
+          next_day_districts?: string[]
           original_price?: number | null
           price?: number
           rating?: number | null
           review_count?: number | null
+          same_day_districts?: string[]
           seo_description?: string | null
           seo_title?: string | null
           short_description?: string | null
           slug?: string
           specifications?: Json | null
+          standard_delivery_days?: number
           stock?: number
           subcategory_id?: string | null
           tags?: string[] | null
