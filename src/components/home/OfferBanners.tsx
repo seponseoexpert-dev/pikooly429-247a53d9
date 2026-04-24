@@ -43,7 +43,11 @@ const OfferBanners = memo(() => {
           {banners.map((b: any) => {
             const bgColor = b.bg_color || "#f5f0d0";
             const hasContent = (b.title && b.title.trim()) || (b.subtitle && b.subtitle.trim()) || b.logo_url;
-            const itemClassName = "min-w-[280px] w-[80vw] sm:w-[340px] md:min-w-0 md:w-[calc((100%-2.5rem)/3)] flex-shrink-0 snap-start";
+            const itemClassName = banners.length === 1
+              ? "w-full md:max-w-[640px] md:mx-auto flex-shrink-0 snap-start"
+              : banners.length === 2
+              ? "min-w-[280px] w-[80vw] sm:w-[340px] md:min-w-0 md:w-[calc((100%-1.25rem)/2)] flex-shrink-0 snap-start"
+              : "min-w-[280px] w-[80vw] sm:w-[340px] md:min-w-0 md:w-[calc((100%-2.5rem)/3)] flex-shrink-0 snap-start";
 
             const card = (
               <div
