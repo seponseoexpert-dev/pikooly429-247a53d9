@@ -332,30 +332,75 @@ const BouquetBuilder = () => {
 
         {step === 3 && (
           <div>
-            <h2 className="text-xl md:text-2xl font-display font-bold text-foreground mb-1">Choose Size</h2>
-            <p className="text-sm text-muted-foreground mb-6">Pick your bouquet size</p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {FIXED_SIZES.map((size) => {
-                const isSelected = selectedSize === size.id;
-                return (
-                  <div
-                    key={size.id}
-                    onClick={() => setSelectedSize(size.id)}
-                    className={cn(
-                      "rounded-xl border-2 p-4 cursor-pointer transition-all bg-card text-center",
-                      isSelected ? "border-primary shadow-md bg-primary/5" : "border-border/50 hover:border-primary/30"
-                    )}
-                  >
-                    <div className="text-2xl font-display font-bold text-foreground mb-1">{size.name}</div>
-                    <p className="text-xs text-muted-foreground">{size.description}</p>
-                    {isSelected && (
-                      <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto mt-2">
-                        <Check className="h-3.5 w-3.5" />
+            <h2 className="text-xl md:text-2xl font-display font-bold text-foreground mb-1">Choose Size & Color</h2>
+            <p className="text-sm text-muted-foreground mb-6">Pick your bouquet size and color theme</p>
+
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                  <Ruler className="h-4 w-4 text-primary" /> Size
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {FIXED_SIZES.map((size) => {
+                    const isSelected = selectedSize === size.id;
+                    return (
+                      <div
+                        key={size.id}
+                        onClick={() => setSelectedSize(size.id)}
+                        className={cn(
+                          "rounded-xl border-2 p-4 cursor-pointer transition-all bg-card text-center",
+                          isSelected ? "border-primary shadow-md bg-primary/5" : "border-border/50 hover:border-primary/30"
+                        )}
+                      >
+                        <div className="text-2xl font-display font-bold text-foreground mb-1">{size.name}</div>
+                        <p className="text-xs text-muted-foreground">{size.description}</p>
+                        {isSelected && (
+                          <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto mt-2">
+                            <Check className="h-3.5 w-3.5" />
+                          </div>
+                        )}
                       </div>
-                    )}
+                    );
+                  })}
+                </div>
+              </div>
+
+              {bouquetColors.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                    <Palette className="h-4 w-4 text-primary" /> Color Theme
+                  </h3>
+                  <div className="flex flex-wrap gap-3">
+                    {bouquetColors.map((c: any) => {
+                      const active = selectedColorId === c.id;
+                      return (
+                        <button
+                          key={c.id}
+                          type="button"
+                          onClick={() => setSelectedColorId(c.id)}
+                          className={cn(
+                            "flex flex-col items-center gap-1.5 transition-all",
+                            active ? "scale-105" : "opacity-80 hover:opacity-100"
+                          )}
+                        >
+                          <span
+                            className={cn(
+                              "w-12 h-12 rounded-full border-2 shadow-sm flex items-center justify-center",
+                              active ? "border-primary ring-2 ring-primary/30" : "border-border"
+                            )}
+                            style={{ backgroundColor: c.hex_code }}
+                          >
+                            {active && <Check className="h-5 w-5 text-white drop-shadow" />}
+                          </span>
+                          <span className={cn("text-[11px] font-medium", active ? "text-primary" : "text-muted-foreground")}>
+                            {c.name}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
-                );
-              })}
+                </div>
+              )}
             </div>
           </div>
         )}
