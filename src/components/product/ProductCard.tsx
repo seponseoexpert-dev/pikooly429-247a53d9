@@ -1,6 +1,5 @@
-import { useCart } from "@/contexts/CartContext";
-import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Star, Heart } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Heart } from "lucide-react";
 import { useState, memo, useMemo, useCallback, useEffect } from "react";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { getOptimizedCloudinaryUrl } from "@/lib/imageUtils";
