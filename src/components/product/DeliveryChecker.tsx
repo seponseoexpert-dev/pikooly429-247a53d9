@@ -57,6 +57,7 @@ const DeliveryChecker = ({ product }: Props) => {
     }
     if (typeof window !== "undefined") {
       localStorage.setItem(STORAGE_KEY, selected);
+      window.dispatchEvent(new Event("delivery-district-changed"));
     }
     const r = resolveDelivery(product, selected, {
       delivery_fee: district.delivery_fee,
