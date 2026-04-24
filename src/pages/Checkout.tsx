@@ -578,12 +578,16 @@ const Checkout = () => {
           couponCode: appliedCoupon?.code,
           total: grandTotal,
           note: form.notes || undefined,
-          items: items.map((item) => ({
-            name: item.product.name,
-            quantity: item.quantity,
-            total: item.product.price * item.quantity,
-            imageUrl: (item.product as any).image_url || item.product.image || "",
-          })),
+          items: items.map((item) => {
+            const u = item.product.price + (item.variant?.size?.extraPrice || 0);
+            const variantSuffix = [item.variant?.size?.name, item.variant?.color?.name].filter(Boolean).join(" / ");
+            return {
+              name: variantSuffix ? `${item.product.name} (${variantSuffix})` : item.product.name,
+              quantity: item.quantity,
+              total: u * item.quantity,
+              imageUrl: (item.product as any).image_url || item.product.image || "",
+            };
+          }),
           trackOrderUrl: `${window.location.origin}/track-order`,
           logoUrl: gatewaySettings.company_logo || "",
         });
@@ -636,12 +640,16 @@ const Checkout = () => {
           couponCode: appliedCoupon?.code,
           total: grandTotal,
           note: form.notes || undefined,
-          items: items.map((item) => ({
-            name: item.product.name,
-            quantity: item.quantity,
-            total: item.product.price * item.quantity,
-            imageUrl: (item.product as any).image_url || item.product.image || "",
-          })),
+          items: items.map((item) => {
+            const u = item.product.price + (item.variant?.size?.extraPrice || 0);
+            const variantSuffix = [item.variant?.size?.name, item.variant?.color?.name].filter(Boolean).join(" / ");
+            return {
+              name: variantSuffix ? `${item.product.name} (${variantSuffix})` : item.product.name,
+              quantity: item.quantity,
+              total: u * item.quantity,
+              imageUrl: (item.product as any).image_url || item.product.image || "",
+            };
+          }),
           trackOrderUrl: `${window.location.origin}/admin`,
           customerPhone: form.phone,
           customerEmail: form.email || undefined,
