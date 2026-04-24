@@ -50,6 +50,9 @@ const AdminProducts = () => {
     specifications: [] as Array<{ item: string; value: string }>,
     seo_title: "", seo_description: "", delivery_time: "",
     instructions: "", delivery_info: "",
+    same_day_districts: [] as string[],
+    next_day_districts: [] as string[],
+    standard_delivery_days: 3,
   };
   const [form, setForm] = useState(defaultForm);
 
