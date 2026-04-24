@@ -54,13 +54,13 @@ const CelebrationsCalendar = memo(() => {
       <div className="relative">
         <div
           ref={scrollRef}
-          className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide scroll-smooth-ios pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory"
+          className="flex md:grid md:grid-cols-5 gap-3 sm:gap-4 overflow-x-auto md:overflow-visible scrollbar-hide scroll-smooth-ios pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory"
         >
           {celebrations.map((c: any, index: number) => {
             const bgColor = c.bg_color || PASTEL_COLORS[index % PASTEL_COLORS.length];
 
             const card = (
-              <div className="w-[42vw] min-w-[42vw] sm:w-[30vw] sm:min-w-[30vw] md:w-[24vw] md:min-w-[24vw] lg:w-[18vw] lg:min-w-[18vw] xl:w-[16vw] xl:min-w-[16vw] max-w-[240px] flex-shrink-0 snap-start group">
+              <div className="w-[42vw] min-w-[42vw] sm:w-[30vw] sm:min-w-[30vw] md:w-auto md:min-w-0 md:max-w-none flex-shrink-0 snap-start group">
                 <div
                   className="relative rounded-xl sm:rounded-2xl overflow-hidden aspect-square transition-all duration-500 ease-out group-hover:shadow-lg group-hover:scale-[1.02]"
                   style={{ backgroundColor: bgColor }}
