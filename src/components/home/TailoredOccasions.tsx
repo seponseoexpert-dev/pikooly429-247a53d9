@@ -37,57 +37,88 @@ const TailoredOccasions = memo(() => {
     placeholderData: (prev) => prev,
   });
 
+  const { data: tailoredSubcategories = [] } = useQuery({
+    queryKey: ["homepage-tailored-subcategories"],
+    queryFn: async () => {
+      const { data, error } = await (supabase
+        .from("subcategories")
+        .select("id, name, slug, image_url, category_id") as any)
+        .eq("is_active", true)
+        .eq("show_in_tailored", true)
+        .order("display_order");
+      if (error) throw error;
+      return (data || []) as any[];
+    },
+    staleTime: 5 * 60 * 1000,
+    placeholderData: (prev) => prev,
+  });
+
+  // Unified tab list: categories + subcategories
+  const occasionTabs = useMemo(() => {
+    const catTabs = occasionCategories.map((c: any) => ({
+      key: `cat-${c.slug}`, kind: "cat" as const, id: c.id, name: c.name, slug: c.slug, image_url: c.image_url,
+    }));
+    const subTabs = tailoredSubcategories.map((s: any) => ({
+      key: `sub-${s.slug}`, kind: "sub" as const, id: s.id, name: s.name, slug: s.slug, image_url: s.image_url,
+    }));
+    return [...catTabs, ...subTabs];
+  }, [occasionCategories, tailoredSubcategories]);
+
   const tailoredCatIds = useMemo(() => occasionCategories.map((c) => c.id), [occasionCategories]);
+  const tailoredSubIds = useMemo(() => tailoredSubcategories.map((s: any) => s.id), [tailoredSubcategories]);
 
   const { data: products = [], isLoading } = useQuery({
-    queryKey: ["tailored-occasion-products", tailoredCatIds],
+    queryKey: ["tailored-occasion-products", tailoredCatIds, tailoredSubIds],
     queryFn: async () => {
-      if (!tailoredCatIds.length) return [];
-      
-      // Step 1: Get product IDs from junction table for tailored categories
-      const { data: junctionData } = await supabase
-        .from("product_categories")
-        .select("product_id")
-        .in("category_id", tailoredCatIds);
-      
-      // Step 2: Get product IDs from direct category_id
-      const { data: directData } = await supabase
-        .from("products")
-        .select("id")
-        .eq("is_active", true)
-        .in("category_id", tailoredCatIds);
-      
-      // Combine unique product IDs
-      const productIds = [...new Set([
-        ...(junctionData || []).map((j: any) => j.product_id),
-        ...(directData || []).map((d: any) => d.id),
-      ])];
-      
+      if (!tailoredCatIds.length && !tailoredSubIds.length) return [];
+
+      const productIdSet = new Set<string>();
+
+      // Products linked to tailored categories (junction + direct)
+      if (tailoredCatIds.length) {
+        const [junctionRes, directRes] = await Promise.all([
+          supabase.from("product_categories").select("product_id").in("category_id", tailoredCatIds),
+          supabase.from("products").select("id").eq("is_active", true).in("category_id", tailoredCatIds),
+        ]);
+        (junctionRes.data || []).forEach((j: any) => productIdSet.add(j.product_id));
+        (directRes.data || []).forEach((d: any) => productIdSet.add(d.id));
+      }
+
+      // Products linked to tailored subcategories (junction + direct)
+      if (tailoredSubIds.length) {
+        const [subJunctionRes, subDirectRes] = await Promise.all([
+          supabase.from("product_subcategories").select("product_id").in("subcategory_id", tailoredSubIds),
+          supabase.from("products").select("id").eq("is_active", true).in("subcategory_id", tailoredSubIds),
+        ]);
+        (subJunctionRes.data || []).forEach((j: any) => productIdSet.add(j.product_id));
+        (subDirectRes.data || []).forEach((d: any) => productIdSet.add(d.id));
+      }
+
+      const productIds = Array.from(productIdSet);
       if (!productIds.length) return [];
-      
-      // Step 3: Fetch full product data
+
       const { data, error } = await supabase
         .from("products")
-        .select("*, categories(name, slug), product_categories(category_id, categories(name, slug))")
+        .select("*, categories(name, slug), product_categories(category_id, categories(name, slug)), product_subcategories(subcategory_id, subcategories(slug))")
         .eq("is_active", true)
         .in("id", productIds)
         .order("created_at", { ascending: false })
         .limit(60);
-      
+
       if (error) throw error;
       return data || [];
     },
-    enabled: tailoredCatIds.length > 0,
+    enabled: tailoredCatIds.length > 0 || tailoredSubIds.length > 0,
     staleTime: 5 * 60 * 1000,
     placeholderData: (prev) => prev,
   });
 
   useEffect(() => {
-    if (!occasionCategories.length) { setActiveSlug(""); return; }
+    if (!occasionTabs.length) { setActiveSlug(""); return; }
     setActiveSlug((prev) =>
-      prev && occasionCategories.some((c) => c.slug === prev) ? prev : occasionCategories[0].slug
+      prev && occasionTabs.some((t) => t.slug === prev) ? prev : occasionTabs[0].slug
     );
-  }, [occasionCategories]);
+  }, [occasionTabs]);
 
   const filteredProducts = useMemo(() => {
     if (!activeSlug) return products;
