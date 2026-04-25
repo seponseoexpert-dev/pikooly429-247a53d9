@@ -104,6 +104,7 @@ const AdminShipping = () => {
       }
       const payload: any = {
         name: values.name.trim(),
+        postal_code: values.postal_code.trim() || null,
         delivery_fee: sameDay ?? 0,
         delivery_label: values.same_day_label.trim() || "Same Day Delivery",
         same_day_fee: sameDay,
