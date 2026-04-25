@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Heart, ShoppingCart } from "lucide-react";
-import { useState, memo, useMemo, useCallback, useEffect } from "react";
+import { useState, memo, useMemo, useCallback } from "react";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { useCart } from "@/contexts/CartContext";
 import { getOptimizedCloudinaryUrl } from "@/lib/imageUtils";
