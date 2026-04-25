@@ -89,45 +89,45 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
       </Link>
 
       {/* Content */}
-      <div className="p-3.5 sm:p-4 flex flex-col flex-1">
+      <div className="p-2.5 sm:p-3 flex flex-col flex-1">
         {/* Title — 2 lines, bold dark */}
         <Link to={linkTo}>
-          <h3 className="text-[16px] sm:text-[18px] text-[hsl(0_0%_12%)] line-clamp-2 leading-[1.3] font-semibold min-h-[2.6em]">
+          <h3 className="text-[13px] sm:text-[15px] text-[hsl(0_0%_12%)] line-clamp-2 leading-[1.3] font-semibold min-h-[2.6em]">
             {product.name}
           </h3>
         </Link>
 
         {/* Price row with inline % OFF pill badge */}
-        <div className="mt-3 flex items-center flex-wrap gap-x-2.5 gap-y-1">
+        <div className="mt-1.5 flex items-center flex-wrap gap-x-1.5 gap-y-0.5">
           {origPrice && origPrice > product.price && (
-            <span className="text-[14px] sm:text-[15px] text-[hsl(0_0%_55%)] line-through tabular-nums font-normal">
+            <span className="text-[11px] sm:text-[12px] text-[hsl(0_0%_55%)] line-through tabular-nums font-normal">
               {formatPrice(origPrice)}
             </span>
           )}
-          <span className="font-bold text-[hsl(0_0%_10%)] text-[18px] sm:text-[20px] tabular-nums">
+          <span className="font-bold text-[hsl(0_0%_10%)] text-[14px] sm:text-[16px] tabular-nums">
             {formatPrice(product.price)}
           </span>
           {origPrice && origPrice > product.price && (
-            <span className="px-2 py-0.5 rounded-md bg-[hsl(142_70%_94%)] text-[hsl(142_71%_32%)] text-[12px] sm:text-[13px] font-bold tabular-nums">
+            <span className="px-1.5 py-0.5 rounded-md bg-[hsl(142_70%_94%)] text-[hsl(142_71%_32%)] text-[10px] sm:text-[11px] font-bold tabular-nums">
               {Math.round(((origPrice - product.price) / origPrice) * 100)}% OFF
             </span>
           )}
         </div>
 
         {/* Action buttons — SHOP NOW (light pink) + Cart Icon (outline) */}
-        <div className="mt-3.5 flex items-stretch gap-2.5">
+        <div className="mt-2 flex items-stretch gap-1.5">
           <button
             onClick={handleShopNow}
-            className="flex-1 h-11 sm:h-12 rounded-lg bg-[hsl(350_100%_96%)] hover:bg-[hsl(350_100%_93%)] text-[hsl(345_80%_55%)] text-[14px] sm:text-[15px] font-bold tracking-wide uppercase transition-colors duration-200"
+            className="flex-1 h-8 sm:h-9 rounded-md bg-[hsl(350_100%_96%)] hover:bg-[hsl(350_100%_93%)] text-[hsl(345_80%_55%)] text-[11px] sm:text-[12px] font-bold tracking-wide uppercase transition-colors duration-200"
           >
             Shop Now
           </button>
           <button
             onClick={handleAddToCart}
-            className="w-11 sm:w-12 h-11 sm:h-12 rounded-lg border border-[hsl(350_85%_88%)] text-[hsl(345_80%_55%)] hover:bg-[hsl(350_100%_96%)] flex items-center justify-center transition-colors duration-200"
+            className="w-8 sm:w-9 h-8 sm:h-9 rounded-md border border-[hsl(350_85%_88%)] text-[hsl(345_80%_55%)] hover:bg-[hsl(350_100%_96%)] flex items-center justify-center transition-colors duration-200"
             aria-label="Add to Cart"
           >
-            <ShoppingCart size={20} strokeWidth={1.8} />
+            <ShoppingCart size={14} strokeWidth={1.8} />
           </button>
         </div>
       </div>
