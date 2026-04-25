@@ -28,7 +28,7 @@ interface ProductCardProps {
 
 const ProductCard = memo(({ product }: ProductCardProps) => {
   const { formatPrice } = useMultiCurrency();
-  const { addToCart } = useCart();
+  const { addItem } = useCart();
   const navigate = useNavigate();
   const [liked, setLiked] = useState(false);
 
