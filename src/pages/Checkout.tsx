@@ -72,6 +72,8 @@ const Checkout = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [postalStatus, setPostalStatus] = useState<"idle" | "matched" | "not_found">("idle");
   const [countryOpen, setCountryOpen] = useState(false);
   const [districtOpen, setDistrictOpen] = useState(false);
   const [couponCode, setCouponCode] = useState("");
@@ -206,6 +208,38 @@ const Checkout = () => {
     );
     if (match) setSelectedDistrict(match.id);
   }, [districts, defaultAddress, selectedDistrict]);
+
+  // Auto-detect district from postal code (debounced)
+  useEffect(() => {
+    const code = postalCode.trim();
+    if (!code) {
+      setPostalStatus("idle");
+      return;
+    }
+    if (!districts.length) return;
+    const t = setTimeout(() => {
+      const match = districts.find(
+        (d: any) => (d.postal_code || "").toString().trim() === code
+      );
+      if (match) {
+        setSelectedDistrict(match.id);
+        setPostalStatus("matched");
+      } else {
+        setPostalStatus("not_found");
+      }
+    }, 250);
+    return () => clearTimeout(t);
+  }, [postalCode, districts]);
+
+  // Keep postal code in sync when district is changed manually
+  useEffect(() => {
+    if (!selectedDistrict || !districts.length) return;
+    const d: any = districts.find((x: any) => x.id === selectedDistrict);
+    if (d?.postal_code && d.postal_code !== postalCode) {
+      setPostalCode(d.postal_code);
+      setPostalStatus("matched");
+    }
+  }, [selectedDistrict, districts]);
 
   // Fetch category-specific shipping fees
   const { data: categoryFees = [] } = useQuery({
@@ -833,6 +867,43 @@ const Checkout = () => {
                   <div>
                     <Label>Country / Region</Label>
                     <div className="mt-1.5 px-3 py-2.5 bg-muted rounded-md text-sm font-medium">Bangladesh</div>
+                  </div>
+                  <div>
+                    <Label htmlFor="postalCode" className="flex items-center gap-1.5">
+                      <MapPin size={13} className="text-primary" />
+                      Postal Code
+                      <span className="text-[11px] font-normal text-muted-foreground">(auto-fills delivery options)</span>
+                    </Label>
+                    <div className="relative mt-1.5">
+                      <Input
+                        id="postalCode"
+                        inputMode="numeric"
+                        placeholder="e.g. 1207"
+                        value={postalCode}
+                        onChange={(e) => setPostalCode(e.target.value.replace(/[^0-9-]/g, ""))}
+                        className={cn(
+                          "pr-28",
+                          postalStatus === "matched" && "border-primary/60 focus-visible:ring-primary/40",
+                          postalStatus === "not_found" && "border-destructive/60 focus-visible:ring-destructive/30"
+                        )}
+                        maxLength={10}
+                      />
+                      {postalStatus === "matched" && activeDistrict && (
+                        <span className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center gap-1 text-[11px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                          <Check size={12} /> {activeDistrict.name}
+                        </span>
+                      )}
+                      {postalStatus === "not_found" && (
+                        <span className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center gap-1 text-[11px] font-semibold text-destructive bg-destructive/10 px-2 py-0.5 rounded-full">
+                          <AlertTriangle size={12} /> Not found
+                        </span>
+                      )}
+                    </div>
+                    {postalStatus === "not_found" && (
+                      <p className="text-[11px] text-muted-foreground mt-1.5">
+                        Pick your district manually in the order summary.
+                      </p>
+                    )}
                   </div>
                   <div>
                     <Label htmlFor="address">Full Address <span className="text-destructive">*</span></Label>
