@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 interface District {
   id: string;
   name: string;
+  postal_code: string | null;
   delivery_fee: number;
   delivery_label: string;
   same_day_fee: number | null;
