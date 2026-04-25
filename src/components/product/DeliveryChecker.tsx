@@ -7,6 +7,7 @@ import { resolveDelivery, type ResolvedDelivery } from "@/lib/deliveryResolver";
 interface District {
   id: string;
   name: string;
+  postal_code: string | null;
   delivery_fee: number;
   same_day_fee: number | null;
   next_day_fee: number | null;
@@ -30,7 +31,7 @@ const DeliveryChecker = ({ product }: Props) => {
   useEffect(() => {
     supabase
       .from("shipping_districts")
-      .select("id,name,delivery_fee,same_day_fee,next_day_fee")
+      .select("id,name,postal_code,delivery_fee,same_day_fee,next_day_fee")
       .eq("is_active", true)
       .order("display_order")
       .then(({ data }) => {
@@ -91,7 +92,16 @@ const DeliveryChecker = ({ product }: Props) => {
             <SelectItem value="none" disabled>No districts available</SelectItem>
           ) : (
             districts.map((d) => (
-              <SelectItem key={d.id} value={d.name}>{d.name}</SelectItem>
+              <SelectItem key={d.id} value={d.name}>
+                <span className="flex items-center gap-2">
+                  <span>{d.name}</span>
+                  {d.postal_code && (
+                    <span className="text-[11px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+                      {d.postal_code}
+                    </span>
+                  )}
+                </span>
+              </SelectItem>
             ))
           )}
         </SelectContent>

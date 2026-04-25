@@ -1755,6 +1755,7 @@ export type Database = {
           name: string
           next_day_fee: number | null
           next_day_label: string | null
+          postal_code: string | null
           same_day_fee: number | null
           same_day_label: string | null
           updated_at: string
@@ -1769,6 +1770,7 @@ export type Database = {
           name: string
           next_day_fee?: number | null
           next_day_label?: string | null
+          postal_code?: string | null
           same_day_fee?: number | null
           same_day_label?: string | null
           updated_at?: string
@@ -1783,6 +1785,7 @@ export type Database = {
           name?: string
           next_day_fee?: number | null
           next_day_label?: string | null
+          postal_code?: string | null
           same_day_fee?: number | null
           same_day_label?: string | null
           updated_at?: string

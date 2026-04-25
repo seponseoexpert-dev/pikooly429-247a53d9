@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 interface District {
   id: string;
   name: string;
+  postal_code: string | null;
   delivery_fee: number;
   delivery_label: string;
   same_day_fee: number | null;
@@ -34,6 +35,7 @@ interface CategoryFee {
 
 const emptyForm = {
   name: "",
+  postal_code: "",
   same_day_fee: "",
   same_day_label: "Same Day Delivery",
   next_day_fee: "",
@@ -102,6 +104,7 @@ const AdminShipping = () => {
       }
       const payload: any = {
         name: values.name.trim(),
+        postal_code: values.postal_code.trim() || null,
         delivery_fee: sameDay ?? 0,
         delivery_label: values.same_day_label.trim() || "Same Day Delivery",
         same_day_fee: sameDay,
@@ -197,6 +200,7 @@ const AdminShipping = () => {
     setEditingId(d.id);
     setForm({
       name: d.name,
+      postal_code: d.postal_code || "",
       same_day_fee: d.same_day_fee === null || d.same_day_fee === undefined ? "" : String(d.same_day_fee),
       same_day_label: d.same_day_label || "Same Day Delivery",
       next_day_fee: d.next_day_fee === null || d.next_day_fee === undefined ? "" : String(d.next_day_fee),
@@ -241,7 +245,10 @@ const AdminShipping = () => {
           {editingId ? "Edit District" : "Add New District"}
         </h3>
         <div className="space-y-3">
-          <Input placeholder="District Name (e.g., Dhaka)" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          <div className="grid grid-cols-1 sm:grid-cols-[1fr_140px] gap-2">
+            <Input placeholder="District Name (e.g., Dhaka)" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+            <Input placeholder="Postal Code (e.g., 1212)" value={form.postal_code} onChange={(e) => setForm({ ...form, postal_code: e.target.value })} />
+          </div>
           <div className="rounded-md bg-muted/50 border border-dashed border-border px-3 py-2 text-xs text-muted-foreground">
             💡 <strong>Tip:</strong> Leave a fee field <em>empty</em> if that delivery option is NOT available in this district. Enter <code className="px-1 bg-background rounded">0</code> to offer it for FREE.
           </div>
@@ -294,7 +301,12 @@ const AdminShipping = () => {
                 {/* District row */}
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3 p-3">
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium text-sm">{d.name}</div>
+                    <div className="font-medium text-sm flex items-center gap-2 flex-wrap">
+                      <span>{d.name}</span>
+                      {d.postal_code && (
+                        <span className="text-[11px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground">{d.postal_code}</span>
+                      )}
+                    </div>
                     <div className="text-xs text-muted-foreground flex flex-wrap gap-x-3 gap-y-0.5 mt-0.5">
                       <span className={cn(
                         "inline-flex items-center gap-1",
