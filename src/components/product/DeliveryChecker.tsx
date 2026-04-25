@@ -92,7 +92,16 @@ const DeliveryChecker = ({ product }: Props) => {
             <SelectItem value="none" disabled>No districts available</SelectItem>
           ) : (
             districts.map((d) => (
-              <SelectItem key={d.id} value={d.name}>{d.name}</SelectItem>
+              <SelectItem key={d.id} value={d.name}>
+                <span className="flex items-center gap-2">
+                  <span>{d.name}</span>
+                  {d.postal_code && (
+                    <span className="text-[11px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+                      {d.postal_code}
+                    </span>
+                  )}
+                </span>
+              </SelectItem>
             ))
           )}
         </SelectContent>
