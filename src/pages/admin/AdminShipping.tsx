@@ -245,7 +245,10 @@ const AdminShipping = () => {
           {editingId ? "Edit District" : "Add New District"}
         </h3>
         <div className="space-y-3">
-          <Input placeholder="District Name (e.g., Dhaka)" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          <div className="grid grid-cols-1 sm:grid-cols-[1fr_140px] gap-2">
+            <Input placeholder="District Name (e.g., Dhaka)" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+            <Input placeholder="Postal Code (e.g., 1212)" value={form.postal_code} onChange={(e) => setForm({ ...form, postal_code: e.target.value })} />
+          </div>
           <div className="rounded-md bg-muted/50 border border-dashed border-border px-3 py-2 text-xs text-muted-foreground">
             💡 <strong>Tip:</strong> Leave a fee field <em>empty</em> if that delivery option is NOT available in this district. Enter <code className="px-1 bg-background rounded">0</code> to offer it for FREE.
           </div>
