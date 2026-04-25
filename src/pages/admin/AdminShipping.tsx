@@ -200,6 +200,7 @@ const AdminShipping = () => {
     setEditingId(d.id);
     setForm({
       name: d.name,
+      postal_code: d.postal_code || "",
       same_day_fee: d.same_day_fee === null || d.same_day_fee === undefined ? "" : String(d.same_day_fee),
       same_day_label: d.same_day_label || "Same Day Delivery",
       next_day_fee: d.next_day_fee === null || d.next_day_fee === undefined ? "" : String(d.next_day_fee),
