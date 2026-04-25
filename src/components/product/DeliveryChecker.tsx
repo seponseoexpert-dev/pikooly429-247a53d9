@@ -31,7 +31,7 @@ const DeliveryChecker = ({ product }: Props) => {
   useEffect(() => {
     supabase
       .from("shipping_districts")
-      .select("id,name,delivery_fee,same_day_fee,next_day_fee")
+      .select("id,name,postal_code,delivery_fee,same_day_fee,next_day_fee")
       .eq("is_active", true)
       .order("display_order")
       .then(({ data }) => {
