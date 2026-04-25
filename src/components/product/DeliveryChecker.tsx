@@ -7,6 +7,7 @@ import { resolveDelivery, type ResolvedDelivery } from "@/lib/deliveryResolver";
 interface District {
   id: string;
   name: string;
+  postal_code: string | null;
   delivery_fee: number;
   same_day_fee: number | null;
   next_day_fee: number | null;
