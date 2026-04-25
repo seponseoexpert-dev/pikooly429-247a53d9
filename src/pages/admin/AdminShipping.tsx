@@ -301,7 +301,12 @@ const AdminShipping = () => {
                 {/* District row */}
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3 p-3">
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium text-sm">{d.name}</div>
+                    <div className="font-medium text-sm flex items-center gap-2 flex-wrap">
+                      <span>{d.name}</span>
+                      {d.postal_code && (
+                        <span className="text-[11px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground">{d.postal_code}</span>
+                      )}
+                    </div>
                     <div className="text-xs text-muted-foreground flex flex-wrap gap-x-3 gap-y-0.5 mt-0.5">
                       <span className={cn(
                         "inline-flex items-center gap-1",
