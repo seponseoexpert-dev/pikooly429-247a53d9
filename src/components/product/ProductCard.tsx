@@ -52,15 +52,16 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
   const handleAddToCart = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    addToCart({
+    addItem({
       id: product.id,
       name: product.name,
       price: product.price,
+      originalPrice: origPrice,
       image: rawImg,
-      quantity: 1,
-      slug: product.slug,
-    } as any);
-  }, [addToCart, product, rawImg]);
+      category: product.category || "",
+      inStock: product.inStock ?? true,
+    });
+  }, [addItem, product, rawImg, origPrice]);
 
   return (
     <article className="group relative flex flex-col h-full bg-white rounded-xl border border-[hsl(0_0%_92%)] overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-shadow duration-300">
