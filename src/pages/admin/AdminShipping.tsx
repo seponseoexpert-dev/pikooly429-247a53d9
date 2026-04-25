@@ -35,6 +35,7 @@ interface CategoryFee {
 
 const emptyForm = {
   name: "",
+  postal_code: "",
   same_day_fee: "",
   same_day_label: "Same Day Delivery",
   next_day_fee: "",
