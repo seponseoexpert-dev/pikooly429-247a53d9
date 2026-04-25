@@ -146,12 +146,20 @@ const CartDrawer = () => {
             {items.length > 0 && (
               <div className="p-4 border-t border-border bg-gradient-to-t from-secondary/40 via-transparent to-transparent space-y-3 relative">
                 <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--gold)/0.4)] to-transparent" />
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="eyebrow text-[10px]">Subtotal</p>
-                    <p className="text-[11px] text-muted-foreground">Taxes & delivery at checkout</p>
-                  </div>
-                  <span className="text-primary text-xl sm:text-2xl font-bold tabular-nums" style={{ fontFamily: "'Lora', serif" }}>{formatPrice(totalPrice)}</span>
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="text-sm text-muted-foreground tabular-nums">
+                    {totalItems} {totalItems === 1 ? "item" : "items"}
+                  </span>
+                  <span className="text-[11px] text-muted-foreground">Taxes & delivery at checkout</span>
+                </div>
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="eyebrow text-[11px]">Subtotal</span>
+                  <span
+                    className="text-primary text-xl sm:text-2xl font-bold tabular-nums leading-none"
+                    style={{ fontFamily: "'Lora', serif" }}
+                  >
+                    {formatPrice(totalPrice)}
+                  </span>
                 </div>
                 <Link to="/checkout" onClick={() => setIsOpen(false)} className="block">
                   <Button className="btn-luxe w-full h-12 text-sm sm:text-base">
