@@ -1,12 +1,9 @@
-import { Link } from "react-router-dom";
-import { Heart } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Heart, ShoppingCart } from "lucide-react";
 import { useState, memo, useMemo, useCallback, useEffect } from "react";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
+import { useCart } from "@/contexts/CartContext";
 import { getOptimizedCloudinaryUrl } from "@/lib/imageUtils";
-import { getEarliestDeliveryLabel } from "@/lib/deliveryResolver";
-
-const PREFERRED_DISTRICT_KEY = "preferred_delivery_district";
-
 
 interface ProductCardProps {
   product: {
@@ -31,47 +28,39 @@ interface ProductCardProps {
 
 const ProductCard = memo(({ product }: ProductCardProps) => {
   const { formatPrice } = useMultiCurrency();
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
   const [liked, setLiked] = useState(false);
-  const [district, setDistrict] = useState<string | null>(() =>
-    typeof window !== "undefined" ? localStorage.getItem(PREFERRED_DISTRICT_KEY) : null
-  );
-
-  // Sync when district changes elsewhere on the page (Product detail / Cart)
-  useEffect(() => {
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === PREFERRED_DISTRICT_KEY) setDistrict(e.newValue);
-    };
-    const onCustom = () => setDistrict(localStorage.getItem(PREFERRED_DISTRICT_KEY));
-    window.addEventListener("storage", onStorage);
-    window.addEventListener("delivery-district-changed", onCustom);
-    return () => {
-      window.removeEventListener("storage", onStorage);
-      window.removeEventListener("delivery-district-changed", onCustom);
-    };
-  }, []);
 
   const origPrice = product.original_price ?? product.originalPrice;
   const rawImg = product.image_url || product.image || "/placeholder.svg";
   const imgSrc = useMemo(() => getOptimizedCloudinaryUrl(rawImg, 360), [rawImg]);
   const linkTo = `/product/${product.slug || product.id}`;
 
-  // Earliest delivery label — uses saved district if any, else fastest possible
-  const earliestLabel = useMemo(
-    () =>
-      getEarliestDeliveryLabel(
-        {
-          standard_delivery_days: undefined,
-        },
-        district
-      ),
-    [district]
-  );
-
   const toggleLiked = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setLiked((v) => !v);
   }, []);
+
+  const handleShopNow = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(linkTo);
+  }, [navigate, linkTo]);
+
+  const handleAddToCart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: rawImg,
+      quantity: 1,
+      slug: product.slug,
+    } as any);
+  }, [addToCart, product, rawImg]);
 
   return (
     <article className="group relative flex flex-col h-full bg-white rounded-xl border border-[hsl(0_0%_92%)] overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-shadow duration-300">
@@ -88,9 +77,6 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
           sizes="(max-width: 480px) 46vw, (max-width: 768px) 30vw, (max-width: 1024px) 22vw, 18vw"
         />
 
-        {/* (Delivery badge removed — now shown as text below price, FNP-style) */}
-
-
         {/* Wishlist heart - top right */}
         <button
           onClick={toggleLiked}
@@ -101,17 +87,17 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
         </button>
       </Link>
 
-      {/* Content — FNP style: clean, no buttons, no rating row */}
+      {/* Content */}
       <div className="p-3 sm:p-3.5 flex flex-col flex-1">
-        {/* Title — 2 lines like FNP */}
+        {/* Title — 2 lines */}
         <Link to={linkTo}>
-          <h3 className="text-[14px] sm:text-[15.5px] text-[hsl(0_0%_15%)] line-clamp-2 leading-snug font-normal min-h-[2.6em]">
+          <h3 className="text-[15px] sm:text-[16px] text-[hsl(0_0%_15%)] line-clamp-2 leading-snug font-normal min-h-[2.6em]">
             {product.name}
           </h3>
         </Link>
 
-        {/* Price row with inline % OFF badge — FNP style */}
-        <div className="mt-1.5 flex items-baseline flex-wrap gap-x-2 gap-y-1">
+        {/* Price row with inline % OFF badge */}
+        <div className="mt-2 flex items-baseline flex-wrap gap-x-2 gap-y-1">
           {origPrice && origPrice > product.price && (
             <span className="text-[13px] sm:text-[14px] text-[hsl(0_0%_55%)] line-through tabular-nums font-normal">
               {formatPrice(origPrice)}
@@ -121,16 +107,28 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
             {formatPrice(product.price)}
           </span>
           {origPrice && origPrice > product.price && (
-            <span className="text-[11px] sm:text-[12px] font-bold text-[hsl(142_71%_32%)] bg-[hsl(142_71%_92%)] px-1.5 py-0.5 rounded-sm tabular-nums">
+            <span className="text-[12px] sm:text-[13px] font-bold text-[hsl(142_71%_32%)] tabular-nums">
               {Math.round(((origPrice - product.price) / origPrice) * 100)}% OFF
             </span>
           )}
         </div>
 
-        {/* Earliest Delivery line — FNP-style: blue, bold, no border */}
-        <p className="mt-2 text-[13px] sm:text-[14px] text-[hsl(210_85%_45%)] font-semibold leading-tight whitespace-nowrap overflow-hidden text-ellipsis">
-          Earliest Delivery : <span className="font-bold">{earliestLabel}</span>
-        </p>
+        {/* Action buttons — SHOP NOW + Cart Icon */}
+        <div className="mt-3 flex items-stretch gap-2">
+          <button
+            onClick={handleShopNow}
+            className="flex-1 h-10 sm:h-11 rounded-md bg-[hsl(345_75%_45%)] hover:bg-[hsl(345_75%_40%)] text-white text-[13px] sm:text-[14px] font-bold tracking-wide uppercase transition-colors duration-200"
+          >
+            Shop Now
+          </button>
+          <button
+            onClick={handleAddToCart}
+            className="w-10 sm:w-11 h-10 sm:h-11 rounded-md border border-[hsl(345_75%_45%)] text-[hsl(345_75%_45%)] hover:bg-[hsl(345_75%_45%)] hover:text-white flex items-center justify-center transition-colors duration-200"
+            aria-label="Add to Cart"
+          >
+            <ShoppingCart size={18} strokeWidth={1.8} />
+          </button>
+        </div>
       </div>
     </article>
   );
