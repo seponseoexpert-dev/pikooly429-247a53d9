@@ -209,6 +209,38 @@ const Checkout = () => {
     if (match) setSelectedDistrict(match.id);
   }, [districts, defaultAddress, selectedDistrict]);
 
+  // Auto-detect district from postal code (debounced)
+  useEffect(() => {
+    const code = postalCode.trim();
+    if (!code) {
+      setPostalStatus("idle");
+      return;
+    }
+    if (!districts.length) return;
+    const t = setTimeout(() => {
+      const match = districts.find(
+        (d: any) => (d.postal_code || "").toString().trim() === code
+      );
+      if (match) {
+        setSelectedDistrict(match.id);
+        setPostalStatus("matched");
+      } else {
+        setPostalStatus("not_found");
+      }
+    }, 250);
+    return () => clearTimeout(t);
+  }, [postalCode, districts]);
+
+  // Keep postal code in sync when district is changed manually
+  useEffect(() => {
+    if (!selectedDistrict || !districts.length) return;
+    const d: any = districts.find((x: any) => x.id === selectedDistrict);
+    if (d?.postal_code && d.postal_code !== postalCode) {
+      setPostalCode(d.postal_code);
+      setPostalStatus("matched");
+    }
+  }, [selectedDistrict, districts]);
+
   // Fetch category-specific shipping fees
   const { data: categoryFees = [] } = useQuery({
     queryKey: ["shipping-category-fees"],
