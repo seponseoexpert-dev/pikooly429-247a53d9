@@ -158,21 +158,21 @@ const DeliveryChecker = ({ product }: Props) => {
 
           {/* Delivery method — seamless continuation, no separate box */}
           {resolved.speed === "same_day" && (
-            <div className="px-1 pt-0.5">
-              <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-1.5 font-semibold">
+            <div className="px-0.5">
+              <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1 font-semibold">
                 Delivered via
               </p>
-              <div className="flex flex-wrap gap-1.5">
-                <span className="inline-flex items-center gap-1 text-[11px] border border-border rounded-full px-2 py-0.5 text-foreground">
-                  <Bike className="h-3 w-3" /> Bike
+              <div className="flex flex-wrap gap-1">
+                <span className="inline-flex items-center gap-1 text-[10px] border border-border rounded-full px-1.5 py-0.5 text-foreground">
+                  <Bike className="h-2.5 w-2.5" /> Bike
                 </span>
-                <span className="inline-flex items-center gap-1 text-[11px] border border-border rounded-full px-2 py-0.5 text-foreground">
-                  <Truck className="h-3 w-3" /> CNG
+                <span className="inline-flex items-center gap-1 text-[10px] border border-border rounded-full px-1.5 py-0.5 text-foreground">
+                  <Truck className="h-2.5 w-2.5" /> CNG
                 </span>
-                <span className="inline-flex items-center gap-1 text-[11px] border border-border rounded-full px-2 py-0.5 text-foreground">
-                  <Car className="h-3 w-3" /> Private Car
+                <span className="inline-flex items-center gap-1 text-[10px] border border-border rounded-full px-1.5 py-0.5 text-foreground">
+                  <Car className="h-2.5 w-2.5" /> Private Car
                 </span>
-                <span className="inline-flex items-center gap-1 text-[11px] border border-border rounded-full px-2 py-0.5 text-muted-foreground">
+                <span className="inline-flex items-center gap-1 text-[10px] border border-border rounded-full px-1.5 py-0.5 text-muted-foreground">
                   + Others
                 </span>
               </div>
@@ -180,18 +180,18 @@ const DeliveryChecker = ({ product }: Props) => {
           )}
 
           {(resolved.speed === "next_day" || resolved.speed === "standard") && (
-            <div className="px-1 pt-0.5">
-              <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-1.5 font-semibold">
+            <div className="px-0.5">
+              <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1 font-semibold">
                 Shipped via courier
               </p>
-              <div className="flex flex-wrap gap-1.5">
-                <span className="inline-flex items-center gap-1 text-[11px] border border-border rounded-full px-2 py-0.5 text-foreground">
-                  <Package className="h-3 w-3" /> Pathao
+              <div className="flex flex-wrap gap-1">
+                <span className="inline-flex items-center gap-1 text-[10px] border border-border rounded-full px-1.5 py-0.5 text-foreground">
+                  <Package className="h-2.5 w-2.5" /> Pathao
                 </span>
-                <span className="inline-flex items-center gap-1 text-[11px] border border-border rounded-full px-2 py-0.5 text-foreground">
-                  <Package className="h-3 w-3" /> SteadFast
+                <span className="inline-flex items-center gap-1 text-[10px] border border-border rounded-full px-1.5 py-0.5 text-foreground">
+                  <Package className="h-2.5 w-2.5" /> SteadFast
                 </span>
-                <span className="inline-flex items-center gap-1 text-[11px] border border-border rounded-full px-2 py-0.5 text-muted-foreground">
+                <span className="inline-flex items-center gap-1 text-[10px] border border-border rounded-full px-1.5 py-0.5 text-muted-foreground">
                   + Other Couriers
                 </span>
               </div>
