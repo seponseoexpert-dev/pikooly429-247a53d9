@@ -42,7 +42,7 @@ export function resolveDelivery(
     return {
       speed: "same_day",
       label: "Same Day Delivery",
-      eta: "Today (within 6-9 hours)",
+      eta: "Today (within 2-3 hours)",
       fee: Number(fees.same_day_fee ?? fees.delivery_fee ?? 0),
       feeLabel: `৳${Number(fees.same_day_fee ?? fees.delivery_fee ?? 0)}`,
     };
