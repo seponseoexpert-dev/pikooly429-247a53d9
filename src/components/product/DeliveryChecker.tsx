@@ -89,14 +89,14 @@ const DeliveryChecker = ({ product }: Props) => {
       : "from-[hsl(0_0%_30%)] to-[hsl(0_0%_18%)]";
 
   return (
-    <div className="rounded-xl border border-border bg-card p-4 space-y-3">
-      <div className="flex items-center gap-2">
-        <MapPin className="h-4 w-4 text-primary" />
-        <h3 className="text-sm font-semibold">Check Delivery Availability</h3>
+    <div className="rounded-lg border border-border bg-card p-2.5 space-y-2">
+      <div className="flex items-center gap-1.5">
+        <MapPin className="h-3.5 w-3.5 text-primary" />
+        <h3 className="text-[13px] font-semibold">Check Delivery Availability</h3>
       </div>
 
       <Select value={selected} onValueChange={setSelected}>
-        <SelectTrigger className="w-full text-base">
+        <SelectTrigger className="w-full text-sm h-9">
           <SelectValue placeholder="Select your district / city" />
         </SelectTrigger>
         <SelectContent className="max-h-80">
@@ -136,20 +136,20 @@ const DeliveryChecker = ({ product }: Props) => {
       </Select>
 
       {resolved && (
-        <div className="space-y-2.5">
+        <div className="space-y-2">
           {/* Compact gradient banner — only label + ETA + Fee */}
-          <div className={`rounded-xl p-3 text-white bg-gradient-to-br ${tone} shadow-md ring-1 ring-white/20`}>
-            <div className="flex items-start gap-2.5">
-              <Icon className="h-5 w-5 shrink-0 mt-0.5" strokeWidth={2.5} />
+          <div className={`rounded-lg p-2.5 text-white bg-gradient-to-br ${tone} shadow-sm ring-1 ring-white/20`}>
+            <div className="flex items-start gap-2">
+              <Icon className="h-4 w-4 shrink-0 mt-0.5" strokeWidth={2.5} />
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle2 className="h-3.5 w-3.5" />
-                  <p className="text-sm font-bold leading-tight">{resolved.label}</p>
+                <div className="flex items-center gap-1">
+                  <CheckCircle2 className="h-3 w-3" />
+                  <p className="text-[13px] font-bold leading-tight">{resolved.label}</p>
                 </div>
-                <p className="text-xs mt-1 opacity-95">
+                <p className="text-[11px] mt-0.5 opacity-95 leading-snug">
                   Estimated: <strong>{resolved.eta}</strong>
                 </p>
-                <p className="text-xs mt-0.5 opacity-95">
+                <p className="text-[11px] opacity-95 leading-snug">
                   Delivery Fee: <strong>{resolved.feeLabel}</strong>
                 </p>
               </div>
@@ -158,21 +158,21 @@ const DeliveryChecker = ({ product }: Props) => {
 
           {/* Delivery method — seamless continuation, no separate box */}
           {resolved.speed === "same_day" && (
-            <div className="px-1 pt-0.5">
-              <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-1.5 font-semibold">
+            <div className="px-0.5">
+              <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1 font-semibold">
                 Delivered via
               </p>
-              <div className="flex flex-wrap gap-1.5">
-                <span className="inline-flex items-center gap-1 text-[11px] border border-border rounded-full px-2 py-0.5 text-foreground">
-                  <Bike className="h-3 w-3" /> Bike
+              <div className="flex flex-wrap gap-1">
+                <span className="inline-flex items-center gap-1 text-[10px] border border-border rounded-full px-1.5 py-0.5 text-foreground">
+                  <Bike className="h-2.5 w-2.5" /> Bike
                 </span>
-                <span className="inline-flex items-center gap-1 text-[11px] border border-border rounded-full px-2 py-0.5 text-foreground">
-                  <Truck className="h-3 w-3" /> CNG
+                <span className="inline-flex items-center gap-1 text-[10px] border border-border rounded-full px-1.5 py-0.5 text-foreground">
+                  <Truck className="h-2.5 w-2.5" /> CNG
                 </span>
-                <span className="inline-flex items-center gap-1 text-[11px] border border-border rounded-full px-2 py-0.5 text-foreground">
-                  <Car className="h-3 w-3" /> Private Car
+                <span className="inline-flex items-center gap-1 text-[10px] border border-border rounded-full px-1.5 py-0.5 text-foreground">
+                  <Car className="h-2.5 w-2.5" /> Private Car
                 </span>
-                <span className="inline-flex items-center gap-1 text-[11px] border border-border rounded-full px-2 py-0.5 text-muted-foreground">
+                <span className="inline-flex items-center gap-1 text-[10px] border border-border rounded-full px-1.5 py-0.5 text-muted-foreground">
                   + Others
                 </span>
               </div>
@@ -180,18 +180,18 @@ const DeliveryChecker = ({ product }: Props) => {
           )}
 
           {(resolved.speed === "next_day" || resolved.speed === "standard") && (
-            <div className="px-1 pt-0.5">
-              <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-1.5 font-semibold">
+            <div className="px-0.5">
+              <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1 font-semibold">
                 Shipped via courier
               </p>
-              <div className="flex flex-wrap gap-1.5">
-                <span className="inline-flex items-center gap-1 text-[11px] border border-border rounded-full px-2 py-0.5 text-foreground">
-                  <Package className="h-3 w-3" /> Pathao
+              <div className="flex flex-wrap gap-1">
+                <span className="inline-flex items-center gap-1 text-[10px] border border-border rounded-full px-1.5 py-0.5 text-foreground">
+                  <Package className="h-2.5 w-2.5" /> Pathao
                 </span>
-                <span className="inline-flex items-center gap-1 text-[11px] border border-border rounded-full px-2 py-0.5 text-foreground">
-                  <Package className="h-3 w-3" /> SteadFast
+                <span className="inline-flex items-center gap-1 text-[10px] border border-border rounded-full px-1.5 py-0.5 text-foreground">
+                  <Package className="h-2.5 w-2.5" /> SteadFast
                 </span>
-                <span className="inline-flex items-center gap-1 text-[11px] border border-border rounded-full px-2 py-0.5 text-muted-foreground">
+                <span className="inline-flex items-center gap-1 text-[10px] border border-border rounded-full px-1.5 py-0.5 text-muted-foreground">
                   + Other Couriers
                 </span>
               </div>
