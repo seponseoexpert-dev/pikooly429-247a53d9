@@ -99,11 +99,27 @@ const DeliveryChecker = ({ product }: Props) => {
         <SelectTrigger className="w-full text-base">
           <SelectValue placeholder="Select your district / city" />
         </SelectTrigger>
-        <SelectContent className="max-h-72">
+        <SelectContent className="max-h-80">
+          <div className="sticky top-0 z-10 bg-popover p-2 border-b border-border">
+            <div className="relative">
+              <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={(e) => e.stopPropagation()}
+                placeholder="Search district or postal code..."
+                className="pl-8 h-9 text-sm"
+              />
+            </div>
+          </div>
           {districts.length === 0 ? (
             <SelectItem value="none" disabled>No districts available</SelectItem>
+          ) : filteredDistricts.length === 0 ? (
+            <div className="py-6 text-center text-sm text-muted-foreground">
+              No matches for "{search}"
+            </div>
           ) : (
-            districts.map((d) => (
+            filteredDistricts.map((d) => (
               <SelectItem key={d.id} value={d.name}>
                 <span className="flex items-center gap-2">
                   <span>{d.name}</span>
@@ -134,6 +150,47 @@ const DeliveryChecker = ({ product }: Props) => {
               <p className="text-xs mt-0.5 opacity-95">
                 Delivery Fee: <strong>{resolved.feeLabel}</strong>
               </p>
+
+              {resolved.speed === "same_day" && (
+                <div className="mt-2 pt-2 border-t border-white/25">
+                  <p className="text-[11px] uppercase tracking-wide opacity-90 mb-1.5 font-semibold">
+                    Delivered via
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    <span className="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
+                      <Bike className="h-3 w-3" /> Bike
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
+                      <Truck className="h-3 w-3" /> CNG
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
+                      <Car className="h-3 w-3" /> Private Car
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
+                      + Others
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {(resolved.speed === "next_day" || resolved.speed === "standard") && (
+                <div className="mt-2 pt-2 border-t border-white/25">
+                  <p className="text-[11px] uppercase tracking-wide opacity-90 mb-1.5 font-semibold">
+                    Shipped via courier
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    <span className="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
+                      <Package className="h-3 w-3" /> Pathao
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
+                      <Package className="h-3 w-3" /> SteadFast
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
+                      + Other Couriers
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -141,7 +198,7 @@ const DeliveryChecker = ({ product }: Props) => {
 
       {!resolved && (
         <p className="text-xs text-muted-foreground">
-          Select a district to see exact delivery time and fee.
+          Select a district to see exact delivery time, fee, and how it'll be delivered.
         </p>
       )}
     </div>
