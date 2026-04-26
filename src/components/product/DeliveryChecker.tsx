@@ -140,57 +140,61 @@ const DeliveryChecker = ({ product }: Props) => {
           <div className="flex items-start gap-2.5">
             <Icon className="h-5 w-5 shrink-0 mt-0.5" strokeWidth={2.5} />
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 mb-2">
                 <CheckCircle2 className="h-3.5 w-3.5" />
                 <p className="text-sm font-bold">{resolved.label}</p>
               </div>
-              <p className="text-xs mt-0.5 opacity-95">
-                Estimated: <strong>{resolved.eta}</strong>
-              </p>
-              <p className="text-xs mt-0.5 opacity-95">
-                Delivery Fee: <strong>{resolved.feeLabel}</strong>
-              </p>
 
-              {resolved.speed === "same_day" && (
-                <div className="mt-2 pt-2 border-t border-white/25">
-                  <p className="text-[11px] uppercase tracking-wide opacity-90 mb-1.5 font-semibold">
-                    Delivered via
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    <span className="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
-                      <Bike className="h-3 w-3" /> Bike
-                    </span>
-                    <span className="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
-                      <Truck className="h-3 w-3" /> CNG
-                    </span>
-                    <span className="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
-                      <Car className="h-3 w-3" /> Private Car
-                    </span>
-                    <span className="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
-                      + Others
-                    </span>
-                  </div>
-                </div>
-              )}
+              {/* Highlighted info block — subtle inset for clarity */}
+              <div className="rounded-md bg-white/15 ring-1 ring-white/25 backdrop-blur-sm px-2.5 py-2 space-y-1">
+                <p className="text-xs opacity-95">
+                  Estimated: <strong>{resolved.eta}</strong>
+                </p>
+                <p className="text-xs opacity-95">
+                  Delivery Fee: <strong>{resolved.feeLabel}</strong>
+                </p>
 
-              {(resolved.speed === "next_day" || resolved.speed === "standard") && (
-                <div className="mt-2 pt-2 border-t border-white/25">
-                  <p className="text-[11px] uppercase tracking-wide opacity-90 mb-1.5 font-semibold">
-                    Shipped via courier
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    <span className="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
-                      <Package className="h-3 w-3" /> Pathao
-                    </span>
-                    <span className="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
-                      <Package className="h-3 w-3" /> SteadFast
-                    </span>
-                    <span className="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
-                      + Other Couriers
-                    </span>
+                {resolved.speed === "same_day" && (
+                  <div className="pt-1.5 mt-1 border-t border-white/25">
+                    <p className="text-[11px] uppercase tracking-wide opacity-90 mb-1.5 font-semibold">
+                      Delivered via
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      <span className="inline-flex items-center gap-1 text-[11px] bg-white/25 rounded-full px-2 py-0.5">
+                        <Bike className="h-3 w-3" /> Bike
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-[11px] bg-white/25 rounded-full px-2 py-0.5">
+                        <Truck className="h-3 w-3" /> CNG
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-[11px] bg-white/25 rounded-full px-2 py-0.5">
+                        <Car className="h-3 w-3" /> Private Car
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-[11px] bg-white/25 rounded-full px-2 py-0.5">
+                        + Others
+                      </span>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+
+                {(resolved.speed === "next_day" || resolved.speed === "standard") && (
+                  <div className="pt-1.5 mt-1 border-t border-white/25">
+                    <p className="text-[11px] uppercase tracking-wide opacity-90 mb-1.5 font-semibold">
+                      Shipped via courier
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      <span className="inline-flex items-center gap-1 text-[11px] bg-white/25 rounded-full px-2 py-0.5">
+                        <Package className="h-3 w-3" /> Pathao
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-[11px] bg-white/25 rounded-full px-2 py-0.5">
+                        <Package className="h-3 w-3" /> SteadFast
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-[11px] bg-white/25 rounded-full px-2 py-0.5">
+                        + Other Couriers
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
