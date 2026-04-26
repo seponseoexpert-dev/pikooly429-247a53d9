@@ -92,7 +92,7 @@ const DeliveryChecker = ({ product }: Props) => {
     <div className="rounded-lg border border-border bg-card p-2.5 space-y-2">
       <div className="flex items-center gap-1.5">
         <MapPin className="h-3.5 w-3.5 text-primary" />
-        <h3 className="text-[13px] font-semibold">Check Delivery Availability</h3>
+        <h3 className="text-[13px] font-semibold">Gift Receiver's Location</h3>
       </div>
 
       <Select value={selected} onValueChange={setSelected}>
