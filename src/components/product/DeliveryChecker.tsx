@@ -89,14 +89,14 @@ const DeliveryChecker = ({ product }: Props) => {
       : "from-[hsl(0_0%_30%)] to-[hsl(0_0%_18%)]";
 
   return (
-    <div className="rounded-xl border border-border bg-card p-4 space-y-3">
-      <div className="flex items-center gap-2">
-        <MapPin className="h-4 w-4 text-primary" />
-        <h3 className="text-sm font-semibold">Check Delivery Availability</h3>
+    <div className="rounded-lg border border-border bg-card p-2.5 space-y-2">
+      <div className="flex items-center gap-1.5">
+        <MapPin className="h-3.5 w-3.5 text-primary" />
+        <h3 className="text-[13px] font-semibold">Check Delivery Availability</h3>
       </div>
 
       <Select value={selected} onValueChange={setSelected}>
-        <SelectTrigger className="w-full text-base">
+        <SelectTrigger className="w-full text-sm h-9">
           <SelectValue placeholder="Select your district / city" />
         </SelectTrigger>
         <SelectContent className="max-h-80">
