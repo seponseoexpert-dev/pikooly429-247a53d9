@@ -136,65 +136,67 @@ const DeliveryChecker = ({ product }: Props) => {
       </Select>
 
       {resolved && (
-        <div className="mx-1 my-1">
+        <div className="space-y-2.5">
+          {/* Compact gradient banner — only label + ETA + Fee */}
           <div className={`rounded-xl p-3 text-white bg-gradient-to-br ${tone} shadow-md ring-1 ring-white/20`}>
             <div className="flex items-start gap-2.5">
               <Icon className="h-5 w-5 shrink-0 mt-0.5" strokeWidth={2.5} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
                   <CheckCircle2 className="h-3.5 w-3.5" />
-                  <p className="text-sm font-bold">{resolved.label}</p>
+                  <p className="text-sm font-bold leading-tight">{resolved.label}</p>
                 </div>
-                <p className="text-xs mt-0.5 opacity-95">
+                <p className="text-xs mt-1 opacity-95">
                   Estimated: <strong>{resolved.eta}</strong>
                 </p>
                 <p className="text-xs mt-0.5 opacity-95">
                   Delivery Fee: <strong>{resolved.feeLabel}</strong>
                 </p>
-
-                {resolved.speed === "same_day" && (
-                  <div className="mt-2 pt-2 border-t border-white/25">
-                    <p className="text-[11px] uppercase tracking-wide opacity-90 mb-1.5 font-semibold">
-                      Delivered via
-                    </p>
-                    <div className="flex flex-wrap gap-1.5">
-                      <span className="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
-                        <Bike className="h-3 w-3" /> Bike
-                      </span>
-                      <span className="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
-                        <Truck className="h-3 w-3" /> CNG
-                      </span>
-                      <span className="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
-                        <Car className="h-3 w-3" /> Private Car
-                      </span>
-                      <span className="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
-                        + Others
-                      </span>
-                    </div>
-                  </div>
-                )}
-
-                {(resolved.speed === "next_day" || resolved.speed === "standard") && (
-                  <div className="mt-2 pt-2 border-t border-white/25">
-                    <p className="text-[11px] uppercase tracking-wide opacity-90 mb-1.5 font-semibold">
-                      Shipped via courier
-                    </p>
-                    <div className="flex flex-wrap gap-1.5">
-                      <span className="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
-                        <Package className="h-3 w-3" /> Pathao
-                      </span>
-                      <span className="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
-                        <Package className="h-3 w-3" /> SteadFast
-                      </span>
-                      <span className="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
-                        + Other Couriers
-                      </span>
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           </div>
+
+          {/* Delivery method — outside the gradient, subtle muted card */}
+          {resolved.speed === "same_day" && (
+            <div className="rounded-lg bg-muted/60 border border-border px-3 py-2.5">
+              <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-1.5 font-semibold">
+                Delivered via
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                <span className="inline-flex items-center gap-1 text-[11px] bg-background border border-border rounded-full px-2 py-0.5 text-foreground">
+                  <Bike className="h-3 w-3" /> Bike
+                </span>
+                <span className="inline-flex items-center gap-1 text-[11px] bg-background border border-border rounded-full px-2 py-0.5 text-foreground">
+                  <Truck className="h-3 w-3" /> CNG
+                </span>
+                <span className="inline-flex items-center gap-1 text-[11px] bg-background border border-border rounded-full px-2 py-0.5 text-foreground">
+                  <Car className="h-3 w-3" /> Private Car
+                </span>
+                <span className="inline-flex items-center gap-1 text-[11px] bg-background border border-border rounded-full px-2 py-0.5 text-muted-foreground">
+                  + Others
+                </span>
+              </div>
+            </div>
+          )}
+
+          {(resolved.speed === "next_day" || resolved.speed === "standard") && (
+            <div className="rounded-lg bg-muted/60 border border-border px-3 py-2.5">
+              <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-1.5 font-semibold">
+                Shipped via courier
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                <span className="inline-flex items-center gap-1 text-[11px] bg-background border border-border rounded-full px-2 py-0.5 text-foreground">
+                  <Package className="h-3 w-3" /> Pathao
+                </span>
+                <span className="inline-flex items-center gap-1 text-[11px] bg-background border border-border rounded-full px-2 py-0.5 text-foreground">
+                  <Package className="h-3 w-3" /> SteadFast
+                </span>
+                <span className="inline-flex items-center gap-1 text-[11px] bg-background border border-border rounded-full px-2 py-0.5 text-muted-foreground">
+                  + Other Couriers
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
