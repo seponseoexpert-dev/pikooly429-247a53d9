@@ -28,6 +28,17 @@ const DeliveryChecker = ({ product }: Props) => {
   const [districts, setDistricts] = useState<District[]>([]);
   const [selected, setSelected] = useState<string>("");
   const [resolved, setResolved] = useState<ResolvedDelivery | null>(null);
+  const [search, setSearch] = useState("");
+
+  const filteredDistricts = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return districts;
+    return districts.filter(
+      (d) =>
+        d.name.toLowerCase().includes(q) ||
+        (d.postal_code || "").toLowerCase().includes(q)
+    );
+  }, [districts, search]);
 
   useEffect(() => {
     supabase
