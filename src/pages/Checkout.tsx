@@ -82,8 +82,8 @@ const Checkout = () => {
   const [deliveryType, setDeliveryType] = useState<"same_day" | "next_day">("same_day");
   const [form, setForm] = useState({
     fullName: "",
-    billingCountry: "",
-    phone: "",
+    billingCountry: "Bangladesh",
+    phone: "+88",
     email: "",
     recipientName: "",
     recipientPhone: "",
