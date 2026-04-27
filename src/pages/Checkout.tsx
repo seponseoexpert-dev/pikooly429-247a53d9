@@ -456,8 +456,8 @@ const Checkout = () => {
 
     const billingVisible = gatewaySettings.checkout_billing_visible !== "false";
 
-    if (billingVisible && (!form.fullName.trim() || !form.phone.trim())) {
-      toast.error("Please fill in billing details");
+    if (billingVisible && (!form.phone.trim() || form.phone.trim() === "+88" || !form.email.trim())) {
+      toast.error("Please enter your WhatsApp number and email");
       return;
     }
 
