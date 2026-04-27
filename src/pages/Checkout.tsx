@@ -641,7 +641,7 @@ const Checkout = () => {
       if (form.email.trim() && shouldSendMail(alertSettings, "pending")) {
         const { buildOrderConfirmationEmail } = await import("@/lib/emailTemplates");
         const emailHtml = buildOrderConfirmationEmail({
-          customerName: form.fullName,
+          customerName: form.fullName || form.recipientName,
           orderNumber: order.order_number,
           deliveryAddress: `${activeDistrict?.name || ""} - ${form.address}`,
           deliveryDate: form.deliveryDate || undefined,
@@ -703,7 +703,7 @@ const Checkout = () => {
       if (adminEmail && shouldSendAdminMail(alertSettings)) {
         const { buildAdminNewOrderEmail } = await import("@/lib/emailTemplates");
         const adminHtml = buildAdminNewOrderEmail({
-          customerName: form.fullName,
+          customerName: form.fullName || form.recipientName,
           orderNumber: order.order_number,
           deliveryAddress: `${activeDistrict?.name || ""} - ${form.address}`,
           deliveryDate: form.deliveryDate || undefined,
