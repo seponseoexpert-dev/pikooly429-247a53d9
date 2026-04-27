@@ -487,7 +487,7 @@ const Checkout = () => {
       const userId = session?.session?.user?.id || null;
 
       const orderData = {
-        customer_name: form.fullName.trim(),
+        customer_name: (form.fullName.trim() || form.recipientName.trim()),
         customer_phone: form.phone.trim(),
         customer_email: form.email.trim() || null,
         billing_country: form.billingCountry.trim() || 'Bangladesh',
