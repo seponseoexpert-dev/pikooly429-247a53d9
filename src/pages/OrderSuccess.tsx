@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home, Phone, Mail, PartyPopper, CircleCheckBig, Package, Truck, CheckCircle, Clock, XCircle, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Separator } from "@/components/ui/separator";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import SEOHead from "@/components/seo/SEOHead";
+import { useEffect, useRef } from "react";
 
 const trackingSteps = [
   { key: "pending", label: "Order Placed", icon: Clock },
