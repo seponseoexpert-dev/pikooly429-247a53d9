@@ -813,79 +813,29 @@ const Checkout = () => {
                 </div>
                 <div className="space-y-5">
                   <div>
-                    <Label htmlFor="fullName">Full Name <span className="text-destructive">*</span></Label>
-                    <Input id="fullName" placeholder="Enter your name" value={form.fullName} onChange={(e) => handleChange("fullName", e.target.value)} className="mt-1.5" required maxLength={100} />
-                  </div>
-                  <div>
-                    <Label>Country / Region <span className="text-destructive">*</span></Label>
-                    <Popover open={countryOpen} onOpenChange={setCountryOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          aria-expanded={countryOpen}
-                          className="w-full mt-1.5 justify-between font-normal h-10"
-                        >
-                          {form.billingCountry || "Select country"}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-[--radix-popover-trigger-width] p-0 z-[60] bg-popover" align="start">
-                        <Command>
-                          <CommandInput placeholder="Search country..." />
-                          <CommandList className="max-h-[200px]">
-                            <CommandEmpty>No country found.</CommandEmpty>
-                            <CommandGroup>
-                              {countries.map((c) => (
-                                <CommandItem
-                                  key={c}
-                                  value={c}
-                                  onSelect={() => {
-                                    handleChange("billingCountry", c);
-                                    const code = countryPhoneCodes[c] || "";
-                                    if (!form.phone || form.phone.startsWith("+")) {
-                                      handleChange("phone", code);
-                                    }
-                                    setCountryOpen(false);
-                                  }}
-                                >
-                                  <Check className={cn("mr-2 h-4 w-4", form.billingCountry === c ? "opacity-100" : "opacity-0")} />
-                                  {c}
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                  <div>
                     <Label htmlFor="phone">WhatsApp Number <span className="text-destructive">*</span></Label>
                     <div className="relative mt-1.5 flex">
-                      {form.billingCountry && countryPhoneCodes[form.billingCountry] && (
-                        <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-sm text-muted-foreground font-medium">
-                          {countryPhoneCodes[form.billingCountry]}
-                        </span>
-                      )}
+                      <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-sm text-muted-foreground font-medium">
+                        +88
+                      </span>
                       <Input
                         id="phone"
                         type="tel"
                         placeholder="Enter your number"
-                        value={form.phone.startsWith("+") ? form.phone.slice((countryPhoneCodes[form.billingCountry] || "").length) : form.phone}
+                        value={form.phone.startsWith("+88") ? form.phone.slice(3) : form.phone.startsWith("+") ? form.phone.slice((countryPhoneCodes[form.billingCountry] || "").length) : form.phone}
                         onChange={(e) => {
-                          const code = countryPhoneCodes[form.billingCountry] || "";
-                          const val = e.target.value.replace(/^0+/, "");
-                          handleChange("phone", code ? code + val : e.target.value);
+                          const val = e.target.value.replace(/^0+/, "").replace(/[^0-9]/g, "");
+                          handleChange("phone", "+88" + val);
                         }}
-                        className={cn("flex-1", form.billingCountry && countryPhoneCodes[form.billingCountry] && "rounded-l-none")}
+                        className="flex-1 rounded-l-none"
                         required
                         maxLength={20}
                       />
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="email">Email Address (Optional)</Label>
-                    <Input id="email" type="email" placeholder="example@email.com" value={form.email} onChange={(e) => handleChange("email", e.target.value)} className="mt-1.5" maxLength={255} />
+                    <Label htmlFor="email">Email Address <span className="text-destructive">*</span></Label>
+                    <Input id="email" type="email" placeholder="example@email.com" value={form.email} onChange={(e) => handleChange("email", e.target.value)} className="mt-1.5" required maxLength={255} />
                   </div>
                 </div>
               </section>
