@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
     const { data: settingsData, error: settingsError } = await supabaseAdmin
       .from("site_settings")
       .select("key, value")
-      .in("key", ["paypal_client_id", "paypal_client_secret", "paypal_mode", "paypal_status"]);
+      .in("key", ["paypal_client_id", "paypal_client_secret", "paypal_mode", "paypal_status", "store_name"]);
 
     if (settingsError) throw new Error("Failed to fetch PayPal settings");
 
@@ -84,8 +84,23 @@ Deno.serve(async (req) => {
         req.headers.get("referer")?.split("/").slice(0, 3).join("/") ||
         "";
 
-      // PayPal expects USD-style amount strings; we send order total as-is.
-      const totalStr = Number(order.total).toFixed(2);
+      // Get default currency (BDT base) and convert to USD for PayPal (PayPal does not support BDT)
+      const { data: defaultCur } = await supabaseAdmin
+        .from("currencies")
+        .select("code, exchange_rate, is_default")
+        .eq("is_default", true)
+        .maybeSingle();
+
+      const { data: usdCur } = await supabaseAdmin
+        .from("currencies")
+        .select("code, exchange_rate")
+        .eq("code", "USD")
+        .maybeSingle();
+
+      // Order total stored in default currency (BDT). Convert -> USD.
+      const usdRate = Number(usdCur?.exchange_rate) || 0.0085;
+      const totalStr = (Number(order.total) * usdRate).toFixed(2);
+      const brandName = settings.store_name || "Pikooly";
 
       const createRes = await fetch(`${baseUrl}/v2/checkout/orders`, {
         method: "POST",
@@ -103,7 +118,7 @@ Deno.serve(async (req) => {
             },
           ],
           application_context: {
-            brand_name: "PikoolyFlora",
+            brand_name: brandName,
             user_action: "PAY_NOW",
             return_url: `${origin}/order-success/${order.order_number}?paypal=1&order_id=${order.id}`,
             cancel_url: `${origin}/checkout?cancelled=1`,

@@ -63,6 +63,31 @@ Deno.serve(async (req) => {
         .select("product_name, quantity, price")
         .eq("order_id", order_id);
 
+      // Determine checkout currency. Order totals are stored in the default currency (BDT).
+      // Stripe does NOT support BDT card payments, so if default is BDT we convert to USD.
+      const { data: defaultCur } = await supabaseAdmin
+        .from("currencies")
+        .select("code, exchange_rate")
+        .eq("is_default", true)
+        .maybeSingle();
+
+      const stripeSupported = ["usd","eur","gbp","aed","aud","cad","sgd","jpy","inr","myr","thb","hkd","nzd","chf","sek","nok","dkk"];
+      const defaultCode = (defaultCur?.code || "BDT").toLowerCase();
+
+      let checkoutCurrency = defaultCode;
+      let conversionRate = 1; // multiply BDT amount to get checkoutCurrency amount
+
+      if (!stripeSupported.includes(defaultCode)) {
+        // Default currency unsupported by Stripe → fall back to USD using stored USD rate
+        const { data: usdCur } = await supabaseAdmin
+          .from("currencies")
+          .select("exchange_rate")
+          .eq("code", "USD")
+          .maybeSingle();
+        checkoutCurrency = "usd";
+        conversionRate = Number(usdCur?.exchange_rate) || 0.0085;
+      }
+
       const origin = req.headers.get("origin") || req.headers.get("referer")?.split("/").slice(0, 3).join("/") || "";
 
       // Build line_items
@@ -75,19 +100,22 @@ Deno.serve(async (req) => {
       params.append("metadata[order_id]", order.id);
       params.append("metadata[order_number]", order.order_number);
 
+      // Stripe minimum charge ~$0.50 USD equivalent → smallest unit 50
       let idx = 0;
       (itemsData || []).forEach((it: any) => {
-        params.append(`line_items[${idx}][price_data][currency]`, "usd");
+        const converted = Number(it.price) * conversionRate;
+        params.append(`line_items[${idx}][price_data][currency]`, checkoutCurrency);
         params.append(`line_items[${idx}][price_data][product_data][name]`, it.product_name);
-        params.append(`line_items[${idx}][price_data][unit_amount]`, String(Math.max(50, Math.round(Number(it.price) * 100))));
+        params.append(`line_items[${idx}][price_data][unit_amount]`, String(Math.max(50, Math.round(converted * 100))));
         params.append(`line_items[${idx}][quantity]`, String(it.quantity));
         idx++;
       });
 
       if (Number(order.delivery_fee) > 0) {
-        params.append(`line_items[${idx}][price_data][currency]`, "usd");
+        const convertedFee = Number(order.delivery_fee) * conversionRate;
+        params.append(`line_items[${idx}][price_data][currency]`, checkoutCurrency);
         params.append(`line_items[${idx}][price_data][product_data][name]`, "Delivery Fee");
-        params.append(`line_items[${idx}][price_data][unit_amount]`, String(Math.round(Number(order.delivery_fee) * 100)));
+        params.append(`line_items[${idx}][price_data][unit_amount]`, String(Math.round(convertedFee * 100)));
         params.append(`line_items[${idx}][quantity]`, "1");
         idx++;
       }
