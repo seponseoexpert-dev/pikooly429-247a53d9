@@ -4,6 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { MapPin, Zap, Calendar, Truck, CheckCircle2, Search, Bike, Car, Package } from "lucide-react";
 import { resolveDelivery, type ResolvedDelivery } from "@/lib/deliveryResolver";
+import { useMultiCurrency } from "@/contexts/CurrencyContext";
 
 interface District {
   id: string;
