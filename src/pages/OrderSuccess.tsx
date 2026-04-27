@@ -26,12 +26,40 @@ const getStepIndex = (status: string) => {
 
 const OrderSuccess = () => {
   const { orderNumber } = useParams();
+  const [searchParams] = useSearchParams();
   const { settings } = useSiteSettings();
   const { formatPrice } = useMultiCurrency();
+  const capturedRef = useRef(false);
 
   const storePhone = settings?.store_phone || "";
   const storeEmail = settings?.store_email || "";
   const whatsapp = settings?.whatsapp_number || "";
+
+  // Capture PayPal payment on return from approval
+  useEffect(() => {
+    const paypalToken = searchParams.get("token");
+    const paypalFlag = searchParams.get("paypal");
+    const orderId = searchParams.get("order_id");
+    if (paypalFlag && paypalToken && !capturedRef.current) {
+      capturedRef.current = true;
+      supabase.functions
+        .invoke("paypal-payment", {
+          body: { action: "capture", paypal_order_id: paypalToken, order_id: orderId },
+        })
+        .catch((e) => console.error("PayPal capture error:", e));
+    }
+    // Stripe is captured server-side via session_id presence; verify silently
+    const stripeSession = searchParams.get("stripe_session");
+    if (stripeSession && !capturedRef.current) {
+      capturedRef.current = true;
+      supabase.functions
+        .invoke("stripe-payment", {
+          body: { action: "verify", session_id: stripeSession },
+        })
+        .catch((e) => console.error("Stripe verify error:", e));
+    }
+  }, [searchParams]);
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["track-order", orderNumber],
