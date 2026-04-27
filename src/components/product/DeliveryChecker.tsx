@@ -26,6 +26,7 @@ interface Props {
 const STORAGE_KEY = "preferred_delivery_district";
 
 const DeliveryChecker = ({ product }: Props) => {
+  const { formatPrice } = useMultiCurrency();
   const [districts, setDistricts] = useState<District[]>([]);
   const [selected, setSelected] = useState<string>("");
   const [resolved, setResolved] = useState<ResolvedDelivery | null>(null);
