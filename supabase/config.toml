@@ -3,5 +3,11 @@ project_id = "uizdqqyiqxkcjufkksrc"
 [functions.eps-payment]
 verify_jwt = false
 
+[functions.stripe-payment]
+verify_jwt = false
+
+[functions.paypal-payment]
+verify_jwt = false
+
 [functions.sync-google-reviews]
 verify_jwt = false
