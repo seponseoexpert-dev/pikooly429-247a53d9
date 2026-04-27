@@ -152,7 +152,7 @@ const DeliveryChecker = ({ product }: Props) => {
                   Estimated: <strong>{resolved.eta}</strong>
                 </p>
                 <p className="text-[11px] opacity-95 leading-snug">
-                  Delivery Fee: <strong>{resolved.feeLabel}</strong>
+                  Delivery Fee: <strong>{formatPrice(resolved.fee)}</strong>
                 </p>
               </div>
             </div>
