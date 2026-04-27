@@ -4,6 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { MapPin, Zap, Calendar, Truck, CheckCircle2, Search, Bike, Car, Package } from "lucide-react";
 import { resolveDelivery, type ResolvedDelivery } from "@/lib/deliveryResolver";
+import { useMultiCurrency } from "@/contexts/CurrencyContext";
 
 interface District {
   id: string;
@@ -25,6 +26,7 @@ interface Props {
 const STORAGE_KEY = "preferred_delivery_district";
 
 const DeliveryChecker = ({ product }: Props) => {
+  const { formatPrice } = useMultiCurrency();
   const [districts, setDistricts] = useState<District[]>([]);
   const [selected, setSelected] = useState<string>("");
   const [resolved, setResolved] = useState<ResolvedDelivery | null>(null);
@@ -150,7 +152,7 @@ const DeliveryChecker = ({ product }: Props) => {
                   Estimated: <strong>{resolved.eta}</strong>
                 </p>
                 <p className="text-[11px] opacity-95 leading-snug">
-                  Delivery Fee: <strong>{resolved.feeLabel}</strong>
+                  Delivery Fee: <strong>{formatPrice(resolved.fee)}</strong>
                 </p>
               </div>
             </div>

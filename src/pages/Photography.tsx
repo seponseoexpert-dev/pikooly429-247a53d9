@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { useCurrency } from "@/hooks/useCurrency";
+import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import SEOHead from "@/components/seo/SEOHead";
 import PageBottomSEO from "@/components/seo/PageBottomSEO";
@@ -29,7 +29,7 @@ const timeSlots = [
 
 const Photography = () => {
   const { user } = useAuth();
-  const { formatCurrency } = useCurrency();
+  const { formatPrice: formatCurrency } = useMultiCurrency();
   const { settings } = useSiteSettings();
   const [bookingOpen, setBookingOpen] = useState(false);
   const [step, setStep] = useState(1);

@@ -82,8 +82,8 @@ const Checkout = () => {
   const [deliveryType, setDeliveryType] = useState<"same_day" | "next_day">("same_day");
   const [form, setForm] = useState({
     fullName: "",
-    billingCountry: "",
-    phone: "",
+    billingCountry: "Bangladesh",
+    phone: "+88",
     email: "",
     recipientName: "",
     recipientPhone: "",
@@ -456,8 +456,8 @@ const Checkout = () => {
 
     const billingVisible = gatewaySettings.checkout_billing_visible !== "false";
 
-    if (billingVisible && (!form.fullName.trim() || !form.phone.trim())) {
-      toast.error("Please fill in billing details");
+    if (billingVisible && (!form.phone.trim() || form.phone.trim() === "+88" || !form.email.trim())) {
+      toast.error("Please enter your WhatsApp number and email");
       return;
     }
 
@@ -487,7 +487,7 @@ const Checkout = () => {
       const userId = session?.session?.user?.id || null;
 
       const orderData = {
-        customer_name: form.fullName.trim(),
+        customer_name: (form.fullName.trim() || form.recipientName.trim()),
         customer_phone: form.phone.trim(),
         customer_email: form.email.trim() || null,
         billing_country: form.billingCountry.trim() || 'Bangladesh',
@@ -641,7 +641,7 @@ const Checkout = () => {
       if (form.email.trim() && shouldSendMail(alertSettings, "pending")) {
         const { buildOrderConfirmationEmail } = await import("@/lib/emailTemplates");
         const emailHtml = buildOrderConfirmationEmail({
-          customerName: form.fullName,
+          customerName: form.fullName || form.recipientName,
           orderNumber: order.order_number,
           deliveryAddress: `${activeDistrict?.name || ""} - ${form.address}`,
           deliveryDate: form.deliveryDate || undefined,
@@ -703,7 +703,7 @@ const Checkout = () => {
       if (adminEmail && shouldSendAdminMail(alertSettings)) {
         const { buildAdminNewOrderEmail } = await import("@/lib/emailTemplates");
         const adminHtml = buildAdminNewOrderEmail({
-          customerName: form.fullName,
+          customerName: form.fullName || form.recipientName,
           orderNumber: order.order_number,
           deliveryAddress: `${activeDistrict?.name || ""} - ${form.address}`,
           deliveryDate: form.deliveryDate || undefined,
@@ -777,7 +777,7 @@ const Checkout = () => {
   }
 
   // Step indicator state derived from form completeness
-  const billingStepDone = !!(form.fullName.trim() && form.phone.trim());
+  const billingStepDone = !!(form.phone.trim() && form.phone.trim() !== "+88" && form.email.trim());
   const deliveryStepDone = !!(form.recipientName.trim() && form.recipientPhone.trim() && form.address.trim() && selectedDistrict);
   const paymentStepDone = !!form.paymentMethod;
 
@@ -813,79 +813,29 @@ const Checkout = () => {
                 </div>
                 <div className="space-y-5">
                   <div>
-                    <Label htmlFor="fullName">Full Name <span className="text-destructive">*</span></Label>
-                    <Input id="fullName" placeholder="Enter your name" value={form.fullName} onChange={(e) => handleChange("fullName", e.target.value)} className="mt-1.5" required maxLength={100} />
-                  </div>
-                  <div>
-                    <Label>Country / Region <span className="text-destructive">*</span></Label>
-                    <Popover open={countryOpen} onOpenChange={setCountryOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          aria-expanded={countryOpen}
-                          className="w-full mt-1.5 justify-between font-normal h-10"
-                        >
-                          {form.billingCountry || "Select country"}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-[--radix-popover-trigger-width] p-0 z-[60] bg-popover" align="start">
-                        <Command>
-                          <CommandInput placeholder="Search country..." />
-                          <CommandList className="max-h-[200px]">
-                            <CommandEmpty>No country found.</CommandEmpty>
-                            <CommandGroup>
-                              {countries.map((c) => (
-                                <CommandItem
-                                  key={c}
-                                  value={c}
-                                  onSelect={() => {
-                                    handleChange("billingCountry", c);
-                                    const code = countryPhoneCodes[c] || "";
-                                    if (!form.phone || form.phone.startsWith("+")) {
-                                      handleChange("phone", code);
-                                    }
-                                    setCountryOpen(false);
-                                  }}
-                                >
-                                  <Check className={cn("mr-2 h-4 w-4", form.billingCountry === c ? "opacity-100" : "opacity-0")} />
-                                  {c}
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                  <div>
                     <Label htmlFor="phone">WhatsApp Number <span className="text-destructive">*</span></Label>
                     <div className="relative mt-1.5 flex">
-                      {form.billingCountry && countryPhoneCodes[form.billingCountry] && (
-                        <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-sm text-muted-foreground font-medium">
-                          {countryPhoneCodes[form.billingCountry]}
-                        </span>
-                      )}
+                      <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-sm text-muted-foreground font-medium">
+                        +88
+                      </span>
                       <Input
                         id="phone"
                         type="tel"
                         placeholder="Enter your number"
-                        value={form.phone.startsWith("+") ? form.phone.slice((countryPhoneCodes[form.billingCountry] || "").length) : form.phone}
+                        value={form.phone.startsWith("+88") ? form.phone.slice(3) : form.phone.startsWith("+") ? form.phone.slice((countryPhoneCodes[form.billingCountry] || "").length) : form.phone}
                         onChange={(e) => {
-                          const code = countryPhoneCodes[form.billingCountry] || "";
-                          const val = e.target.value.replace(/^0+/, "");
-                          handleChange("phone", code ? code + val : e.target.value);
+                          const val = e.target.value.replace(/^0+/, "").replace(/[^0-9]/g, "");
+                          handleChange("phone", "+88" + val);
                         }}
-                        className={cn("flex-1", form.billingCountry && countryPhoneCodes[form.billingCountry] && "rounded-l-none")}
+                        className="flex-1 rounded-l-none"
                         required
                         maxLength={20}
                       />
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="email">Email Address (Optional)</Label>
-                    <Input id="email" type="email" placeholder="example@email.com" value={form.email} onChange={(e) => handleChange("email", e.target.value)} className="mt-1.5" maxLength={255} />
+                    <Label htmlFor="email">Email Address <span className="text-destructive">*</span></Label>
+                    <Input id="email" type="email" placeholder="example@email.com" value={form.email} onChange={(e) => handleChange("email", e.target.value)} className="mt-1.5" required maxLength={255} />
                   </div>
                 </div>
               </section>
@@ -1102,159 +1052,161 @@ const Checkout = () => {
 
                   <div className="gold-divider my-5" />
 
-                  {/* Shipping District */}
-                  <div>
-                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                      <MapPin size={12} className="text-[hsl(var(--gold-deep))]" />
-                      Shipping District <span className="text-destructive">*</span>
-                    </Label>
-                    <Popover open={districtOpen} onOpenChange={setDistrictOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          aria-expanded={districtOpen}
-                          className="w-full mt-2 justify-between font-normal h-11 rounded-xl border-border/70 hover:border-[hsl(var(--gold)/0.4)] transition-colors"
-                        >
-                          {activeDistrict ? activeDistrict.name : "Select district"}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-[--radix-popover-trigger-width] p-0 z-[60] bg-popover" align="start">
-                        <Command>
-                          <CommandInput placeholder="Search district..." />
-                          <CommandList className="max-h-[200px]">
-                            <CommandEmpty>No district found.</CommandEmpty>
-                            <CommandGroup>
-                              {districts.map((d) => (
-                                <CommandItem
-                                  key={d.id}
-                                  value={d.name}
-                                  onSelect={() => {
-                                    setSelectedDistrict(d.id);
-                                    setDistrictOpen(false);
-                                  }}
-                                >
-                                  <Check className={cn("mr-2 h-4 w-4", selectedDistrict === d.id ? "opacity-100" : "opacity-0")} />
-                                  {d.name}
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
+                  {/* Delivery Speed (district picked via postal code in Delivery Information) */}
+                  {!activeDistrict && (
+                    <div className="mb-4">
+                      <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                        <MapPin size={12} className="text-[hsl(var(--gold-deep))]" />
+                        Shipping District <span className="text-destructive">*</span>
+                      </Label>
+                      <Popover open={districtOpen} onOpenChange={setDistrictOpen}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            aria-expanded={districtOpen}
+                            className="w-full mt-2 justify-between font-normal h-11 rounded-xl border-border/70"
+                          >
+                            {activeDistrict ? (activeDistrict as any).name : "Select district"}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[--radix-popover-trigger-width] p-0 z-[60] bg-popover" align="start">
+                          <Command>
+                            <CommandInput placeholder="Search district..." />
+                            <CommandList className="max-h-[200px]">
+                              <CommandEmpty>No district found.</CommandEmpty>
+                              <CommandGroup>
+                                {districts.map((d) => (
+                                  <CommandItem
+                                    key={d.id}
+                                    value={d.name}
+                                    onSelect={() => {
+                                      setSelectedDistrict(d.id);
+                                      setDistrictOpen(false);
+                                    }}
+                                  >
+                                    <Check className={cn("mr-2 h-4 w-4", selectedDistrict === d.id ? "opacity-100" : "opacity-0")} />
+                                    {d.name}
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <p className="text-[11px] text-muted-foreground mt-2">
+                        Tip: Enter your postal code above to auto-select your district.
+                      </p>
+                    </div>
+                  )}
 
-                    {activeDistrict && (sameDayAvailable || nextDayAvailable) && (
-                      <div className="mt-4 space-y-2.5">
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[hsl(var(--gold-deep))]">
-                          {sameDayAvailable && nextDayAvailable ? "Choose Delivery Speed" : "Delivery Option"}
-                        </p>
-                        <div className={cn(
-                          "grid gap-2.5",
-                          sameDayAvailable && nextDayAvailable ? "grid-cols-1" : "grid-cols-1"
-                        )}>
-                          {/* Same Day */}
-                          {sameDayAvailable && (
-                            <button
-                              type="button"
-                              onClick={() => setDeliveryType("same_day")}
-                              className={cn("luxe-option text-left", deliveryType === "same_day" && "is-selected")}
-                            >
-                              <div className="relative flex items-start gap-3">
-                                <div className={cn(
-                                  "mt-0.5 w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-colors",
-                                  deliveryType === "same_day" ? "border-primary bg-primary/10" : "border-muted-foreground/40"
-                                )}>
-                                  {deliveryType === "same_day" && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center justify-between gap-2">
-                                    <div className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
-                                      <SameDayAnimation />
-                                      {activeDistrict.same_day_label || "Same Day Delivery"}
-                                    </div>
-                                    <div className="text-sm font-bold text-primary tabular-nums">{formatPrice(sameDayFee)}</div>
-                                  </div>
-                                  <div className="text-[11px] text-muted-foreground mt-1">
-                                    Bike, CNG & Private Car ·{" "}
-                                    <span className="font-semibold text-foreground">Delivery within 2 hours</span>
-                                  </div>
-                                </div>
+                  {activeDistrict && (sameDayAvailable || nextDayAvailable) && (
+                    <div className="mb-4 space-y-2.5">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[hsl(var(--gold-deep))] flex items-center gap-1.5">
+                        <MapPin size={11} /> Delivering to {(activeDistrict as any).name}
+                      </p>
+                      <div className="grid gap-2.5 grid-cols-1">
+                        {/* Same Day */}
+                        {sameDayAvailable && (
+                          <button
+                            type="button"
+                            onClick={() => setDeliveryType("same_day")}
+                            className={cn("luxe-option text-left", deliveryType === "same_day" && "is-selected")}
+                          >
+                            <div className="relative flex items-start gap-3">
+                              <div className={cn(
+                                "mt-0.5 w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-colors",
+                                deliveryType === "same_day" ? "border-primary bg-primary/10" : "border-muted-foreground/40"
+                              )}>
+                                {deliveryType === "same_day" && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
                               </div>
-                            </button>
-                          )}
-
-                          {/* Next Day */}
-                          {nextDayAvailable && (
-                            <button
-                              type="button"
-                              onClick={() => setDeliveryType("next_day")}
-                              className={cn("luxe-option text-left", deliveryType === "next_day" && "is-selected")}
-                            >
-                              <div className="relative flex items-start gap-3">
-                                <div className={cn(
-                                  "mt-0.5 w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-colors",
-                                  deliveryType === "next_day" ? "border-primary bg-primary/10" : "border-muted-foreground/40"
-                                )}>
-                                  {deliveryType === "next_day" && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center justify-between gap-2">
-                                    <div className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
-                                      <NextDayAnimation />
-                                      {activeDistrict.next_day_label || "Next Day Delivery"}
-                                    </div>
-                                    <div className="text-sm font-bold text-primary tabular-nums">{formatPrice(nextDayFee)}</div>
-                                  </div>
-                                  <div className="text-[11px] text-muted-foreground mt-1">
-                                    Delivery between{" "}
-                                    <span className="font-semibold text-foreground">
-                                      {(() => {
-                                        const d1 = new Date(); d1.setDate(d1.getDate() + 1);
-                                        const d2 = new Date(); d2.setDate(d2.getDate() + 2);
-                                        const fmt = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-                                        return `${fmt(d1)} – ${fmt(d2)}`;
-                                      })()}
-                                    </span>
-                                    {" "}· Steadfast, Pathao & others couriers
-                                  </div>
-                                </div>
-                              </div>
-                            </button>
-                          )}
-                        </div>
-
-                        {/* Delivery mismatch warning */}
-                        {hasDeliveryMismatch && (
-                          <div className="mt-3 p-3 rounded-xl border border-destructive/40 bg-destructive/5">
-                            <div className="flex items-start gap-2">
-                              <AlertTriangle size={16} className="text-destructive shrink-0 mt-0.5" />
                               <div className="flex-1 min-w-0">
-                                <p className="text-[12px] font-semibold text-destructive leading-tight">
-                                  {incompatibleItems.length === 1 ? "1 item is" : `${incompatibleItems.length} items are`} not available for {deliveryType === "same_day" ? "Same Day" : "Next Day"} delivery
-                                </p>
-                                <ul className="mt-1.5 space-y-0.5">
-                                  {incompatibleItems.slice(0, 3).map((it) => (
-                                    <li key={it.id} className="text-[11px] text-foreground/80 flex items-center justify-between gap-2">
-                                      <span className="truncate">• {it.name}</span>
-                                      {it.label && <span className="text-muted-foreground shrink-0 text-[10px]">{it.label}</span>}
-                                    </li>
-                                  ))}
-                                  {incompatibleItems.length > 3 && (
-                                    <li className="text-[11px] text-muted-foreground">+{incompatibleItems.length - 3} more</li>
-                                  )}
-                                </ul>
-                                <p className="text-[11px] text-muted-foreground mt-2">
-                                  Switch delivery option above, or remove these items from cart to continue.
-                                </p>
+                                <div className="flex items-center justify-between gap-2">
+                                  <div className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+                                    <SameDayAnimation />
+                                    {(activeDistrict as any).same_day_label || "Same Day Delivery"}
+                                  </div>
+                                  <div className="text-sm font-bold text-primary tabular-nums">{formatPrice(sameDayFee)}</div>
+                                </div>
+                                <div className="text-[11px] text-muted-foreground mt-1">
+                                  Bike, CNG & Private Car ·{" "}
+                                  <span className="font-semibold text-foreground">Delivery within 2 hours</span>
+                                </div>
                               </div>
                             </div>
-                          </div>
+                          </button>
+                        )}
+
+                        {/* Next Day */}
+                        {nextDayAvailable && (
+                          <button
+                            type="button"
+                            onClick={() => setDeliveryType("next_day")}
+                            className={cn("luxe-option text-left", deliveryType === "next_day" && "is-selected")}
+                          >
+                            <div className="relative flex items-start gap-3">
+                              <div className={cn(
+                                "mt-0.5 w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-colors",
+                                deliveryType === "next_day" ? "border-primary bg-primary/10" : "border-muted-foreground/40"
+                              )}>
+                                {deliveryType === "next_day" && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between gap-2">
+                                  <div className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+                                    <NextDayAnimation />
+                                    {(activeDistrict as any).next_day_label || "Next Day Delivery"}
+                                  </div>
+                                  <div className="text-sm font-bold text-primary tabular-nums">{formatPrice(nextDayFee)}</div>
+                                </div>
+                                <div className="text-[11px] text-muted-foreground mt-1">
+                                  Delivery between{" "}
+                                  <span className="font-semibold text-foreground">
+                                    {(() => {
+                                      const d1 = new Date(); d1.setDate(d1.getDate() + 1);
+                                      const d2 = new Date(); d2.setDate(d2.getDate() + 2);
+                                      const fmt = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+                                      return `${fmt(d1)} – ${fmt(d2)}`;
+                                    })()}
+                                  </span>
+                                  {" "}· Steadfast, Pathao & others couriers
+                                </div>
+                              </div>
+                            </div>
+                          </button>
                         )}
                       </div>
-                    )}
-                  </div>
+
+                      {/* Delivery mismatch warning */}
+                      {hasDeliveryMismatch && (
+                        <div className="mt-3 p-3 rounded-xl border border-destructive/40 bg-destructive/5">
+                          <div className="flex items-start gap-2">
+                            <AlertTriangle size={16} className="text-destructive shrink-0 mt-0.5" />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[12px] font-semibold text-destructive leading-tight">
+                                {incompatibleItems.length === 1 ? "1 item is" : `${incompatibleItems.length} items are`} not available for {deliveryType === "same_day" ? "Same Day" : "Next Day"} delivery
+                              </p>
+                              <ul className="mt-1.5 space-y-0.5">
+                                {incompatibleItems.slice(0, 3).map((it) => (
+                                  <li key={it.id} className="text-[11px] text-foreground/80 flex items-center justify-between gap-2">
+                                    <span className="truncate">• {it.name}</span>
+                                    {it.label && <span className="text-muted-foreground shrink-0 text-[10px]">{it.label}</span>}
+                                  </li>
+                                ))}
+                                {incompatibleItems.length > 3 && (
+                                  <li className="text-[11px] text-muted-foreground">+{incompatibleItems.length - 3} more</li>
+                                )}
+                              </ul>
+                              <p className="text-[11px] text-muted-foreground mt-2">
+                                Switch delivery option above, or remove these items from cart to continue.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <div>
                     <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                       <Ticket size={12} className="text-[hsl(var(--gold-deep))]" />
