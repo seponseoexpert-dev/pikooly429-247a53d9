@@ -590,6 +590,48 @@ const Checkout = () => {
         }
       }
 
+      // Stripe checkout redirect
+      if (form.paymentMethod === "stripe") {
+        try {
+          const { data: stripeData, error: stripeError } = await supabase.functions.invoke("stripe-payment", {
+            body: { action: "initialize", order_id: order.id },
+          });
+          if (stripeError || !stripeData?.redirectUrl) {
+            toast.error(stripeData?.error || "Stripe payment initialization failed.");
+            setLoading(false);
+            return;
+          }
+          window.location.href = stripeData.redirectUrl;
+          return;
+        } catch (err: any) {
+          console.error("Stripe error:", err);
+          toast.error("Failed to connect to Stripe.");
+          setLoading(false);
+          return;
+        }
+      }
+
+      // PayPal checkout redirect
+      if (form.paymentMethod === "paypal") {
+        try {
+          const { data: ppData, error: ppError } = await supabase.functions.invoke("paypal-payment", {
+            body: { action: "initialize", order_id: order.id },
+          });
+          if (ppError || !ppData?.redirectUrl) {
+            toast.error(ppData?.error || "PayPal payment initialization failed.");
+            setLoading(false);
+            return;
+          }
+          window.location.href = ppData.redirectUrl;
+          return;
+        } catch (err: any) {
+          console.error("PayPal error:", err);
+          toast.error("Failed to connect to PayPal.");
+          setLoading(false);
+          return;
+        }
+      }
+
       // COD orders go straight to success
 
       // Fetch alert settings for notification toggles
