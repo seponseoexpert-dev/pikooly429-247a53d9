@@ -861,43 +861,6 @@ const Checkout = () => {
                     <div className="mt-1.5 px-3 py-2.5 bg-muted rounded-md text-sm font-medium">Bangladesh</div>
                   </div>
                   <div>
-                    <Label htmlFor="postalCode" className="flex items-center gap-1.5">
-                      <MapPin size={13} className="text-primary" />
-                      Postal Code
-                      <span className="text-[11px] font-normal text-muted-foreground">(auto-fills delivery options)</span>
-                    </Label>
-                    <div className="relative mt-1.5">
-                      <Input
-                        id="postalCode"
-                        inputMode="numeric"
-                        placeholder="e.g. 1207"
-                        value={postalCode}
-                        onChange={(e) => setPostalCode(e.target.value.replace(/[^0-9-]/g, ""))}
-                        className={cn(
-                          "pr-28",
-                          postalStatus === "matched" && "border-primary/60 focus-visible:ring-primary/40",
-                          postalStatus === "not_found" && "border-destructive/60 focus-visible:ring-destructive/30"
-                        )}
-                        maxLength={10}
-                      />
-                      {postalStatus === "matched" && activeDistrict && (
-                        <span className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center gap-1 text-[11px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                          <Check size={12} /> {activeDistrict.name}
-                        </span>
-                      )}
-                      {postalStatus === "not_found" && (
-                        <span className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center gap-1 text-[11px] font-semibold text-destructive bg-destructive/10 px-2 py-0.5 rounded-full">
-                          <AlertTriangle size={12} /> Not found
-                        </span>
-                      )}
-                    </div>
-                    {postalStatus === "not_found" && (
-                      <p className="text-[11px] text-muted-foreground mt-1.5">
-                        Pick your district manually in the order summary.
-                      </p>
-                    )}
-                  </div>
-                  <div>
                     <Label htmlFor="address">Full Address <span className="text-destructive">*</span></Label>
                     <Input id="address" placeholder="House no, Street, Area" value={form.address} onChange={(e) => handleChange("address", e.target.value)} className="mt-1.5" required maxLength={500} />
                   </div>
