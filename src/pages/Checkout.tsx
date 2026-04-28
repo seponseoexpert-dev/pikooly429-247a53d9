@@ -785,7 +785,7 @@ const Checkout = () => {
   }
 
   // Step indicator state derived from form completeness
-  const billingStepDone = !!(form.phone.trim() && form.phone.trim() !== "+88" && form.email.trim());
+  const billingStepDone = !!(form.phone.trim() && form.phone.trim() !== phoneCode && form.email.trim());
   const deliveryStepDone = !!(form.recipientName.trim() && form.recipientPhone.trim() && form.address.trim() && selectedDistrict);
   const paymentStepDone = !!form.paymentMethod;
 
