@@ -209,6 +209,12 @@ const Checkout = () => {
     if (match) setSelectedDistrict(match.id);
   }, [districts, defaultAddress, selectedDistrict]);
 
+  // Fallback: auto-select the first available district so checkout always has a fee
+  useEffect(() => {
+    if (selectedDistrict || !districts.length) return;
+    setSelectedDistrict((districts[0] as any).id);
+  }, [districts, selectedDistrict]);
+
   // Auto-detect district from postal code (debounced)
   useEffect(() => {
     const code = postalCode.trim();
@@ -861,43 +867,6 @@ const Checkout = () => {
                     <div className="mt-1.5 px-3 py-2.5 bg-muted rounded-md text-sm font-medium">Bangladesh</div>
                   </div>
                   <div>
-                    <Label htmlFor="postalCode" className="flex items-center gap-1.5">
-                      <MapPin size={13} className="text-primary" />
-                      Postal Code
-                      <span className="text-[11px] font-normal text-muted-foreground">(auto-fills delivery options)</span>
-                    </Label>
-                    <div className="relative mt-1.5">
-                      <Input
-                        id="postalCode"
-                        inputMode="numeric"
-                        placeholder="e.g. 1207"
-                        value={postalCode}
-                        onChange={(e) => setPostalCode(e.target.value.replace(/[^0-9-]/g, ""))}
-                        className={cn(
-                          "pr-28",
-                          postalStatus === "matched" && "border-primary/60 focus-visible:ring-primary/40",
-                          postalStatus === "not_found" && "border-destructive/60 focus-visible:ring-destructive/30"
-                        )}
-                        maxLength={10}
-                      />
-                      {postalStatus === "matched" && activeDistrict && (
-                        <span className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center gap-1 text-[11px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                          <Check size={12} /> {activeDistrict.name}
-                        </span>
-                      )}
-                      {postalStatus === "not_found" && (
-                        <span className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center gap-1 text-[11px] font-semibold text-destructive bg-destructive/10 px-2 py-0.5 rounded-full">
-                          <AlertTriangle size={12} /> Not found
-                        </span>
-                      )}
-                    </div>
-                    {postalStatus === "not_found" && (
-                      <p className="text-[11px] text-muted-foreground mt-1.5">
-                        Pick your district manually in the order summary.
-                      </p>
-                    )}
-                  </div>
-                  <div>
                     <Label htmlFor="address">Full Address <span className="text-destructive">*</span></Label>
                     <Input id="address" placeholder="House no, Street, Area" value={form.address} onChange={(e) => handleChange("address", e.target.value)} className="mt-1.5" required maxLength={500} />
                   </div>
@@ -1052,54 +1021,7 @@ const Checkout = () => {
 
                   <div className="gold-divider my-5" />
 
-                  {/* Delivery Speed (district picked via postal code in Delivery Information) */}
-                  {!activeDistrict && (
-                    <div className="mb-4">
-                      <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                        <MapPin size={12} className="text-[hsl(var(--gold-deep))]" />
-                        Shipping District <span className="text-destructive">*</span>
-                      </Label>
-                      <Popover open={districtOpen} onOpenChange={setDistrictOpen}>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            aria-expanded={districtOpen}
-                            className="w-full mt-2 justify-between font-normal h-11 rounded-xl border-border/70"
-                          >
-                            {activeDistrict ? (activeDistrict as any).name : "Select district"}
-                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-[--radix-popover-trigger-width] p-0 z-[60] bg-popover" align="start">
-                          <Command>
-                            <CommandInput placeholder="Search district..." />
-                            <CommandList className="max-h-[200px]">
-                              <CommandEmpty>No district found.</CommandEmpty>
-                              <CommandGroup>
-                                {districts.map((d) => (
-                                  <CommandItem
-                                    key={d.id}
-                                    value={d.name}
-                                    onSelect={() => {
-                                      setSelectedDistrict(d.id);
-                                      setDistrictOpen(false);
-                                    }}
-                                  >
-                                    <Check className={cn("mr-2 h-4 w-4", selectedDistrict === d.id ? "opacity-100" : "opacity-0")} />
-                                    {d.name}
-                                  </CommandItem>
-                                ))}
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-                      <p className="text-[11px] text-muted-foreground mt-2">
-                        Tip: Enter your postal code above to auto-select your district.
-                      </p>
-                    </div>
-                  )}
+                  {/* Delivery Speed (district auto-selected) */}
 
                   {activeDistrict && (sameDayAvailable || nextDayAvailable) && (
                     <div className="mb-4 space-y-2.5">
