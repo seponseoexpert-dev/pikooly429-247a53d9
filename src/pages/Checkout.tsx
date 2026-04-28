@@ -907,8 +907,17 @@ const Checkout = () => {
                     <div className="mt-1.5 px-3 py-2.5 bg-muted rounded-md text-sm font-medium">Bangladesh</div>
                   </div>
                   <div>
-                    <Label htmlFor="address">Full Address <span className="text-destructive">*</span></Label>
-                    <Input id="address" placeholder="House no, Street, Area" value={form.address} onChange={(e) => handleChange("address", e.target.value)} className="mt-1.5" required maxLength={500} />
+                    <Label htmlFor="address">Recipient Address <span className="text-destructive">*</span></Label>
+                    <AddressAutocomplete
+                      id="address"
+                      placeholder="Search address on Google Maps..."
+                      value={form.address}
+                      onChange={(v) => handleChange("address", v)}
+                      className="mt-1.5"
+                      required
+                      maxLength={500}
+                      countryRestriction={["bd"]}
+                    />
                   </div>
                   <div>
                     <Label htmlFor="giftMessage">Gift Message (Optional)</Label>
