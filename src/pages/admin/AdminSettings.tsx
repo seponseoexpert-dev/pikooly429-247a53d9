@@ -211,6 +211,7 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "google_analytics_id", label: "Google Analytics ID", placeholder: "G-XXXXXXXXXX" },
     { key: "facebook_pixel_id", label: "Facebook Pixel ID", placeholder: "123456789012345" },
     { key: "google_tag_manager_id", label: "Google Tag Manager ID", placeholder: "GTM-XXXXXXX" },
+    { key: "google_maps_api_key", label: "Google Maps API Key", placeholder: "AIzaSy...", fullWidth: true },
   ],
   theme: [
     { key: "company_logo", label: "Logo (128PX, 43PX)", type: "image_upload" },
