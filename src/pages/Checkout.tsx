@@ -76,6 +76,8 @@ const Checkout = () => {
   const [postalStatus, setPostalStatus] = useState<"idle" | "matched" | "not_found">("idle");
   const [countryOpen, setCountryOpen] = useState(false);
   const [districtOpen, setDistrictOpen] = useState(false);
+  const [phoneCode, setPhoneCode] = useState("+88");
+  const [phoneCodeOpen, setPhoneCodeOpen] = useState(false);
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
   const [couponLoading, setCouponLoading] = useState(false);
