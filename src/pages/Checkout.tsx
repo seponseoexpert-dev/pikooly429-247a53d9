@@ -76,6 +76,8 @@ const Checkout = () => {
   const [postalStatus, setPostalStatus] = useState<"idle" | "matched" | "not_found">("idle");
   const [countryOpen, setCountryOpen] = useState(false);
   const [districtOpen, setDistrictOpen] = useState(false);
+  const [phoneCode, setPhoneCode] = useState("+88");
+  const [phoneCodeOpen, setPhoneCodeOpen] = useState(false);
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
   const [couponLoading, setCouponLoading] = useState(false);
@@ -462,7 +464,7 @@ const Checkout = () => {
 
     const billingVisible = gatewaySettings.checkout_billing_visible !== "false";
 
-    if (billingVisible && (!form.phone.trim() || form.phone.trim() === "+88" || !form.email.trim())) {
+    if (billingVisible && (!form.phone.trim() || form.phone.trim() === phoneCode || !form.email.trim())) {
       toast.error("Please enter your WhatsApp number and email");
       return;
     }
@@ -783,7 +785,7 @@ const Checkout = () => {
   }
 
   // Step indicator state derived from form completeness
-  const billingStepDone = !!(form.phone.trim() && form.phone.trim() !== "+88" && form.email.trim());
+  const billingStepDone = !!(form.phone.trim() && form.phone.trim() !== phoneCode && form.email.trim());
   const deliveryStepDone = !!(form.recipientName.trim() && form.recipientPhone.trim() && form.address.trim() && selectedDistrict);
   const paymentStepDone = !!form.paymentMethod;
 
@@ -821,17 +823,54 @@ const Checkout = () => {
                   <div>
                     <Label htmlFor="phone">WhatsApp Number <span className="text-destructive">*</span></Label>
                     <div className="relative mt-1.5 flex">
-                      <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-sm text-muted-foreground font-medium">
-                        +88
-                      </span>
+                      <Popover open={phoneCodeOpen} onOpenChange={setPhoneCodeOpen}>
+                        <PopoverTrigger asChild>
+                          <button
+                            type="button"
+                            className="inline-flex items-center gap-1 px-3 rounded-l-md border border-r-0 border-input bg-muted text-sm font-medium hover:bg-muted/80 transition-colors min-w-[78px]"
+                          >
+                            {phoneCode}
+                            <ChevronsUpDown size={12} className="opacity-60" />
+                          </button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[260px] p-0" align="start">
+                          <Command>
+                            <CommandInput placeholder="Search country..." className="h-9" />
+                            <CommandList>
+                              <CommandEmpty>No country found.</CommandEmpty>
+                              <CommandGroup>
+                                {countries.map((c) => {
+                                  const code = countryPhoneCodes[c];
+                                  return (
+                                    <CommandItem
+                                      key={c}
+                                      value={`${c} ${code}`}
+                                      onSelect={() => {
+                                        const digits = form.phone.replace(/^\+[\d-]+/, "");
+                                        setPhoneCode(code);
+                                        handleChange("phone", code + digits);
+                                        setPhoneCodeOpen(false);
+                                      }}
+                                    >
+                                      <Check size={14} className={cn("mr-2", phoneCode === code ? "opacity-100" : "opacity-0")} />
+                                      <span className="flex-1 truncate">{c}</span>
+                                      <span className="text-muted-foreground text-xs ml-2">{code}</span>
+                                    </CommandItem>
+                                  );
+                                })}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
                       <Input
                         id="phone"
                         type="tel"
                         placeholder="Enter your number"
-                        value={form.phone.startsWith("+88") ? form.phone.slice(3) : form.phone.startsWith("+") ? form.phone.slice((countryPhoneCodes[form.billingCountry] || "").length) : form.phone}
+                        value={form.phone.startsWith(phoneCode) ? form.phone.slice(phoneCode.length) : form.phone.replace(/^\+[\d-]+/, "")}
                         onChange={(e) => {
                           const val = e.target.value.replace(/^0+/, "").replace(/[^0-9]/g, "");
-                          handleChange("phone", "+88" + val);
+                          handleChange("phone", phoneCode + val);
                         }}
                         className="flex-1 rounded-l-none"
                         required
