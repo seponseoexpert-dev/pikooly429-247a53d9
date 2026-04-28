@@ -209,6 +209,12 @@ const Checkout = () => {
     if (match) setSelectedDistrict(match.id);
   }, [districts, defaultAddress, selectedDistrict]);
 
+  // Fallback: auto-select the first available district so checkout always has a fee
+  useEffect(() => {
+    if (selectedDistrict || !districts.length) return;
+    setSelectedDistrict((districts[0] as any).id);
+  }, [districts, selectedDistrict]);
+
   // Auto-detect district from postal code (debounced)
   useEffect(() => {
     const code = postalCode.trim();
