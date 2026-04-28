@@ -1015,54 +1015,7 @@ const Checkout = () => {
 
                   <div className="gold-divider my-5" />
 
-                  {/* Delivery Speed (district picked via postal code in Delivery Information) */}
-                  {!activeDistrict && (
-                    <div className="mb-4">
-                      <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                        <MapPin size={12} className="text-[hsl(var(--gold-deep))]" />
-                        Shipping District <span className="text-destructive">*</span>
-                      </Label>
-                      <Popover open={districtOpen} onOpenChange={setDistrictOpen}>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            aria-expanded={districtOpen}
-                            className="w-full mt-2 justify-between font-normal h-11 rounded-xl border-border/70"
-                          >
-                            {activeDistrict ? (activeDistrict as any).name : "Select district"}
-                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-[--radix-popover-trigger-width] p-0 z-[60] bg-popover" align="start">
-                          <Command>
-                            <CommandInput placeholder="Search district..." />
-                            <CommandList className="max-h-[200px]">
-                              <CommandEmpty>No district found.</CommandEmpty>
-                              <CommandGroup>
-                                {districts.map((d) => (
-                                  <CommandItem
-                                    key={d.id}
-                                    value={d.name}
-                                    onSelect={() => {
-                                      setSelectedDistrict(d.id);
-                                      setDistrictOpen(false);
-                                    }}
-                                  >
-                                    <Check className={cn("mr-2 h-4 w-4", selectedDistrict === d.id ? "opacity-100" : "opacity-0")} />
-                                    {d.name}
-                                  </CommandItem>
-                                ))}
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-                      <p className="text-[11px] text-muted-foreground mt-2">
-                        Tip: Enter your postal code above to auto-select your district.
-                      </p>
-                    </div>
-                  )}
+                  {/* Delivery Speed (district auto-selected) */}
 
                   {activeDistrict && (sameDayAvailable || nextDayAvailable) && (
                     <div className="mb-4 space-y-2.5">
