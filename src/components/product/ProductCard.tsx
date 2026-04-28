@@ -89,10 +89,10 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
       </Link>
 
       {/* Content */}
-      <div className="p-2.5 sm:p-3 flex flex-col flex-1">
-        {/* Title — 2 lines, bold dark */}
+      <div className="p-3 sm:p-3 flex flex-col flex-1">
+        {/* Title — 3 lines on mobile, 2 on desktop */}
         <Link to={linkTo}>
-          <h3 className="text-[13px] sm:text-[15px] text-[hsl(0_0%_12%)] line-clamp-2 leading-[1.3] font-semibold min-h-[2.6em]">
+          <h3 className="text-[13px] sm:text-[15px] text-[hsl(0_0%_12%)] line-clamp-3 sm:line-clamp-2 leading-[1.3] font-semibold min-h-[3.9em] sm:min-h-[2.6em]">
             {product.name}
           </h3>
         </Link>
