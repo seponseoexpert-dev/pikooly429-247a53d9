@@ -1074,9 +1074,6 @@ const Checkout = () => {
 
                   {activeDistrict && (sameDayAvailable || nextDayAvailable) && (
                     <div className="mb-4 space-y-2.5">
-                      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[hsl(var(--gold-deep))] flex items-center gap-1.5">
-                        <MapPin size={11} /> Delivering to {(activeDistrict as any).name}
-                      </p>
                       <div className="grid gap-2.5 grid-cols-1">
                         {/* Same Day */}
                         {sameDayAvailable && (
