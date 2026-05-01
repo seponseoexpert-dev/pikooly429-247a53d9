@@ -83,18 +83,18 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
           </h3>
         </Link>
 
-        {/* Price row — balanced spacing, single line, ellipsis-safe */}
-        <div className="mt-1.5 flex items-baseline gap-x-1.5 sm:gap-x-2 whitespace-nowrap overflow-hidden min-w-0">
+        {/* Price row — price + badge always visible; origPrice truncates first */}
+        <div className="mt-1.5 flex items-baseline gap-x-1.5 sm:gap-x-2 whitespace-nowrap min-w-0">
           <span className="font-bold text-[hsl(280_60%_35%)] text-[13px] sm:text-[15px] leading-none tabular-nums shrink-0">
             {formatPrice(product.price)}
           </span>
           {origPrice && origPrice > product.price && (
-            <span className="text-[11px] sm:text-[12px] leading-none text-[hsl(0_0%_55%)] line-through tabular-nums shrink-0">
+            <span className="text-[11px] sm:text-[12px] leading-none text-[hsl(0_0%_55%)] line-through tabular-nums min-w-0 overflow-hidden text-ellipsis">
               {formatPrice(origPrice)}
             </span>
           )}
           {discount > 0 && (
-            <span className="ml-auto px-1.5 py-[2px] sm:py-0.5 rounded-md bg-[hsl(142_70%_94%)] text-[hsl(142_71%_32%)] text-[10px] sm:text-[11px] leading-none font-bold tabular-nums shrink-0">
+            <span className="ml-auto px-1.5 py-[2px] sm:py-0.5 rounded-md bg-[hsl(142_70%_94%)] text-[hsl(142_71%_32%)] text-[10px] sm:text-[11px] leading-none font-bold tabular-nums shrink-0 whitespace-nowrap">
               {discount}% OFF
             </span>
           )}
