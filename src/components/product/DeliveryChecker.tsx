@@ -112,27 +112,12 @@ const DeliveryChecker = ({ product, productId, categoryId }: Props) => {
       window.dispatchEvent(new Event("delivery-district-changed"));
     }
 
-    // Apply category-specific fees: pick the highest matching override per fee type
-    let effectiveFees = {
+    // Use district base fee only (category overrides ignored)
+    const effectiveFees = {
       delivery_fee: Number(district.delivery_fee ?? 0),
       same_day_fee: district.same_day_fee,
       next_day_fee: district.next_day_fee,
     };
-    if (productCategoryIds.length > 0 && categoryFees.length > 0) {
-      const matches = categoryFees.filter(
-        (cf: any) => cf.district_id === district.id && productCategoryIds.includes(cf.category_id)
-      );
-      if (matches.length > 0) {
-        const maxStd = matches.reduce((m, cf) => Math.max(m, Number(cf.delivery_fee ?? 0)), Number(district.delivery_fee ?? 0));
-        const maxSame = matches.reduce((m, cf) => Math.max(m, Number(cf.same_day_fee ?? 0)), Number(district.same_day_fee ?? 0));
-        const maxNext = matches.reduce((m, cf) => Math.max(m, Number(cf.next_day_fee ?? 0)), Number(district.next_day_fee ?? 0));
-        effectiveFees = {
-          delivery_fee: maxStd,
-          same_day_fee: district.same_day_fee != null ? maxSame : null,
-          next_day_fee: district.next_day_fee != null ? maxNext : null,
-        };
-      }
-    }
 
     const r = resolveDelivery(product, selected, effectiveFees);
     setResolved(r);
