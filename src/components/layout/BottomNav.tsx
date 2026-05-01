@@ -73,12 +73,15 @@ const BottomNav = () => {
 
   // Animation classes are gated by `reduced` so reduced-motion users get a
   // calm, instant UI.
-  const transitionItem = reduced ? "" : "transition-all duration-300 ease-out active:scale-90";
+  // Snappy transitions — 150ms keeps the UI feeling instant on first tap while
+  // still providing a polished feedback animation. Reduced-motion users skip
+  // animations entirely.
+  const transitionItem = reduced ? "" : "transition-colors duration-150 ease-out active:scale-95";
   const transitionIconWrap = reduced
     ? ""
-    : "transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]";
-  const transitionLabel = reduced ? "" : "transition-all duration-300";
-  const transitionDot = reduced ? "" : "transition-all duration-300 ease-out";
+    : "transition-transform duration-150 ease-out";
+  const transitionLabel = reduced ? "" : "transition-colors duration-150";
+  const transitionDot = reduced ? "" : "transition-all duration-150 ease-out";
 
   const itemClass = (active: boolean) =>
     `group relative flex flex-col items-center justify-center gap-[2px] ${transitionItem} min-w-[44px] min-h-[50px] ${
@@ -138,7 +141,7 @@ const BottomNav = () => {
                     className={`absolute -top-3 flex items-center justify-center w-[46px] h-[46px] rounded-full shadow-lg ${
                       reduced
                         ? ""
-                        : "transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] active:scale-90 hover:scale-105"
+                        : "transition-transform duration-150 ease-out active:scale-90"
                     } ${
                       active
                         ? `bg-primary text-primary-foreground ${

@@ -157,6 +157,12 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* Eliminate the 300ms tap-delay on mobile for all interactive elements.
+     `manipulation` disables double-tap zoom which is the source of the delay. */
+  a, button, [role="button"], input, select, textarea, label, summary {
+    touch-action: manipulation;
+  }
+
   html {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
