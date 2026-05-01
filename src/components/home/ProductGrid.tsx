@@ -84,9 +84,12 @@ const ProductGrid = memo(() => {
       {productsLoading ? (
         <div className="py-4">
           {/* Mobile: single-line horizontal scroll skeleton */}
-          <div className="flex gap-3 overflow-x-auto sm:hidden scrollbar-hide -mx-4 px-4 snap-x snap-mandatory">
+          <div
+            className="flex gap-3 overflow-x-auto sm:hidden scrollbar-hide -mx-4 px-4 snap-x snap-mandatory"
+            style={{ scrollPaddingLeft: "1rem", scrollPaddingRight: "1rem", scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }}
+          >
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={`m-${i}`} className="shrink-0 w-[46%] snap-start">
+              <div key={`m-${i}`} className="shrink-0 w-[44%] snap-start">
                 <div className="aspect-square rounded-xl bg-muted animate-pulse" />
                 <div className="mt-2 h-3 w-3/4 rounded bg-muted animate-pulse" />
                 <div className="mt-1.5 h-3 w-1/2 rounded bg-muted animate-pulse" />
@@ -112,9 +115,12 @@ const ProductGrid = memo(() => {
       ) : (
         <>
           {/* Mobile: single-line horizontal carousel */}
-          <div className="flex gap-3 overflow-x-auto sm:hidden scrollbar-hide -mx-4 px-4 snap-x snap-mandatory pb-2">
+          <div
+            className="flex gap-3 overflow-x-auto sm:hidden scrollbar-hide -mx-4 px-4 snap-x snap-mandatory pb-2"
+            style={{ scrollPaddingLeft: "1rem", scrollPaddingRight: "1rem", scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }}
+          >
             {trendingProducts.slice(0, 10).map((product: any) => (
-              <div key={product.id} className="shrink-0 w-[46%] snap-start">
+              <div key={product.id} className="shrink-0 w-[44%] snap-start">
                 <ProductCard product={product} />
               </div>
             ))}
