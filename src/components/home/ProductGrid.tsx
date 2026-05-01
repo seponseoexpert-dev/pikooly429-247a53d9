@@ -83,10 +83,10 @@ const ProductGrid = memo(() => {
 
       {productsLoading ? (
         <div className="py-4">
-          {/* Mobile: 2-column skeleton grid */}
-          <div className="grid grid-cols-2 gap-3 sm:hidden">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={`m-${i}`}>
+          {/* Mobile: single-line horizontal scroll skeleton */}
+          <div className="flex gap-3 overflow-x-auto sm:hidden scrollbar-hide -mx-4 px-4 snap-x snap-mandatory">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={`m-${i}`} className="shrink-0 w-[46%] snap-start">
                 <div className="aspect-square rounded-xl bg-muted animate-pulse" />
                 <div className="mt-2 h-3 w-3/4 rounded bg-muted animate-pulse" />
                 <div className="mt-1.5 h-3 w-1/2 rounded bg-muted animate-pulse" />
@@ -111,10 +111,10 @@ const ProductGrid = memo(() => {
         </div>
       ) : (
         <>
-          {/* Mobile: 2-column grid like reference */}
-          <div className="grid grid-cols-2 gap-3 sm:hidden">
-            {trendingProducts.slice(0, 8).map((product: any) => (
-              <div key={product.id}>
+          {/* Mobile: single-line horizontal carousel */}
+          <div className="flex gap-3 overflow-x-auto sm:hidden scrollbar-hide -mx-4 px-4 snap-x snap-mandatory pb-2">
+            {trendingProducts.slice(0, 10).map((product: any) => (
+              <div key={product.id} className="shrink-0 w-[46%] snap-start">
                 <ProductCard product={product} />
               </div>
             ))}
