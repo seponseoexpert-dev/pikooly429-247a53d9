@@ -228,25 +228,13 @@ const TailoredOccasions = memo(() => {
           </div>
         ) : (
           <div key={animKey} className="motion-safe:animate-fade-in-up">
-            {/* Mobile: 2-column grid */}
-            <div className="grid grid-cols-2 gap-3 sm:hidden">
-              {filteredProducts.slice(0, 8).map((product: any, i: number) => (
-                <div
-                  key={product.id}
-                  style={{ animationDelay: `${i * 60}ms` }}
-                  className="motion-safe:animate-fade-in-up"
-                >
-                  <ProductCard product={product} />
-                </div>
-              ))}
-            </div>
-            {/* Tablet/Desktop: horizontal scroll */}
-            <div className="hidden sm:flex gap-2.5 sm:gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
+            {/* Single-line horizontal carousel (all breakpoints) */}
+            <div className="flex gap-2.5 sm:gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
               {filteredProducts.slice(0, 12).map((product: any, i: number) => (
                 <div
                   key={product.id}
                   style={{ animationDelay: `${i * 60}ms` }}
-                  className="sm:w-[200px] sm:min-w-[200px] sm:max-w-[200px] md:w-[220px] md:min-w-[220px] md:max-w-[220px] lg:w-[240px] lg:min-w-[240px] lg:max-w-[240px] snap-start shrink-0 motion-safe:animate-fade-in-up"
+                  className="w-[46%] min-w-[46%] max-w-[46%] sm:w-[200px] sm:min-w-[200px] sm:max-w-[200px] md:w-[220px] md:min-w-[220px] md:max-w-[220px] lg:w-[240px] lg:min-w-[240px] lg:max-w-[240px] snap-start shrink-0 motion-safe:animate-fade-in-up"
                 >
                   <ProductCard product={product} />
                 </div>
