@@ -27,9 +27,11 @@ interface Props {
 
 const STORAGE_KEY = "preferred_delivery_district";
 
-const DeliveryChecker = ({ product }: Props) => {
+const DeliveryChecker = ({ product, productId, categoryId }: Props) => {
   const { formatPrice } = useMultiCurrency();
   const [districts, setDistricts] = useState<District[]>([]);
+  const [categoryFees, setCategoryFees] = useState<any[]>([]);
+  const [productCategoryIds, setProductCategoryIds] = useState<string[]>([]);
   const [selected, setSelected] = useState<string>("");
   const [resolved, setResolved] = useState<ResolvedDelivery | null>(null);
   const [search, setSearch] = useState("");
