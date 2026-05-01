@@ -228,20 +228,21 @@ const TailoredOccasions = memo(() => {
           </div>
         ) : (
           <div key={animKey} className="motion-safe:animate-fade-in-up">
-            {/* Single-line horizontal carousel (all breakpoints) */}
-            <div
-              className="flex gap-2.5 sm:gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2 -mx-4 px-4 sm:mx-0 sm:px-0"
-              style={{ scrollPaddingLeft: "1rem", scrollPaddingRight: "1rem", scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }}
-            >
-              {filteredProducts.slice(0, 12).map((product: any, i: number) => (
-                <div
-                  key={product.id}
-                  style={{ animationDelay: `${i * 60}ms`, scrollSnapAlign: "start" }}
-                  className="w-[44%] min-w-[44%] max-w-[44%] sm:w-[200px] sm:min-w-[200px] sm:max-w-[200px] md:w-[220px] md:min-w-[220px] md:max-w-[220px] lg:w-[240px] lg:min-w-[240px] lg:max-w-[240px] snap-start shrink-0 motion-safe:animate-fade-in-up"
-                >
-                  <ProductCard product={product} />
-                </div>
-              ))}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-3.5 md:gap-4">
+              {filteredProducts.slice(0, 10).map((product: any, i: number) => {
+                const hideClass =
+                  i >= 6 && i < 8 ? "hidden md:block" :
+                  i >= 8 ? "hidden lg:block" : "";
+                return (
+                  <div
+                    key={product.id}
+                    style={{ animationDelay: `${i * 60}ms` }}
+                    className={`motion-safe:animate-fade-in-up ${hideClass}`}
+                  >
+                    <ProductCard product={product} />
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

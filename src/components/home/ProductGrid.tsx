@@ -82,30 +82,14 @@ const ProductGrid = memo(() => {
       </div>
 
       {productsLoading ? (
-        <div className="py-4">
-          {/* Mobile: single-line horizontal scroll skeleton */}
-          <div
-            className="flex gap-3 overflow-x-auto sm:hidden scrollbar-hide -mx-4 px-4 snap-x snap-mandatory"
-            style={{ scrollPaddingLeft: "1rem", scrollPaddingRight: "1rem", scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }}
-          >
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div key={`m-${i}`} className="shrink-0 w-[44%] snap-start">
-                <div className="aspect-square rounded-xl bg-muted animate-pulse" />
-                <div className="mt-2 h-3 w-3/4 rounded bg-muted animate-pulse" />
-                <div className="mt-1.5 h-3 w-1/2 rounded bg-muted animate-pulse" />
-              </div>
-            ))}
-          </div>
-          {/* Tablet/Desktop skeleton grid */}
-          <div className="hidden sm:grid grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div key={`d-${i}`}>
-                <div className="aspect-square rounded-xl bg-muted animate-pulse" />
-                <div className="mt-2 h-3 w-3/4 rounded bg-muted animate-pulse" />
-                <div className="mt-1.5 h-3 w-1/2 rounded bg-muted animate-pulse" />
-              </div>
-            ))}
-          </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-3.5 md:gap-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={`s-${i}`}>
+              <div className="aspect-square rounded-xl bg-muted animate-pulse" />
+              <div className="mt-2 h-3 w-3/4 rounded bg-muted animate-pulse" />
+              <div className="mt-1.5 h-3 w-1/2 rounded bg-muted animate-pulse" />
+            </div>
+          ))}
         </div>
       ) : trendingProducts.length === 0 ? (
         <div className="text-center py-16 px-4">
@@ -113,32 +97,18 @@ const ProductGrid = memo(() => {
           <p className="text-muted-foreground text-sm">No products found in this category</p>
         </div>
       ) : (
-        <>
-          {/* Mobile: single-line horizontal carousel */}
-          <div
-            className="flex gap-3 overflow-x-auto sm:hidden scrollbar-hide -mx-4 px-4 snap-x snap-mandatory pb-2"
-            style={{ scrollPaddingLeft: "1rem", scrollPaddingRight: "1rem", scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }}
-          >
-            {trendingProducts.slice(0, 10).map((product: any) => (
-              <div key={product.id} className="shrink-0 w-[44%] snap-start">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-3.5 md:gap-4">
+          {trendingProducts.slice(0, 10).map((product: any, idx: number) => {
+            const hideClass =
+              idx >= 6 && idx < 8 ? "hidden md:block" :
+              idx >= 8 ? "hidden lg:block" : "";
+            return (
+              <div key={product.id} className={hideClass}>
                 <ProductCard product={product} />
               </div>
-            ))}
-          </div>
-          {/* Tablet & Desktop: grid */}
-          <div className="hidden sm:grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-3.5 md:gap-4">
-            {trendingProducts.slice(0, 10).map((product: any, idx: number) => {
-              const hideClass =
-                idx >= 6 && idx < 8 ? "hidden md:block" :
-                idx >= 8 ? "hidden lg:block" : "";
-              return (
-                <div key={product.id} className={hideClass}>
-                  <ProductCard product={product} />
-                </div>
-              );
-            })}
-          </div>
-        </>
+            );
+          })}
+        </div>
       )}
     </section>
   );
