@@ -82,7 +82,7 @@ const ProductGrid = memo(() => {
       </div>
 
       {productsLoading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-3.5 md:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-2.5 gap-y-4 sm:gap-x-3.5 sm:gap-y-5 md:gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={`s-${i}`}>
               <div className="aspect-square rounded-xl bg-muted animate-pulse" />
@@ -97,7 +97,7 @@ const ProductGrid = memo(() => {
           <p className="text-muted-foreground text-sm">No products found in this category</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-3.5 md:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-2.5 gap-y-4 sm:gap-x-3.5 sm:gap-y-5 md:gap-4">
           {trendingProducts.slice(0, 10).map((product: any, idx: number) => {
             const hideClass =
               idx >= 6 && idx < 8 ? "hidden md:block" :
