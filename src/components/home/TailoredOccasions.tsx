@@ -228,7 +228,7 @@ const TailoredOccasions = memo(() => {
           </div>
         ) : (
           <div key={animKey} className="motion-safe:animate-fade-in-up">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-3.5 md:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-2.5 gap-y-4 sm:gap-x-3.5 sm:gap-y-5 md:gap-4">
               {filteredProducts.slice(0, 10).map((product: any, i: number) => {
                 const hideClass =
                   i >= 6 && i < 8 ? "hidden md:block" :
