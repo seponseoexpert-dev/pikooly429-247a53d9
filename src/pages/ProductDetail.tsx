@@ -576,6 +576,8 @@ const ProductDetail = () => {
           {/* Delivery availability checker */}
           <div className="mb-4">
             <DeliveryChecker
+              productId={(product as any).id}
+              categoryId={(product as any).category_id}
               product={{
                 same_day_districts: (product as any).same_day_districts,
                 next_day_districts: (product as any).next_day_districts,
