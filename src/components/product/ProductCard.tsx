@@ -83,18 +83,18 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
           </h3>
         </Link>
 
-        {/* Price row */}
-        <div className="mt-1.5 flex items-center flex-wrap gap-x-1.5 gap-y-0.5">
-          <span className="font-bold text-[hsl(280_60%_35%)] text-[15px] sm:text-[16px] tabular-nums">
+        {/* Price row — single line, no wrap, ellipsis on overflow */}
+        <div className="mt-1.5 flex items-center gap-x-1.5 whitespace-nowrap overflow-hidden min-w-0">
+          <span className="font-bold text-[hsl(280_60%_35%)] text-[13px] sm:text-[15px] tabular-nums shrink-0">
             {formatPrice(product.price)}
           </span>
           {origPrice && origPrice > product.price && (
-            <span className="text-[12px] text-[hsl(0_0%_55%)] line-through tabular-nums">
+            <span className="text-[11px] sm:text-[12px] text-[hsl(0_0%_55%)] line-through tabular-nums shrink-0">
               {formatPrice(origPrice)}
             </span>
           )}
           {discount > 0 && (
-            <span className="px-1.5 py-0.5 rounded-md bg-[hsl(142_70%_94%)] text-[hsl(142_71%_32%)] text-[11px] font-bold tabular-nums">
+            <span className="px-1.5 py-0.5 rounded-md bg-[hsl(142_70%_94%)] text-[hsl(142_71%_32%)] text-[10px] sm:text-[11px] font-bold tabular-nums shrink-0">
               {discount}% OFF
             </span>
           )}
