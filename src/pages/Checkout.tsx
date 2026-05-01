@@ -343,21 +343,10 @@ const Checkout = () => {
     return Number(row.next_day_fee ?? 0);
   };
 
-  // Calculate fee for a given option
+  // Calculate fee for a given option — use district base fee only (category overrides ignored)
   const computeFee = (type: "same_day" | "next_day") => {
     if (!activeDistrict) return 0;
-    const defaultFee = pickFee(activeDistrict, type);
-
-    if (!selectedDistrict || productCategories.length === 0) return defaultFee;
-    const districtCatFees = categoryFees.filter((cf: any) => cf.district_id === selectedDistrict);
-    if (districtCatFees.length === 0) return defaultFee;
-
-    const catIds = productCategories.map((p: any) => p.category_id).filter(Boolean);
-    const applicableFees = districtCatFees.filter((cf: any) => catIds.includes(cf.category_id));
-    if (applicableFees.length === 0) return defaultFee;
-
-    // Use the highest fee among matching categories
-    return applicableFees.reduce((max: number, cf: any) => Math.max(max, pickFee(cf, type)), 0);
+    return pickFee(activeDistrict, type);
   };
 
   const sameDayFee = useMemo(() => computeFee("same_day"), [activeDistrict, selectedDistrict, categoryFees, productCategories]);
