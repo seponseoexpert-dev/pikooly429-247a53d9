@@ -21,6 +21,8 @@ interface Props {
     next_day_districts?: string[] | null;
     standard_delivery_days?: number | null;
   };
+  productId?: string;
+  categoryId?: string | null;
 }
 
 const STORAGE_KEY = "preferred_delivery_district";
