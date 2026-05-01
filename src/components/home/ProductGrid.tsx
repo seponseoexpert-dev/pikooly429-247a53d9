@@ -83,10 +83,10 @@ const ProductGrid = memo(() => {
 
       {productsLoading ? (
         <div className="py-4">
-          {/* Mobile: horizontal scroll skeleton */}
-          <div className="flex gap-3 overflow-x-auto sm:hidden scrollbar-hide -mx-4 px-4 snap-x snap-mandatory">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div key={`m-${i}`} className="shrink-0 w-[60%] snap-start">
+          {/* Mobile: 2-column skeleton grid */}
+          <div className="grid grid-cols-2 gap-3 sm:hidden">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={`m-${i}`}>
                 <div className="aspect-square rounded-xl bg-muted animate-pulse" />
                 <div className="mt-2 h-3 w-3/4 rounded bg-muted animate-pulse" />
                 <div className="mt-1.5 h-3 w-1/2 rounded bg-muted animate-pulse" />
