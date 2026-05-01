@@ -141,7 +141,7 @@ const BottomNav = () => {
                     className={`absolute -top-3 flex items-center justify-center w-[46px] h-[46px] rounded-full shadow-lg ${
                       reduced
                         ? ""
-                        : "transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] active:scale-90 hover:scale-105"
+                        : "transition-transform duration-150 ease-out active:scale-90"
                     } ${
                       active
                         ? `bg-primary text-primary-foreground ${
