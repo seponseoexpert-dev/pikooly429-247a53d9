@@ -75,21 +75,21 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
       </Link>
 
       {/* Content */}
-      <div className="p-3 flex flex-col flex-1">
+      <div className="p-3 sm:p-3.5 flex flex-col flex-1">
         {/* Title — single line with ellipsis */}
         <Link to={linkTo}>
-          <h3 className="text-[12px] sm:text-[13px] text-[hsl(0_0%_12%)] truncate leading-[1.3] font-semibold">
+          <h3 className="text-[14px] sm:text-[14px] text-[hsl(0_0%_12%)] truncate leading-[1.3] font-semibold">
             {product.name}
           </h3>
         </Link>
 
         {/* Price row — price + badge always visible; origPrice truncates first */}
         <div className="mt-1.5 flex items-baseline gap-x-1.5 sm:gap-x-2 whitespace-nowrap min-w-0">
-          <span className="font-bold text-[hsl(280_60%_35%)] text-[13px] sm:text-[15px] leading-none tabular-nums shrink-0">
+          <span className="font-bold text-[hsl(280_60%_35%)] text-[16px] sm:text-[16px] leading-none tabular-nums shrink-0">
             {formatPrice(product.price)}
           </span>
           {origPrice && origPrice > product.price && (
-            <span className="text-[11px] sm:text-[12px] leading-none text-[hsl(0_0%_55%)] line-through tabular-nums min-w-0 overflow-hidden text-ellipsis">
+            <span className="text-[12px] sm:text-[12px] leading-none text-[hsl(0_0%_55%)] line-through tabular-nums min-w-0 overflow-hidden text-ellipsis">
               {formatPrice(origPrice)}
             </span>
           )}
