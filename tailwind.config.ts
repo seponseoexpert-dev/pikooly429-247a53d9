@@ -127,6 +127,10 @@ export default {
           "0%": { backgroundPosition: "-150% 0" },
           "100%": { backgroundPosition: "150% 0" },
         },
+        "page-in": {
+          "0%": { opacity: "0", transform: "translateY(6px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.3s cubic-bezier(0.16,1,0.3,1)",
@@ -139,6 +143,7 @@ export default {
         float: "float 6s cubic-bezier(0.16,1,0.3,1) infinite",
         shimmer: "shimmer 2.5s linear infinite",
         "gold-shine": "gold-shine 3s linear infinite",
+        "page-in": "page-in 0.32s cubic-bezier(0.16,1,0.3,1) both",
       },
       backgroundImage: {
         "gradient-luxe": "var(--gradient-luxe)",

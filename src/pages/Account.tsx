@@ -12,6 +12,7 @@ import RecentOrders from "@/components/account/RecentOrders";
 import SavedAddresses from "@/components/account/SavedAddresses";
 import WishlistSection from "@/components/account/WishlistSection";
 import WalletSection from "@/components/account/WalletSection";
+import ReduceMotionToggle from "@/components/account/ReduceMotionToggle";
 import SEOHead from "@/components/seo/SEOHead";
 
 const Account = () => {
@@ -113,6 +114,9 @@ const Account = () => {
 
       {/* Saved Addresses */}
       <SavedAddresses userId={user.id} />
+
+      {/* Preferences */}
+      <ReduceMotionToggle />
 
       {/* Quick Links */}
       <div className="bg-card border border-border rounded-2xl p-4 sm:p-5">

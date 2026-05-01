@@ -15,6 +15,7 @@ import DynamicHead from "@/components/layout/DynamicHead";
 import ScrollToTop from "@/components/layout/ScrollToTop";
 import PageLoader from "@/components/layout/PageLoader";
 import WordPressRedirects from "@/components/layout/WordPressRedirects";
+import PageTransition from "@/components/layout/PageTransition";
 import { lazy, Suspense } from "react";
 
 // Lazy-load non-critical layout components
@@ -89,7 +90,9 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => (
     <Header />
     <CartDrawer />
     <div className="pt-[var(--mobile-header-offset,0px)] md:pt-0">
-      <Suspense fallback={<PageLoader />}>{children}</Suspense>
+      <Suspense fallback={<PageLoader />}>
+        <PageTransition>{children}</PageTransition>
+      </Suspense>
     </div>
     <Suspense fallback={null}>
       <Footer />
