@@ -64,6 +64,39 @@ const DeliveryChecker = ({ product, productId, categoryId }: Props) => {
       });
   }, []);
 
+  // Load product's category ids (junction table + fallback) and category-specific fees
+  useEffect(() => {
+    if (!productId) {
+      setProductCategoryIds(categoryId ? [categoryId] : []);
+      return;
+    }
+    let active = true;
+    (async () => {
+      const { data: pcData } = await supabase
+        .from("product_categories")
+        .select("category_id")
+        .eq("product_id", productId);
+      if (!active) return;
+      const ids = new Set<string>();
+      (pcData || []).forEach((r: any) => r.category_id && ids.add(r.category_id));
+      if (categoryId) ids.add(categoryId);
+      setProductCategoryIds(Array.from(ids));
+    })();
+    return () => { active = false; };
+  }, [productId, categoryId]);
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      const { data } = await supabase
+        .from("shipping_category_fees")
+        .select("district_id, category_id, delivery_fee, same_day_fee, next_day_fee");
+      if (!active) return;
+      setCategoryFees(data || []);
+    })();
+    return () => { active = false; };
+  }, []);
+
   useEffect(() => {
     if (!selected) {
       setResolved(null);
@@ -78,13 +111,32 @@ const DeliveryChecker = ({ product, productId, categoryId }: Props) => {
       localStorage.setItem(STORAGE_KEY, selected);
       window.dispatchEvent(new Event("delivery-district-changed"));
     }
-    const r = resolveDelivery(product, selected, {
-      delivery_fee: district.delivery_fee,
+
+    // Apply category-specific fees: pick the highest matching override per fee type
+    let effectiveFees = {
+      delivery_fee: Number(district.delivery_fee ?? 0),
       same_day_fee: district.same_day_fee,
       next_day_fee: district.next_day_fee,
-    });
+    };
+    if (productCategoryIds.length > 0 && categoryFees.length > 0) {
+      const matches = categoryFees.filter(
+        (cf: any) => cf.district_id === district.id && productCategoryIds.includes(cf.category_id)
+      );
+      if (matches.length > 0) {
+        const maxStd = matches.reduce((m, cf) => Math.max(m, Number(cf.delivery_fee ?? 0)), Number(district.delivery_fee ?? 0));
+        const maxSame = matches.reduce((m, cf) => Math.max(m, Number(cf.same_day_fee ?? 0)), Number(district.same_day_fee ?? 0));
+        const maxNext = matches.reduce((m, cf) => Math.max(m, Number(cf.next_day_fee ?? 0)), Number(district.next_day_fee ?? 0));
+        effectiveFees = {
+          delivery_fee: maxStd,
+          same_day_fee: district.same_day_fee != null ? maxSame : null,
+          next_day_fee: district.next_day_fee != null ? maxNext : null,
+        };
+      }
+    }
+
+    const r = resolveDelivery(product, selected, effectiveFees);
     setResolved(r);
-  }, [selected, districts, product]);
+  }, [selected, districts, product, productCategoryIds, categoryFees]);
 
   const Icon = resolved?.speed === "same_day" ? Zap : resolved?.speed === "next_day" ? Calendar : Truck;
   const tone =
