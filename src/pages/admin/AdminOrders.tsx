@@ -378,10 +378,27 @@ const AdminOrders = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
         <h2 className="text-xl sm:text-2xl font-display font-bold">Orders</h2>
-        <Badge variant="outline" className="text-sm">{orders.length} total</Badge>
+        <Badge variant="outline" className="text-sm">{activeCount} active · {trashCount} in trash</Badge>
       </div>
+
+      {/* View tabs */}
+      <Tabs value={view} onValueChange={(v) => setView(v as "active" | "trash")} className="mb-4">
+        <TabsList>
+          <TabsTrigger value="active">Active ({activeCount})</TabsTrigger>
+          <TabsTrigger value="trash">
+            <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+            Trash ({trashCount})
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
+
+      {view === "trash" && (
+        <p className="text-xs text-muted-foreground mb-3">
+          Trashed orders are kept for 24 hours and then permanently removed.
+        </p>
+      )}
 
       {/* Filters */}
       <div className="flex gap-3 mb-4 flex-wrap">
@@ -397,6 +414,24 @@ const AdminOrders = () => {
           </SelectContent>
         </Select>
       </div>
+
+      {/* Bulk action bar */}
+      {view === "active" && selectedIds.size > 0 && (
+        <div className="flex items-center justify-between gap-3 mb-3 p-3 rounded-lg border border-destructive/30 bg-destructive/5">
+          <div className="flex items-center gap-2 text-sm">
+            <Checkbox checked onCheckedChange={() => setSelectedIds(new Set())} />
+            <span className="font-medium">{selectedIds.size} selected</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={() => setSelectedIds(new Set())}>
+              <X className="h-4 w-4 mr-1" /> Clear
+            </Button>
+            <Button variant="destructive" size="sm" onClick={() => setBulkConfirmOpen(true)}>
+              <Trash2 className="h-4 w-4 mr-1" /> Move to trash
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Mobile Card Layout */}
       <div className="sm:hidden space-y-3">
