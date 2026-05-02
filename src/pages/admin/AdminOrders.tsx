@@ -453,31 +453,65 @@ const AdminOrders = () => {
             </CardContent>
           </Card>
         ) : (
-          filtered.map((order) => (
-            <Card key={order.id} className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer" onClick={() => viewOrder(order)}>
-              <CardContent className="p-3.5">
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <div className="min-w-0">
-                    <p className="font-mono text-xs text-muted-foreground">{order.order_number}</p>
-                    <h3 className="font-semibold text-sm mt-0.5">{order.customer_name}</h3>
-                    <p className="text-xs text-muted-foreground">{order.customer_phone}</p>
+          filtered.map((order) => {
+            const deletedAt = (order as any).deleted_at as string | null;
+            const isTrash = !!deletedAt;
+            const checked = selectedIds.has(order.id);
+            return (
+              <Card
+                key={order.id}
+                className={`overflow-hidden hover:shadow-md transition-shadow ${checked ? "ring-2 ring-primary" : ""}`}
+              >
+                <CardContent className="p-3.5">
+                  <div className="flex items-start gap-2.5">
+                    {!isTrash && (
+                      <div onClick={(e) => e.stopPropagation()} className="pt-0.5">
+                        <Checkbox checked={checked} onCheckedChange={() => toggleSelect(order.id)} />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0 cursor-pointer" onClick={() => viewOrder(order)}>
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <div className="min-w-0">
+                          <p className="font-mono text-xs text-muted-foreground">{order.order_number}</p>
+                          <h3 className="font-semibold text-sm mt-0.5">{order.customer_name}</h3>
+                          <p className="text-xs text-muted-foreground">{order.customer_phone}</p>
+                        </div>
+                        <p className="font-bold text-sm text-primary whitespace-nowrap">{formatCurrency(order.total)}</p>
+                      </div>
+                      <div className="flex items-center justify-between mt-2 pt-2 border-t border-border">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full capitalize font-medium ${statusColors[order.status] || "bg-muted"}`}>
+                            {order.status}
+                          </span>
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full capitalize font-medium ${statusColors[order.payment_status] || "bg-muted"}`}>
+                            {order.payment_status}
+                          </span>
+                          {isTrash && deletedAt && (
+                            <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-amber-100 text-amber-800">
+                              {formatTimeLeft(deletedAt)}
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-[10px] text-muted-foreground">{new Date(order.created_at).toLocaleDateString("en-GB")}</span>
+                      </div>
+                    </div>
                   </div>
-                  <p className="font-bold text-sm text-primary whitespace-nowrap">{formatCurrency(order.total)}</p>
-                </div>
-                <div className="flex items-center justify-between mt-2 pt-2 border-t border-border">
-                  <div className="flex items-center gap-1.5">
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full capitalize font-medium ${statusColors[order.status] || "bg-muted"}`}>
-                      {order.status}
-                    </span>
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full capitalize font-medium ${statusColors[order.payment_status] || "bg-muted"}`}>
-                      {order.payment_status}
-                    </span>
-                  </div>
-                  <span className="text-[10px] text-muted-foreground">{new Date(order.created_at).toLocaleDateString("en-GB")}</span>
-                </div>
-              </CardContent>
-            </Card>
-          ))
+                  {isTrash && (
+                    <div className="mt-3 pt-3 border-t border-border">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                        onClick={(e) => { e.stopPropagation(); handleRestoreOrder(order); }}
+                      >
+                        <RotateCcw className="h-3.5 w-3.5 mr-1.5" /> Restore
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })
         )}
       </div>
 
