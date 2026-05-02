@@ -42,26 +42,44 @@ const statusColors: Record<string, string> = {
 const AdminOrders = () => {
   const { formatCurrency } = useCurrency();
   const { settings: siteSettings } = useSiteSettings();
+  const { user } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [view, setView] = useState<"active" | "trash">("active");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [detailOpen, setDetailOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [bulkConfirmOpen, setBulkConfirmOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  const TRASH_RETENTION_MS = 24 * 60 * 60 * 1000; // 24 hours
 
   const fetchOrders = async () => {
-    const { data, error } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
+    // Admin sees all orders including trashed (admin RLS bypasses filter)
+    const { data, error } = await supabase
+      .from("orders")
+      .select("*")
+      .order("created_at", { ascending: false });
     if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
-    else setOrders(data || []);
+    else setOrders((data as Order[]) || []);
     setLoading(false);
   };
 
   useEffect(() => { fetchOrders(); }, []);
 
+  // Clear selection when switching tabs
+  useEffect(() => { setSelectedIds(new Set()); }, [view]);
+
   const viewOrder = async (order: Order) => {
+    setSelectedOrder(order);
+    const { data } = await supabase.from("order_items").select("*").eq("order_id", order.id);
+    setOrderItems(data || []);
+    setDetailOpen(true);
+  };
     setSelectedOrder(order);
     const { data } = await supabase.from("order_items").select("*").eq("order_id", order.id);
     setOrderItems(data || []);
