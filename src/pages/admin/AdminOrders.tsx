@@ -211,6 +211,27 @@ const AdminOrders = () => {
     }
   };
 
+  const handleDeleteOrder = async () => {
+    if (!deleteId) return;
+    setDeleting(true);
+    // Delete dependent rows first (no FK cascade configured)
+    await supabase.from("order_items").delete().eq("order_id", deleteId);
+    await supabase.from("bouquet_orders").delete().eq("order_id", deleteId);
+    const { error } = await supabase.from("orders").delete().eq("id", deleteId);
+    setDeleting(false);
+    if (error) {
+      toast({ title: "Delete failed", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Order deleted" });
+    if (selectedOrder?.id === deleteId) {
+      setDetailOpen(false);
+      setSelectedOrder(null);
+    }
+    setDeleteId(null);
+    fetchOrders();
+  };
+
   const filtered = orders.filter((o) => {
     const matchSearch = o.order_number.toLowerCase().includes(search.toLowerCase()) ||
       o.customer_name.toLowerCase().includes(search.toLowerCase()) ||
