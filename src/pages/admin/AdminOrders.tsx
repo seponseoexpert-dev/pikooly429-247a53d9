@@ -80,11 +80,6 @@ const AdminOrders = () => {
     setOrderItems(data || []);
     setDetailOpen(true);
   };
-    setSelectedOrder(order);
-    const { data } = await supabase.from("order_items").select("*").eq("order_id", order.id);
-    setOrderItems(data || []);
-    setDetailOpen(true);
-  };
 
   const statusEmailTemplates: Record<string, { subject: string; heading: string; message: string; emoji: string; color: string }> = {
     confirmed: {
