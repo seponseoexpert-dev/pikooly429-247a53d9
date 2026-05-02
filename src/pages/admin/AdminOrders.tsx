@@ -732,27 +732,38 @@ const AdminOrders = () => {
 
               <Separator />
 
-              {/* Danger Zone */}
-              <Button
-                variant="outline"
-                className="w-full text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive"
-                onClick={() => setDeleteId(selectedOrder.id)}
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete Order
-              </Button>
+              {/* Danger Zone / Restore */}
+              {(selectedOrder as any).deleted_at ? (
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => { handleRestoreOrder(selectedOrder); setDetailOpen(false); }}
+                >
+                  <RotateCcw className="h-4 w-4 mr-2" />
+                  Restore Order
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  className="w-full text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive"
+                  onClick={() => setDeleteId(selectedOrder.id)}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Move to Trash
+                </Button>
+              )}
             </div>
           )}
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation */}
+      {/* Single Delete Confirmation */}
       <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete this order?</AlertDialogTitle>
+            <AlertDialogTitle>Move this order to trash?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently remove the order and all its items. This action cannot be undone.
+              The order will be hidden from customers and can be restored from the Trash tab within 24 hours. After that it will be permanently deleted.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -762,7 +773,29 @@ const AdminOrders = () => {
               disabled={deleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {deleting ? "Deleting..." : "Delete"}
+              {deleting ? "Moving..." : "Move to trash"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Bulk Delete Confirmation */}
+      <AlertDialog open={bulkConfirmOpen} onOpenChange={(open) => !deleting && setBulkConfirmOpen(open)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Move {selectedIds.size} orders to trash?</AlertDialogTitle>
+            <AlertDialogDescription>
+              The selected orders will be hidden from customers and can be restored from the Trash tab within 24 hours.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => { e.preventDefault(); handleBulkDelete(); }}
+              disabled={deleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? "Moving..." : `Move ${selectedIds.size} to trash`}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
