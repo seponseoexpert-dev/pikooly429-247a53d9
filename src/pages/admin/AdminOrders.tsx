@@ -228,19 +228,46 @@ const AdminOrders = () => {
     }
   };
 
+  // Soft-delete a single order: set deleted_at + deleted_by, log activity
+  const softDeleteOrders = async (ids: string[]) => {
+    if (ids.length === 0) return { ok: false, count: 0 };
+    const { data, error } = await supabase
+      .from("orders")
+      .update({ deleted_at: new Date().toISOString(), deleted_by: user?.id ?? null })
+      .in("id", ids)
+      .select("id, order_number");
+    if (error) {
+      toast({ title: "Delete failed", description: error.message, variant: "destructive" });
+      return { ok: false, count: 0 };
+    }
+    const affected = data || [];
+    if (affected.length === 1) {
+      await logAdminActivity({
+        action: "order_deleted",
+        userId: user?.id ?? null,
+        userEmail: user?.email ?? null,
+        description: `Moved order ${affected[0].order_number} to trash`,
+        metadata: { order_id: affected[0].id, order_number: affected[0].order_number },
+      });
+    } else if (affected.length > 1) {
+      await logAdminActivity({
+        action: "orders_bulk_deleted",
+        userId: user?.id ?? null,
+        userEmail: user?.email ?? null,
+        description: `Moved ${affected.length} orders to trash`,
+        metadata: { order_ids: affected.map((o) => o.id), order_numbers: affected.map((o) => o.order_number) },
+      });
+    }
+    return { ok: true, count: affected.length };
+  };
+
   const handleDeleteOrder = async () => {
     if (!deleteId) return;
     setDeleting(true);
-    // Delete dependent rows first (no FK cascade configured)
-    await supabase.from("order_items").delete().eq("order_id", deleteId);
-    await supabase.from("bouquet_orders").delete().eq("order_id", deleteId);
-    const { error } = await supabase.from("orders").delete().eq("id", deleteId);
+    const { ok, count } = await softDeleteOrders([deleteId]);
     setDeleting(false);
-    if (error) {
-      toast({ title: "Delete failed", description: error.message, variant: "destructive" });
-      return;
-    }
-    toast({ title: "Order deleted" });
+    if (!ok) return;
+    toast({ title: "Moved to trash", description: `Order can be restored within 24 hours. (${count} order)` });
     if (selectedOrder?.id === deleteId) {
       setDetailOpen(false);
       setSelectedOrder(null);
@@ -249,13 +276,105 @@ const AdminOrders = () => {
     fetchOrders();
   };
 
-  const filtered = orders.filter((o) => {
-    const matchSearch = o.order_number.toLowerCase().includes(search.toLowerCase()) ||
-      o.customer_name.toLowerCase().includes(search.toLowerCase()) ||
+  const handleBulkDelete = async () => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    setDeleting(true);
+    const { ok, count } = await softDeleteOrders(ids);
+    setDeleting(false);
+    if (!ok) return;
+    toast({ title: "Moved to trash", description: `${count} orders moved. Restorable within 24 hours.` });
+    setSelectedIds(new Set());
+    setBulkConfirmOpen(false);
+    fetchOrders();
+  };
+
+  const handleRestoreOrder = async (order: Order) => {
+    const { error } = await supabase
+      .from("orders")
+      .update({ deleted_at: null, deleted_by: null })
+      .eq("id", order.id);
+    if (error) {
+      toast({ title: "Restore failed", description: error.message, variant: "destructive" });
+      return;
+    }
+    await logAdminActivity({
+      action: "order_restored",
+      userId: user?.id ?? null,
+      userEmail: user?.email ?? null,
+      description: `Restored order ${order.order_number} from trash`,
+      metadata: { order_id: order.id, order_number: order.order_number },
+    });
+    toast({ title: "Order restored" });
+    fetchOrders();
+  };
+
+  const isExpired = (order: Order) => {
+    const deletedAt = (order as any).deleted_at as string | null;
+    if (!deletedAt) return false;
+    return Date.now() - new Date(deletedAt).getTime() > TRASH_RETENTION_MS;
+  };
+
+  // Auto-purge expired trashed orders (>24h) — best effort, runs on mount
+  useEffect(() => {
+    if (orders.length === 0) return;
+    const expired = orders.filter((o) => (o as any).deleted_at && isExpired(o));
+    if (expired.length === 0) return;
+    (async () => {
+      const ids = expired.map((o) => o.id);
+      await supabase.from("order_items").delete().in("order_id", ids);
+      await supabase.from("bouquet_orders").delete().in("order_id", ids);
+      await supabase.from("orders").delete().in("id", ids);
+      fetchOrders();
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orders.length]);
+
+  const visibleOrders = useMemo(() => {
+    return orders.filter((o) => {
+      const deleted = !!(o as any).deleted_at;
+      if (view === "active" && deleted) return false;
+      if (view === "trash" && !deleted) return false;
+      return true;
+    });
+  }, [orders, view]);
+
+  const filtered = visibleOrders.filter((o) => {
+    const q = search.toLowerCase();
+    const matchSearch = o.order_number.toLowerCase().includes(q) ||
+      o.customer_name.toLowerCase().includes(q) ||
       o.customer_phone.includes(search);
     const matchStatus = filterStatus === "all" || o.status === filterStatus;
     return matchSearch && matchStatus;
   });
+
+  const allVisibleSelected = filtered.length > 0 && filtered.every((o) => selectedIds.has(o.id));
+  const toggleSelectAll = () => {
+    if (allVisibleSelected) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filtered.map((o) => o.id)));
+    }
+  };
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const trashCount = orders.filter((o) => (o as any).deleted_at).length;
+  const activeCount = orders.length - trashCount;
+
+  const formatTimeLeft = (deletedAt: string) => {
+    const ms = TRASH_RETENTION_MS - (Date.now() - new Date(deletedAt).getTime());
+    if (ms <= 0) return "Expired";
+    const hrs = Math.floor(ms / (60 * 60 * 1000));
+    const mins = Math.floor((ms % (60 * 60 * 1000)) / (60 * 1000));
+    return hrs > 0 ? `${hrs}h ${mins}m left` : `${mins}m left`;
+  };
+
 
   return (
     <div>
