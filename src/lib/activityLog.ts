@@ -8,7 +8,10 @@ export type AdminActivityAction =
   | "email_change"
   | "mfa_enabled"
   | "mfa_disabled"
-  | "mfa_challenge_failed";
+  | "mfa_challenge_failed"
+  | "order_deleted"
+  | "order_restored"
+  | "orders_bulk_deleted";
 
 interface LogParams {
   action: AdminActivityAction;
