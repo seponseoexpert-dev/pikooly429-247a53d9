@@ -529,49 +529,88 @@ const AdminOrders = () => {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-10">
+                    {view === "active" && (
+                      <Checkbox
+                        checked={allVisibleSelected}
+                        onCheckedChange={toggleSelectAll}
+                        aria-label="Select all"
+                      />
+                    )}
+                  </TableHead>
                   <TableHead>Order #</TableHead>
                   <TableHead>Customer</TableHead>
                   <TableHead>Total</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Payment</TableHead>
-                  <TableHead className="hidden md:table-cell">Date</TableHead>
+                  <TableHead className="hidden md:table-cell">{view === "trash" ? "Trashed" : "Date"}</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filtered.map((order) => (
-                  <TableRow key={order.id}>
-                    <TableCell className="font-mono text-xs">{order.order_number}</TableCell>
-                    <TableCell>
-                      <div className="font-medium text-sm">{order.customer_name}</div>
-                      <div className="text-xs text-muted-foreground">{order.customer_phone}</div>
-                    </TableCell>
-                    <TableCell className="font-medium text-sm">{formatCurrency(order.total)}</TableCell>
-                    <TableCell>
-                      <span className={`text-xs px-2 py-1 rounded-full capitalize ${statusColors[order.status] || "bg-muted"}`}>
-                        {order.status}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span className={`text-xs px-2 py-1 rounded-full capitalize ${statusColors[order.payment_status] || "bg-muted"}`}>
-                        {order.payment_status}
-                      </span>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
-                      {new Date(order.created_at).toLocaleDateString("en-GB")}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-1">
-                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => viewOrder(order)}>
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => setDeleteId(order.id)}>
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {filtered.map((order) => {
+                  const deletedAt = (order as any).deleted_at as string | null;
+                  const isTrash = !!deletedAt;
+                  const checked = selectedIds.has(order.id);
+                  return (
+                    <TableRow key={order.id} data-state={checked ? "selected" : undefined}>
+                      <TableCell>
+                        {!isTrash && (
+                          <Checkbox checked={checked} onCheckedChange={() => toggleSelect(order.id)} aria-label="Select row" />
+                        )}
+                      </TableCell>
+                      <TableCell className="font-mono text-xs">{order.order_number}</TableCell>
+                      <TableCell>
+                        <div className="font-medium text-sm">{order.customer_name}</div>
+                        <div className="text-xs text-muted-foreground">{order.customer_phone}</div>
+                      </TableCell>
+                      <TableCell className="font-medium text-sm">{formatCurrency(order.total)}</TableCell>
+                      <TableCell>
+                        <span className={`text-xs px-2 py-1 rounded-full capitalize ${statusColors[order.status] || "bg-muted"}`}>
+                          {order.status}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span className={`text-xs px-2 py-1 rounded-full capitalize ${statusColors[order.payment_status] || "bg-muted"}`}>
+                          {order.payment_status}
+                        </span>
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
+                        {isTrash && deletedAt
+                          ? <span className="text-amber-700">{formatTimeLeft(deletedAt)}</span>
+                          : new Date(order.created_at).toLocaleDateString("en-GB")}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => viewOrder(order)}>
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          {isTrash ? (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-primary hover:text-primary hover:bg-primary/10"
+                              onClick={() => handleRestoreOrder(order)}
+                              title="Restore"
+                            >
+                              <RotateCcw className="h-4 w-4" />
+                            </Button>
+                          ) : (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                              onClick={() => setDeleteId(order.id)}
+                              title="Move to trash"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           )}
