@@ -80,6 +80,8 @@ const AdminBouquet = () => {
         payload.price = form.price;
         if (tab === "flowers") {
           payload.available_districts = form.available_districts || [];
+          payload.same_day_districts = form.same_day_districts || [];
+          payload.next_day_districts = form.next_day_districts || [];
         }
       }
 
