@@ -285,7 +285,18 @@ const BouquetBuilder = () => {
               <DeliveryChecker product={{ same_day_districts: [], next_day_districts: [], standard_delivery_days: 3 }} />
             </div>
             <h2 className="text-xl md:text-2xl font-display font-bold text-foreground mb-1">Choose Your Flowers</h2>
-            <p className="text-sm text-muted-foreground mb-6">Select the flowers you love</p>
+            <p className="text-sm text-muted-foreground mb-6">
+              {selectedDistrict
+                ? `Showing flowers available in ${selectedDistrict}`
+                : "Select your delivery location above to see flowers available in your area"}
+            </p>
+            {flowers.length === 0 && (
+              <div className="text-center py-12 border-2 border-dashed border-border rounded-xl bg-muted/30 mb-6">
+                <Flower2 className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
+                <p className="text-sm font-medium text-foreground">No flowers available in {selectedDistrict}</p>
+                <p className="text-xs text-muted-foreground mt-1">Please choose a different district to see available flowers.</p>
+              </div>
+            )}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {flowers.map((flower: any) => {
                 const qty = selectedFlowers[flower.id] || 0;
