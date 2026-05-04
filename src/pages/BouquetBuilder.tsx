@@ -293,9 +293,46 @@ const BouquetBuilder = () => {
       <div className="min-h-[400px]">
         {step === 1 && (
           <div>
-            <div className="mb-6 max-w-md">
-              <DeliveryChecker product={{ same_day_districts: [], next_day_districts: [], standard_delivery_days: 3 }} />
-            </div>
+            {/* Compact location summary / change button */}
+            <button
+              type="button"
+              onClick={() => setLocationDialogOpen(true)}
+              className="mb-6 w-full max-w-md flex items-center justify-between gap-3 rounded-lg border border-border bg-card px-3 py-2.5 text-left hover:border-primary/50 transition-colors"
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <MapPin className="h-4 w-4 text-primary shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Gift Receiver's Location</p>
+                  <p className="text-sm font-semibold text-foreground truncate">
+                    {selectedDistrict || "Select your district"}
+                  </p>
+                </div>
+              </div>
+              <span className="inline-flex items-center gap-1 text-xs font-medium text-primary shrink-0">
+                <Pencil className="h-3 w-3" />
+                {selectedDistrict ? "Change" : "Choose"}
+              </span>
+            </button>
+
+            <Dialog open={locationDialogOpen} onOpenChange={setLocationDialogOpen}>
+              <DialogContent className="max-w-md p-0 gap-0 overflow-hidden">
+                <DialogHeader className="px-4 pt-4 pb-3 border-b border-border">
+                  <DialogTitle className="flex items-center gap-2 text-base">
+                    <MapPin className="h-4 w-4 text-primary" />
+                    Gift Receiver's Location
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="p-4 max-h-[70vh] overflow-y-auto">
+                  <DeliveryChecker product={{ same_day_districts: [], next_day_districts: [], standard_delivery_days: 3 }} />
+                  {selectedDistrict && (
+                    <Button onClick={() => setLocationDialogOpen(false)} className="w-full mt-4">
+                      Continue
+                    </Button>
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
+
             <h2 className="text-xl md:text-2xl font-display font-bold text-foreground mb-1">Choose Your Flowers</h2>
             <p className="text-sm text-muted-foreground mb-6">
               {selectedDistrict
