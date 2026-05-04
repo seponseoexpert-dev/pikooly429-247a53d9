@@ -8,6 +8,7 @@ import { Check, ChevronRight, ChevronLeft, Flower2, Upload, Ruler, MessageSquare
 import SEOHead from "@/components/seo/SEOHead";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import PageBottomSEO from "@/components/seo/PageBottomSEO";
+import DeliveryChecker from "@/components/product/DeliveryChecker";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
@@ -239,6 +240,9 @@ const BouquetBuilder = () => {
       <div className="min-h-[400px]">
         {step === 1 && (
           <div>
+            <div className="mb-6 max-w-md">
+              <DeliveryChecker product={{ same_day_districts: [], next_day_districts: [], standard_delivery_days: 3 }} />
+            </div>
             <h2 className="text-xl md:text-2xl font-display font-bold text-foreground mb-1">Choose Your Flowers</h2>
             <p className="text-sm text-muted-foreground mb-6">Select the flowers you love</p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
