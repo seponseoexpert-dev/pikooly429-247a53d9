@@ -156,7 +156,7 @@ const AdminBouquet = () => {
             <DialogTrigger asChild>
               <Button><Plus className="h-4 w-4 mr-2" />Add {(tabLabels[tab] ?? "Item").slice(0, -1)}</Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>{editId ? "Edit" : "Add"} {(tabLabels[tab] ?? "Item").slice(0, -1)}</DialogTitle>
               </DialogHeader>
