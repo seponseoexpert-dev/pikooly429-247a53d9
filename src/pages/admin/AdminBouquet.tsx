@@ -26,9 +26,11 @@ interface FormData {
   is_active: boolean;
   display_order: number;
   available_districts?: string[];
+  same_day_districts?: string[];
+  next_day_districts?: string[];
 }
 
-const defaultForm: FormData = { name: "", image_url: "", price: 0, hex_code: "#ec4899", is_active: true, display_order: 0, available_districts: [] };
+const defaultForm: FormData = { name: "", image_url: "", price: 0, hex_code: "#ec4899", is_active: true, display_order: 0, available_districts: [], same_day_districts: [], next_day_districts: [] };
 
 const AdminBouquet = () => {
   const qc = useQueryClient();
@@ -78,6 +80,8 @@ const AdminBouquet = () => {
         payload.price = form.price;
         if (tab === "flowers") {
           payload.available_districts = form.available_districts || [];
+          payload.same_day_districts = form.same_day_districts || [];
+          payload.next_day_districts = form.next_day_districts || [];
         }
       }
 
@@ -124,15 +128,18 @@ const AdminBouquet = () => {
       is_active: item.is_active,
       display_order: item.display_order,
       available_districts: item.available_districts || [],
+      same_day_districts: item.same_day_districts || [],
+      next_day_districts: item.next_day_districts || [],
     });
     setDialogOpen(true);
   };
 
-  const toggleDistrict = (name: string) => {
-    const current = form.available_districts || [];
+  type DistrictField = "available_districts" | "same_day_districts" | "next_day_districts";
+  const toggleDistrict = (field: DistrictField, name: string) => {
+    const current = form[field] || [];
     setForm({
       ...form,
-      available_districts: current.includes(name)
+      [field]: current.includes(name)
         ? current.filter((d) => d !== name)
         : [...current, name],
     });
@@ -149,7 +156,7 @@ const AdminBouquet = () => {
             <DialogTrigger asChild>
               <Button><Plus className="h-4 w-4 mr-2" />Add {(tabLabels[tab] ?? "Item").slice(0, -1)}</Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>{editId ? "Edit" : "Add"} {(tabLabels[tab] ?? "Item").slice(0, -1)}</DialogTitle>
               </DialogHeader>
@@ -202,43 +209,62 @@ const AdminBouquet = () => {
                   </div>
                 )}
                 {tab === "flowers" && (
-                  <div>
-                    <Label>Available Districts</Label>
-                    <p className="text-xs text-muted-foreground mb-2">
-                      Select districts where this flower is available. Leave empty = available everywhere.
-                    </p>
-                    <div className="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto border border-border rounded-md p-2 bg-background">
-                      {districts.length === 0 ? (
-                        <span className="text-xs text-muted-foreground">No districts found</span>
-                      ) : (
-                        districts.map((d: any) => {
-                          const checked = (form.available_districts || []).includes(d.name);
-                          return (
-                            <button
-                              key={d.id}
-                              type="button"
-                              onClick={() => toggleDistrict(d.name)}
-                              className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
-                                checked
-                                  ? "bg-primary text-primary-foreground border-primary"
-                                  : "bg-background text-foreground border-border hover:border-primary/50"
-                              }`}
-                            >
-                              {d.name}
-                            </button>
-                          );
-                        })
-                      )}
+                  <div className="space-y-4 rounded-lg border border-border p-3 bg-muted/20">
+                    <div className="flex items-start gap-2">
+                      <div className="text-xs">
+                        <p className="font-semibold text-foreground mb-0.5">Delivery availability</p>
+                        <p className="text-muted-foreground">
+                          Control which flowers appear for which delivery speed in each district.
+                          Empty list = available everywhere for that speed.
+                        </p>
+                      </div>
                     </div>
-                    {(form.available_districts || []).length > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => setForm({ ...form, available_districts: [] })}
-                        className="text-xs text-muted-foreground hover:text-foreground mt-2 underline"
-                      >
-                        Clear all (available everywhere)
-                      </button>
-                    )}
+
+                    {([
+                      { field: "available_districts" as const, label: "All Deliveries (general)", hint: "Default fallback. Used when no speed-specific list matches." },
+                      { field: "same_day_districts" as const, label: "Same-Day Delivery only", hint: "Show this flower when the customer's district has same-day delivery." },
+                      { field: "next_day_districts" as const, label: "Next-Day Delivery only", hint: "Show this flower when the customer's district has next-day delivery." },
+                    ]).map(({ field, label, hint }) => {
+                      const list = form[field] || [];
+                      return (
+                        <div key={field}>
+                          <Label className="text-sm">{label}</Label>
+                          <p className="text-[11px] text-muted-foreground mb-1.5">{hint}</p>
+                          <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto border border-border rounded-md p-2 bg-background">
+                            {districts.length === 0 ? (
+                              <span className="text-xs text-muted-foreground">No districts found</span>
+                            ) : (
+                              districts.map((d: any) => {
+                                const checked = list.includes(d.name);
+                                return (
+                                  <button
+                                    key={d.id}
+                                    type="button"
+                                    onClick={() => toggleDistrict(field, d.name)}
+                                    className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
+                                      checked
+                                        ? "bg-primary text-primary-foreground border-primary"
+                                        : "bg-background text-foreground border-border hover:border-primary/50"
+                                    }`}
+                                  >
+                                    {d.name}
+                                  </button>
+                                );
+                              })
+                            )}
+                          </div>
+                          {list.length > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => setForm({ ...form, [field]: [] })}
+                              className="text-[11px] text-muted-foreground hover:text-foreground mt-1.5 underline"
+                            >
+                              Clear all
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
                 <div>

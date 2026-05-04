@@ -95,14 +95,45 @@ const BouquetBuilder = () => {
     },
   });
 
-  // Filter flowers by selected district. Empty available_districts = available everywhere.
+  // Fetch district info to determine delivery speed for the chosen district
+  const { data: shippingDistricts = [] } = useQuery({
+    queryKey: ["shipping-districts-builder"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("shipping_districts")
+        .select("name, same_day_fee, next_day_fee")
+        .eq("is_active", true);
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Determine delivery speed available for the selected district
+  const deliverySpeed: "same_day" | "next_day" | "standard" | null = useMemo(() => {
+    if (!selectedDistrict) return null;
+    const d = shippingDistricts.find((x: any) => x.name === selectedDistrict);
+    if (!d) return "standard";
+    if (d.same_day_fee !== null && d.same_day_fee !== undefined) return "same_day";
+    if (d.next_day_fee !== null && d.next_day_fee !== undefined) return "next_day";
+    return "standard";
+  }, [selectedDistrict, shippingDistricts]);
+
+  // Filter flowers by selected district + delivery speed.
+  // Logic: prefer speed-specific list when set; otherwise fall back to general available_districts.
   const flowers = useMemo(() => {
     if (!selectedDistrict) return allFlowers;
     return allFlowers.filter((f: any) => {
-      const list = f.available_districts || [];
-      return list.length === 0 || list.includes(selectedDistrict);
+      const speedList: string[] =
+        deliverySpeed === "same_day" ? (f.same_day_districts || []) :
+        deliverySpeed === "next_day" ? (f.next_day_districts || []) :
+        [];
+      // If admin configured a speed-specific list, it takes priority
+      if (speedList.length > 0) return speedList.includes(selectedDistrict);
+      // Otherwise use the general allow-list (empty = available everywhere)
+      const general: string[] = f.available_districts || [];
+      return general.length === 0 || general.includes(selectedDistrict);
     });
-  }, [allFlowers, selectedDistrict]);
+  }, [allFlowers, selectedDistrict, deliverySpeed]);
 
   // Auto-remove flowers from selection if they become unavailable for the chosen district
   useEffect(() => {
@@ -336,7 +367,11 @@ const BouquetBuilder = () => {
             <h2 className="text-xl md:text-2xl font-display font-bold text-foreground mb-1">Choose Your Flowers</h2>
             <p className="text-sm text-muted-foreground mb-6">
               {selectedDistrict
-                ? `Showing flowers available in ${selectedDistrict}`
+                ? `Showing flowers available in ${selectedDistrict}${
+                    deliverySpeed === "same_day" ? " (Same-Day Delivery)" :
+                    deliverySpeed === "next_day" ? " (Next-Day Delivery)" :
+                    ""
+                  }`
                 : "Select your delivery location above to see flowers available in your area"}
             </p>
             {flowers.length === 0 && (
