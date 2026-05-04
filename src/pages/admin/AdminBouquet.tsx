@@ -123,8 +123,19 @@ const AdminBouquet = () => {
       hex_code: item.hex_code || "#ec4899",
       is_active: item.is_active,
       display_order: item.display_order,
+      available_districts: item.available_districts || [],
     });
     setDialogOpen(true);
+  };
+
+  const toggleDistrict = (name: string) => {
+    const current = form.available_districts || [];
+    setForm({
+      ...form,
+      available_districts: current.includes(name)
+        ? current.filter((d) => d !== name)
+        : [...current, name],
+    });
   };
 
   const tabLabels: Record<ItemType, string> = { flowers: "Flowers", materials: "Materials", sizes: "Sizes", colors: "Colors" };
