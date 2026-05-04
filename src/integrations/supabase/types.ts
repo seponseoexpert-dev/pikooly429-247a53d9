@@ -136,6 +136,7 @@ export type Database = {
       }
       bouquet_flowers: {
         Row: {
+          available_districts: string[]
           created_at: string
           display_order: number
           id: string
@@ -146,6 +147,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          available_districts?: string[]
           created_at?: string
           display_order?: number
           id?: string
@@ -156,6 +158,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          available_districts?: string[]
           created_at?: string
           display_order?: number
           id?: string
