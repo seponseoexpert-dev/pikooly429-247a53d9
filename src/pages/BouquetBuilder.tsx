@@ -41,6 +41,23 @@ const BouquetBuilder = () => {
   const [selectedColorId, setSelectedColorId] = useState<string | null>(null);
   const [giftMessage, setGiftMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedDistrict, setSelectedDistrict] = useState<string>(() =>
+    typeof window !== "undefined" ? localStorage.getItem("preferred_delivery_district") || "" : ""
+  );
+
+  // Sync with DeliveryChecker (which writes to localStorage + dispatches event)
+  useEffect(() => {
+    const sync = () => {
+      const d = localStorage.getItem("preferred_delivery_district") || "";
+      setSelectedDistrict(d);
+    };
+    window.addEventListener("delivery-district-changed", sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener("delivery-district-changed", sync);
+      window.removeEventListener("storage", sync);
+    };
+  }, []);
 
   const { data: bouquetColors = [] } = useQuery({
     queryKey: ["bouquet-colors-public"],
@@ -57,7 +74,7 @@ const BouquetBuilder = () => {
 
   const selectedColor = bouquetColors.find((c: any) => c.id === selectedColorId);
 
-  const { data: flowers = [] } = useQuery({
+  const { data: allFlowers = [] } = useQuery({
     queryKey: ["bouquet-flowers"],
     queryFn: async () => {
       const { data, error } = await supabase.from("bouquet_flowers").select("*").eq("is_active", true).order("display_order");
@@ -66,15 +83,39 @@ const BouquetBuilder = () => {
     },
   });
 
+  // Filter flowers by selected district. Empty available_districts = available everywhere.
+  const flowers = useMemo(() => {
+    if (!selectedDistrict) return allFlowers;
+    return allFlowers.filter((f: any) => {
+      const list = f.available_districts || [];
+      return list.length === 0 || list.includes(selectedDistrict);
+    });
+  }, [allFlowers, selectedDistrict]);
+
+  // Auto-remove flowers from selection if they become unavailable for the chosen district
+  useEffect(() => {
+    if (!selectedDistrict) return;
+    setSelectedFlowers((prev) => {
+      const visibleIds = new Set(flowers.map((f: any) => f.id));
+      const next: Record<string, number> = {};
+      let changed = false;
+      Object.entries(prev).forEach(([id, qty]) => {
+        if (visibleIds.has(id)) next[id] = qty;
+        else changed = true;
+      });
+      return changed ? next : prev;
+    });
+  }, [flowers, selectedDistrict]);
+
   const selectedFlowersList = useMemo(() => {
     return Object.entries(selectedFlowers)
       .filter(([, qty]) => qty > 0)
       .map(([id, qty]) => {
-        const f = flowers.find((fl: any) => fl.id === id);
+        const f = allFlowers.find((fl: any) => fl.id === id);
         return f ? { ...f, qty } : null;
       })
       .filter(Boolean) as any[];
-  }, [selectedFlowers, flowers]);
+  }, [selectedFlowers, allFlowers]);
 
   const selectedSizeItem = FIXED_SIZES.find((s) => s.id === selectedSize);
 
