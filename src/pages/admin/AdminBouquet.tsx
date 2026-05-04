@@ -201,6 +201,46 @@ const AdminBouquet = () => {
                     <Input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: +e.target.value })} />
                   </div>
                 )}
+                {tab === "flowers" && (
+                  <div>
+                    <Label>Available Districts</Label>
+                    <p className="text-xs text-muted-foreground mb-2">
+                      Select districts where this flower is available. Leave empty = available everywhere.
+                    </p>
+                    <div className="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto border border-border rounded-md p-2 bg-background">
+                      {districts.length === 0 ? (
+                        <span className="text-xs text-muted-foreground">No districts found</span>
+                      ) : (
+                        districts.map((d: any) => {
+                          const checked = (form.available_districts || []).includes(d.name);
+                          return (
+                            <button
+                              key={d.id}
+                              type="button"
+                              onClick={() => toggleDistrict(d.name)}
+                              className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
+                                checked
+                                  ? "bg-primary text-primary-foreground border-primary"
+                                  : "bg-background text-foreground border-border hover:border-primary/50"
+                              }`}
+                            >
+                              {d.name}
+                            </button>
+                          );
+                        })
+                      )}
+                    </div>
+                    {(form.available_districts || []).length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setForm({ ...form, available_districts: [] })}
+                        className="text-xs text-muted-foreground hover:text-foreground mt-2 underline"
+                      >
+                        Clear all (available everywhere)
+                      </button>
+                    )}
+                  </div>
+                )}
                 <div>
                   <Label>Display Order</Label>
                   <Input type="number" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: +e.target.value })} />
