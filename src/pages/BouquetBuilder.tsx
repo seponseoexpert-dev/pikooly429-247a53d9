@@ -61,6 +61,7 @@ const BouquetBuilder = () => {
     const sync = () => {
       const d = localStorage.getItem("preferred_delivery_district") || "";
       setSelectedDistrict(d);
+      if (d) setLocationDialogOpen(false);
     };
     window.addEventListener("delivery-district-changed", sync);
     window.addEventListener("storage", sync);
