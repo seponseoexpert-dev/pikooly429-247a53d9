@@ -26,9 +26,11 @@ interface FormData {
   is_active: boolean;
   display_order: number;
   available_districts?: string[];
+  same_day_districts?: string[];
+  next_day_districts?: string[];
 }
 
-const defaultForm: FormData = { name: "", image_url: "", price: 0, hex_code: "#ec4899", is_active: true, display_order: 0, available_districts: [] };
+const defaultForm: FormData = { name: "", image_url: "", price: 0, hex_code: "#ec4899", is_active: true, display_order: 0, available_districts: [], same_day_districts: [], next_day_districts: [] };
 
 const AdminBouquet = () => {
   const qc = useQueryClient();
