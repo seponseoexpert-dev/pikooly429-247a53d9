@@ -45,6 +45,16 @@ const BouquetBuilder = () => {
   const [selectedDistrict, setSelectedDistrict] = useState<string>(() =>
     typeof window !== "undefined" ? localStorage.getItem("preferred_delivery_district") || "" : ""
   );
+  const [locationDialogOpen, setLocationDialogOpen] = useState(false);
+
+  // Auto-open popup on mount if no district is selected
+  useEffect(() => {
+    if (!selectedDistrict) {
+      const t = setTimeout(() => setLocationDialogOpen(true), 400);
+      return () => clearTimeout(t);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Sync with DeliveryChecker (which writes to localStorage + dispatches event)
   useEffect(() => {
