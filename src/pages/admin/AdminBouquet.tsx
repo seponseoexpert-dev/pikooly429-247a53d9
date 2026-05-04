@@ -48,6 +48,19 @@ const AdminBouquet = () => {
     },
   });
 
+  const { data: districts = [] } = useQuery({
+    queryKey: ["shipping-districts-admin-bouquet"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("shipping_districts")
+        .select("id, name")
+        .eq("is_active", true)
+        .order("display_order");
+      if (error) throw error;
+      return data;
+    },
+  });
+
   const saveMutation = useMutation({
     mutationFn: async () => {
       const payload: any = {
@@ -63,6 +76,9 @@ const AdminBouquet = () => {
         payload.hex_code = form.hex_code || "#cccccc";
       } else {
         payload.price = form.price;
+        if (tab === "flowers") {
+          payload.available_districts = form.available_districts || [];
+        }
       }
 
       if (editId) {
