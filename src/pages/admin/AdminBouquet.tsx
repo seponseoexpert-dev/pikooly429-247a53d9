@@ -25,9 +25,10 @@ interface FormData {
   hex_code?: string;
   is_active: boolean;
   display_order: number;
+  available_districts?: string[];
 }
 
-const defaultForm: FormData = { name: "", image_url: "", price: 0, hex_code: "#ec4899", is_active: true, display_order: 0 };
+const defaultForm: FormData = { name: "", image_url: "", price: 0, hex_code: "#ec4899", is_active: true, display_order: 0, available_districts: [] };
 
 const AdminBouquet = () => {
   const qc = useQueryClient();
@@ -42,6 +43,19 @@ const AdminBouquet = () => {
     queryKey: ["bouquet", tab],
     queryFn: async () => {
       const { data, error } = await supabase.from(tableName).select("*").order("display_order");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: districts = [] } = useQuery({
+    queryKey: ["shipping-districts-admin-bouquet"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("shipping_districts")
+        .select("id, name")
+        .eq("is_active", true)
+        .order("display_order");
       if (error) throw error;
       return data;
     },
@@ -62,6 +76,9 @@ const AdminBouquet = () => {
         payload.hex_code = form.hex_code || "#cccccc";
       } else {
         payload.price = form.price;
+        if (tab === "flowers") {
+          payload.available_districts = form.available_districts || [];
+        }
       }
 
       if (editId) {
@@ -106,8 +123,19 @@ const AdminBouquet = () => {
       hex_code: item.hex_code || "#ec4899",
       is_active: item.is_active,
       display_order: item.display_order,
+      available_districts: item.available_districts || [],
     });
     setDialogOpen(true);
+  };
+
+  const toggleDistrict = (name: string) => {
+    const current = form.available_districts || [];
+    setForm({
+      ...form,
+      available_districts: current.includes(name)
+        ? current.filter((d) => d !== name)
+        : [...current, name],
+    });
   };
 
   const tabLabels: Record<ItemType, string> = { flowers: "Flowers", materials: "Materials", sizes: "Sizes", colors: "Colors" };
@@ -171,6 +199,46 @@ const AdminBouquet = () => {
                   <div>
                     <Label>Price (৳)</Label>
                     <Input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: +e.target.value })} />
+                  </div>
+                )}
+                {tab === "flowers" && (
+                  <div>
+                    <Label>Available Districts</Label>
+                    <p className="text-xs text-muted-foreground mb-2">
+                      Select districts where this flower is available. Leave empty = available everywhere.
+                    </p>
+                    <div className="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto border border-border rounded-md p-2 bg-background">
+                      {districts.length === 0 ? (
+                        <span className="text-xs text-muted-foreground">No districts found</span>
+                      ) : (
+                        districts.map((d: any) => {
+                          const checked = (form.available_districts || []).includes(d.name);
+                          return (
+                            <button
+                              key={d.id}
+                              type="button"
+                              onClick={() => toggleDistrict(d.name)}
+                              className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
+                                checked
+                                  ? "bg-primary text-primary-foreground border-primary"
+                                  : "bg-background text-foreground border-border hover:border-primary/50"
+                              }`}
+                            >
+                              {d.name}
+                            </button>
+                          );
+                        })
+                      )}
+                    </div>
+                    {(form.available_districts || []).length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setForm({ ...form, available_districts: [] })}
+                        className="text-xs text-muted-foreground hover:text-foreground mt-2 underline"
+                      >
+                        Clear all (available everywhere)
+                      </button>
+                    )}
                   </div>
                 )}
                 <div>
