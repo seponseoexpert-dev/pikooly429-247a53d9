@@ -8,6 +8,7 @@ import { Check, ChevronRight, ChevronLeft, Flower2, Upload, Ruler, MessageSquare
 import SEOHead from "@/components/seo/SEOHead";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import PageBottomSEO from "@/components/seo/PageBottomSEO";
+import DeliveryChecker from "@/components/product/DeliveryChecker";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
