@@ -367,7 +367,11 @@ const BouquetBuilder = () => {
             <h2 className="text-xl md:text-2xl font-display font-bold text-foreground mb-1">Choose Your Flowers</h2>
             <p className="text-sm text-muted-foreground mb-6">
               {selectedDistrict
-                ? `Showing flowers available in ${selectedDistrict}`
+                ? `Showing flowers available in ${selectedDistrict}${
+                    deliverySpeed === "same_day" ? " (Same-Day Delivery)" :
+                    deliverySpeed === "next_day" ? " (Next-Day Delivery)" :
+                    ""
+                  }`
                 : "Select your delivery location above to see flowers available in your area"}
             </p>
             {flowers.length === 0 && (
