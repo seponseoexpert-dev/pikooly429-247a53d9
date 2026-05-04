@@ -143,7 +143,9 @@ export type Database = {
           image_url: string | null
           is_active: boolean
           name: string
+          next_day_districts: string[]
           price: number
+          same_day_districts: string[]
           updated_at: string
         }
         Insert: {
@@ -154,7 +156,9 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean
           name: string
+          next_day_districts?: string[]
           price?: number
+          same_day_districts?: string[]
           updated_at?: string
         }
         Update: {
@@ -165,7 +169,9 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean
           name?: string
+          next_day_districts?: string[]
           price?: number
+          same_day_districts?: string[]
           updated_at?: string
         }
         Relationships: []
