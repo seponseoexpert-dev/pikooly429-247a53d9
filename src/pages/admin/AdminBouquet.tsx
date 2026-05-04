@@ -25,9 +25,10 @@ interface FormData {
   hex_code?: string;
   is_active: boolean;
   display_order: number;
+  available_districts?: string[];
 }
 
-const defaultForm: FormData = { name: "", image_url: "", price: 0, hex_code: "#ec4899", is_active: true, display_order: 0 };
+const defaultForm: FormData = { name: "", image_url: "", price: 0, hex_code: "#ec4899", is_active: true, display_order: 0, available_districts: [] };
 
 const AdminBouquet = () => {
   const qc = useQueryClient();
