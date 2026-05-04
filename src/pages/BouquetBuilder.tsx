@@ -240,6 +240,9 @@ const BouquetBuilder = () => {
       <div className="min-h-[400px]">
         {step === 1 && (
           <div>
+            <div className="mb-6 max-w-md">
+              <DeliveryChecker product={{ same_day_districts: [], next_day_districts: [], standard_delivery_days: 3 }} />
+            </div>
             <h2 className="text-xl md:text-2xl font-display font-bold text-foreground mb-1">Choose Your Flowers</h2>
             <p className="text-sm text-muted-foreground mb-6">Select the flowers you love</p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
