@@ -385,6 +385,14 @@ const BouquetBuilder = () => {
               {flowers.map((flower: any) => {
                 const qty = selectedFlowers[flower.id] || 0;
                 const isSelected = qty > 0;
+                const sameDay = (flower.same_day_districts || []) as string[];
+                const nextDay = (flower.next_day_districts || []) as string[];
+                let flowerSpeed: "same_day" | "next_day" | null = null;
+                if (selectedDistrict) {
+                  if (sameDay.includes(selectedDistrict)) flowerSpeed = "same_day";
+                  else if (nextDay.includes(selectedDistrict)) flowerSpeed = "next_day";
+                  else if (deliverySpeed === "same_day" || deliverySpeed === "next_day") flowerSpeed = deliverySpeed;
+                }
                 return (
                   <div
                     key={flower.id}
@@ -393,8 +401,20 @@ const BouquetBuilder = () => {
                       isSelected ? "border-primary shadow-md" : "border-border/50 hover:border-primary/30"
                     )}
                   >
-                    <div className="aspect-square bg-secondary/20 overflow-hidden" onClick={() => toggleFlower(flower.id)}>
+                    <div className="aspect-square bg-secondary/20 overflow-hidden relative" onClick={() => toggleFlower(flower.id)}>
                       <img src={flower.image_url || "/placeholder.svg"} alt={flower.name} className="w-full h-full object-cover" loading="lazy" />
+                      {flowerSpeed && (
+                        <div
+                          className={cn(
+                            "absolute top-2 left-2 px-1.5 py-0.5 rounded-md text-[10px] font-semibold shadow-sm",
+                            flowerSpeed === "same_day"
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-amber-500 text-white"
+                          )}
+                        >
+                          {flowerSpeed === "same_day" ? "Same-Day" : "Next-Day"}
+                        </div>
+                      )}
                       {isSelected && (
                         <div className="absolute top-2 right-2 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
                           <Check className="h-3.5 w-3.5" />
