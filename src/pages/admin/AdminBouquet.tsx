@@ -128,15 +128,18 @@ const AdminBouquet = () => {
       is_active: item.is_active,
       display_order: item.display_order,
       available_districts: item.available_districts || [],
+      same_day_districts: item.same_day_districts || [],
+      next_day_districts: item.next_day_districts || [],
     });
     setDialogOpen(true);
   };
 
-  const toggleDistrict = (name: string) => {
-    const current = form.available_districts || [];
+  type DistrictField = "available_districts" | "same_day_districts" | "next_day_districts";
+  const toggleDistrict = (field: DistrictField, name: string) => {
+    const current = form[field] || [];
     setForm({
       ...form,
-      available_districts: current.includes(name)
+      [field]: current.includes(name)
         ? current.filter((d) => d !== name)
         : [...current, name],
     });
