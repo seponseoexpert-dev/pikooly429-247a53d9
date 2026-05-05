@@ -22,6 +22,7 @@ import { shouldSendMail, shouldSendSms, shouldSendPush, shouldSendAdminMail, sen
 import { SameDayAnimation, NextDayAnimation } from "@/components/checkout/DeliveryAnimations";
 import SEOHead from "@/components/seo/SEOHead";
 import { AddressAutocomplete } from "@/components/checkout/AddressAutocomplete";
+import { resolveEffectiveDeliveryFees, type CategoryDeliveryFee, type DistrictFees } from "@/lib/deliveryResolver";
 
 const countryPhoneCodes: Record<string, string> = {
   "Afghanistan": "+93", "Albania": "+355", "Algeria": "+213", "Andorra": "+376", "Angola": "+244",
@@ -66,6 +67,13 @@ const deliveryTimeSlots = [
 ];
 
 const PREFERRED_DELIVERY_DISTRICT_KEY = "preferred_delivery_district";
+
+interface CheckoutDistrict extends DistrictFees {
+  name: string;
+  postal_code?: string | null;
+  same_day_label?: string | null;
+  next_day_label?: string | null;
+}
 
 const Checkout = () => {
   const { items, totalPrice, clearCart, updateQuantity, removeItem } = useCart();
@@ -331,7 +339,17 @@ const Checkout = () => {
     queryKey: ["checkout-product-categories", items.map((i) => i.product.id).join(",")],
     queryFn: async () => {
       if (items.length === 0) return [];
-      const productIds = items.map((i) => i.product.id);
+      const cartCategoryIds = new Set<string>();
+      items.forEach((item) => {
+        const categoryId = (item.product as any).categoryId || (item.product as any).category_id;
+        if (categoryId) cartCategoryIds.add(categoryId);
+      });
+      const productIds = items
+        .map((i) => i.product.id)
+        .filter((productId) => !productId.startsWith("bouquet-"));
+      if (productIds.length === 0) {
+        return Array.from(cartCategoryIds).map((cid) => ({ category_id: cid }));
+      }
       // Get from product_categories junction table
       const { data: pcData, error: pcError } = await supabase
         .from("product_categories")
@@ -344,8 +362,9 @@ const Checkout = () => {
         .select("id, category_id")
         .in("id", productIds);
       if (pError) throw pError;
-      // Combine both sources into unique category_ids
+      // Combine database categories and cart payload categories into unique category_ids
       const catIds = new Set<string>();
+      cartCategoryIds.forEach((categoryId) => catIds.add(categoryId));
       (pcData || []).forEach((pc) => catIds.add(pc.category_id));
       (pData || []).forEach((p) => { if (p.category_id) catIds.add(p.category_id); });
       return Array.from(catIds).map((cid) => ({ category_id: cid }));
@@ -353,36 +372,36 @@ const Checkout = () => {
     enabled: items.length > 0,
   });
 
-  const activeDistrict: any = districts.find((d: any) => d.id === selectedDistrict);
+  const activeDistrict = districts.find((d: CheckoutDistrict) => d.id === selectedDistrict) as CheckoutDistrict | undefined;
 
   // Helper: pick fee field based on delivery type
-  const pickFee = (row: any, type: "same_day" | "next_day") => {
+  const pickFee = (row: DistrictFees | null, type: "same_day" | "next_day") => {
     if (!row) return 0;
     if (type === "same_day") return Number(row.same_day_fee ?? row.delivery_fee ?? 0);
     return Number(row.next_day_fee ?? 0);
   };
 
-  // Use district base fee only (matches DeliveryChecker on product page).
-  const computeFee = (type: "same_day" | "next_day") => {
-    if (!activeDistrict) return 0;
-    return pickFee(activeDistrict, type);
-  };
+  const effectiveDistrictFees = useMemo(() => {
+    if (!activeDistrict) return null;
+    const categoryIds = productCategories.map((row: { category_id: string }) => row.category_id).filter(Boolean);
+    return resolveEffectiveDeliveryFees(activeDistrict, categoryFees as CategoryDeliveryFee[], categoryIds);
+  }, [activeDistrict, categoryFees, productCategories]);
 
-  const sameDayFee = useMemo(() => computeFee("same_day"), [activeDistrict, selectedDistrict, categoryFees, productCategories]);
-  const nextDayFee = useMemo(() => computeFee("next_day"), [activeDistrict, selectedDistrict, categoryFees, productCategories]);
+  const sameDayFee = useMemo(() => pickFee(effectiveDistrictFees, "same_day"), [effectiveDistrictFees]);
+  const nextDayFee = useMemo(() => pickFee(effectiveDistrictFees, "next_day"), [effectiveDistrictFees]);
 
   // Availability: an option is available when admin explicitly configured it.
   // A fee of 0 means free delivery, not unavailable.
   const sameDayAvailable = useMemo(() => {
     if (!activeDistrict) return false;
-    const raw = activeDistrict.same_day_fee;
+    const raw = effectiveDistrictFees?.same_day_fee;
     return raw !== null && raw !== undefined;
-  }, [activeDistrict]);
+  }, [activeDistrict, effectiveDistrictFees]);
   const nextDayAvailable = useMemo(() => {
     if (!activeDistrict) return false;
-    const raw = activeDistrict.next_day_fee;
+    const raw = effectiveDistrictFees?.next_day_fee;
     return raw !== null && raw !== undefined;
-  }, [activeDistrict]);
+  }, [activeDistrict, effectiveDistrictFees]);
 
   // Auto-select the only available option when district changes
   useEffect(() => {

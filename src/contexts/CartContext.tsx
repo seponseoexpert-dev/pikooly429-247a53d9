@@ -7,6 +7,7 @@ interface Product {
   originalPrice?: number;
   image: string;
   category: string;
+  categoryId?: string | null;
   badge?: string;
   rating?: number;
   inStock: boolean;

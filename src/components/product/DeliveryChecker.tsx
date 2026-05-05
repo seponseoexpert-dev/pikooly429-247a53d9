@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { MapPin, Zap, Calendar, Truck, CheckCircle2, Search, Bike, Car, Package } from "lucide-react";
-import { resolveDelivery, type ResolvedDelivery } from "@/lib/deliveryResolver";
+import { resolveDelivery, resolveEffectiveDeliveryFees, type CategoryDeliveryFee, type ResolvedDelivery } from "@/lib/deliveryResolver";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 
 interface District {
@@ -30,7 +30,7 @@ const STORAGE_KEY = "preferred_delivery_district";
 const DeliveryChecker = ({ product, productId, categoryId }: Props) => {
   const { formatPrice } = useMultiCurrency();
   const [districts, setDistricts] = useState<District[]>([]);
-  const [categoryFees, setCategoryFees] = useState<any[]>([]);
+  const [categoryFees, setCategoryFees] = useState<CategoryDeliveryFee[]>([]);
   const [productCategoryIds, setProductCategoryIds] = useState<string[]>([]);
   const [selected, setSelected] = useState<string>("");
   const [resolved, setResolved] = useState<ResolvedDelivery | null>(null);
@@ -78,7 +78,7 @@ const DeliveryChecker = ({ product, productId, categoryId }: Props) => {
         .eq("product_id", productId);
       if (!active) return;
       const ids = new Set<string>();
-      (pcData || []).forEach((r: any) => r.category_id && ids.add(r.category_id));
+      (pcData || []).forEach((r) => r.category_id && ids.add(r.category_id));
       if (categoryId) ids.add(categoryId);
       setProductCategoryIds(Array.from(ids));
     })();
@@ -112,12 +112,7 @@ const DeliveryChecker = ({ product, productId, categoryId }: Props) => {
       window.dispatchEvent(new Event("delivery-district-changed"));
     }
 
-    // Use district base fee only (category overrides ignored)
-    const effectiveFees = {
-      delivery_fee: Number(district.delivery_fee ?? 0),
-      same_day_fee: district.same_day_fee,
-      next_day_fee: district.next_day_fee,
-    };
+    const effectiveFees = resolveEffectiveDeliveryFees(district, categoryFees, productCategoryIds);
 
     const r = resolveDelivery(product, selected, effectiveFees);
     setResolved(r);
