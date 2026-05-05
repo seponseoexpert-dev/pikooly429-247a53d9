@@ -16,7 +16,7 @@ import ScrollToTop from "@/components/layout/ScrollToTop";
 import PageLoader from "@/components/layout/PageLoader";
 import WordPressRedirects from "@/components/layout/WordPressRedirects";
 import PageTransition from "@/components/layout/PageTransition";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 
 // Lazy-load non-critical layout components
 const Footer = lazy(() => import("@/components/layout/Footer"));
@@ -84,6 +84,38 @@ const queryClient = new QueryClient({
   },
 });
 
+// Prefetch common routes during idle so navigations feel instant
+const prefetchCommonRoutes = () => {
+  import("./pages/Shop");
+  import("./pages/ProductDetail");
+  import("./pages/Checkout");
+  import("./pages/AllGifts");
+  import("./pages/Account");
+  import("./pages/Search");
+  import("./pages/TrackOrder");
+  import("./pages/Auth");
+  import("./pages/AboutUs");
+  import("./pages/ContactUs");
+  import("./pages/Blog");
+  import("./pages/Events");
+  import("@/components/layout/Footer");
+  import("@/components/layout/BottomNav");
+  import("@/components/layout/WhatsAppButton");
+};
+
+const RoutePrefetcher = () => {
+  useEffect(() => {
+    const w = window as any;
+    if ("requestIdleCallback" in w) {
+      const id = w.requestIdleCallback(prefetchCommonRoutes, { timeout: 4000 });
+      return () => w.cancelIdleCallback?.(id);
+    }
+    const id = setTimeout(prefetchCommonRoutes, 2500);
+    return () => clearTimeout(id);
+  }, []);
+  return null;
+};
+
 
 const PublicLayout = ({ children }: { children: React.ReactNode }) => (
   <>
@@ -125,6 +157,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <ScrollToTop />
+            <RoutePrefetcher />
             <WordPressRedirects />
             <Routes>
               {/* Public routes */}
