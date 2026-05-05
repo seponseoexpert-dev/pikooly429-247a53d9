@@ -334,8 +334,10 @@ const Checkout = () => {
 
   const hasDeliveryMismatch = incompatibleItems.length > 0;
 
-  // Fetch all category_ids for cart products (via product_categories many-to-many)
-  const { data: productCategories = [] } = useQuery({
+  // Fetch each cart product's primary category. Category delivery fees follow
+  // the product's main category only, so unrelated browsing categories won't
+  // accidentally force a higher/lower shipping charge.
+  const { data: productCategoryIds = [] } = useQuery({
     queryKey: ["checkout-product-categories", items.map((i) => i.product.id).join(",")],
     queryFn: async () => {
       if (items.length === 0) return [];
@@ -348,26 +350,17 @@ const Checkout = () => {
         .map((i) => i.product.id)
         .filter((productId) => !productId.startsWith("bouquet-"));
       if (productIds.length === 0) {
-        return Array.from(cartCategoryIds).map((cid) => ({ category_id: cid }));
+        return Array.from(cartCategoryIds);
       }
-      // Get from product_categories junction table
-      const { data: pcData, error: pcError } = await supabase
-        .from("product_categories")
-        .select("product_id, category_id")
-        .in("product_id", productIds);
-      if (pcError) throw pcError;
-      // Also get direct category_id from products table as fallback
       const { data: pData, error: pError } = await supabase
         .from("products")
         .select("id, category_id")
         .in("id", productIds);
       if (pError) throw pError;
-      // Combine database categories and cart payload categories into unique category_ids
       const catIds = new Set<string>();
       cartCategoryIds.forEach((categoryId) => catIds.add(categoryId));
-      (pcData || []).forEach((pc) => catIds.add(pc.category_id));
       (pData || []).forEach((p) => { if (p.category_id) catIds.add(p.category_id); });
-      return Array.from(catIds).map((cid) => ({ category_id: cid }));
+      return Array.from(catIds);
     },
     enabled: items.length > 0,
   });
@@ -383,9 +376,8 @@ const Checkout = () => {
 
   const effectiveDistrictFees = useMemo(() => {
     if (!activeDistrict) return null;
-    const categoryIds = productCategories.map((row: { category_id: string }) => row.category_id).filter(Boolean);
-    return resolveEffectiveDeliveryFees(activeDistrict, categoryFees as CategoryDeliveryFee[], categoryIds);
-  }, [activeDistrict, categoryFees, productCategories]);
+    return resolveEffectiveDeliveryFees(activeDistrict, categoryFees as CategoryDeliveryFee[], productCategoryIds);
+  }, [activeDistrict, categoryFees, productCategoryIds]);
 
   const sameDayFee = useMemo(() => pickFee(effectiveDistrictFees, "same_day"), [effectiveDistrictFees]);
   const nextDayFee = useMemo(() => pickFee(effectiveDistrictFees, "next_day"), [effectiveDistrictFees]);
