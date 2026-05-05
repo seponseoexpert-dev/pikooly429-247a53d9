@@ -10,37 +10,39 @@
 
 @layer base {
   :root {
-    --background: 36 30% 98.5%;
-    --foreground: 150 18% 11%;
+    /* Apple.com inspired palette: pure white, near-black, Apple blue */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 7%;
 
     --card: 0 0% 100%;
-    --card-foreground: 150 18% 11%;
+    --card-foreground: 0 0% 7%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 150 18% 11%;
+    --popover-foreground: 0 0% 7%;
 
-    --primary: 152 38% 28%;
-    --primary-foreground: 36 30% 98%;
-    --primary-deep: 152 42% 20%;
-    --primary-glow: 152 32% 42%;
+    /* Apple blue #0071e3 */
+    --primary: 211 100% 45%;
+    --primary-foreground: 0 0% 100%;
+    --primary-deep: 211 100% 38%;
+    --primary-glow: 211 100% 55%;
 
-    --secondary: 36 22% 95%;
-    --secondary-foreground: 150 18% 14%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 7%;
 
-    --muted: 36 18% 95%;
-    --muted-foreground: 150 8% 42%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 38 58% 48%;
-    --accent-foreground: 36 30% 98%;
+    --accent: 211 100% 45%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 65% 48%;
+    --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 36 18% 90%;
-    --input: 36 18% 88%;
-    --ring: 152 38% 28%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 211 100% 45%;
 
-    --radius: 0.875rem;
+    --radius: 1.25rem;
 
     --olive: 152 38% 28%;
     --olive-light: 152 22% 94%;
