@@ -591,19 +591,21 @@ const ProductDetail = () => {
           <div className="grid grid-cols-2 gap-2.5 sm:gap-3 mb-2.5 sm:mb-3">
             <button
               onClick={handleAddToCart}
-              className="group relative h-12 sm:h-[54px] rounded-full bg-white border-2 border-primary/80 text-primary text-[12px] sm:text-[13px] font-bold tracking-[0.16em] uppercase flex items-center justify-center gap-2 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-[0_8px_20px_-6px_hsl(var(--primary)/0.45)] active:scale-[0.97] transition-all duration-300 ease-luxe overflow-hidden"
+              className="group relative h-12 sm:h-[54px] rounded-full bg-white border-2 border-primary/80 text-primary text-[11px] sm:text-[12px] font-bold tracking-[0.14em] uppercase flex items-center justify-center gap-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-[0_8px_20px_-6px_hsl(var(--primary)/0.45)] active:scale-[0.97] transition-all duration-300 ease-luxe overflow-hidden"
             >
-              <ShoppingBag size={16} strokeWidth={2.2} className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:rotate-[-6deg]" />
+              <ShoppingBag size={15} strokeWidth={2.2} className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:rotate-[-6deg]" />
               <span>Add to Cart</span>
+              <span className="font-bold tabular-nums normal-case tracking-normal">| {formatPrice(effectivePrice * qty)}</span>
             </button>
             <button
               onClick={handleBuyNow}
-              className="group relative h-12 sm:h-[54px] rounded-full text-primary-foreground text-[12px] sm:text-[13px] font-bold tracking-[0.16em] uppercase flex items-center justify-center gap-2 shadow-[0_8px_20px_-6px_hsl(var(--primary)/0.5)] hover:shadow-[0_12px_28px_-6px_hsl(var(--primary)/0.65)] active:scale-[0.97] transition-all duration-300 ease-luxe overflow-hidden"
+              className="btn-metal-shine group relative h-12 sm:h-[54px] rounded-full text-primary-foreground text-[11px] sm:text-[12px] font-bold tracking-[0.14em] uppercase flex items-center justify-center gap-1.5 shadow-[0_8px_20px_-6px_hsl(var(--primary)/0.5)] hover:shadow-[0_12px_28px_-6px_hsl(var(--primary)/0.65)] active:scale-[0.97] transition-all duration-300 ease-luxe overflow-hidden"
               style={{ background: "var(--gradient-luxe)" }}
             >
-              <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-[900ms] ease-luxe bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-              <Zap size={15} strokeWidth={2.4} className="fill-current" />
+              <span aria-hidden className="metal-sheen pointer-events-none absolute inset-0" />
+              <Zap size={14} strokeWidth={2.4} className="fill-current relative" />
               <span className="relative">Buy Now</span>
+              <span className="relative font-bold tabular-nums normal-case tracking-normal">| {formatPrice(effectivePrice * qty)}</span>
             </button>
           </div>
 
