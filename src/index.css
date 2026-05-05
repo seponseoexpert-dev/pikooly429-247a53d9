@@ -180,11 +180,18 @@
     letter-spacing: -0.01em;
   }
 
-  h1, h2, h3, h4 {
-    font-family: 'Lora', serif;
-    letter-spacing: -0.025em;
-    font-feature-settings: "ss01", "liga", "kern";
+  h1, h2, h3, h4, h5, h6 {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    letter-spacing: -0.022em;
+    font-weight: 600;
+    font-feature-settings: "kern", "liga";
+    text-rendering: optimizeLegibility;
   }
+  h1 { font-size: clamp(1.875rem, 3.2vw + 0.75rem, 3rem); line-height: 1.1; }
+  h2 { font-size: clamp(1.5rem, 2.2vw + 0.6rem, 2.25rem); line-height: 1.15; }
+  h3 { font-size: clamp(1.25rem, 1.4vw + 0.6rem, 1.75rem); line-height: 1.2; }
+  h4 { font-size: clamp(1.125rem, 1vw + 0.55rem, 1.375rem); line-height: 1.25; }
+  p { font-size: clamp(0.9375rem, 0.3vw + 0.875rem, 1.0625rem); line-height: 1.55; }
 
   ::selection {
     background: hsl(var(--primary) / 0.18);
