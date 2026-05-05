@@ -68,6 +68,13 @@ const deliveryTimeSlots = [
 
 const PREFERRED_DELIVERY_DISTRICT_KEY = "preferred_delivery_district";
 
+interface CheckoutDistrict extends DistrictFees {
+  name: string;
+  postal_code?: string | null;
+  same_day_label?: string | null;
+  next_day_label?: string | null;
+}
+
 const Checkout = () => {
   const { items, totalPrice, clearCart, updateQuantity, removeItem } = useCart();
   const navigate = useNavigate();
@@ -365,7 +372,7 @@ const Checkout = () => {
     enabled: items.length > 0,
   });
 
-  const activeDistrict = districts.find((d: DistrictFees) => d.id === selectedDistrict) as DistrictFees | undefined;
+  const activeDistrict = districts.find((d: CheckoutDistrict) => d.id === selectedDistrict) as CheckoutDistrict | undefined;
 
   // Helper: pick fee field based on delivery type
   const pickFee = (row: DistrictFees | null, type: "same_day" | "next_day") => {
