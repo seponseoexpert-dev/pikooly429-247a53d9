@@ -103,7 +103,8 @@ const Index = () => {
                 src={settings.homepage_banner_image || sameDayDeliveryBanner}
                 alt="Same Day Delivery within 2 hours"
                 className="w-full h-auto rounded-xl sm:rounded-2xl object-cover"
-                loading="eager"
+                loading="lazy"
+                decoding="async"
               />
             </a>
           ) : (
@@ -111,7 +112,8 @@ const Index = () => {
               src={settings.homepage_banner_image || sameDayDeliveryBanner}
               alt="Same Day Delivery within 2 hours"
               className="w-full h-auto rounded-xl sm:rounded-2xl object-cover"
-              loading="eager"
+              loading="lazy"
+              decoding="async"
             />
           )}
         </section>
