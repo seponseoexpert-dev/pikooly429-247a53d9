@@ -365,7 +365,10 @@ const AdminBouquet = () => {
           ))}
 
           <TabsContent value="seo">
-            <BouquetSEOEditor />
+            <div className="space-y-8">
+              <BouquetSEOEditor />
+              <PageContentEditor prefix="bouquet" title="Custom Bouquet" />
+            </div>
           </TabsContent>
         </Tabs>
       </div>
