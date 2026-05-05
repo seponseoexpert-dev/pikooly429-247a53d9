@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 import { toast } from "sonner";
-import { FileText, Image, MessageSquare, Save, PlusCircle, Trash2 } from "lucide-react";
+import { FileText, Search, MessageSquare, Save, PlusCircle, Trash2 } from "lucide-react";
 
 interface PageContentEditorProps {
   prefix: string;
