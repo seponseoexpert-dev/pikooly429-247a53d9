@@ -9,7 +9,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Pencil, Trash2, Flower2, Package, Ruler, FileText, Palette } from "lucide-react";
-import BouquetSEOEditor from "@/components/admin/BouquetSEOEditor";
 import PageContentEditor from "@/components/admin/PageContentEditor";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { useState } from "react";
@@ -365,10 +364,7 @@ const AdminBouquet = () => {
           ))}
 
           <TabsContent value="seo">
-            <div className="space-y-8">
-              <BouquetSEOEditor />
-              <PageContentEditor prefix="bouquet" title="Custom Bouquet" />
-            </div>
+            <PageContentEditor prefix="bouquet" title="Custom Bouquet" />
           </TabsContent>
         </Tabs>
       </div>
