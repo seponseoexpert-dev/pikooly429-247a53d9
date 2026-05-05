@@ -34,7 +34,7 @@ const defaultForm: FormData = { name: "", image_url: "", price: 0, hex_code: "#e
 
 const AdminBouquet = () => {
   const qc = useQueryClient();
-  const [tab, setTab] = useState<ItemType>("flowers");
+  const [tab, setTab] = useState<ItemType | "seo">("flowers");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState<FormData>(defaultForm);
