@@ -19,7 +19,7 @@ import { useMultiCurrency } from "@/contexts/CurrencyContext";
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addItem } = useCart();
+  const { addItem, clearCart } = useCart();
   const { settings } = useSiteSettings();
   const { formatPrice } = useMultiCurrency();
   const [qty, setQty] = useState(1);
@@ -303,6 +303,8 @@ const ProductDetail = () => {
   const handleBuyNow = () => {
     if (!validateVariants()) return;
     const variant = buildVariantPayload();
+    // Quick checkout: replace cart with just this product at the selected qty
+    clearCart();
     for (let i = 0; i < qty; i++) addItem(cartProduct, customImages.length ? customImages : undefined, true, variant);
     navigate("/checkout");
   };
@@ -595,7 +597,6 @@ const ProductDetail = () => {
             >
               <ShoppingBag size={15} strokeWidth={2.2} className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:rotate-[-6deg]" />
               <span>Add to Cart</span>
-              <span className="font-bold tabular-nums normal-case tracking-normal">| {formatPrice(effectivePrice * qty)}</span>
             </button>
             <button
               onClick={handleBuyNow}
