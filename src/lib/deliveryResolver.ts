@@ -20,9 +20,46 @@ export interface ProductDeliveryConfig {
 }
 
 export interface DistrictFees {
+  id?: string | null;
   same_day_fee?: number | null;
   next_day_fee?: number | null;
   delivery_fee: number; // standard
+}
+
+export interface CategoryDeliveryFee {
+  district_id?: string | null;
+  category_id?: string | null;
+  same_day_fee?: number | null;
+  next_day_fee?: number | null;
+}
+
+const maxNumberOrNull = (values: Array<number | null | undefined>) => {
+  const numbers = values
+    .filter((value) => value !== null && value !== undefined)
+    .map(Number)
+    .filter((value) => !Number.isNaN(value));
+  return numbers.length > 0 ? Math.max(...numbers) : null;
+};
+
+export function resolveEffectiveDeliveryFees(
+  district: DistrictFees,
+  categoryFees: CategoryDeliveryFee[] = [],
+  categoryIds: string[] = []
+): DistrictFees {
+  const categorySet = new Set(categoryIds.filter(Boolean));
+  const matchingFees = categoryFees.filter(
+    (fee) =>
+      fee.district_id === district.id &&
+      !!fee.category_id &&
+      categorySet.has(fee.category_id)
+  );
+
+  return {
+    ...district,
+    delivery_fee: Number(district.delivery_fee ?? 0),
+    same_day_fee: maxNumberOrNull(matchingFees.map((fee) => fee.same_day_fee)) ?? district.same_day_fee,
+    next_day_fee: maxNumberOrNull(matchingFees.map((fee) => fee.next_day_fee)) ?? district.next_day_fee,
+  };
 }
 
 /**
