@@ -531,9 +531,12 @@ const ProductDetail = () => {
             </div>
           )}
 
-          {(product.short_description || product.description) && (
-            <div className="text-sm text-muted-foreground mb-5 leading-relaxed prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: product.short_description || product.description || "" }} />
-          )}
+          {(() => {
+            const sd = (product.short_description || "").replace(/<[^>]*>/g, "").trim();
+            return sd ? (
+              <div className="text-sm text-muted-foreground mb-5 leading-relaxed prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: product.short_description || "" }} />
+            ) : null;
+          })()}
 
           {allowCustomImage && (
             <div className="mb-5 p-4 rounded-xl border border-border/50 bg-muted/20">
