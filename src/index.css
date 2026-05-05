@@ -362,7 +362,7 @@
 
   .luxe-panel-header {
     @apply flex items-center gap-2.5 text-base sm:text-lg font-semibold;
-    font-family: 'Lora', serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
     letter-spacing: -0.01em;
     color: hsl(var(--foreground));
     min-width: 0;
