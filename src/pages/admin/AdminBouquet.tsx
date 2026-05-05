@@ -41,6 +41,7 @@ const AdminBouquet = () => {
 
   const tableName = `bouquet_${tab}` as "bouquet_flowers" | "bouquet_materials" | "bouquet_sizes" | "bouquet_colors";
 
+  const isItemTab = (["flowers", "materials", "sizes", "colors"] as string[]).includes(tab);
   const { data: items = [], isLoading } = useQuery({
     queryKey: ["bouquet", tab],
     queryFn: async () => {
@@ -48,6 +49,7 @@ const AdminBouquet = () => {
       if (error) throw error;
       return data;
     },
+    enabled: isItemTab,
   });
 
   const { data: districts = [] } = useQuery({
