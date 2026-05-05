@@ -18,60 +18,75 @@ import WordPressRedirects from "@/components/layout/WordPressRedirects";
 import PageTransition from "@/components/layout/PageTransition";
 import { lazy, Suspense, useEffect } from "react";
 
+// Retry dynamic imports to recover from transient chunk fetch failures
+// (e.g. after a deploy or HMR update where old chunk URLs become stale).
+const lazyRetry = <T extends { default: any }>(factory: () => Promise<T>, retries = 2, delay = 400): Promise<T> =>
+  factory().catch((err) => {
+    if (retries <= 0) {
+      // Hard reload as last resort to pick up new chunk hashes
+      if (typeof window !== "undefined" && !(window as any).__chunkReloaded) {
+        (window as any).__chunkReloaded = true;
+        window.location.reload();
+      }
+      throw err;
+    }
+    return new Promise((resolve) => setTimeout(resolve, delay)).then(() => lazyRetry(factory, retries - 1, delay * 2));
+  });
+
 // Lazy-load non-critical layout components
-const Footer = lazy(() => import("@/components/layout/Footer"));
-const BottomNav = lazy(() => import("@/components/layout/BottomNav"));
-const WhatsAppButton = lazy(() => import("@/components/layout/WhatsAppButton"));
+const Footer = lazy(() => lazyRetry(() => import("@/components/layout/Footer")));
+const BottomNav = lazy(() => lazyRetry(() => import("@/components/layout/BottomNav")));
+const WhatsAppButton = lazy(() => lazyRetry(() => import("@/components/layout/WhatsAppButton")));
 
 // Eager-load homepage
 import Index from "./pages/Index";
 
 // Lazy-load all other pages
-const Shop = lazy(() => import("./pages/Shop"));
-const ProductDetail = lazy(() => import("./pages/ProductDetail"));
-const Blog = lazy(() => import("./pages/Blog"));
-const BlogDetail = lazy(() => import("./pages/BlogDetail"));
-const AllGifts = lazy(() => import("./pages/AllGifts"));
-const Checkout = lazy(() => import("./pages/Checkout"));
-const OrderSuccess = lazy(() => import("./pages/OrderSuccess"));
-const TrackOrder = lazy(() => import("./pages/TrackOrder"));
-const NotFound = lazy(() => import("./pages/NotFound"));
-const Auth = lazy(() => import("./pages/Auth"));
-const Account = lazy(() => import("./pages/Account"));
-const ResetPassword = lazy(() => import("./pages/ResetPassword"));
-const AdminLogin = lazy(() => import("./pages/AdminLogin"));
-const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
-const EpsCallback = lazy(() => import("./pages/EpsCallback"));
-const AboutUs = lazy(() => import("./pages/AboutUs"));
-const ContactUs = lazy(() => import("./pages/ContactUs"));
-const Reviews = lazy(() => import("./pages/Reviews"));
-const AdminProducts = lazy(() => import("./pages/admin/AdminProducts"));
-const AdminCategories = lazy(() => import("./pages/admin/AdminCategories"));
-const AdminOrders = lazy(() => import("./pages/admin/AdminOrders"));
-const AdminCustomers = lazy(() => import("./pages/admin/AdminCustomers"));
-const AdminBlog = lazy(() => import("./pages/admin/AdminBlog"));
-const AdminReviews = lazy(() => import("./pages/admin/AdminReviews"));
-const AdminCoupons = lazy(() => import("./pages/admin/AdminCoupons"));
-const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
-const AdminShipping = lazy(() => import("./pages/admin/AdminShipping"));
-const AdminCurrencies = lazy(() => import("./pages/admin/AdminCurrencies"));
-const AdminSubscribers = lazy(() => import("./pages/admin/AdminSubscribers"));
-const AdminMigrate = lazy(() => import("./pages/admin/AdminMigrate"));
-const AdminHomepageContent = lazy(() => import("./pages/admin/AdminHomepageContent"));
-const AdminBouquet = lazy(() => import("./pages/admin/AdminBouquet"));
-const BouquetBuilder = lazy(() => import("./pages/BouquetBuilder"));
-const Install = lazy(() => import("./pages/Install"));
-const Events = lazy(() => import("./pages/Events"));
-const EventCategoryDetail = lazy(() => import("./pages/EventCategoryDetail"));
-const AdminEvents = lazy(() => import("./pages/admin/AdminEvents"));
-const Photography = lazy(() => import("./pages/Photography"));
-const AdminPhotography = lazy(() => import("./pages/admin/AdminPhotography"));
-const AdminPopularGifting = lazy(() => import("./pages/admin/AdminPopularGifting"));
-const AdminHomeLiving = lazy(() => import("./pages/admin/AdminHomeLiving"));
-const AdminAccount = lazy(() => import("./pages/admin/AdminAccount"));
-const AdminSecurity = lazy(() => import("./pages/admin/AdminSecurity"));
-const AdminActivityLog = lazy(() => import("./pages/admin/AdminActivityLog"));
-const SearchPage = lazy(() => import("./pages/Search"));
+const Shop = lazy(() => lazyRetry(() => import("./pages/Shop")));
+const ProductDetail = lazy(() => lazyRetry(() => import("./pages/ProductDetail")));
+const Blog = lazy(() => lazyRetry(() => import("./pages/Blog")));
+const BlogDetail = lazy(() => lazyRetry(() => import("./pages/BlogDetail")));
+const AllGifts = lazy(() => lazyRetry(() => import("./pages/AllGifts")));
+const Checkout = lazy(() => lazyRetry(() => import("./pages/Checkout")));
+const OrderSuccess = lazy(() => lazyRetry(() => import("./pages/OrderSuccess")));
+const TrackOrder = lazy(() => lazyRetry(() => import("./pages/TrackOrder")));
+const NotFound = lazy(() => lazyRetry(() => import("./pages/NotFound")));
+const Auth = lazy(() => lazyRetry(() => import("./pages/Auth")));
+const Account = lazy(() => lazyRetry(() => import("./pages/Account")));
+const ResetPassword = lazy(() => lazyRetry(() => import("./pages/ResetPassword")));
+const AdminLogin = lazy(() => lazyRetry(() => import("./pages/AdminLogin")));
+const AdminDashboard = lazy(() => lazyRetry(() => import("./pages/AdminDashboard")));
+const EpsCallback = lazy(() => lazyRetry(() => import("./pages/EpsCallback")));
+const AboutUs = lazy(() => lazyRetry(() => import("./pages/AboutUs")));
+const ContactUs = lazy(() => lazyRetry(() => import("./pages/ContactUs")));
+const Reviews = lazy(() => lazyRetry(() => import("./pages/Reviews")));
+const AdminProducts = lazy(() => lazyRetry(() => import("./pages/admin/AdminProducts")));
+const AdminCategories = lazy(() => lazyRetry(() => import("./pages/admin/AdminCategories")));
+const AdminOrders = lazy(() => lazyRetry(() => import("./pages/admin/AdminOrders")));
+const AdminCustomers = lazy(() => lazyRetry(() => import("./pages/admin/AdminCustomers")));
+const AdminBlog = lazy(() => lazyRetry(() => import("./pages/admin/AdminBlog")));
+const AdminReviews = lazy(() => lazyRetry(() => import("./pages/admin/AdminReviews")));
+const AdminCoupons = lazy(() => lazyRetry(() => import("./pages/admin/AdminCoupons")));
+const AdminSettings = lazy(() => lazyRetry(() => import("./pages/admin/AdminSettings")));
+const AdminShipping = lazy(() => lazyRetry(() => import("./pages/admin/AdminShipping")));
+const AdminCurrencies = lazy(() => lazyRetry(() => import("./pages/admin/AdminCurrencies")));
+const AdminSubscribers = lazy(() => lazyRetry(() => import("./pages/admin/AdminSubscribers")));
+const AdminMigrate = lazy(() => lazyRetry(() => import("./pages/admin/AdminMigrate")));
+const AdminHomepageContent = lazy(() => lazyRetry(() => import("./pages/admin/AdminHomepageContent")));
+const AdminBouquet = lazy(() => lazyRetry(() => import("./pages/admin/AdminBouquet")));
+const BouquetBuilder = lazy(() => lazyRetry(() => import("./pages/BouquetBuilder")));
+const Install = lazy(() => lazyRetry(() => import("./pages/Install")));
+const Events = lazy(() => lazyRetry(() => import("./pages/Events")));
+const EventCategoryDetail = lazy(() => lazyRetry(() => import("./pages/EventCategoryDetail")));
+const AdminEvents = lazy(() => lazyRetry(() => import("./pages/admin/AdminEvents")));
+const Photography = lazy(() => lazyRetry(() => import("./pages/Photography")));
+const AdminPhotography = lazy(() => lazyRetry(() => import("./pages/admin/AdminPhotography")));
+const AdminPopularGifting = lazy(() => lazyRetry(() => import("./pages/admin/AdminPopularGifting")));
+const AdminHomeLiving = lazy(() => lazyRetry(() => import("./pages/admin/AdminHomeLiving")));
+const AdminAccount = lazy(() => lazyRetry(() => import("./pages/admin/AdminAccount")));
+const AdminSecurity = lazy(() => lazyRetry(() => import("./pages/admin/AdminSecurity")));
+const AdminActivityLog = lazy(() => lazyRetry(() => import("./pages/admin/AdminActivityLog")));
+const SearchPage = lazy(() => lazyRetry(() => import("./pages/Search")));
 
 const queryClient = new QueryClient({
   defaultOptions: {
