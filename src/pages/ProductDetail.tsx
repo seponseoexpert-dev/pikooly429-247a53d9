@@ -270,6 +270,7 @@ const ProductDetail = () => {
     originalPrice: product.original_price ?? undefined,
     image: mainImg,
     category: product.categories?.slug || "",
+    categoryId: (product as any).category_id || null,
     inStock: product.stock > 0,
   };
 
