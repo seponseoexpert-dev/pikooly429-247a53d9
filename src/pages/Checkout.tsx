@@ -367,27 +367,33 @@ const Checkout = () => {
     return Number(row.next_day_fee ?? 0);
   };
 
-  // Use district base fee only (matches DeliveryChecker on product page).
+  const effectiveDistrictFees = useMemo(() => {
+    if (!activeDistrict) return null;
+    const categoryIds = productCategories.map((row: any) => row.category_id).filter(Boolean);
+    return resolveEffectiveDeliveryFees(activeDistrict, categoryFees as any[], categoryIds);
+  }, [activeDistrict, categoryFees, productCategories]);
+
+  // Use the same category-aware fee resolver as Gift Receiver's Location.
   const computeFee = (type: "same_day" | "next_day") => {
-    if (!activeDistrict) return 0;
-    return pickFee(activeDistrict, type);
+    if (!effectiveDistrictFees) return 0;
+    return pickFee(effectiveDistrictFees, type);
   };
 
-  const sameDayFee = useMemo(() => computeFee("same_day"), [activeDistrict, selectedDistrict, categoryFees, productCategories]);
-  const nextDayFee = useMemo(() => computeFee("next_day"), [activeDistrict, selectedDistrict, categoryFees, productCategories]);
+  const sameDayFee = useMemo(() => computeFee("same_day"), [effectiveDistrictFees]);
+  const nextDayFee = useMemo(() => computeFee("next_day"), [effectiveDistrictFees]);
 
   // Availability: an option is available when admin explicitly configured it.
   // A fee of 0 means free delivery, not unavailable.
   const sameDayAvailable = useMemo(() => {
     if (!activeDistrict) return false;
-    const raw = activeDistrict.same_day_fee;
+    const raw = effectiveDistrictFees?.same_day_fee;
     return raw !== null && raw !== undefined;
-  }, [activeDistrict]);
+  }, [activeDistrict, effectiveDistrictFees]);
   const nextDayAvailable = useMemo(() => {
     if (!activeDistrict) return false;
-    const raw = activeDistrict.next_day_fee;
+    const raw = effectiveDistrictFees?.next_day_fee;
     return raw !== null && raw !== undefined;
-  }, [activeDistrict]);
+  }, [activeDistrict, effectiveDistrictFees]);
 
   // Auto-select the only available option when district changes
   useEffect(() => {
