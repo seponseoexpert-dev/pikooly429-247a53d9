@@ -18,6 +18,21 @@ import WordPressRedirects from "@/components/layout/WordPressRedirects";
 import PageTransition from "@/components/layout/PageTransition";
 import { lazy, Suspense, useEffect } from "react";
 
+// Retry dynamic imports to recover from transient chunk fetch failures
+// (e.g. after a deploy or HMR update where old chunk URLs become stale).
+const lazyRetry = <T extends { default: any }>(factory: () => Promise<T>, retries = 2, delay = 400): Promise<T> =>
+  factory().catch((err) => {
+    if (retries <= 0) {
+      // Hard reload as last resort to pick up new chunk hashes
+      if (typeof window !== "undefined" && !(window as any).__chunkReloaded) {
+        (window as any).__chunkReloaded = true;
+        window.location.reload();
+      }
+      throw err;
+    }
+    return new Promise((resolve) => setTimeout(resolve, delay)).then(() => lazyRetry(factory, retries - 1, delay * 2));
+  });
+
 // Lazy-load non-critical layout components
 const Footer = lazy(() => import("@/components/layout/Footer"));
 const BottomNav = lazy(() => import("@/components/layout/BottomNav"));
