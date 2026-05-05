@@ -625,3 +625,32 @@
     font-size: 16px !important;
   }
 }
+
+/* Metal shine animation for Buy Now button */
+.btn-metal-shine .metal-sheen {
+  background: linear-gradient(
+    115deg,
+    transparent 0%,
+    transparent 30%,
+    hsl(0 0% 100% / 0.15) 42%,
+    hsl(0 0% 100% / 0.55) 50%,
+    hsl(0 0% 100% / 0.15) 58%,
+    transparent 70%,
+    transparent 100%
+  );
+  background-size: 250% 100%;
+  background-repeat: no-repeat;
+  background-position: 200% 0;
+  animation: metal-shine 2.8s ease-in-out infinite;
+  mix-blend-mode: overlay;
+}
+
+@keyframes metal-shine {
+  0% { background-position: 200% 0; }
+  55% { background-position: -100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-metal-shine .metal-sheen { animation: none; }
+}
