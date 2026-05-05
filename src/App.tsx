@@ -157,6 +157,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <ScrollToTop />
+            <RoutePrefetcher />
             <WordPressRedirects />
             <Routes>
               {/* Public routes */}
