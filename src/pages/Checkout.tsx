@@ -22,7 +22,7 @@ import { shouldSendMail, shouldSendSms, shouldSendPush, shouldSendAdminMail, sen
 import { SameDayAnimation, NextDayAnimation } from "@/components/checkout/DeliveryAnimations";
 import SEOHead from "@/components/seo/SEOHead";
 import { AddressAutocomplete } from "@/components/checkout/AddressAutocomplete";
-import { resolveEffectiveDeliveryFees } from "@/lib/deliveryResolver";
+import { resolveEffectiveDeliveryFees, type CategoryDeliveryFee, type DistrictFees } from "@/lib/deliveryResolver";
 
 const countryPhoneCodes: Record<string, string> = {
   "Afghanistan": "+93", "Albania": "+355", "Algeria": "+213", "Andorra": "+376", "Angola": "+244",
@@ -365,10 +365,10 @@ const Checkout = () => {
     enabled: items.length > 0,
   });
 
-  const activeDistrict: any = districts.find((d: any) => d.id === selectedDistrict);
+  const activeDistrict = districts.find((d: DistrictFees) => d.id === selectedDistrict) as DistrictFees | undefined;
 
   // Helper: pick fee field based on delivery type
-  const pickFee = (row: any, type: "same_day" | "next_day") => {
+  const pickFee = (row: DistrictFees | null, type: "same_day" | "next_day") => {
     if (!row) return 0;
     if (type === "same_day") return Number(row.same_day_fee ?? row.delivery_fee ?? 0);
     return Number(row.next_day_fee ?? 0);
@@ -376,18 +376,12 @@ const Checkout = () => {
 
   const effectiveDistrictFees = useMemo(() => {
     if (!activeDistrict) return null;
-    const categoryIds = productCategories.map((row: any) => row.category_id).filter(Boolean);
-    return resolveEffectiveDeliveryFees(activeDistrict, categoryFees as any[], categoryIds);
+    const categoryIds = productCategories.map((row: { category_id: string }) => row.category_id).filter(Boolean);
+    return resolveEffectiveDeliveryFees(activeDistrict, categoryFees as CategoryDeliveryFee[], categoryIds);
   }, [activeDistrict, categoryFees, productCategories]);
 
-  // Use the same category-aware fee resolver as Gift Receiver's Location.
-  const computeFee = (type: "same_day" | "next_day") => {
-    if (!effectiveDistrictFees) return 0;
-    return pickFee(effectiveDistrictFees, type);
-  };
-
-  const sameDayFee = useMemo(() => computeFee("same_day"), [effectiveDistrictFees]);
-  const nextDayFee = useMemo(() => computeFee("next_day"), [effectiveDistrictFees]);
+  const sameDayFee = useMemo(() => pickFee(effectiveDistrictFees, "same_day"), [effectiveDistrictFees]);
+  const nextDayFee = useMemo(() => pickFee(effectiveDistrictFees, "next_day"), [effectiveDistrictFees]);
 
   // Availability: an option is available when admin explicitly configured it.
   // A fee of 0 means free delivery, not unavailable.
