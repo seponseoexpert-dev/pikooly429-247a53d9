@@ -64,23 +64,22 @@ const DeliveryChecker = ({ product, productId, categoryId }: Props) => {
       });
   }, []);
 
-  // Load product's category ids (junction table + fallback) and category-specific fees
+  // Category delivery fees are tied to the product's primary category only.
+  // Extra browsing/category links must not change the delivery charge.
   useEffect(() => {
-    if (!productId) {
+    if (categoryId || !productId) {
       setProductCategoryIds(categoryId ? [categoryId] : []);
       return;
     }
     let active = true;
     (async () => {
-      const { data: pcData } = await supabase
-        .from("product_categories")
+      const { data } = await supabase
+        .from("products")
         .select("category_id")
-        .eq("product_id", productId);
+        .eq("id", productId)
+        .maybeSingle();
       if (!active) return;
-      const ids = new Set<string>();
-      (pcData || []).forEach((r) => r.category_id && ids.add(r.category_id));
-      if (categoryId) ids.add(categoryId);
-      setProductCategoryIds(Array.from(ids));
+      setProductCategoryIds(data?.category_id ? [data.category_id] : []);
     })();
     return () => { active = false; };
   }, [productId, categoryId]);
