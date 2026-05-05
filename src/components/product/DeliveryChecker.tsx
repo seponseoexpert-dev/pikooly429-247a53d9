@@ -112,23 +112,11 @@ const DeliveryChecker = ({ product, productId, categoryId }: Props) => {
       window.dispatchEvent(new Event("delivery-district-changed"));
     }
 
-    // Apply category-specific fee overrides — highest fee wins (matches Checkout logic)
-    const baseStd = Number(district.delivery_fee ?? 0);
-    const baseSame = district.same_day_fee != null ? Number(district.same_day_fee) : baseStd;
-    const baseNext = district.next_day_fee != null ? Number(district.next_day_fee) : baseStd;
-
-    const matching = (categoryFees || []).filter(
-      (f: any) => f.district_id === district.id && productCategoryIds.includes(f.category_id)
-    );
-
-    const stdFees = matching.map((f: any) => Number(f.delivery_fee ?? 0));
-    const sameFees = matching.map((f: any) => Number(f.same_day_fee ?? f.delivery_fee ?? 0));
-    const nextFees = matching.map((f: any) => Number(f.next_day_fee ?? f.delivery_fee ?? 0));
-
+    // Use district base fee only (category overrides ignored)
     const effectiveFees = {
-      delivery_fee: Math.max(baseStd, ...stdFees),
-      same_day_fee: Math.max(baseSame, ...sameFees),
-      next_day_fee: Math.max(baseNext, ...nextFees),
+      delivery_fee: Number(district.delivery_fee ?? 0),
+      same_day_fee: district.same_day_fee,
+      next_day_fee: district.next_day_fee,
     };
 
     const r = resolveDelivery(product, selected, effectiveFees);

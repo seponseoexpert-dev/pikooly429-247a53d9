@@ -343,25 +343,10 @@ const Checkout = () => {
     return Number(row.next_day_fee ?? 0);
   };
 
-  // Calculate fee for a given option — apply category-specific overrides if any.
-  // Rule: highest fee among matching category overrides wins; falls back to district base fee.
+  // Use district base fee only (matches DeliveryChecker on product page).
   const computeFee = (type: "same_day" | "next_day") => {
     if (!activeDistrict) return 0;
-    const baseFee = pickFee(activeDistrict, type);
-    const cartCatIds = (productCategories as any[]).map((pc) => pc.category_id);
-    if (cartCatIds.length === 0) return baseFee;
-    const overrides = (categoryFees as any[]).filter(
-      (cf) => cf.district_id === activeDistrict.id && cartCatIds.includes(cf.category_id)
-    );
-    if (overrides.length === 0) return baseFee;
-    const fees = overrides
-      .map((cf) => {
-        const raw = type === "same_day" ? cf.same_day_fee : cf.next_day_fee;
-        return raw === null || raw === undefined ? null : Number(raw);
-      })
-      .filter((v): v is number => v !== null);
-    if (fees.length === 0) return baseFee;
-    return Math.max(baseFee, ...fees);
+    return pickFee(activeDistrict, type);
   };
 
   const sameDayFee = useMemo(() => computeFee("same_day"), [activeDistrict, selectedDistrict, categoryFees, productCategories]);
