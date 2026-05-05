@@ -167,35 +167,72 @@ const PageContentEditor = ({ prefix, title }: PageContentEditorProps) => {
         />
       </div>
 
-      {/* Motto */}
-      <div>
-        <Label className="text-sm">Motto / Tagline</Label>
-        <Input
-          value={form[`${prefix}_page_motto`] || ""}
-          onChange={e => updateField(`${prefix}_page_motto`, e.target.value)}
-          placeholder="Making every moment unforgettable"
-        />
-      </div>
-
       <Separator />
 
-      {/* 3 Images */}
-      <div>
+      {/* SEO Settings */}
+      <div className="space-y-4">
         <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1">
-          <Image className="w-3 h-3" /> Gallery Images (3 images grid)
+          <Search className="w-3 h-3" /> SEO Settings
         </Label>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-2">
-          {[1, 2, 3].map(i => (
-            <div key={i}>
-              <Label className="text-xs text-muted-foreground">Image {i}</Label>
-              <CloudinaryUpload
-                value={form[`${prefix}_page_image_${i}`] || ""}
-                onChange={url => updateField(`${prefix}_page_image_${i}`, url)}
-                folder="page-content"
-                label={`Upload Image ${i}`}
-              />
-            </div>
-          ))}
+
+        {/* Google Preview */}
+        <div className="bg-muted/30 rounded-lg p-4 border border-border space-y-1">
+          <p className="text-xs text-muted-foreground mb-2">Google Search Preview</p>
+          <p className="text-[#1a0dab] text-lg leading-snug truncate">
+            {form[`${prefix}_page_seo_title`] || form[`${prefix}_page_title`] || `${title}`}
+          </p>
+          <p className="text-[#006621] text-sm truncate">
+            yoursite.com/{form[`${prefix}_page_seo_slug`] || prefix}
+          </p>
+          <p className="text-sm text-[#545454] line-clamp-2">
+            {form[`${prefix}_page_seo_description`] || "Meta description will appear here..."}
+          </p>
+        </div>
+
+        <div>
+          <div className="flex justify-between items-center">
+            <Label className="text-sm">SEO Title</Label>
+            <span className={`text-xs ${(form[`${prefix}_page_seo_title`]?.length || 0) > 60 ? "text-destructive" : "text-muted-foreground"}`}>
+              {form[`${prefix}_page_seo_title`]?.length || 0}/60
+            </span>
+          </div>
+          <Input
+            value={form[`${prefix}_page_seo_title`] || ""}
+            onChange={e => updateField(`${prefix}_page_seo_title`, e.target.value)}
+            placeholder="Custom SEO title..."
+            maxLength={60}
+          />
+        </div>
+
+        <div>
+          <div className="flex justify-between items-center">
+            <Label className="text-sm">Permalink (Slug)</Label>
+            <span className={`text-xs ${(form[`${prefix}_page_seo_slug`]?.length || 0) > 75 ? "text-destructive" : "text-muted-foreground"}`}>
+              {form[`${prefix}_page_seo_slug`]?.length || 0}/75
+            </span>
+          </div>
+          <Input
+            value={form[`${prefix}_page_seo_slug`] || ""}
+            onChange={e => updateField(`${prefix}_page_seo_slug`, e.target.value.toLowerCase().replace(/[^a-z0-9-/]/g, "-"))}
+            placeholder={prefix}
+            maxLength={75}
+          />
+        </div>
+
+        <div>
+          <div className="flex justify-between items-center">
+            <Label className="text-sm">Meta Description</Label>
+            <span className={`text-xs ${(form[`${prefix}_page_seo_description`]?.length || 0) > 160 ? "text-destructive" : "text-muted-foreground"}`}>
+              {form[`${prefix}_page_seo_description`]?.length || 0}/160
+            </span>
+          </div>
+          <Textarea
+            value={form[`${prefix}_page_seo_description`] || ""}
+            onChange={e => updateField(`${prefix}_page_seo_description`, e.target.value)}
+            placeholder="Custom meta description..."
+            rows={3}
+            maxLength={160}
+          />
         </div>
       </div>
 
