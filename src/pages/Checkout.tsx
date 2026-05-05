@@ -332,7 +332,17 @@ const Checkout = () => {
     queryKey: ["checkout-product-categories", items.map((i) => i.product.id).join(",")],
     queryFn: async () => {
       if (items.length === 0) return [];
-      const productIds = items.map((i) => i.product.id);
+      const cartCategoryIds = new Set<string>();
+      items.forEach((item) => {
+        const categoryId = (item.product as any).categoryId || (item.product as any).category_id;
+        if (categoryId) cartCategoryIds.add(categoryId);
+      });
+      const productIds = items
+        .map((i) => i.product.id)
+        .filter((productId) => !productId.startsWith("bouquet-"));
+      if (productIds.length === 0) {
+        return Array.from(cartCategoryIds).map((cid) => ({ category_id: cid }));
+      }
       // Get from product_categories junction table
       const { data: pcData, error: pcError } = await supabase
         .from("product_categories")
@@ -347,10 +357,7 @@ const Checkout = () => {
       if (pError) throw pError;
       // Combine database categories and cart payload categories into unique category_ids
       const catIds = new Set<string>();
-      items.forEach((item) => {
-        const categoryId = (item.product as any).categoryId || (item.product as any).category_id;
-        if (categoryId) catIds.add(categoryId);
-      });
+      cartCategoryIds.forEach((categoryId) => catIds.add(categoryId));
       (pcData || []).forEach((pc) => catIds.add(pc.category_id));
       (pData || []).forEach((p) => { if (p.category_id) catIds.add(p.category_id); });
       return Array.from(catIds).map((cid) => ({ category_id: cid }));
