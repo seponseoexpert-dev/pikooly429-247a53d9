@@ -22,6 +22,7 @@ import { shouldSendMail, shouldSendSms, shouldSendPush, shouldSendAdminMail, sen
 import { SameDayAnimation, NextDayAnimation } from "@/components/checkout/DeliveryAnimations";
 import SEOHead from "@/components/seo/SEOHead";
 import { AddressAutocomplete } from "@/components/checkout/AddressAutocomplete";
+import { resolveEffectiveDeliveryFees } from "@/lib/deliveryResolver";
 
 const countryPhoneCodes: Record<string, string> = {
   "Afghanistan": "+93", "Albania": "+355", "Algeria": "+213", "Andorra": "+376", "Angola": "+244",
@@ -344,8 +345,12 @@ const Checkout = () => {
         .select("id, category_id")
         .in("id", productIds);
       if (pError) throw pError;
-      // Combine both sources into unique category_ids
+      // Combine database categories and cart payload categories into unique category_ids
       const catIds = new Set<string>();
+      items.forEach((item) => {
+        const categoryId = (item.product as any).categoryId || (item.product as any).category_id;
+        if (categoryId) catIds.add(categoryId);
+      });
       (pcData || []).forEach((pc) => catIds.add(pc.category_id));
       (pData || []).forEach((p) => { if (p.category_id) catIds.add(p.category_id); });
       return Array.from(catIds).map((cid) => ({ category_id: cid }));
