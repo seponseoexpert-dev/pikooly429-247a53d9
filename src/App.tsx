@@ -16,7 +16,7 @@ import ScrollToTop from "@/components/layout/ScrollToTop";
 import PageLoader from "@/components/layout/PageLoader";
 import WordPressRedirects from "@/components/layout/WordPressRedirects";
 import PageTransition from "@/components/layout/PageTransition";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 
 // Lazy-load non-critical layout components
 const Footer = lazy(() => import("@/components/layout/Footer"));
