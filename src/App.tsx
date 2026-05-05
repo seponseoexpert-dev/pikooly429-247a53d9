@@ -84,34 +84,50 @@ const queryClient = new QueryClient({
   },
 });
 
-// Prefetch common routes during idle so navigations feel instant
-const prefetchCommonRoutes = () => {
+// Prefetch routes in two waves so first paint isn't blocked by extra JS parsing.
+// Wave 1 (likely-next pages) — fired only after the homepage is idle.
+const prefetchPrimary = () => {
   import("./pages/Shop");
   import("./pages/ProductDetail");
+  import("./pages/Search");
+  import("@/components/layout/Footer");
+  import("@/components/layout/BottomNav");
+  import("@/components/layout/WhatsAppButton");
+};
+
+// Wave 2 (less likely) — fired even later to avoid contending with main-thread work.
+const prefetchSecondary = () => {
   import("./pages/Checkout");
   import("./pages/AllGifts");
   import("./pages/Account");
-  import("./pages/Search");
   import("./pages/TrackOrder");
   import("./pages/Auth");
   import("./pages/AboutUs");
   import("./pages/ContactUs");
   import("./pages/Blog");
   import("./pages/Events");
-  import("@/components/layout/Footer");
-  import("@/components/layout/BottomNav");
-  import("@/components/layout/WhatsAppButton");
 };
 
 const RoutePrefetcher = () => {
   useEffect(() => {
     const w = window as any;
-    if ("requestIdleCallback" in w) {
-      const id = w.requestIdleCallback(prefetchCommonRoutes, { timeout: 4000 });
-      return () => w.cancelIdleCallback?.(id);
-    }
-    const id = setTimeout(prefetchCommonRoutes, 2500);
-    return () => clearTimeout(id);
+    const schedule = (fn: () => void, delay: number, idleTimeout: number) => {
+      if ("requestIdleCallback" in w) {
+        return w.requestIdleCallback(fn, { timeout: idleTimeout });
+      }
+      return setTimeout(fn, delay);
+    };
+    const id1 = schedule(prefetchPrimary, 3000, 5000);
+    const id2 = schedule(prefetchSecondary, 8000, 12000);
+    return () => {
+      if ("cancelIdleCallback" in w) {
+        w.cancelIdleCallback?.(id1);
+        w.cancelIdleCallback?.(id2);
+      } else {
+        clearTimeout(id1 as any);
+        clearTimeout(id2 as any);
+      }
+    };
   }, []);
   return null;
 };
