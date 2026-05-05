@@ -65,6 +65,8 @@ const deliveryTimeSlots = [
   "05:00 PM - 09:00 PM",
 ];
 
+const PREFERRED_DELIVERY_DISTRICT_KEY = "preferred_delivery_district";
+
 const Checkout = () => {
   const { items, totalPrice, clearCart, updateQuantity, removeItem } = useCart();
   const navigate = useNavigate();
@@ -203,20 +205,34 @@ const Checkout = () => {
     },
   });
 
-  // Auto-select district for logged-in users with saved address
-  useEffect(() => {
-    if (!defaultAddress?.district || !districts.length || selectedDistrict) return;
-    const match = districts.find((d: any) => 
-      d.name.toLowerCase() === defaultAddress.district.toLowerCase()
-    );
-    if (match) setSelectedDistrict(match.id);
-  }, [districts, defaultAddress, selectedDistrict]);
-
-  // Fallback: auto-select the first available district so checkout always has a fee
+  // Auto-select district in the same order customers see fees:
+  // Product Details saved location → saved address → first available district.
   useEffect(() => {
     if (selectedDistrict || !districts.length) return;
+
+    const savedLocation =
+      typeof window !== "undefined" ? localStorage.getItem(PREFERRED_DELIVERY_DISTRICT_KEY) : null;
+    const savedMatch = savedLocation
+      ? districts.find((d: any) => d.name.toLowerCase() === savedLocation.toLowerCase())
+      : null;
+
+    if (savedMatch) {
+      setSelectedDistrict((savedMatch as any).id);
+      return;
+    }
+
+    if (defaultAddress?.district) {
+      const addressMatch = districts.find(
+        (d: any) => d.name.toLowerCase() === defaultAddress.district.toLowerCase()
+      );
+      if (addressMatch) {
+        setSelectedDistrict(addressMatch.id);
+        return;
+      }
+    }
+
     setSelectedDistrict((districts[0] as any).id);
-  }, [districts, selectedDistrict]);
+  }, [districts, defaultAddress, selectedDistrict]);
 
   // Auto-detect district from postal code (debounced)
   useEffect(() => {
@@ -244,6 +260,9 @@ const Checkout = () => {
   useEffect(() => {
     if (!selectedDistrict || !districts.length) return;
     const d: any = districts.find((x: any) => x.id === selectedDistrict);
+    if (d?.name && typeof window !== "undefined") {
+      localStorage.setItem(PREFERRED_DELIVERY_DISTRICT_KEY, d.name);
+    }
     if (d?.postal_code && d.postal_code !== postalCode) {
       setPostalCode(d.postal_code);
       setPostalStatus("matched");
