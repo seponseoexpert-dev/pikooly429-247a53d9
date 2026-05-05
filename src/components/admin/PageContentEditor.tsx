@@ -25,10 +25,9 @@ const PageContentEditor = ({ prefix, title }: PageContentEditorProps) => {
   const baseKeys = [
     `${prefix}_page_title`,
     `${prefix}_page_description`,
-    `${prefix}_page_motto`,
-    `${prefix}_page_image_1`,
-    `${prefix}_page_image_2`,
-    `${prefix}_page_image_3`,
+    `${prefix}_page_seo_title`,
+    `${prefix}_page_seo_slug`,
+    `${prefix}_page_seo_description`,
   ];
   const allFaqKeys = Array.from({ length: MAX_FAQS }, (_, i) => [
     `${prefix}_page_faq_${i + 1}_question`,
