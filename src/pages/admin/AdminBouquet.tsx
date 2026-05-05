@@ -34,13 +34,14 @@ const defaultForm: FormData = { name: "", image_url: "", price: 0, hex_code: "#e
 
 const AdminBouquet = () => {
   const qc = useQueryClient();
-  const [tab, setTab] = useState<ItemType>("flowers");
+  const [tab, setTab] = useState<ItemType | "seo">("flowers");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState<FormData>(defaultForm);
 
   const tableName = `bouquet_${tab}` as "bouquet_flowers" | "bouquet_materials" | "bouquet_sizes" | "bouquet_colors";
 
+  const isItemTab = (["flowers", "materials", "sizes", "colors"] as string[]).includes(tab);
   const { data: items = [], isLoading } = useQuery({
     queryKey: ["bouquet", tab],
     queryFn: async () => {
@@ -48,6 +49,7 @@ const AdminBouquet = () => {
       if (error) throw error;
       return data;
     },
+    enabled: isItemTab,
   });
 
   const { data: districts = [] } = useQuery({
