@@ -255,6 +255,12 @@ const ProductDetail = () => {
     };
   }, [product, siteName, siteUrl, reviewsData]);
 
+  const addonIds = useMemo(() => new Set((addonProducts || []).map((p: any) => p.id)), [addonProducts]);
+  const addonInCartTotal = useMemo(
+    () => cartItems.filter(i => addonIds.has(i.product.id)).reduce((s, i) => s + i.product.price * i.quantity, 0),
+    [cartItems, addonIds]
+  );
+
   if (isLoading) {
     return <ProductDetailSkeleton />;
   }
@@ -320,11 +326,6 @@ const ProductDetail = () => {
     for (let i = 0; i < qty; i++) addItem(cartProduct, customImages.length ? customImages : undefined, false, variant);
   };
 
-  const addonIds = useMemo(() => new Set((addonProducts || []).map((p: any) => p.id)), [addonProducts]);
-  const addonInCartTotal = useMemo(
-    () => cartItems.filter(i => addonIds.has(i.product.id)).reduce((s, i) => s + i.product.price * i.quantity, 0),
-    [cartItems, addonIds]
-  );
   const buyNowTotal = effectivePrice * qty + addonInCartTotal;
 
   const handleBuyNow = () => {
