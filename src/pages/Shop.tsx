@@ -42,6 +42,7 @@ const Shop = () => {
   const catParam = catSlug || searchParams.get("cat") || "";
   const subParam = subSlug || searchParams.get("sub") || "";
   const searchParam = searchParams.get("search") || "";
+  const sameDayParam = searchParams.get("same_day") === "true";
   const [selectedCat, setSelectedCat] = useState(catParam);
   const [selectedSub, setSelectedSub] = useState(subParam);
   const [resolvedAsSub, setResolvedAsSub] = useState(false);
