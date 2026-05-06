@@ -18,6 +18,11 @@ const BottomNav = () => {
   const { t } = useLanguage();
   const reduced = useReducedMotion();
 
+  // Hide on cart/checkout pages where a sticky action bar replaces it
+  if (location.pathname === "/cart" || location.pathname.startsWith("/checkout")) {
+    return null;
+  }
+
   const items: NavItem[] = useMemo(
     () => [
       {
