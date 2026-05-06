@@ -80,8 +80,21 @@ const CartDrawer = () => {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="flex gap-3.5 p-3 bg-secondary/50 rounded-2xl border border-border/30 hover:border-border/60 transition-colors"
+                    className="bg-secondary/50 rounded-2xl border border-border/30 hover:border-border/60 transition-colors overflow-hidden"
                   >
+                    {badge && (
+                      <div className="flex items-center gap-2 px-3.5 py-2 bg-primary/[0.06] border-b border-border/40 text-[12px]">
+                        <span className="font-semibold text-foreground">Express Delivery</span>
+                        <span className={cn(
+                          "inline-flex items-center gap-1 font-semibold",
+                          "text-primary"
+                        )}>
+                          <badge.Icon size={13} className="shrink-0" />
+                          {badge.label}
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex gap-3.5 p-3">
                     <Link to={`/product/${item.product.id}`} onClick={() => setIsOpen(false)} className="flex-shrink-0">
                       <img
                         src={item.product.image}
