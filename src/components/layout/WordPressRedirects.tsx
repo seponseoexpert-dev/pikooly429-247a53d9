@@ -46,11 +46,7 @@ const WordPressRedirects = () => {
       return;
     }
 
-    // WordPress /cart → /checkout
-    if (path === "/cart") {
-      navigate("/checkout", { replace: true });
-      return;
-    }
+    // /cart now serves the dedicated cart page (no redirect)
 
     // WordPress /my-account → /account
     if (path === "/my-account" || path.startsWith("/my-account/")) {
