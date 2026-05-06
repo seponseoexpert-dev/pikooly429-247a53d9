@@ -1516,6 +1516,12 @@ const AdminSettings = () => {
       const dynamicKeys = Object.keys(formValues).filter((k) => /^faq_\d+_(question|answer)$/.test(k));
       return [...new Set([...base, ...dynamicKeys])];
     }
+    if (activeSection === "about") {
+      const base = (sectionFields["about"] || []).map((f) => f.key);
+      const faqBase = (sectionFields["faq"] || []).map((f) => f.key);
+      const dynamicKeys = Object.keys(formValues).filter((k) => /^faq_\d+_(question|answer)$/.test(k));
+      return [...new Set([...base, ...faqBase, ...dynamicKeys])];
+    }
     if (activeSection === "languages") {
       return ["default_language_code", "multi_language_enabled_setting", "enabled_languages"];
     }
@@ -1545,8 +1551,8 @@ const AdminSettings = () => {
         }
       });
 
-      // For FAQ section, also delete removed FAQ keys from DB
-      if (activeSection === "faq") {
+      // For FAQ section (or About which embeds FAQs), also delete removed FAQ keys from DB
+      if (activeSection === "faq" || activeSection === "about") {
         const dbFaqKeys = settings
           .filter((s: any) => /^faq_\d+_(question|answer)$/.test(s.key))
           .map((s: any) => s.key);
@@ -1666,6 +1672,14 @@ const AdminSettings = () => {
                       </div>
                       {activeSection === "mail" && (
                         <SendTestEmailButton />
+                      )}
+                      {activeSection === "about" && (
+                        <div className="mt-8 pt-6 border-t border-border">
+                          <h3 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
+                            <MessageSquare className="h-4 w-4" /> FAQ Section
+                          </h3>
+                          <DynamicFAQSection formValues={formValues} setFormValues={setFormValues} />
+                        </div>
                       )}
                     </div>
                   )}
