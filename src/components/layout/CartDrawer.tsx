@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
+import { parseDeliveryBadge } from "@/lib/deliveryBadge";
+import { cn } from "@/lib/utils";
 
 const CartDrawer = () => {
   const { items, removeItem, updateQuantity, totalPrice, totalItems, isOpen, setIsOpen } = useCart();
@@ -63,14 +65,36 @@ const CartDrawer = () => {
                 items.map((item, index) => {
                   const variantKey = buildVariantKey(item.variant);
                   const lineUnit = item.product.price + (item.variant?.size?.extraPrice || 0);
+                  // Resolve delivery badge: explicit delivery_time wins, else infer from districts
+                  let badge = parseDeliveryBadge(item.product.deliveryTime);
+                  if (!badge) {
+                    const sd = item.product.sameDayDistricts;
+                    const nd = item.product.nextDayDistricts;
+                    if (Array.isArray(sd) && sd.length > 0) badge = parseDeliveryBadge("same day");
+                    else if (Array.isArray(nd) && nd.length > 0) badge = parseDeliveryBadge("next day");
+                    else badge = parseDeliveryBadge("standard");
+                  }
                   return (
                   <motion.div
                     key={`${item.product.id}-${variantKey}`}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="flex gap-3.5 p-3 bg-secondary/50 rounded-2xl border border-border/30 hover:border-border/60 transition-colors"
+                    className="bg-secondary/50 rounded-2xl border border-border/30 hover:border-border/60 transition-colors overflow-hidden"
                   >
+                    {badge && (
+                      <div className="flex items-center gap-2 px-3.5 py-2 bg-primary/[0.06] border-b border-border/40 text-[12px]">
+                        <span className="font-semibold text-foreground">Express Delivery</span>
+                        <span className={cn(
+                          "inline-flex items-center gap-1 font-semibold",
+                          "text-primary"
+                        )}>
+                          <badge.Icon size={13} className="shrink-0" />
+                          {badge.label}
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex gap-3.5 p-3">
                     <Link to={`/product/${item.product.id}`} onClick={() => setIsOpen(false)} className="flex-shrink-0">
                       <img
                         src={item.product.image}
@@ -135,6 +159,7 @@ const CartDrawer = () => {
                           <Trash2 size={16} />
                         </button>
                       </div>
+                    </div>
                     </div>
                   </motion.div>
                   );
