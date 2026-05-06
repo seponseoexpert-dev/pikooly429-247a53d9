@@ -42,6 +42,7 @@ const Shop = () => {
   const catParam = catSlug || searchParams.get("cat") || "";
   const subParam = subSlug || searchParams.get("sub") || "";
   const searchParam = searchParams.get("search") || "";
+  const sameDayParam = searchParams.get("same_day") === "true";
   const [selectedCat, setSelectedCat] = useState(catParam);
   const [selectedSub, setSelectedSub] = useState(subParam);
   const [resolvedAsSub, setResolvedAsSub] = useState(false);
@@ -251,13 +252,20 @@ const Shop = () => {
       }
     }
 
+    if (sameDayParam) {
+      list = list.filter((p: any) => {
+        const dt = (p.delivery_time || "").toLowerCase();
+        return /\b(same\s*day|today|express|instant|urgent|asap|min|mins|minute|hour|hr|hrs|h)\b/.test(dt) || /\d+\s*(m|h)\b/.test(dt);
+      });
+    }
+
     switch (sortBy) {
       case "price-low": return [...list].sort((a: any, b: any) => a.price - b.price);
       case "price-high": return [...list].sort((a: any, b: any) => b.price - a.price);
       case "rating": return [...list].sort((a: any, b: any) => (b.rating || 0) - (a.rating || 0));
       default: return list;
     }
-  }, [selectedCat, selectedSub, searchParam, sortBy, products, subcategories]);
+  }, [selectedCat, selectedSub, searchParam, sameDayParam, sortBy, products, subcategories]);
 
   return (
     <main className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-3 sm:py-4 md:py-6 lg:py-8 pb-24 md:pb-10">
