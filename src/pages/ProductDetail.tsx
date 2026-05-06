@@ -89,6 +89,23 @@ const ProductDetail = () => {
     placeholderData: (prev) => prev,
   });
 
+  // Recommended Add-on Products (managed in admin Cart Add-ons)
+  const { data: addonProducts = [] } = useQuery({
+    queryKey: ["product-detail-addons"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("cart_addons")
+        .select("product_id, sort_order, products!inner(id, name, slug, price, original_price, image_url, is_active)")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return (data as any[])
+        .map((r) => r.products)
+        .filter((p: any) => p && p.is_active);
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
   // Fetch product sizes & colors variants
   const { data: sizes = [] } = useQuery({
     queryKey: ["product-sizes", product?.id],
