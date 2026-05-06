@@ -11,6 +11,9 @@ interface Product {
   badge?: string;
   rating?: number;
   inStock: boolean;
+  deliveryTime?: string | null;
+  sameDayDistricts?: string[] | null;
+  nextDayDistricts?: string[] | null;
 }
 
 export interface VariantSelection {
