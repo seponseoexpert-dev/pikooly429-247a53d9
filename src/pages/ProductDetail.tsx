@@ -654,7 +654,7 @@ const ProductDetail = () => {
                 <span aria-hidden className="metal-sheen pointer-events-none absolute inset-0" />
                 <Zap size={14} strokeWidth={2.4} className="fill-current relative" />
                 <span className="relative">Buy Now</span>
-                <span className="relative font-bold tabular-nums normal-case tracking-normal">| {formatPrice(effectivePrice * qty)}</span>
+                <span className="relative font-bold tabular-nums normal-case tracking-normal">| {formatPrice(buyNowTotal)}</span>
               </button>
             </div>
 
@@ -871,7 +871,7 @@ const ProductDetail = () => {
             style={{ background: "var(--gradient-luxe)" }}
           >
             <Zap size={13} strokeWidth={2.4} className="fill-current" />
-            Buy Now | <span className="tabular-nums normal-case tracking-normal">{formatPrice(effectivePrice * qty)}</span>
+            Buy Now | <span className="tabular-nums normal-case tracking-normal">{formatPrice(buyNowTotal)}</span>
           </button>
         </div>
       </div>
