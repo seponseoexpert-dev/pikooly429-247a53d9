@@ -12,7 +12,7 @@ import {
   Bell, BellRing, Share2, Cookie, BarChart3, Palette, Image,
   Settings, Upload, X, Phone, Cloud,
   Store, Gift, Ruler, Receipt, FileText, Shield, Languages,
-  MessageSquare, CreditCard, Award, Star,
+  MessageSquare, CreditCard, Award, Star, ShoppingCart,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -55,6 +55,7 @@ const settingSections = [
   { key: "bouquet_seo", label: "Bouquet SEO", icon: FileText },
   { key: "cloudinary", label: "Cloudinary", icon: Cloud },
   { key: "checkout", label: "Checkout", icon: CreditCard },
+  { key: "cart_page", label: "Cart Page", icon: ShoppingCart },
 ];
 
 type FieldDef = {
@@ -392,6 +393,19 @@ const sectionFields: Record<string, FieldDef[]> = {
       { value: "true", label: "Show" },
       { value: "false", label: "Hide" },
     ]},
+  ],
+  cart_page: [
+    { key: "cart_express_section_enabled", label: "Show Express Delivery Cards", type: "switch" },
+    { key: "cart_express_heading", label: "Express Delivery Heading", placeholder: "Express Delivery" },
+    { key: "cart_addons_enabled", label: "Show Last-Minute Add-ons Section", type: "switch" },
+    { key: "cart_addons_heading", label: "Add-ons Section Heading", placeholder: "Your last minute add-ons" },
+    { key: "cart_savings_enabled", label: "Show Savings Banner", type: "switch" },
+    { key: "cart_savings_heading", label: "Savings Banner Text (use {amount})", placeholder: "You have saved {amount} on this order", fullWidth: true },
+    { key: "cart_bill_summary_enabled", label: "Show Bill Summary", type: "switch" },
+    { key: "cart_bill_summary_heading", label: "Bill Summary Heading", placeholder: "Bill Summary" },
+    { key: "cart_accent_color", label: "Accent Color (hex)", placeholder: "#0a4d5c" },
+    { key: "cart_addons_bg_color", label: "Add-ons Background Color (hex)", placeholder: "#fde9d9" },
+    { key: "cart_savings_bg_color", label: "Savings Banner Background (hex)", placeholder: "#d4edf7" },
   ],
 };
 
