@@ -272,6 +272,9 @@ const ProductDetail = () => {
     category: product.categories?.slug || "",
     categoryId: product.category_id || null,
     inStock: product.stock > 0,
+    deliveryTime: (product as any).delivery_time ?? null,
+    sameDayDistricts: (product as any).same_day_districts ?? null,
+    nextDayDistricts: (product as any).next_day_districts ?? null,
   };
 
   const buildVariantPayload = (): VariantSelection | undefined => {
