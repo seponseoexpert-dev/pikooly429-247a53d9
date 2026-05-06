@@ -78,35 +78,35 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
       <div className="p-3 sm:p-3.5 flex flex-col flex-1">
         {/* Title — 2 lines max */}
         <Link to={linkTo} className="block min-w-0">
-          <h3 className="text-[14px] sm:text-[14px] text-[hsl(0_0%_12%)] leading-[1.35] font-semibold line-clamp-2 min-h-[2.7em]">
+          <h3 className="font-sans text-[12px] sm:text-[13px] text-[hsl(0_0%_15%)] leading-[1.3] font-normal line-clamp-2 min-h-[2.6em] list-none">
             {product.name}
           </h3>
         </Link>
 
-        {/* Price row — price + badge always visible; origPrice truncates first */}
-        <div className="mt-1.5 flex items-baseline gap-x-1.5 sm:gap-x-2 whitespace-nowrap min-w-0">
-          <span className="font-bold text-[hsl(280_60%_35%)] text-[16px] sm:text-[16px] leading-none tabular-nums shrink-0">
+        {/* Price row */}
+        <div className="mt-1.5 flex items-baseline gap-x-1.5 whitespace-nowrap min-w-0">
+          <span className="font-sans font-semibold text-[hsl(280_60%_35%)] text-[13px] sm:text-[14px] leading-none tabular-nums shrink-0">
             {formatPrice(product.price)}
           </span>
           {origPrice && origPrice > product.price && (
-            <span className="text-[12px] sm:text-[12px] leading-none text-[hsl(0_0%_55%)] line-through tabular-nums min-w-0 overflow-hidden text-ellipsis">
+            <span className="font-sans text-[11px] leading-none text-[hsl(0_0%_55%)] line-through tabular-nums min-w-0 overflow-hidden text-ellipsis">
               {formatPrice(origPrice)}
             </span>
           )}
           {discount > 0 && (
-            <span className="ml-auto px-1.5 py-[2px] sm:py-0.5 rounded-md bg-[hsl(142_70%_94%)] text-[hsl(142_71%_32%)] text-[10px] sm:text-[11px] leading-none font-bold tabular-nums shrink-0 whitespace-nowrap">
+            <span className="ml-auto px-1.5 py-[2px] rounded-md bg-[hsl(142_70%_94%)] text-[hsl(142_71%_32%)] text-[10px] leading-none font-semibold tabular-nums shrink-0 whitespace-nowrap font-sans">
               {discount}% OFF
             </span>
           )}
         </div>
 
-        {/* Rating row — green pill + reviews */}
-        <div className="mt-2 flex items-center gap-1.5">
-          <span className="inline-flex items-center gap-1 bg-[hsl(142_71%_38%)] text-white text-[12px] font-bold px-2 py-0.5 rounded-md">
-            <Star size={11} className="fill-white text-white" strokeWidth={0} />
+        {/* Rating row */}
+        <div className="mt-1.5 flex items-center gap-1.5">
+          <span className="inline-flex items-center gap-0.5 bg-[hsl(142_71%_38%)] text-white text-[10px] font-semibold px-1.5 py-0.5 rounded font-sans">
+            <Star size={9} className="fill-white text-white" strokeWidth={0} />
             {rating}
           </span>
-          <span className="text-[12px] text-[hsl(0_0%_45%)]">({reviewCount} Reviews)</span>
+          <span className="text-[10px] text-[hsl(0_0%_45%)] font-sans">({reviewCount} Reviews)</span>
         </div>
       </div>
     </article>
