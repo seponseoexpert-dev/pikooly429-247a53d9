@@ -690,11 +690,11 @@ const ProductDetail = () => {
               Recommended Addon Products
             </h2>
           </div>
-          <div className="grid grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3 lg:gap-4">
-            {addonProducts.slice(0, 6).map((p: any) => (
+          <div className="flex gap-2 sm:gap-3 lg:gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 pb-2">
+            {addonProducts.slice(0, 12).map((p: any) => (
               <div
                 key={p.id}
-                className="bg-white rounded-2xl border border-border/60 overflow-hidden flex flex-col"
+                className="snap-start shrink-0 basis-[30%] sm:basis-[22%] lg:basis-[15.5%] bg-white rounded-2xl border border-border/60 overflow-hidden flex flex-col"
               >
                 <Link to={`/product/${p.slug || p.id}`} className="block aspect-square bg-muted/20">
                   <img
