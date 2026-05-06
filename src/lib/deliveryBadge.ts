@@ -13,7 +13,7 @@ const EXPRESS = {
   glow: "shadow-[0_2px_8px_hsl(20_92%_52%/0.45)]",
 };
 const SAME_DAY = {
-  Icon: Clock,
+  Icon: Zap,
   gradient: "from-[hsl(142_71%_42%)] to-[hsl(160_75%_38%)]",
   glow: "shadow-[0_2px_8px_hsl(150_71%_38%/0.4)]",
 };
