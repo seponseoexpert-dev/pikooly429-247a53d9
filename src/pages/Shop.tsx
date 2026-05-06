@@ -255,7 +255,9 @@ const Shop = () => {
     if (sameDayParam) {
       list = list.filter((p: any) => {
         const dt = (p.delivery_time || "").toLowerCase();
-        return /\b(same\s*day|today|express|instant|urgent|asap|min|mins|minute|hour|hr|hrs|h)\b/.test(dt) || /\d+\s*(m|h)\b/.test(dt);
+        const hasSameDayText = /\b(same\s*day|today|express|instant|urgent|asap|min|mins|minute|hour|hr|hrs|h)\b/.test(dt) || /\d+\s*(m|h)\b/.test(dt);
+        const hasSameDayDistricts = Array.isArray((p as any).same_day_districts) && (p as any).same_day_districts.length > 0;
+        return hasSameDayText || hasSameDayDistricts;
       });
     }
 
