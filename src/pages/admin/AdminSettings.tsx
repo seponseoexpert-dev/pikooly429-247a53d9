@@ -1516,6 +1516,12 @@ const AdminSettings = () => {
       const dynamicKeys = Object.keys(formValues).filter((k) => /^faq_\d+_(question|answer)$/.test(k));
       return [...new Set([...base, ...dynamicKeys])];
     }
+    if (activeSection === "about") {
+      const base = (sectionFields["about"] || []).map((f) => f.key);
+      const faqBase = (sectionFields["faq"] || []).map((f) => f.key);
+      const dynamicKeys = Object.keys(formValues).filter((k) => /^faq_\d+_(question|answer)$/.test(k));
+      return [...new Set([...base, ...faqBase, ...dynamicKeys])];
+    }
     if (activeSection === "languages") {
       return ["default_language_code", "multi_language_enabled_setting", "enabled_languages"];
     }
