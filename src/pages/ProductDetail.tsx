@@ -630,56 +630,58 @@ const ProductDetail = () => {
             />
           </div>
 
-          {/* Primary actions: Add to Cart + Buy Now */}
-          <div className="grid grid-cols-2 gap-2.5 sm:gap-3 mb-2.5 sm:mb-3">
-            <button
-              onClick={handleAddToCart}
-              className="group relative h-12 sm:h-[54px] rounded-full bg-white border-2 border-primary/80 text-primary text-[11px] sm:text-[12px] font-bold tracking-[0.14em] uppercase flex items-center justify-center gap-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-[0_8px_20px_-6px_hsl(var(--primary)/0.45)] active:scale-[0.97] transition-all duration-300 ease-luxe overflow-hidden"
-            >
-              <ShoppingBag size={15} strokeWidth={2.2} className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:rotate-[-6deg]" />
-              <span>Add to Cart</span>
-            </button>
-            <button
-              onClick={handleBuyNow}
-              className="btn-metal-shine group relative h-12 sm:h-[54px] rounded-full text-primary-foreground text-[11px] sm:text-[12px] font-bold tracking-[0.14em] uppercase flex items-center justify-center gap-1.5 shadow-[0_8px_20px_-6px_hsl(var(--primary)/0.5)] hover:shadow-[0_12px_28px_-6px_hsl(var(--primary)/0.65)] active:scale-[0.97] transition-all duration-300 ease-luxe overflow-hidden"
-              style={{ background: "var(--gradient-luxe)" }}
-            >
-              <span aria-hidden className="metal-sheen pointer-events-none absolute inset-0" />
-              <Zap size={14} strokeWidth={2.4} className="fill-current relative" />
-              <span className="relative">Buy Now</span>
-              <span className="relative font-bold tabular-nums normal-case tracking-normal">| {formatPrice(effectivePrice * qty)}</span>
-            </button>
+          {/* Primary actions: hidden on mobile (rendered as sticky bar below) */}
+          <div className="hidden md:block">
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 mb-2.5 sm:mb-3">
+              <button
+                onClick={handleAddToCart}
+                className="group relative h-12 sm:h-[54px] rounded-full bg-white border-2 border-primary/80 text-primary text-[11px] sm:text-[12px] font-bold tracking-[0.14em] uppercase flex items-center justify-center gap-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-[0_8px_20px_-6px_hsl(var(--primary)/0.45)] active:scale-[0.97] transition-all duration-300 ease-luxe overflow-hidden"
+              >
+                <ShoppingBag size={15} strokeWidth={2.2} className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:rotate-[-6deg]" />
+                <span>Add to Cart</span>
+              </button>
+              <button
+                onClick={handleBuyNow}
+                className="btn-metal-shine group relative h-12 sm:h-[54px] rounded-full text-primary-foreground text-[11px] sm:text-[12px] font-bold tracking-[0.14em] uppercase flex items-center justify-center gap-1.5 shadow-[0_8px_20px_-6px_hsl(var(--primary)/0.5)] hover:shadow-[0_12px_28px_-6px_hsl(var(--primary)/0.65)] active:scale-[0.97] transition-all duration-300 ease-luxe overflow-hidden"
+                style={{ background: "var(--gradient-luxe)" }}
+              >
+                <span aria-hidden className="metal-sheen pointer-events-none absolute inset-0" />
+                <Zap size={14} strokeWidth={2.4} className="fill-current relative" />
+                <span className="relative">Buy Now</span>
+                <span className="relative font-bold tabular-nums normal-case tracking-normal">| {formatPrice(effectivePrice * qty)}</span>
+              </button>
+            </div>
+
+            {whatsappUrl && (
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative flex items-center justify-center gap-2.5 w-full h-12 sm:h-[54px] rounded-full text-white font-semibold text-[13px] sm:text-sm tracking-wide shadow-[0_6px_18px_-6px_hsl(142_70%_40%/0.55)] hover:shadow-[0_10px_24px_-6px_hsl(142_70%_40%/0.7)] active:scale-[0.98] transition-all duration-300 ease-luxe mb-2.5 sm:mb-3 overflow-hidden"
+                style={{ background: "linear-gradient(135deg, hsl(142 72% 48%) 0%, hsl(142 70% 38%) 100%)" }}
+              >
+                <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-[900ms] ease-luxe bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                <span className="flex items-center justify-center w-7 h-7 rounded-full bg-white/20 backdrop-blur-sm">
+                  <MessageCircle size={15} strokeWidth={2.4} />
+                </span>
+                <span className="relative">Order On WhatsApp</span>
+              </a>
+            )}
+
+            {orderPhone && (
+              <a
+                href={`tel:${orderPhone}`}
+                className="group relative flex items-center justify-center gap-2.5 w-full h-12 sm:h-[54px] rounded-full text-white font-semibold text-[13px] sm:text-sm tracking-wide shadow-[0_6px_18px_-6px_hsl(240_60%_30%/0.55)] hover:shadow-[0_10px_24px_-6px_hsl(240_60%_30%/0.7)] active:scale-[0.98] transition-all duration-300 ease-luxe mb-5 overflow-hidden"
+                style={{ background: "linear-gradient(135deg, hsl(240 60% 38%) 0%, hsl(240 65% 24%) 100%)" }}
+              >
+                <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-[900ms] ease-luxe bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                <span className="flex items-center justify-center w-7 h-7 rounded-full bg-white/20 backdrop-blur-sm">
+                  <Phone size={14} strokeWidth={2.4} className="fill-current" />
+                </span>
+                <span className="relative">Call For Order</span>
+              </a>
+            )}
           </div>
-
-          {whatsappUrl && (
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative flex items-center justify-center gap-2.5 w-full h-12 sm:h-[54px] rounded-full text-white font-semibold text-[13px] sm:text-sm tracking-wide shadow-[0_6px_18px_-6px_hsl(142_70%_40%/0.55)] hover:shadow-[0_10px_24px_-6px_hsl(142_70%_40%/0.7)] active:scale-[0.98] transition-all duration-300 ease-luxe mb-2.5 sm:mb-3 overflow-hidden"
-              style={{ background: "linear-gradient(135deg, hsl(142 72% 48%) 0%, hsl(142 70% 38%) 100%)" }}
-            >
-              <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-[900ms] ease-luxe bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-              <span className="flex items-center justify-center w-7 h-7 rounded-full bg-white/20 backdrop-blur-sm">
-                <MessageCircle size={15} strokeWidth={2.4} />
-              </span>
-              <span className="relative">Order On WhatsApp</span>
-            </a>
-          )}
-
-          {orderPhone && (
-            <a
-              href={`tel:${orderPhone}`}
-              className="group relative flex items-center justify-center gap-2.5 w-full h-12 sm:h-[54px] rounded-full text-white font-semibold text-[13px] sm:text-sm tracking-wide shadow-[0_6px_18px_-6px_hsl(240_60%_30%/0.55)] hover:shadow-[0_10px_24px_-6px_hsl(240_60%_30%/0.7)] active:scale-[0.98] transition-all duration-300 ease-luxe mb-5 overflow-hidden"
-              style={{ background: "linear-gradient(135deg, hsl(240 60% 38%) 0%, hsl(240 65% 24%) 100%)" }}
-            >
-              <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-[900ms] ease-luxe bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-              <span className="flex items-center justify-center w-7 h-7 rounded-full bg-white/20 backdrop-blur-sm">
-                <Phone size={14} strokeWidth={2.4} className="fill-current" />
-              </span>
-              <span className="relative">Call For Order</span>
-            </a>
-          )}
 
           <div className="flex items-center justify-between">
             <div>
