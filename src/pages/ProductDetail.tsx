@@ -19,7 +19,7 @@ import { useMultiCurrency } from "@/contexts/CurrencyContext";
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addItem, clearCart, updateQuantity } = useCart();
+  const { addItem, clearCart, updateQuantity, items: cartItems } = useCart();
   const { settings } = useSiteSettings();
   const { formatPrice } = useMultiCurrency();
   const [qty, setQty] = useState(1);
@@ -320,6 +320,13 @@ const ProductDetail = () => {
     for (let i = 0; i < qty; i++) addItem(cartProduct, customImages.length ? customImages : undefined, false, variant);
   };
 
+  const addonIds = useMemo(() => new Set((addonProducts || []).map((p: any) => p.id)), [addonProducts]);
+  const addonInCartTotal = useMemo(
+    () => cartItems.filter(i => addonIds.has(i.product.id)).reduce((s, i) => s + i.product.price * i.quantity, 0),
+    [cartItems, addonIds]
+  );
+  const buyNowTotal = effectivePrice * qty + addonInCartTotal;
+
   const handleBuyNow = () => {
     if (!validateVariants()) return;
     if (product.stock <= 0) {
@@ -327,8 +334,12 @@ const ProductDetail = () => {
       return;
     }
     const variant = buildVariantPayload();
-    // Quick checkout: replace cart with just this product at the selected qty
+    // Quick checkout: keep selected addons, replace main product line with this one at selected qty
+    const keptAddons = cartItems.filter(i => addonIds.has(i.product.id));
     clearCart();
+    keptAddons.forEach(a => {
+      for (let i = 0; i < a.quantity; i++) addItem(a.product, undefined, true);
+    });
     addItem(cartProduct, customImages.length ? customImages : undefined, true, variant);
     if (qty > 1) {
       const variantKey = buildVariantKey(variant);
@@ -643,7 +654,7 @@ const ProductDetail = () => {
                 <span aria-hidden className="metal-sheen pointer-events-none absolute inset-0" />
                 <Zap size={14} strokeWidth={2.4} className="fill-current relative" />
                 <span className="relative">Buy Now</span>
-                <span className="relative font-bold tabular-nums normal-case tracking-normal">| {formatPrice(effectivePrice * qty)}</span>
+                <span className="relative font-bold tabular-nums normal-case tracking-normal">| {formatPrice(buyNowTotal)}</span>
               </button>
             </div>
 
@@ -860,7 +871,7 @@ const ProductDetail = () => {
             style={{ background: "var(--gradient-luxe)" }}
           >
             <Zap size={13} strokeWidth={2.4} className="fill-current" />
-            Buy Now | <span className="tabular-nums normal-case tracking-normal">{formatPrice(effectivePrice * qty)}</span>
+            Buy Now | <span className="tabular-nums normal-case tracking-normal">{formatPrice(buyNowTotal)}</span>
           </button>
         </div>
       </div>
