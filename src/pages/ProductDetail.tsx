@@ -19,7 +19,7 @@ import { useMultiCurrency } from "@/contexts/CurrencyContext";
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addItem, clearCart } = useCart();
+  const { addItem, clearCart, updateQuantity } = useCart();
   const { settings } = useSiteSettings();
   const { formatPrice } = useMultiCurrency();
   const [qty, setQty] = useState(1);
