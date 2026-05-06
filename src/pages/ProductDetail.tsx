@@ -612,19 +612,6 @@ const ProductDetail = () => {
             </div>
           )}
 
-          <div className="flex items-center gap-3 mb-5">
-            <span className="text-sm font-medium">Quantity:</span>
-            <div className="flex items-center border border-border rounded-xl overflow-hidden">
-              <button onClick={() => setQty(Math.max(1, qty - 1))} className="px-3 py-2.5 hover:bg-muted transition-colors">
-                <Minus size={14} />
-              </button>
-              <span className="w-12 text-center text-sm font-semibold border-x border-border py-2.5">{qty}</span>
-              <button onClick={() => setQty(qty + 1)} className="px-3 py-2.5 hover:bg-muted transition-colors">
-                <Plus size={14} />
-              </button>
-            </div>
-          </div>
-
           {/* Delivery availability checker */}
           <div className="mb-4">
             <DeliveryChecker
