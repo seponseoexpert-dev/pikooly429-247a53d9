@@ -856,6 +856,92 @@ const ProductDetail = () => {
           </div>
         </section>
       )}
+
+      {/* Recommended Addon Products */}
+      {addonProducts.length > 0 && (
+        <section className="mt-8 sm:mt-12 md:mt-14">
+          <div className="mb-4 sm:mb-5">
+            <span className="eyebrow mb-2">Pair It Up</span>
+            <h2 className="display-heading text-foreground mt-1.5" style={{ fontSize: "clamp(1.25rem, 2.4vw + 0.5rem, 2rem)" }}>
+              Recommended Addon Products
+            </h2>
+          </div>
+          <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
+            {addonProducts.map((p: any) => (
+              <div
+                key={p.id}
+                className="min-w-[44vw] w-[44vw] sm:min-w-[180px] sm:w-[180px] md:min-w-[200px] md:w-[200px] flex-shrink-0 snap-start bg-white rounded-2xl border border-border/60 overflow-hidden flex flex-col"
+              >
+                <Link to={`/product/${p.slug || p.id}`} className="block aspect-square bg-muted/20">
+                  <img
+                    src={p.image_url || "/placeholder.svg"}
+                    alt={p.name}
+                    loading="lazy"
+                    className="w-full h-full object-cover"
+                  />
+                </Link>
+                <div className="p-2.5 sm:p-3 flex flex-col gap-1.5 flex-1">
+                  <p className="text-xs sm:text-sm text-foreground line-clamp-2 leading-snug min-h-[2.5em]">{p.name}</p>
+                  <p className="text-sm font-semibold text-foreground tabular-nums">{formatPrice(Number(p.price))}</p>
+                  <button
+                    onClick={() => handleAddAddon(p)}
+                    className="mt-auto h-9 rounded-md border-2 border-primary text-primary text-[12px] font-bold tracking-wider uppercase hover:bg-primary hover:text-primary-foreground transition-colors"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Mobile sticky action bar */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-border shadow-[0_-4px_16px_rgba(0,0,0,0.08)] px-3 pt-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom))] space-y-2">
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={handleAddToCart}
+            className="h-11 rounded-full bg-white border-2 border-primary text-primary text-[11px] font-bold tracking-[0.12em] uppercase flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform"
+          >
+            <ShoppingBag size={14} strokeWidth={2.2} />
+            Add to Cart
+          </button>
+          <button
+            onClick={handleBuyNow}
+            className="h-11 rounded-full text-primary-foreground text-[11px] font-bold tracking-[0.12em] uppercase flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform"
+            style={{ background: "var(--gradient-luxe)" }}
+          >
+            <Zap size={13} strokeWidth={2.4} className="fill-current" />
+            Buy Now | <span className="tabular-nums normal-case tracking-normal">{formatPrice(effectivePrice * qty)}</span>
+          </button>
+        </div>
+        {(whatsappUrl || orderPhone) && (
+          <div className={`grid ${whatsappUrl && orderPhone ? "grid-cols-2" : "grid-cols-1"} gap-2`}>
+            {whatsappUrl && (
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-10 rounded-full text-white text-[11px] font-bold tracking-wide uppercase flex items-center justify-center gap-1.5"
+                style={{ background: "linear-gradient(135deg, hsl(142 72% 48%) 0%, hsl(142 70% 38%) 100%)" }}
+              >
+                <MessageCircle size={13} strokeWidth={2.4} />
+                WhatsApp
+              </a>
+            )}
+            {orderPhone && (
+              <a
+                href={`tel:${orderPhone}`}
+                className="h-10 rounded-full text-white text-[11px] font-bold tracking-wide uppercase flex items-center justify-center gap-1.5"
+                style={{ background: "linear-gradient(135deg, hsl(240 60% 38%) 0%, hsl(240 65% 24%) 100%)" }}
+              >
+                <Phone size={13} strokeWidth={2.4} className="fill-current" />
+                Call
+              </a>
+            )}
+          </div>
+        )}
+      </div>
     </main>
   );
 };
