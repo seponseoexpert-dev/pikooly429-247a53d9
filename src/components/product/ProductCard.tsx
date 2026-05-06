@@ -47,7 +47,7 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
   }, []);
 
   return (
-    <article className="group relative flex flex-col h-full bg-white rounded-xl border border-[hsl(0_0%_92%)] overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-shadow duration-300">
+    <article className="group relative flex flex-col h-full bg-white rounded-[20px] border border-[hsl(0_0%_92%)] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.05)] hover:shadow-[0_6px_18px_rgba(0,0,0,0.1)] active:scale-[0.98] transition-all duration-300">
       {/* Image - 1:1 square */}
       <Link to={linkTo} className="block relative overflow-hidden aspect-square bg-[hsl(0_0%_98%)]">
         <img
