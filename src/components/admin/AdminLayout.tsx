@@ -30,6 +30,7 @@ const navGroups = [
       { label: "Orders", icon: ShoppingCart, path: "/admin/orders" },
       { label: "Customers", icon: Users, path: "/admin/customers" },
       { label: "Coupons", icon: Ticket, path: "/admin/coupons" },
+      { label: "Cart Add-ons", icon: Gift, path: "/admin/cart-addons" },
       { label: "Shipping", icon: Truck, path: "/admin/shipping" },
       { label: "Currencies", icon: Coins, path: "/admin/currencies" },
     ],
