@@ -353,7 +353,7 @@ const ProductDetail = () => {
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
 
   return (
-    <main className="section-container py-3 sm:py-4 md:py-6 lg:py-8 pb-24 md:pb-10">
+    <main className="section-container py-3 sm:py-4 md:py-6 lg:py-8 pb-44 md:pb-10">
       <SEOHead
         title={seoTitle}
         description={seoDesc}
