@@ -332,6 +332,24 @@ const ProductDetail = () => {
   const orderWhatsApp = settings.order_whatsapp_number || settings.whatsapp_number || "";
   const orderPhone = settings.order_phone_number || settings.store_phone || "";
   const whatsappUrl = orderWhatsApp ? `https://wa.me/${orderWhatsApp.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(`Hi! I want to order: ${product.name} (${formatPrice(product.price)}) x ${qty}`)}` : "";
+
+  const handleAddAddon = (p: any) => {
+    addItem(
+      {
+        id: p.id,
+        name: p.name,
+        price: Number(p.price),
+        originalPrice: p.original_price ?? undefined,
+        image: p.image_url || "/placeholder.svg",
+        category: "",
+        categoryId: null,
+        inStock: true,
+      },
+      undefined,
+      true,
+    );
+    toast.success(`${p.name} added to cart`);
+  };
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
 
   return (
