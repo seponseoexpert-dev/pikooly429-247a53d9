@@ -75,38 +75,38 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
       </Link>
 
       {/* Content */}
-      <div className="p-3 sm:p-3.5 flex flex-col flex-1">
+      <div className="px-2.5 py-2.5 sm:px-3 sm:py-3 flex flex-col flex-1 gap-1.5">
         {/* Title — 2 lines max */}
         <Link to={linkTo} className="block min-w-0">
-          <h3 className="font-sans text-[12px] sm:text-[13px] text-[hsl(0_0%_15%)] leading-[1.3] font-normal line-clamp-2 min-h-[2.6em] list-none">
+          <h3 className="font-sans text-[12px] sm:text-[13px] text-[hsl(0_0%_15%)] leading-[1.3] font-normal line-clamp-2 min-h-[2.6em] list-none m-0">
             {product.name}
           </h3>
         </Link>
 
         {/* Price row */}
-        <div className="mt-1.5 flex items-baseline gap-x-1.5 whitespace-nowrap min-w-0">
+        <div className="flex items-center gap-x-1.5 min-w-0">
           <span className="font-sans font-semibold text-[hsl(280_60%_35%)] text-[13px] sm:text-[14px] leading-none tabular-nums shrink-0">
             {formatPrice(product.price)}
           </span>
           {origPrice && origPrice > product.price && (
-            <span className="font-sans text-[11px] leading-none text-[hsl(0_0%_55%)] line-through tabular-nums min-w-0 overflow-hidden text-ellipsis">
+            <span className="font-sans text-[11px] leading-none text-[hsl(0_0%_55%)] line-through tabular-nums min-w-0 truncate">
               {formatPrice(origPrice)}
             </span>
           )}
           {discount > 0 && (
-            <span className="ml-auto px-1.5 py-[2px] rounded-md bg-[hsl(142_70%_94%)] text-[hsl(142_71%_32%)] text-[10px] leading-none font-semibold tabular-nums shrink-0 whitespace-nowrap font-sans">
+            <span className="ml-auto inline-flex items-center justify-center px-1.5 h-[18px] rounded-md bg-[hsl(142_70%_94%)] text-[hsl(142_71%_32%)] text-[10px] leading-none font-semibold tabular-nums shrink-0 whitespace-nowrap font-sans">
               {discount}% OFF
             </span>
           )}
         </div>
 
         {/* Rating row */}
-        <div className="mt-1.5 flex items-center gap-1.5">
-          <span className="inline-flex items-center gap-0.5 bg-[hsl(142_71%_38%)] text-white text-[10px] font-semibold px-1.5 py-0.5 rounded font-sans">
+        <div className="flex items-center gap-1.5">
+          <span className="inline-flex items-center gap-0.5 bg-[hsl(142_71%_38%)] text-white text-[10px] font-semibold px-1.5 h-[18px] rounded font-sans leading-none">
             <Star size={9} className="fill-white text-white" strokeWidth={0} />
             {rating}
           </span>
-          <span className="text-[10px] text-[hsl(0_0%_45%)] font-sans">({reviewCount} Reviews)</span>
+          <span className="text-[10px] text-[hsl(0_0%_45%)] font-sans leading-none">({reviewCount} Reviews)</span>
         </div>
       </div>
     </article>
