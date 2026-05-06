@@ -18,7 +18,10 @@ const BottomNav = () => {
   const { t } = useLanguage();
   const reduced = useReducedMotion();
 
-  const hideBottomNav = location.pathname === "/cart" || location.pathname.startsWith("/checkout");
+  const hideBottomNav =
+    location.pathname === "/cart" ||
+    location.pathname.startsWith("/checkout") ||
+    location.pathname.startsWith("/product/");
 
   const items: NavItem[] = useMemo(
     () => [

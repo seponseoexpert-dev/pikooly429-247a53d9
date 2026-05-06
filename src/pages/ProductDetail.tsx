@@ -89,6 +89,23 @@ const ProductDetail = () => {
     placeholderData: (prev) => prev,
   });
 
+  // Recommended Add-on Products (managed in admin Cart Add-ons)
+  const { data: addonProducts = [] } = useQuery({
+    queryKey: ["product-detail-addons"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("cart_addons")
+        .select("product_id, sort_order, products!inner(id, name, slug, price, original_price, image_url, is_active)")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return (data as any[])
+        .map((r) => r.products)
+        .filter((p: any) => p && p.is_active);
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
   // Fetch product sizes & colors variants
   const { data: sizes = [] } = useQuery({
     queryKey: ["product-sizes", product?.id],
@@ -315,10 +332,28 @@ const ProductDetail = () => {
   const orderWhatsApp = settings.order_whatsapp_number || settings.whatsapp_number || "";
   const orderPhone = settings.order_phone_number || settings.store_phone || "";
   const whatsappUrl = orderWhatsApp ? `https://wa.me/${orderWhatsApp.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(`Hi! I want to order: ${product.name} (${formatPrice(product.price)}) x ${qty}`)}` : "";
+
+  const handleAddAddon = (p: any) => {
+    addItem(
+      {
+        id: p.id,
+        name: p.name,
+        price: Number(p.price),
+        originalPrice: p.original_price ?? undefined,
+        image: p.image_url || "/placeholder.svg",
+        category: "",
+        categoryId: null,
+        inStock: true,
+      },
+      undefined,
+      true,
+    );
+    toast.success(`${p.name} added to cart`);
+  };
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
 
   return (
-    <main className="section-container py-3 sm:py-4 md:py-6 lg:py-8 pb-24 md:pb-10">
+    <main className="section-container py-3 sm:py-4 md:py-6 lg:py-8 pb-44 md:pb-10">
       <SEOHead
         title={seoTitle}
         description={seoDesc}
@@ -595,56 +630,58 @@ const ProductDetail = () => {
             />
           </div>
 
-          {/* Primary actions: Add to Cart + Buy Now */}
-          <div className="grid grid-cols-2 gap-2.5 sm:gap-3 mb-2.5 sm:mb-3">
-            <button
-              onClick={handleAddToCart}
-              className="group relative h-12 sm:h-[54px] rounded-full bg-white border-2 border-primary/80 text-primary text-[11px] sm:text-[12px] font-bold tracking-[0.14em] uppercase flex items-center justify-center gap-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-[0_8px_20px_-6px_hsl(var(--primary)/0.45)] active:scale-[0.97] transition-all duration-300 ease-luxe overflow-hidden"
-            >
-              <ShoppingBag size={15} strokeWidth={2.2} className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:rotate-[-6deg]" />
-              <span>Add to Cart</span>
-            </button>
-            <button
-              onClick={handleBuyNow}
-              className="btn-metal-shine group relative h-12 sm:h-[54px] rounded-full text-primary-foreground text-[11px] sm:text-[12px] font-bold tracking-[0.14em] uppercase flex items-center justify-center gap-1.5 shadow-[0_8px_20px_-6px_hsl(var(--primary)/0.5)] hover:shadow-[0_12px_28px_-6px_hsl(var(--primary)/0.65)] active:scale-[0.97] transition-all duration-300 ease-luxe overflow-hidden"
-              style={{ background: "var(--gradient-luxe)" }}
-            >
-              <span aria-hidden className="metal-sheen pointer-events-none absolute inset-0" />
-              <Zap size={14} strokeWidth={2.4} className="fill-current relative" />
-              <span className="relative">Buy Now</span>
-              <span className="relative font-bold tabular-nums normal-case tracking-normal">| {formatPrice(effectivePrice * qty)}</span>
-            </button>
+          {/* Primary actions: hidden on mobile (rendered as sticky bar below) */}
+          <div className="hidden md:block">
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 mb-2.5 sm:mb-3">
+              <button
+                onClick={handleAddToCart}
+                className="group relative h-12 sm:h-[54px] rounded-full bg-white border-2 border-primary/80 text-primary text-[11px] sm:text-[12px] font-bold tracking-[0.14em] uppercase flex items-center justify-center gap-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-[0_8px_20px_-6px_hsl(var(--primary)/0.45)] active:scale-[0.97] transition-all duration-300 ease-luxe overflow-hidden"
+              >
+                <ShoppingBag size={15} strokeWidth={2.2} className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:rotate-[-6deg]" />
+                <span>Add to Cart</span>
+              </button>
+              <button
+                onClick={handleBuyNow}
+                className="btn-metal-shine group relative h-12 sm:h-[54px] rounded-full text-primary-foreground text-[11px] sm:text-[12px] font-bold tracking-[0.14em] uppercase flex items-center justify-center gap-1.5 shadow-[0_8px_20px_-6px_hsl(var(--primary)/0.5)] hover:shadow-[0_12px_28px_-6px_hsl(var(--primary)/0.65)] active:scale-[0.97] transition-all duration-300 ease-luxe overflow-hidden"
+                style={{ background: "var(--gradient-luxe)" }}
+              >
+                <span aria-hidden className="metal-sheen pointer-events-none absolute inset-0" />
+                <Zap size={14} strokeWidth={2.4} className="fill-current relative" />
+                <span className="relative">Buy Now</span>
+                <span className="relative font-bold tabular-nums normal-case tracking-normal">| {formatPrice(effectivePrice * qty)}</span>
+              </button>
+            </div>
+
+            {whatsappUrl && (
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative flex items-center justify-center gap-2.5 w-full h-12 sm:h-[54px] rounded-full text-white font-semibold text-[13px] sm:text-sm tracking-wide shadow-[0_6px_18px_-6px_hsl(142_70%_40%/0.55)] hover:shadow-[0_10px_24px_-6px_hsl(142_70%_40%/0.7)] active:scale-[0.98] transition-all duration-300 ease-luxe mb-2.5 sm:mb-3 overflow-hidden"
+                style={{ background: "linear-gradient(135deg, hsl(142 72% 48%) 0%, hsl(142 70% 38%) 100%)" }}
+              >
+                <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-[900ms] ease-luxe bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                <span className="flex items-center justify-center w-7 h-7 rounded-full bg-white/20 backdrop-blur-sm">
+                  <MessageCircle size={15} strokeWidth={2.4} />
+                </span>
+                <span className="relative">Order On WhatsApp</span>
+              </a>
+            )}
+
+            {orderPhone && (
+              <a
+                href={`tel:${orderPhone}`}
+                className="group relative flex items-center justify-center gap-2.5 w-full h-12 sm:h-[54px] rounded-full text-white font-semibold text-[13px] sm:text-sm tracking-wide shadow-[0_6px_18px_-6px_hsl(240_60%_30%/0.55)] hover:shadow-[0_10px_24px_-6px_hsl(240_60%_30%/0.7)] active:scale-[0.98] transition-all duration-300 ease-luxe mb-5 overflow-hidden"
+                style={{ background: "linear-gradient(135deg, hsl(240 60% 38%) 0%, hsl(240 65% 24%) 100%)" }}
+              >
+                <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-[900ms] ease-luxe bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                <span className="flex items-center justify-center w-7 h-7 rounded-full bg-white/20 backdrop-blur-sm">
+                  <Phone size={14} strokeWidth={2.4} className="fill-current" />
+                </span>
+                <span className="relative">Call For Order</span>
+              </a>
+            )}
           </div>
-
-          {whatsappUrl && (
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative flex items-center justify-center gap-2.5 w-full h-12 sm:h-[54px] rounded-full text-white font-semibold text-[13px] sm:text-sm tracking-wide shadow-[0_6px_18px_-6px_hsl(142_70%_40%/0.55)] hover:shadow-[0_10px_24px_-6px_hsl(142_70%_40%/0.7)] active:scale-[0.98] transition-all duration-300 ease-luxe mb-2.5 sm:mb-3 overflow-hidden"
-              style={{ background: "linear-gradient(135deg, hsl(142 72% 48%) 0%, hsl(142 70% 38%) 100%)" }}
-            >
-              <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-[900ms] ease-luxe bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-              <span className="flex items-center justify-center w-7 h-7 rounded-full bg-white/20 backdrop-blur-sm">
-                <MessageCircle size={15} strokeWidth={2.4} />
-              </span>
-              <span className="relative">Order On WhatsApp</span>
-            </a>
-          )}
-
-          {orderPhone && (
-            <a
-              href={`tel:${orderPhone}`}
-              className="group relative flex items-center justify-center gap-2.5 w-full h-12 sm:h-[54px] rounded-full text-white font-semibold text-[13px] sm:text-sm tracking-wide shadow-[0_6px_18px_-6px_hsl(240_60%_30%/0.55)] hover:shadow-[0_10px_24px_-6px_hsl(240_60%_30%/0.7)] active:scale-[0.98] transition-all duration-300 ease-luxe mb-5 overflow-hidden"
-              style={{ background: "linear-gradient(135deg, hsl(240 60% 38%) 0%, hsl(240 65% 24%) 100%)" }}
-            >
-              <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-[900ms] ease-luxe bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-              <span className="flex items-center justify-center w-7 h-7 rounded-full bg-white/20 backdrop-blur-sm">
-                <Phone size={14} strokeWidth={2.4} className="fill-current" />
-              </span>
-              <span className="relative">Call For Order</span>
-            </a>
-          )}
 
           <div className="flex items-center justify-between">
             <div>
@@ -819,6 +856,92 @@ const ProductDetail = () => {
           </div>
         </section>
       )}
+
+      {/* Recommended Addon Products */}
+      {addonProducts.length > 0 && (
+        <section className="mt-8 sm:mt-12 md:mt-14">
+          <div className="mb-4 sm:mb-5">
+            <span className="eyebrow mb-2">Pair It Up</span>
+            <h2 className="display-heading text-foreground mt-1.5" style={{ fontSize: "clamp(1.25rem, 2.4vw + 0.5rem, 2rem)" }}>
+              Recommended Addon Products
+            </h2>
+          </div>
+          <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
+            {addonProducts.map((p: any) => (
+              <div
+                key={p.id}
+                className="min-w-[44vw] w-[44vw] sm:min-w-[180px] sm:w-[180px] md:min-w-[200px] md:w-[200px] flex-shrink-0 snap-start bg-white rounded-2xl border border-border/60 overflow-hidden flex flex-col"
+              >
+                <Link to={`/product/${p.slug || p.id}`} className="block aspect-square bg-muted/20">
+                  <img
+                    src={p.image_url || "/placeholder.svg"}
+                    alt={p.name}
+                    loading="lazy"
+                    className="w-full h-full object-cover"
+                  />
+                </Link>
+                <div className="p-2.5 sm:p-3 flex flex-col gap-1.5 flex-1">
+                  <p className="text-xs sm:text-sm text-foreground line-clamp-2 leading-snug min-h-[2.5em]">{p.name}</p>
+                  <p className="text-sm font-semibold text-foreground tabular-nums">{formatPrice(Number(p.price))}</p>
+                  <button
+                    onClick={() => handleAddAddon(p)}
+                    className="mt-auto h-9 rounded-md border-2 border-primary text-primary text-[12px] font-bold tracking-wider uppercase hover:bg-primary hover:text-primary-foreground transition-colors"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Mobile sticky action bar */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-border shadow-[0_-4px_16px_rgba(0,0,0,0.08)] px-3 pt-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom))] space-y-2">
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={handleAddToCart}
+            className="h-11 rounded-full bg-white border-2 border-primary text-primary text-[11px] font-bold tracking-[0.12em] uppercase flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform"
+          >
+            <ShoppingBag size={14} strokeWidth={2.2} />
+            Add to Cart
+          </button>
+          <button
+            onClick={handleBuyNow}
+            className="h-11 rounded-full text-primary-foreground text-[11px] font-bold tracking-[0.12em] uppercase flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform"
+            style={{ background: "var(--gradient-luxe)" }}
+          >
+            <Zap size={13} strokeWidth={2.4} className="fill-current" />
+            Buy Now | <span className="tabular-nums normal-case tracking-normal">{formatPrice(effectivePrice * qty)}</span>
+          </button>
+        </div>
+        {(whatsappUrl || orderPhone) && (
+          <div className={`grid ${whatsappUrl && orderPhone ? "grid-cols-2" : "grid-cols-1"} gap-2`}>
+            {whatsappUrl && (
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-10 rounded-full text-white text-[11px] font-bold tracking-wide uppercase flex items-center justify-center gap-1.5"
+                style={{ background: "linear-gradient(135deg, hsl(142 72% 48%) 0%, hsl(142 70% 38%) 100%)" }}
+              >
+                <MessageCircle size={13} strokeWidth={2.4} />
+                WhatsApp
+              </a>
+            )}
+            {orderPhone && (
+              <a
+                href={`tel:${orderPhone}`}
+                className="h-10 rounded-full text-white text-[11px] font-bold tracking-wide uppercase flex items-center justify-center gap-1.5"
+                style={{ background: "linear-gradient(135deg, hsl(240 60% 38%) 0%, hsl(240 65% 24%) 100%)" }}
+              >
+                <Phone size={13} strokeWidth={2.4} className="fill-current" />
+                Call
+              </a>
+            )}
+          </div>
+        )}
+      </div>
     </main>
   );
 };
