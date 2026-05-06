@@ -327,39 +327,14 @@ const Cart = () => {
             </div>
           )}
 
-          {/* Coupon input */}
-          <div className="bg-white rounded-2xl border border-[#dfe8ef] p-4 sm:p-5">
-            <div className="flex items-center gap-2 mb-2">
-              <Ticket size={16} style={{ color: accent }} />
-              <span className="font-semibold text-sm">Have a coupon code?</span>
-            </div>
-            {appliedCoupon ? (
-              <div className="flex items-center justify-between bg-muted/50 rounded-lg px-3 py-2">
-                <span className="text-sm font-semibold">{appliedCoupon.code}</span>
-                <button
-                  onClick={() => { setAppliedCoupon(null); setCouponCode(""); }}
-                  className="text-xs text-destructive hover:underline"
-                >
-                  Remove
-                </button>
-              </div>
-            ) : (
-              <div className="flex gap-2">
-                <Input
-                  value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                  placeholder="Enter code"
-                  className="flex-1 h-10 text-base"
-                />
-                <Button onClick={applyCoupon} disabled={couponLoading} className="h-10" style={{ backgroundColor: accent }}>
-                  Apply
-                </Button>
-              </div>
-            )}
-            <p className="text-xs text-muted-foreground mt-2">
-              You can also apply the discount coupon in the Checkout Process.
+          {/* Coupon note (FlowerAura style — text only) */}
+          <div className="text-center px-4 py-2">
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              <span className="font-semibold text-foreground">Have a Coupon Code?</span>{" "}
+              You can apply the discount coupon in the Checkout Process.
             </p>
           </div>
+
         </div>
 
         {/* === Sticky bottom bar === */}
