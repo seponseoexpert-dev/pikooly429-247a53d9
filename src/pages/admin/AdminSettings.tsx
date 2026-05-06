@@ -1673,6 +1673,14 @@ const AdminSettings = () => {
                       {activeSection === "mail" && (
                         <SendTestEmailButton />
                       )}
+                      {activeSection === "about" && (
+                        <div className="mt-8 pt-6 border-t border-border">
+                          <h3 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
+                            <MessageSquare className="h-4 w-4" /> FAQ Section
+                          </h3>
+                          <DynamicFAQSection formValues={formValues} setFormValues={setFormValues} />
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
