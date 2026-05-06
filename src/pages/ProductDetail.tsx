@@ -322,11 +322,19 @@ const ProductDetail = () => {
 
   const handleBuyNow = () => {
     if (!validateVariants()) return;
+    if (product.stock <= 0) {
+      toast.error("This product is out of stock");
+      return;
+    }
     const variant = buildVariantPayload();
     // Quick checkout: replace cart with just this product at the selected qty
     clearCart();
-    for (let i = 0; i < qty; i++) addItem(cartProduct, customImages.length ? customImages : undefined, true, variant);
-    navigate("/checkout");
+    addItem(cartProduct, customImages.length ? customImages : undefined, true, variant);
+    if (qty > 1) {
+      const variantKey = buildVariantKey(variant);
+      updateQuantity(product.id, qty, variantKey);
+    }
+    navigate("/checkout", { state: { fromBuyNow: true } });
   };
 
   const orderWhatsApp = settings.order_whatsapp_number || settings.whatsapp_number || "";
