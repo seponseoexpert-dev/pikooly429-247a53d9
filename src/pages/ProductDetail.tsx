@@ -896,8 +896,8 @@ const ProductDetail = () => {
         </section>
       )}
 
-      {/* Mobile sticky action bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-border shadow-[0_-4px_16px_rgba(0,0,0,0.08)] px-3 pt-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom))] space-y-2">
+      {/* Mobile sticky action bar — Add to Cart + Buy Now only */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-border shadow-[0_-4px_16px_rgba(0,0,0,0.08)] px-3 pt-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom))]">
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={handleAddToCart}
@@ -915,32 +915,6 @@ const ProductDetail = () => {
             Buy Now | <span className="tabular-nums normal-case tracking-normal">{formatPrice(effectivePrice * qty)}</span>
           </button>
         </div>
-        {(whatsappUrl || orderPhone) && (
-          <div className={`grid ${whatsappUrl && orderPhone ? "grid-cols-2" : "grid-cols-1"} gap-2`}>
-            {whatsappUrl && (
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="h-10 rounded-full text-white text-[11px] font-bold tracking-wide uppercase flex items-center justify-center gap-1.5"
-                style={{ background: "linear-gradient(135deg, hsl(142 72% 48%) 0%, hsl(142 70% 38%) 100%)" }}
-              >
-                <MessageCircle size={13} strokeWidth={2.4} />
-                WhatsApp
-              </a>
-            )}
-            {orderPhone && (
-              <a
-                href={`tel:${orderPhone}`}
-                className="h-10 rounded-full text-white text-[11px] font-bold tracking-wide uppercase flex items-center justify-center gap-1.5"
-                style={{ background: "linear-gradient(135deg, hsl(240 60% 38%) 0%, hsl(240 65% 24%) 100%)" }}
-              >
-                <Phone size={13} strokeWidth={2.4} className="fill-current" />
-                Call
-              </a>
-            )}
-          </div>
-        )}
       </div>
     </main>
   );
