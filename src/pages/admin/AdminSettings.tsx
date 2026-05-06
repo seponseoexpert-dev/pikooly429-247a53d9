@@ -1551,8 +1551,8 @@ const AdminSettings = () => {
         }
       });
 
-      // For FAQ section, also delete removed FAQ keys from DB
-      if (activeSection === "faq") {
+      // For FAQ section (or About which embeds FAQs), also delete removed FAQ keys from DB
+      if (activeSection === "faq" || activeSection === "about") {
         const dbFaqKeys = settings
           .filter((s: any) => /^faq_\d+_(question|answer)$/.test(s.key))
           .map((s: any) => s.key);
