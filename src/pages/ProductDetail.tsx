@@ -690,8 +690,8 @@ const ProductDetail = () => {
               Recommended Addon Products
             </h2>
           </div>
-          <div className="grid grid-cols-3 gap-2 sm:gap-4">
-            {addonProducts.slice(0, 3).map((p: any) => (
+          <div className="grid grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3 lg:gap-4">
+            {addonProducts.slice(0, 6).map((p: any) => (
               <div
                 key={p.id}
                 className="bg-white rounded-2xl border border-border/60 overflow-hidden flex flex-col"
