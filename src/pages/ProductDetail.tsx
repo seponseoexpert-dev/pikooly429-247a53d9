@@ -320,6 +320,13 @@ const ProductDetail = () => {
     for (let i = 0; i < qty; i++) addItem(cartProduct, customImages.length ? customImages : undefined, false, variant);
   };
 
+  const addonIds = useMemo(() => new Set((addonProducts || []).map((p: any) => p.id)), [addonProducts]);
+  const addonInCartTotal = useMemo(
+    () => cartItems.filter(i => addonIds.has(i.product.id)).reduce((s, i) => s + i.product.price * i.quantity, 0),
+    [cartItems, addonIds]
+  );
+  const buyNowTotal = effectivePrice * qty + addonInCartTotal;
+
   const handleBuyNow = () => {
     if (!validateVariants()) return;
     if (product.stock <= 0) {
@@ -327,8 +334,12 @@ const ProductDetail = () => {
       return;
     }
     const variant = buildVariantPayload();
-    // Quick checkout: replace cart with just this product at the selected qty
+    // Quick checkout: keep selected addons, replace main product line with this one at selected qty
+    const keptAddons = cartItems.filter(i => addonIds.has(i.product.id));
     clearCart();
+    keptAddons.forEach(a => {
+      for (let i = 0; i < a.quantity; i++) addItem(a.product, undefined, true);
+    });
     addItem(cartProduct, customImages.length ? customImages : undefined, true, variant);
     if (qty > 1) {
       const variantKey = buildVariantKey(variant);
