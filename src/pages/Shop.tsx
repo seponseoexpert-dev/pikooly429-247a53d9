@@ -146,7 +146,7 @@ const Shop = () => {
   }, [selectedSub, subcategories]);
 
   const activeContent = activeSubcategory || activeCategory;
-  const activeCategoryName = activeSubcategory?.name || activeCategory?.name || "All Products";
+  const activeCategoryName = activeSubcategory?.name || activeCategory?.name || (sameDayParam ? "Same Day Delivery" : "All Products");
   const { settings } = useSiteSettings();
 
   useEffect(() => {
