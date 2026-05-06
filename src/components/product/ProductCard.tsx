@@ -76,9 +76,9 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
 
       {/* Content */}
       <div className="p-3 sm:p-3.5 flex flex-col flex-1">
-        {/* Title — strictly single line with ellipsis */}
+        {/* Title — 2 lines max */}
         <Link to={linkTo} className="block min-w-0">
-          <h3 className="block w-full text-[14px] sm:text-[14px] text-[hsl(0_0%_12%)] leading-[1.3] font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
+          <h3 className="text-[14px] sm:text-[14px] text-[hsl(0_0%_12%)] leading-[1.35] font-semibold line-clamp-2 min-h-[2.7em]">
             {product.name}
           </h3>
         </Link>
