@@ -323,7 +323,7 @@ const Shop = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4 lg:gap-5">
         {productsLoading
           ? Array.from({ length: 10 }).map((_, i) => <ProductCardSkeleton key={i} />)
           : filtered.map((product: any) => (
