@@ -1,7 +1,7 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import SEOHead from "@/components/seo/SEOHead";
 import { toast } from "sonner";
-import { useCart, VariantSelection } from "@/contexts/CartContext";
+import { useCart, VariantSelection, buildVariantKey } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Heart, Minus, Plus, Star, Phone, MessageCircle, Type, X, ChevronLeft, ChevronRight, Facebook, Twitter, Link2, Check, Ruler, Palette, Zap } from "lucide-react";
 import { parseDeliveryBadge } from "@/lib/deliveryBadge";
@@ -19,7 +19,7 @@ import { useMultiCurrency } from "@/contexts/CurrencyContext";
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addItem, clearCart } = useCart();
+  const { addItem, clearCart, updateQuantity } = useCart();
   const { settings } = useSiteSettings();
   const { formatPrice } = useMultiCurrency();
   const [qty, setQty] = useState(1);
@@ -322,11 +322,19 @@ const ProductDetail = () => {
 
   const handleBuyNow = () => {
     if (!validateVariants()) return;
+    if (product.stock <= 0) {
+      toast.error("This product is out of stock");
+      return;
+    }
     const variant = buildVariantPayload();
     // Quick checkout: replace cart with just this product at the selected qty
     clearCart();
-    for (let i = 0; i < qty; i++) addItem(cartProduct, customImages.length ? customImages : undefined, true, variant);
-    navigate("/checkout");
+    addItem(cartProduct, customImages.length ? customImages : undefined, true, variant);
+    if (qty > 1) {
+      const variantKey = buildVariantKey(variant);
+      updateQuantity(product.id, qty, variantKey);
+    }
+    navigate("/checkout", { state: { fromBuyNow: true } });
   };
 
   const orderWhatsApp = settings.order_whatsapp_number || settings.whatsapp_number || "";
