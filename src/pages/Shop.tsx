@@ -311,7 +311,7 @@ const Shop = () => {
         </div>
       )}
 
-      {!catParam && (
+      {!catParam && !sameDayParam && (
         <div className="mb-4 sm:mb-6 flex gap-2 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-1">
           <button
             onClick={() => setSelectedCat("")}
