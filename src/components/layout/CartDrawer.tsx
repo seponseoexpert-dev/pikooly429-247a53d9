@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
+import { parseDeliveryBadge } from "@/lib/deliveryBadge";
+import { cn } from "@/lib/utils";
 
 const CartDrawer = () => {
   const { items, removeItem, updateQuantity, totalPrice, totalItems, isOpen, setIsOpen } = useCart();
