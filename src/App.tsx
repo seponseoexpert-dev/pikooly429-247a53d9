@@ -87,6 +87,7 @@ const AdminHomeLiving = lazy(() => lazyRetry(() => import("./pages/admin/AdminHo
 const AdminAccount = lazy(() => lazyRetry(() => import("./pages/admin/AdminAccount")));
 const AdminSecurity = lazy(() => lazyRetry(() => import("./pages/admin/AdminSecurity")));
 const AdminActivityLog = lazy(() => lazyRetry(() => import("./pages/admin/AdminActivityLog")));
+const AdminCartAddons = lazy(() => lazyRetry(() => import("./pages/admin/AdminCartAddons")));
 const SearchPage = lazy(() => lazyRetry(() => import("./pages/Search")));
 
 const queryClient = new QueryClient({
