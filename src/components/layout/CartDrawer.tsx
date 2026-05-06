@@ -160,6 +160,7 @@ const CartDrawer = () => {
                         </button>
                       </div>
                     </div>
+                    </div>
                   </motion.div>
                   );
                 })
