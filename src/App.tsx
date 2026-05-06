@@ -243,6 +243,7 @@ const App = () => (
               <Route path="/admin/account" element={<AdminRoute><AdminAccount /></AdminRoute>} />
               <Route path="/admin/security" element={<AdminRoute><AdminSecurity /></AdminRoute>} />
               <Route path="/admin/activity" element={<AdminRoute><AdminActivityLog /></AdminRoute>} />
+              <Route path="/admin/cart-addons" element={<AdminRoute><AdminCartAddons /></AdminRoute>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>
