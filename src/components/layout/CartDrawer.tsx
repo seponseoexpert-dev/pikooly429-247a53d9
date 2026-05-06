@@ -65,6 +65,15 @@ const CartDrawer = () => {
                 items.map((item, index) => {
                   const variantKey = buildVariantKey(item.variant);
                   const lineUnit = item.product.price + (item.variant?.size?.extraPrice || 0);
+                  // Resolve delivery badge: explicit delivery_time wins, else infer from districts
+                  let badge = parseDeliveryBadge(item.product.deliveryTime);
+                  if (!badge) {
+                    const sd = item.product.sameDayDistricts;
+                    const nd = item.product.nextDayDistricts;
+                    if (Array.isArray(sd) && sd.length > 0) badge = parseDeliveryBadge("same day");
+                    else if (Array.isArray(nd) && nd.length > 0) badge = parseDeliveryBadge("next day");
+                    else badge = parseDeliveryBadge("standard");
+                  }
                   return (
                   <motion.div
                     key={`${item.product.id}-${variantKey}`}
