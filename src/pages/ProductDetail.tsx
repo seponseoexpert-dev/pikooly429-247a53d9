@@ -691,7 +691,7 @@ const ProductDetail = () => {
             </h2>
           </div>
           <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
-            {addonProducts.map((p: any) => (
+            {addonProducts.slice(0, 3).map((p: any) => (
               <div
                 key={p.id}
                 className="min-w-[44vw] w-[44vw] sm:min-w-[180px] sm:w-[180px] md:min-w-[200px] md:w-[200px] flex-shrink-0 snap-start bg-white rounded-2xl border border-border/60 overflow-hidden flex flex-col"
