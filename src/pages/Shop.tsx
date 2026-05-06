@@ -260,7 +260,7 @@ const Shop = () => {
   }, [selectedCat, selectedSub, searchParam, sortBy, products, subcategories]);
 
   return (
-    <main className="section-container py-3 sm:py-4 md:py-6 lg:py-8 pb-24 md:pb-10">
+    <main className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-3 sm:py-4 md:py-6 lg:py-8 pb-24 md:pb-10">
       <SEOHead
         title={`${activeCategoryName || "Shop"} — Pikooly`}
         description={`Shop ${activeCategoryName || "premium flowers, gifts and cakes"} online at Pikooly. Same-day delivery across Bangladesh.`}
