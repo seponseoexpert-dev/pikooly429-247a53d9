@@ -260,7 +260,7 @@ const Shop = () => {
   }, [selectedCat, selectedSub, searchParam, sortBy, products, subcategories]);
 
   return (
-    <main className="section-container py-3 sm:py-4 md:py-6 lg:py-8 pb-24 md:pb-10">
+    <main className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-3 sm:py-4 md:py-6 lg:py-8 pb-24 md:pb-10">
       <SEOHead
         title={`${activeCategoryName || "Shop"} — Pikooly`}
         description={`Shop ${activeCategoryName || "premium flowers, gifts and cakes"} online at Pikooly. Same-day delivery across Bangladesh.`}
@@ -323,7 +323,7 @@ const Shop = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4 lg:gap-5">
         {productsLoading
           ? Array.from({ length: 10 }).map((_, i) => <ProductCardSkeleton key={i} />)
           : filtered.map((product: any) => (
