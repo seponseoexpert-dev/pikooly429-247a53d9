@@ -407,12 +407,10 @@ const Checkout = () => {
     }
   }, [activeDistrict, sameDayAvailable, nextDayAvailable, deliveryType]);
 
-  const deliveryFee = deliveryType === "same_day" ? sameDayFee : nextDayFee;
-
-  const deliveryLabel =
-    deliveryType === "same_day"
-      ? (activeDistrict?.same_day_label || "Same Day Delivery")
-      : (activeDistrict?.next_day_label || "Next Day Delivery");
+  // NEW: split-shipment delivery (3-mode system) — overrides legacy district-based fee
+  const { groups: deliveryGroups, totalDeliveryFee, isSplit, primaryLabel } = useCheckoutDelivery(items as any);
+  const deliveryFee = totalDeliveryFee;
+  const deliveryLabel = primaryLabel || "Delivery";
 
   // Coupon discount calculation
   const couponDiscount = appliedCoupon
