@@ -1564,6 +1564,57 @@ const LanguagesSection = ({
   );
 };
 
+const PagesSection = ({
+  formValues,
+  setFormValues,
+}: {
+  formValues: Record<string, string>;
+  setFormValues: (v: Record<string, string>) => void;
+}) => {
+  const pageTabs = [
+    { key: "about_page", label: "About Us" },
+    { key: "contact_page", label: "Contact Us" },
+    { key: "refund_policy", label: "Refund & Return" },
+    { key: "privacy_policy", label: "Privacy Policy" },
+    { key: "terms_conditions", label: "Terms & Conditions" },
+  ];
+  const [active, setActive] = useState(pageTabs[0].key);
+  const fields = sectionFields[active] || [];
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap gap-2 border-b pb-3">
+        {pageTabs.map((t) => (
+          <button
+            key={t.key}
+            type="button"
+            onClick={() => setActive(t.key)}
+            className={cn(
+              "px-3 py-1.5 rounded-md text-sm transition-colors",
+              active === t.key
+                ? "bg-primary text-primary-foreground font-medium"
+                : "bg-muted text-muted-foreground hover:bg-muted/70"
+            )}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+        {fields.map((field) => (
+          <div key={field.key} className={cn("space-y-1.5", field.fullWidth && "md:col-span-2")}>
+            <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{field.label}</label>
+            <FieldRenderer
+              field={field}
+              value={formValues[field.key] || ""}
+              onChange={(val) => setFormValues({ ...formValues, [field.key]: val })}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const AdminSettings = () => {
   const { toast } = useToast();
   const qc = useQueryClient();
