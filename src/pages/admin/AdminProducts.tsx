@@ -290,6 +290,37 @@ const AdminProducts = () => {
                 </div>
               </div>
 
+              {/* Delivery Type & Per-product Fee Override */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border border-border rounded-lg p-4 bg-muted/20">
+                <div className="space-y-2">
+                  <Label>Delivery Type *</Label>
+                  <select
+                    value={form.delivery_type}
+                    onChange={(e) => setForm({ ...form, delivery_type: e.target.value as any })}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base"
+                  >
+                    <option value="same_day">Same Day Delivery</option>
+                    <option value="next_day">Next Day Delivery</option>
+                    <option value="standard">Standard Delivery</option>
+                    <option value="economy">Economy Delivery</option>
+                  </select>
+                  <p className="text-[11px] text-muted-foreground">Choose the delivery speed for this product.</p>
+                </div>
+                <div className="space-y-2">
+                  <Label>Delivery Fee Override (৳)</Label>
+                  <Input
+                    type="number"
+                    min={0}
+                    value={form.delivery_fee_override}
+                    onChange={(e) => setForm({ ...form, delivery_fee_override: e.target.value })}
+                    placeholder="e.g. 250"
+                  />
+                  <p className="text-[11px] text-muted-foreground">
+                    Custom fee for this product. Leave empty to use district default.
+                  </p>
+                </div>
+              </div>
+
               {/* Per-product delivery control */}
               <ProductDeliveryControl
                 sameDayDistricts={form.same_day_districts}
