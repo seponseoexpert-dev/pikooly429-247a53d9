@@ -902,18 +902,15 @@ const ProductDetail = () => {
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={handleAddToCart}
-            className="h-11 rounded-md bg-white border-2 border-primary text-primary text-[11px] font-bold tracking-[0.12em] uppercase flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform"
+            className="h-11 rounded-sm bg-white border border-primary text-primary text-[11px] font-bold tracking-[0.12em] uppercase flex items-center justify-center active:scale-[0.97] transition-transform"
           >
-            <ShoppingBag size={14} strokeWidth={2.2} />
             Add to Cart
           </button>
           <button
             onClick={handleBuyNow}
-            className="h-11 rounded-md text-primary-foreground text-[11px] font-bold tracking-[0.12em] uppercase flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform"
-            style={{ background: "var(--gradient-luxe)" }}
+            className="h-11 rounded-sm bg-[hsl(200_30%_22%)] text-white text-[11px] font-bold tracking-[0.12em] uppercase flex items-center justify-center gap-1 active:scale-[0.97] transition-transform"
           >
-            <Zap size={13} strokeWidth={2.4} className="fill-current" />
-            Buy Now | <span className="tabular-nums normal-case tracking-normal">{formatPrice(buyNowTotal)}</span>
+            Buy Now <span className="tabular-nums normal-case tracking-normal">| {formatPrice(buyNowTotal)}</span>
           </button>
         </div>
       </div>
