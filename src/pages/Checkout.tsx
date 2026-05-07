@@ -509,7 +509,7 @@ const Checkout = () => {
         customer_phone: form.phone.trim(),
         customer_email: form.email.trim() || null,
         billing_country: form.billingCountry.trim() || 'Bangladesh',
-        delivery_address: `${activeDistrict?.name || ""} - ${form.address.trim()}`,
+        delivery_address: `${activeDistrict?.name ? activeDistrict.name + " - " : ""}${form.address.trim()}`,
         notes: form.notes.trim() || null,
         recipient_name: form.recipientName.trim() || null,
         alt_phone: form.recipientPhone.trim() || null,
