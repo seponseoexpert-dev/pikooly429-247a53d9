@@ -87,20 +87,29 @@ const ProductDeliveryControl = ({
               No active districts found. Add districts in Shipping settings.
             </p>
           )}
-          {districts.map((d) => (
-            <label
-              key={`sd-${d.id}`}
-              className="flex items-center gap-2 cursor-pointer hover:bg-muted/50 rounded px-2 py-1 transition-colors"
-            >
-              <Checkbox
-                checked={sameDayDistricts.includes(d.name)}
-                onCheckedChange={() =>
-                  toggle(sameDayDistricts, d.name, "same_day_districts")
-                }
-              />
-              <span className="text-xs">{d.name}</span>
-            </label>
-          ))}
+          {districts.map((d) => {
+            const disabled = nextDayDistricts.includes(d.name);
+            return (
+              <label
+                key={`sd-${d.id}`}
+                className={`flex items-center gap-2 rounded px-2 py-1 transition-colors ${
+                  disabled
+                    ? "opacity-40 cursor-not-allowed"
+                    : "cursor-pointer hover:bg-muted/50"
+                }`}
+                title={disabled ? "Already selected in Next Day Delivery" : undefined}
+              >
+                <Checkbox
+                  disabled={disabled}
+                  checked={sameDayDistricts.includes(d.name)}
+                  onCheckedChange={() =>
+                    toggle(sameDayDistricts, d.name, "same_day_districts")
+                  }
+                />
+                <span className="text-xs">{d.name}</span>
+              </label>
+            );
+          })}
         </div>
         {sameDayDistricts.length > 0 && (
           <p className="text-[11px] text-muted-foreground">
@@ -116,20 +125,29 @@ const ProductDeliveryControl = ({
           Next Day Delivery — Available Districts
         </Label>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 border border-border rounded-md p-3 max-h-44 overflow-y-auto bg-background">
-          {districts.map((d) => (
-            <label
-              key={`nd-${d.id}`}
-              className="flex items-center gap-2 cursor-pointer hover:bg-muted/50 rounded px-2 py-1 transition-colors"
-            >
-              <Checkbox
-                checked={nextDayDistricts.includes(d.name)}
-                onCheckedChange={() =>
-                  toggle(nextDayDistricts, d.name, "next_day_districts")
-                }
-              />
-              <span className="text-xs">{d.name}</span>
-            </label>
-          ))}
+          {districts.map((d) => {
+            const disabled = sameDayDistricts.includes(d.name);
+            return (
+              <label
+                key={`nd-${d.id}`}
+                className={`flex items-center gap-2 rounded px-2 py-1 transition-colors ${
+                  disabled
+                    ? "opacity-40 cursor-not-allowed"
+                    : "cursor-pointer hover:bg-muted/50"
+                }`}
+                title={disabled ? "Already selected in Same Day Delivery" : undefined}
+              >
+                <Checkbox
+                  disabled={disabled}
+                  checked={nextDayDistricts.includes(d.name)}
+                  onCheckedChange={() =>
+                    toggle(nextDayDistricts, d.name, "next_day_districts")
+                  }
+                />
+                <span className="text-xs">{d.name}</span>
+              </label>
+            );
+          })}
         </div>
         {nextDayDistricts.length > 0 && (
           <p className="text-[11px] text-muted-foreground">
