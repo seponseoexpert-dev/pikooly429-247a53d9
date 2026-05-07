@@ -494,18 +494,8 @@ const Checkout = () => {
       return;
     }
 
-    if (!selectedDistrict) {
-      toast.error("Please select a shipping district");
-      return;
-    }
-
     if (items.length === 0) {
       toast.error("Your cart is empty");
-      return;
-    }
-
-    if (hasDeliveryMismatch) {
-      toast.error(`${incompatibleItems.length} item(s) don't support ${deliveryType === "same_day" ? "Same Day" : "Next Day"} delivery. Please switch delivery option or remove them.`);
       return;
     }
 
