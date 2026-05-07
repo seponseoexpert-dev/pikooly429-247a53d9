@@ -321,24 +321,7 @@ const Header = () => {
             </div>
           </div>
 
-          {/* === MOBILE SEARCH === */}
-          {/* Full search bar - shown when not scrolled OR when expanded */}
-          <div
-            className={`lg:hidden relative ${
-              !scrolled || mobileSearchExpanded ? "pb-2 opacity-100" : "pb-0 opacity-0 pointer-events-none"
-            }`}
-          >
-            <div className={`transition-all duration-100 ease-out overflow-hidden ${
-              !scrolled || mobileSearchExpanded ? "max-h-[60px]" : "max-h-0"
-            }`}>
-            <div className="relative group cursor-pointer" onClick={() => navigate("/search")}>
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" size={15} />
-              <div className="w-full rounded-full border border-border/60 bg-muted/50 py-2.5 pl-10 pr-9 text-[13px] text-muted-foreground/60 shadow-[0_20px_40px_-32px_hsl(var(--foreground)/0.45)]">
-                {t("search_placeholder")}
-              </div>
-            </div>
-            </div>
-          </div>
+          {/* Mobile search bar removed — using header icon instead */}
 
           {/* === NAV BAR (Desktop/Tablet) === */}
           <div ref={navRef} className="relative hidden md:block border-t border-border/30">
