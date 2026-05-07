@@ -43,6 +43,9 @@ const settingSections = [
   { key: "about", label: "About Section", icon: FileText },
   { key: "about_page", label: "About Us Page", icon: FileText },
   { key: "contact_page", label: "Contact Us Page", icon: Phone },
+  { key: "refund_policy", label: "Refund & Return Policy", icon: FileText },
+  { key: "privacy_policy", label: "Privacy Policy", icon: Shield },
+  { key: "terms_conditions", label: "Terms & Conditions", icon: FileText },
   { key: "faq", label: "FAQ Section", icon: MessageSquare },
   { key: "push_notification", label: "Push Notification", icon: Bell },
   { key: "social_login", label: "Social Login", icon: Share2 },
@@ -330,6 +333,21 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "contactpage_address", label: "Address", type: "textarea", fullWidth: true, placeholder: "House 95, Road 06, Sector 9, Uttara, Dhaka 1230" },
     { key: "contactpage_website_url", label: "Website URL", placeholder: "https://pikooly.com.bd" },
     { key: "contactpage_website_label", label: "Website Label", placeholder: "pikooly.com.bd" },
+  ],
+  refund_policy: [
+    { key: "refundpage_title", label: "Page Title", fullWidth: true, placeholder: "Refund & Return Policy" },
+    { key: "refundpage_subtitle", label: "Page Subtitle", fullWidth: true, placeholder: "Our commitment to your satisfaction" },
+    { key: "refundpage_content", label: "Page Content", type: "richtext", fullWidth: true, placeholder: "Write your full refund & return policy here..." },
+  ],
+  privacy_policy: [
+    { key: "privacypage_title", label: "Page Title", fullWidth: true, placeholder: "Privacy Policy" },
+    { key: "privacypage_subtitle", label: "Page Subtitle", fullWidth: true, placeholder: "How we protect and use your information" },
+    { key: "privacypage_content", label: "Page Content", type: "richtext", fullWidth: true, placeholder: "Write your full privacy policy here..." },
+  ],
+  terms_conditions: [
+    { key: "termspage_title", label: "Page Title", fullWidth: true, placeholder: "Terms & Conditions" },
+    { key: "termspage_subtitle", label: "Page Subtitle", fullWidth: true, placeholder: "Please read carefully before using our service" },
+    { key: "termspage_content", label: "Page Content", type: "richtext", fullWidth: true, placeholder: "Write your full terms & conditions here..." },
   ],
   faq: [
     { key: "faq_section_title", label: "Section Title", placeholder: "Frequently Asked Questions" },
