@@ -1456,8 +1456,10 @@ export type Database = {
           allow_custom_text: boolean
           category_id: string | null
           created_at: string
+          delivery_fee_override: number | null
           delivery_info: string | null
           delivery_time: string | null
+          delivery_type: string
           description: string | null
           id: string
           image_url: string | null
@@ -1488,8 +1490,10 @@ export type Database = {
           allow_custom_text?: boolean
           category_id?: string | null
           created_at?: string
+          delivery_fee_override?: number | null
           delivery_info?: string | null
           delivery_time?: string | null
+          delivery_type?: string
           description?: string | null
           id?: string
           image_url?: string | null
@@ -1520,8 +1524,10 @@ export type Database = {
           allow_custom_text?: boolean
           category_id?: string | null
           created_at?: string
+          delivery_fee_override?: number | null
           delivery_info?: string | null
           delivery_time?: string | null
+          delivery_type?: string
           description?: string | null
           id?: string
           image_url?: string | null

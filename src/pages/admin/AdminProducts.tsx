@@ -54,6 +54,8 @@ const AdminProducts = () => {
     same_day_districts: [] as string[],
     next_day_districts: [] as string[],
     standard_delivery_days: 3,
+    delivery_type: "standard" as "same_day" | "next_day" | "standard" | "economy",
+    delivery_fee_override: "" as string | number,
   };
   const [form, setForm] = useState(defaultForm);
 
@@ -117,6 +119,8 @@ const AdminProducts = () => {
       same_day_districts: (p as any).same_day_districts || [],
       next_day_districts: (p as any).next_day_districts || [],
       standard_delivery_days: (p as any).standard_delivery_days ?? 3,
+      delivery_type: ((p as any).delivery_type as any) || "standard",
+      delivery_fee_override: (p as any).delivery_fee_override ?? "",
     });
     setImageFile(null);
     setDialogOpen(true);
@@ -161,6 +165,11 @@ const AdminProducts = () => {
       same_day_districts: form.same_day_districts,
       next_day_districts: form.next_day_districts,
       standard_delivery_days: form.standard_delivery_days,
+      delivery_type: form.delivery_type,
+      delivery_fee_override:
+        form.delivery_fee_override === "" || form.delivery_fee_override === null
+          ? null
+          : Number(form.delivery_fee_override),
     };
 
     let productId: string | null = null;
@@ -278,6 +287,37 @@ const AdminProducts = () => {
                 <div className="space-y-2 col-span-2 sm:col-span-1">
                   <Label>Delivery Time (Display Badge)</Label>
                   <Input value={form.delivery_time} onChange={(e) => setForm({ ...form, delivery_time: e.target.value })} placeholder="e.g. 2 Hours" />
+                </div>
+              </div>
+
+              {/* Delivery Type & Per-product Fee Override */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border border-border rounded-lg p-4 bg-muted/20">
+                <div className="space-y-2">
+                  <Label>Delivery Type *</Label>
+                  <select
+                    value={form.delivery_type}
+                    onChange={(e) => setForm({ ...form, delivery_type: e.target.value as any })}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base"
+                  >
+                    <option value="same_day">Same Day Delivery</option>
+                    <option value="next_day">Next Day Delivery</option>
+                    <option value="standard">Standard Delivery</option>
+                    <option value="economy">Economy Delivery</option>
+                  </select>
+                  <p className="text-[11px] text-muted-foreground">Choose the delivery speed for this product.</p>
+                </div>
+                <div className="space-y-2">
+                  <Label>Delivery Fee Override (৳)</Label>
+                  <Input
+                    type="number"
+                    min={0}
+                    value={form.delivery_fee_override}
+                    onChange={(e) => setForm({ ...form, delivery_fee_override: e.target.value })}
+                    placeholder="e.g. 250"
+                  />
+                  <p className="text-[11px] text-muted-foreground">
+                    Custom fee for this product. Leave empty to use district default.
+                  </p>
                 </div>
               </div>
 
