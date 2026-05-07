@@ -12,11 +12,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Search, Package } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Package, ChevronDown, Truck } from "lucide-react";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import ProductVariantsManager, { saveProductVariants } from "@/components/admin/ProductVariantsManager";
 import ProductDeliveryControl from "@/components/admin/ProductDeliveryControl";
 import { useCurrency } from "@/hooks/useCurrency";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Product = Tables<"products">;
@@ -32,6 +33,7 @@ interface Subcategory {
 
 const AdminProducts = () => {
   const { formatCurrency } = useCurrency();
+  const { settings } = useSiteSettings();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
@@ -43,6 +45,22 @@ const AdminProducts = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [search, setSearch] = useState("");
   const [filterCategory, setFilterCategory] = useState<string>("all");
+  const [showAdvancedDelivery, setShowAdvancedDelivery] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [bulkApplying, setBulkApplying] = useState(false);
+
+  const presetFee = (type: string): number | "" => {
+    const v = settings[`delivery_preset_${type}_fee`];
+    if (!v) return "";
+    const n = parseFloat(v);
+    return isNaN(n) ? "" : n;
+  };
+  const presetDays = (type: string): number | null => {
+    const v = settings[`delivery_preset_${type}_days`];
+    if (!v) return null;
+    const n = parseInt(v);
+    return isNaN(n) ? null : n;
+  };
 
   const defaultForm = {
     name: "", slug: "", short_description: "", description: "", price: 0, original_price: 0,
@@ -296,15 +314,30 @@ const AdminProducts = () => {
                   <Label>Delivery Type *</Label>
                   <select
                     value={form.delivery_type}
-                    onChange={(e) => setForm({ ...form, delivery_type: e.target.value as any })}
+                    onChange={(e) => {
+                      const t = e.target.value as any;
+                      const fee = presetFee(t);
+                      const days = presetDays(t);
+                      setForm({
+                        ...form,
+                        delivery_type: t,
+                        // Auto-fill preset fee only if override is empty (don't overwrite user customization)
+                        delivery_fee_override: form.delivery_fee_override === "" || form.delivery_fee_override === null
+                          ? fee
+                          : form.delivery_fee_override,
+                        standard_delivery_days: (t === "standard" || t === "economy") && days != null
+                          ? days
+                          : form.standard_delivery_days,
+                      });
+                    }}
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base"
                   >
-                    <option value="same_day">Same Day Delivery</option>
-                    <option value="next_day">Next Day Delivery</option>
-                    <option value="standard">Standard Delivery</option>
-                    <option value="economy">Economy Delivery</option>
+                    <option value="same_day">Same Day Delivery {presetFee("same_day") !== "" ? `(৳${presetFee("same_day")})` : ""}</option>
+                    <option value="next_day">Next Day Delivery {presetFee("next_day") !== "" ? `(৳${presetFee("next_day")})` : ""}</option>
+                    <option value="standard">Standard Delivery {presetFee("standard") !== "" ? `(৳${presetFee("standard")})` : ""}</option>
+                    <option value="economy">Economy Delivery {presetFee("economy") !== "" ? `(৳${presetFee("economy")})` : ""}</option>
                   </select>
-                  <p className="text-[11px] text-muted-foreground">Choose the delivery speed for this product.</p>
+                  <p className="text-[11px] text-muted-foreground">Preset fees auto-fill from Settings → Delivery Presets.</p>
                 </div>
                 <div className="space-y-2">
                   <Label>Delivery Fee Override (৳)</Label>
@@ -313,28 +346,45 @@ const AdminProducts = () => {
                     min={0}
                     value={form.delivery_fee_override}
                     onChange={(e) => setForm({ ...form, delivery_fee_override: e.target.value })}
-                    placeholder="e.g. 250"
+                    placeholder="Auto from preset"
                   />
                   <p className="text-[11px] text-muted-foreground">
-                    Custom fee for this product. Leave empty to use district default.
+                    Leave empty to use the global preset above.
                   </p>
                 </div>
               </div>
 
-              {/* Per-product delivery control */}
-              <ProductDeliveryControl
-                sameDayDistricts={form.same_day_districts}
-                nextDayDistricts={form.next_day_districts}
-                standardDeliveryDays={form.standard_delivery_days}
-                onChange={(next) =>
-                  setForm({
-                    ...form,
-                    same_day_districts: next.same_day_districts,
-                    next_day_districts: next.next_day_districts,
-                    standard_delivery_days: next.standard_delivery_days,
-                  })
-                }
-              />
+              {/* Advanced (collapsed) per-product district selector */}
+              <div className="border border-border rounded-lg bg-muted/10">
+                <button
+                  type="button"
+                  onClick={() => setShowAdvancedDelivery((v) => !v)}
+                  className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium hover:bg-muted/30 rounded-lg"
+                >
+                  <span className="flex items-center gap-2">
+                    <Truck className="h-4 w-4 text-muted-foreground" />
+                    Advanced — Per-district Override
+                  </span>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${showAdvancedDelivery ? "rotate-180" : ""}`} />
+                </button>
+                {showAdvancedDelivery && (
+                  <div className="px-4 pb-4">
+                    <ProductDeliveryControl
+                      sameDayDistricts={form.same_day_districts}
+                      nextDayDistricts={form.next_day_districts}
+                      standardDeliveryDays={form.standard_delivery_days}
+                      onChange={(next) =>
+                        setForm({
+                          ...form,
+                          same_day_districts: next.same_day_districts,
+                          next_day_districts: next.next_day_districts,
+                          standard_delivery_days: next.standard_delivery_days,
+                        })
+                      }
+                    />
+                  </div>
+                )}
+              </div>
 
               {/* Categories with Checkboxes */}
               <div className="space-y-3">
@@ -543,6 +593,59 @@ const AdminProducts = () => {
         </Select>
       </div>
 
+      {/* Bulk Apply Delivery Type */}
+      <div className="mb-4 border border-border rounded-lg bg-muted/20 p-3 flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-2">
+          <Checkbox
+            checked={selectedIds.length > 0 && selectedIds.length === filtered.length}
+            onCheckedChange={(c) => setSelectedIds(c ? filtered.map((p) => p.id) : [])}
+          />
+          <span className="text-sm font-medium">
+            {selectedIds.length > 0 ? `${selectedIds.length} selected` : "Select all"}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 ml-auto">
+          <Truck className="h-4 w-4 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground hidden sm:inline">Bulk apply delivery type:</span>
+          <Select
+            disabled={selectedIds.length === 0 || bulkApplying}
+            onValueChange={async (type) => {
+              if (selectedIds.length === 0) return;
+              setBulkApplying(true);
+              const fee = presetFee(type);
+              const days = presetDays(type);
+              const updates: any = {
+                delivery_type: type,
+                delivery_fee_override: fee === "" ? null : fee,
+              };
+              if ((type === "standard" || type === "economy") && days != null) {
+                updates.standard_delivery_days = days;
+              }
+              const { error } = await supabase
+                .from("products")
+                .update(updates)
+                .in("id", selectedIds);
+              setBulkApplying(false);
+              if (error) {
+                toast({ title: "Error", description: error.message, variant: "destructive" });
+              } else {
+                toast({ title: `Applied to ${selectedIds.length} product(s)` });
+                setSelectedIds([]);
+                fetchData();
+              }
+            }}
+          >
+            <SelectTrigger className="w-[200px]"><SelectValue placeholder="Choose type..." /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="same_day">Same Day {presetFee("same_day") !== "" ? `(৳${presetFee("same_day")})` : ""}</SelectItem>
+              <SelectItem value="next_day">Next Day {presetFee("next_day") !== "" ? `(৳${presetFee("next_day")})` : ""}</SelectItem>
+              <SelectItem value="standard">Standard {presetFee("standard") !== "" ? `(৳${presetFee("standard")})` : ""}</SelectItem>
+              <SelectItem value="economy">Economy {presetFee("economy") !== "" ? `(৳${presetFee("economy")})` : ""}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
       {/* Mobile Card Layout */}
       <div className="sm:hidden space-y-3">
         {loading ? (
@@ -564,6 +667,13 @@ const AdminProducts = () => {
             <Card key={p.id} className="overflow-hidden hover:shadow-md transition-shadow">
               <CardContent className="p-0">
                 <div className="flex items-start gap-3 p-3">
+                  <Checkbox
+                    className="mt-1"
+                    checked={selectedIds.includes(p.id)}
+                    onCheckedChange={(c) =>
+                      setSelectedIds(c ? [...selectedIds, p.id] : selectedIds.filter((id) => id !== p.id))
+                    }
+                  />
                   {p.image_url ? (
                     <img src={p.image_url} alt="" className="h-16 w-16 object-cover rounded-xl shrink-0 border border-border" />
                   ) : (
@@ -615,6 +725,12 @@ const AdminProducts = () => {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-10">
+                    <Checkbox
+                      checked={selectedIds.length > 0 && selectedIds.length === filtered.length}
+                      onCheckedChange={(c) => setSelectedIds(c ? filtered.map((p) => p.id) : [])}
+                    />
+                  </TableHead>
                   <TableHead>Image</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Price</TableHead>
@@ -626,7 +742,15 @@ const AdminProducts = () => {
               </TableHeader>
               <TableBody>
                 {filtered.map((p) => (
-                  <TableRow key={p.id}>
+                  <TableRow key={p.id} data-state={selectedIds.includes(p.id) ? "selected" : undefined}>
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedIds.includes(p.id)}
+                        onCheckedChange={(c) =>
+                          setSelectedIds(c ? [...selectedIds, p.id] : selectedIds.filter((id) => id !== p.id))
+                        }
+                      />
+                    </TableCell>
                     <TableCell>
                       {p.image_url ? <img src={p.image_url} alt="" className="h-10 w-10 object-cover rounded" /> : <div className="h-10 w-10 bg-muted rounded" />}
                     </TableCell>
