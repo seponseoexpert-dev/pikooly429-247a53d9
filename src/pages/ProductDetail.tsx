@@ -499,6 +499,21 @@ const ProductDetail = () => {
                 ))}
               </div>
             )}
+
+            {/* FNP-style trust badges row */}
+            <div className="hidden md:grid grid-cols-3 gap-3 mt-6 pt-6 border-t border-border/40">
+              {[
+                { icon: "😊", title: "20+ Mn Smiles", sub: "Delivered" },
+                { icon: "📍", title: "20000+", sub: "Pincodes Covered" },
+                { icon: "🚚", title: "620+ Cities Enjoying", sub: "same-day delivery" },
+              ].map((b, i) => (
+                <div key={i} className="flex flex-col items-center text-center gap-1.5">
+                  <span className="text-2xl">{b.icon}</span>
+                  <p className="text-[12px] font-semibold text-foreground leading-tight">{b.title}</p>
+                  <p className="text-[11px] text-muted-foreground leading-tight">{b.sub}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -543,11 +558,19 @@ const ProductDetail = () => {
             {product.name}
           </h1>
 
-          <div className="flex items-center gap-1 mb-3">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} size={14} className={i < Math.floor(product.rating || 0) ? "fill-[hsl(var(--gold))] text-[hsl(var(--gold))]" : "text-border"} />
-            ))}
-            <span className="text-xs text-muted-foreground ml-1">({product.review_count || 0} Reviews)</span>
+          {/* FNP-style green rating badge */}
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-flex items-center gap-1 bg-[hsl(142_65%_38%)] text-white text-xs sm:text-sm font-bold px-2 py-0.5 rounded">
+              <Star size={12} className="fill-white text-white" strokeWidth={0} />
+              {(product.rating || 0).toFixed(1)}
+            </span>
+            <span className="text-xs sm:text-sm text-muted-foreground">•</span>
+            <button
+              onClick={() => setActiveTab("reviews")}
+              className="text-xs sm:text-sm text-primary font-medium hover:underline"
+            >
+              {product.review_count || 0} Reviews
+            </button>
           </div>
 
           <div className="flex items-center gap-3 mb-3 pb-4 border-b border-border/60">
@@ -676,23 +699,19 @@ const ProductDetail = () => {
 
           {/* Primary actions: hidden on mobile (rendered as sticky bar below) */}
           <div className="hidden md:block">
-            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 mb-2.5 sm:mb-3">
+            <div className="grid grid-cols-2 gap-3 mb-3">
               <button
                 onClick={handleAddToCart}
-                className="group relative h-12 sm:h-[54px] rounded-full bg-white border-2 border-primary/80 text-primary text-[11px] sm:text-[12px] font-bold tracking-[0.14em] uppercase flex items-center justify-center gap-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-[0_8px_20px_-6px_hsl(var(--primary)/0.45)] active:scale-[0.97] transition-all duration-300 ease-luxe overflow-hidden"
+                className="h-[52px] rounded-sm bg-white border border-primary text-primary text-[13px] font-bold tracking-[0.12em] uppercase hover:bg-primary/5 active:scale-[0.98] transition-all"
               >
-                <ShoppingBag size={15} strokeWidth={2.2} className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:rotate-[-6deg]" />
-                <span>Add to Cart</span>
+                Add to Cart
               </button>
               <button
                 onClick={handleBuyNow}
-                className="btn-metal-shine group relative h-12 sm:h-[54px] rounded-full text-primary-foreground text-[11px] sm:text-[12px] font-bold tracking-[0.14em] uppercase flex items-center justify-center gap-1.5 shadow-[0_8px_20px_-6px_hsl(var(--primary)/0.5)] hover:shadow-[0_12px_28px_-6px_hsl(var(--primary)/0.65)] active:scale-[0.97] transition-all duration-300 ease-luxe overflow-hidden"
-                style={{ background: "var(--gradient-luxe)" }}
+                className="h-[52px] rounded-sm bg-[hsl(200_30%_22%)] hover:bg-[hsl(200_35%_18%)] text-white text-[13px] font-bold tracking-[0.12em] uppercase flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all"
               >
-                <span aria-hidden className="metal-sheen pointer-events-none absolute inset-0" />
-                <Zap size={14} strokeWidth={2.4} className="fill-current relative" />
-                <span className="relative">Buy Now</span>
-                <span className="relative font-bold tabular-nums normal-case tracking-normal">| {formatPrice(buyNowTotal)}</span>
+                <span>Buy Now</span>
+                <span className="font-bold tabular-nums normal-case tracking-normal">| {formatPrice(buyNowTotal)}</span>
               </button>
             </div>
 
@@ -898,18 +917,15 @@ const ProductDetail = () => {
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={handleAddToCart}
-            className="h-11 rounded-md bg-white border-2 border-primary text-primary text-[11px] font-bold tracking-[0.12em] uppercase flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform"
+            className="h-11 rounded-sm bg-white border border-primary text-primary text-[11px] font-bold tracking-[0.12em] uppercase flex items-center justify-center active:scale-[0.97] transition-transform"
           >
-            <ShoppingBag size={14} strokeWidth={2.2} />
             Add to Cart
           </button>
           <button
             onClick={handleBuyNow}
-            className="h-11 rounded-md text-primary-foreground text-[11px] font-bold tracking-[0.12em] uppercase flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform"
-            style={{ background: "var(--gradient-luxe)" }}
+            className="h-11 rounded-sm bg-[hsl(200_30%_22%)] text-white text-[11px] font-bold tracking-[0.12em] uppercase flex items-center justify-center gap-1 active:scale-[0.97] transition-transform"
           >
-            <Zap size={13} strokeWidth={2.4} className="fill-current" />
-            Buy Now | <span className="tabular-nums normal-case tracking-normal">{formatPrice(buyNowTotal)}</span>
+            Buy Now <span className="tabular-nums normal-case tracking-normal">| {formatPrice(buyNowTotal)}</span>
           </button>
         </div>
       </div>
