@@ -1750,6 +1750,8 @@ const AdminSettings = () => {
                     <LanguagesSection formValues={formValues} setFormValues={setFormValues} />
                   ) : activeSection === "social_login" ? (
                     <SocialLoginSection formValues={formValues} setFormValues={setFormValues} />
+                  ) : activeSection === "pages" ? (
+                    <PagesSection formValues={formValues} setFormValues={setFormValues} />
                   ) : currentFields.length === 0 ? (
                     <p className="text-muted-foreground text-sm py-4 text-center">No settings available for this section yet.</p>
                   ) : (
