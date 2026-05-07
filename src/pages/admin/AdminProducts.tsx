@@ -54,6 +54,8 @@ const AdminProducts = () => {
     same_day_districts: [] as string[],
     next_day_districts: [] as string[],
     standard_delivery_days: 3,
+    delivery_type: "standard" as "same_day" | "next_day" | "standard" | "economy",
+    delivery_fee_override: "" as string | number,
   };
   const [form, setForm] = useState(defaultForm);
 
