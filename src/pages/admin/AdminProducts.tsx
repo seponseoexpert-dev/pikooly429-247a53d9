@@ -119,6 +119,8 @@ const AdminProducts = () => {
       same_day_districts: (p as any).same_day_districts || [],
       next_day_districts: (p as any).next_day_districts || [],
       standard_delivery_days: (p as any).standard_delivery_days ?? 3,
+      delivery_type: ((p as any).delivery_type as any) || "standard",
+      delivery_fee_override: (p as any).delivery_fee_override ?? "",
     });
     setImageFile(null);
     setDialogOpen(true);
