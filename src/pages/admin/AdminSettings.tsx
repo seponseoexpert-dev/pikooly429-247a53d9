@@ -1624,6 +1624,15 @@ const AdminSettings = () => {
     if (activeSection === "social_login") {
       return socialLoginProviders.flatMap((p) => p.fields.map((f) => f.key));
     }
+    if (activeSection === "pages") {
+      return [
+        ...(sectionFields["about_page"] || []),
+        ...(sectionFields["contact_page"] || []),
+        ...(sectionFields["refund_policy"] || []),
+        ...(sectionFields["privacy_policy"] || []),
+        ...(sectionFields["terms_conditions"] || []),
+      ].map((f) => f.key);
+    }
     return (sectionFields[activeSection] || []).map((f) => f.key);
   };
 
