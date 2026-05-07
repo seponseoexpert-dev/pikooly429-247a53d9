@@ -12,12 +12,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Search, Package, ChevronDown, Truck } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Package } from "lucide-react";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import ProductVariantsManager, { saveProductVariants } from "@/components/admin/ProductVariantsManager";
-import ProductDeliveryControl from "@/components/admin/ProductDeliveryControl";
 import { useCurrency } from "@/hooks/useCurrency";
-import { useSiteSettings } from "@/hooks/useSiteSettings";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Product = Tables<"products">;
@@ -33,7 +31,6 @@ interface Subcategory {
 
 const AdminProducts = () => {
   const { formatCurrency } = useCurrency();
-  const { settings } = useSiteSettings();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
@@ -45,22 +42,7 @@ const AdminProducts = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [search, setSearch] = useState("");
   const [filterCategory, setFilterCategory] = useState<string>("all");
-  const [showAdvancedDelivery, setShowAdvancedDelivery] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [bulkApplying, setBulkApplying] = useState(false);
-
-  const presetFee = (type: string): number | "" => {
-    const v = settings[`delivery_preset_${type}_fee`];
-    if (!v) return "";
-    const n = parseFloat(v);
-    return isNaN(n) ? "" : n;
-  };
-  const presetDays = (type: string): number | null => {
-    const v = settings[`delivery_preset_${type}_days`];
-    if (!v) return null;
-    const n = parseInt(v);
-    return isNaN(n) ? null : n;
-  };
 
   const defaultForm = {
     name: "", slug: "", short_description: "", description: "", price: 0, original_price: 0,
@@ -69,11 +51,6 @@ const AdminProducts = () => {
     specifications: [] as Array<{ item: string; value: string }>,
     seo_title: "", seo_description: "", delivery_time: "",
     instructions: "", delivery_info: "",
-    same_day_districts: [] as string[],
-    next_day_districts: [] as string[],
-    standard_delivery_days: 3,
-    delivery_type: "standard" as "same_day" | "next_day" | "standard" | "economy",
-    delivery_fee_override: "" as string | number,
   };
   const [form, setForm] = useState(defaultForm);
 
@@ -134,11 +111,6 @@ const AdminProducts = () => {
       seo_title: (p as any).seo_title || "", seo_description: (p as any).seo_description || "",
       delivery_time: (p as any).delivery_time || "",
       instructions: (p as any).instructions || "", delivery_info: (p as any).delivery_info || "",
-      same_day_districts: (p as any).same_day_districts || [],
-      next_day_districts: (p as any).next_day_districts || [],
-      standard_delivery_days: (p as any).standard_delivery_days ?? 3,
-      delivery_type: ((p as any).delivery_type as any) || "standard",
-      delivery_fee_override: (p as any).delivery_fee_override ?? "",
     });
     setImageFile(null);
     setDialogOpen(true);
@@ -180,14 +152,6 @@ const AdminProducts = () => {
       seo_title: form.seo_title.trim() || null, seo_description: form.seo_description.trim() || null,
       delivery_time: form.delivery_time.trim() || null,
       instructions: form.instructions || null, delivery_info: form.delivery_info || null,
-      same_day_districts: form.same_day_districts,
-      next_day_districts: form.next_day_districts,
-      standard_delivery_days: form.standard_delivery_days,
-      delivery_type: form.delivery_type,
-      delivery_fee_override:
-        form.delivery_fee_override === "" || form.delivery_fee_override === null
-          ? null
-          : Number(form.delivery_fee_override),
     };
 
     let productId: string | null = null;
@@ -308,84 +272,7 @@ const AdminProducts = () => {
                 </div>
               </div>
 
-              {/* Delivery Type & Per-product Fee Override */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border border-border rounded-lg p-4 bg-muted/20">
-                <div className="space-y-2">
-                  <Label>Delivery Type *</Label>
-                  <select
-                    value={form.delivery_type}
-                    onChange={(e) => {
-                      const t = e.target.value as any;
-                      const fee = presetFee(t);
-                      const days = presetDays(t);
-                      setForm({
-                        ...form,
-                        delivery_type: t,
-                        // Auto-fill preset fee only if override is empty (don't overwrite user customization)
-                        delivery_fee_override: form.delivery_fee_override === "" || form.delivery_fee_override === null
-                          ? fee
-                          : form.delivery_fee_override,
-                        standard_delivery_days: (t === "standard" || t === "economy") && days != null
-                          ? days
-                          : form.standard_delivery_days,
-                      });
-                    }}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base"
-                  >
-                    <option value="same_day">Same Day Delivery {presetFee("same_day") !== "" ? `(৳${presetFee("same_day")})` : ""}</option>
-                    <option value="next_day">Next Day Delivery {presetFee("next_day") !== "" ? `(৳${presetFee("next_day")})` : ""}</option>
-                    <option value="standard">Standard Delivery {presetFee("standard") !== "" ? `(৳${presetFee("standard")})` : ""}</option>
-                    <option value="economy">Economy Delivery {presetFee("economy") !== "" ? `(৳${presetFee("economy")})` : ""}</option>
-                  </select>
-                  <p className="text-[11px] text-muted-foreground">Preset fees auto-fill from Settings → Delivery Presets.</p>
-                </div>
-                <div className="space-y-2">
-                  <Label>Delivery Fee Override (৳)</Label>
-                  <Input
-                    type="number"
-                    min={0}
-                    value={form.delivery_fee_override}
-                    onChange={(e) => setForm({ ...form, delivery_fee_override: e.target.value })}
-                    placeholder="Auto from preset"
-                  />
-                  <p className="text-[11px] text-muted-foreground">
-                    Leave empty to use the global preset above.
-                  </p>
-                </div>
-              </div>
-
-              {/* Advanced (collapsed) per-product district selector */}
-              <div className="border border-border rounded-lg bg-muted/10">
-                <button
-                  type="button"
-                  onClick={() => setShowAdvancedDelivery((v) => !v)}
-                  className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium hover:bg-muted/30 rounded-lg"
-                >
-                  <span className="flex items-center gap-2">
-                    <Truck className="h-4 w-4 text-muted-foreground" />
-                    Advanced — Per-district Override
-                  </span>
-                  <ChevronDown className={`h-4 w-4 transition-transform ${showAdvancedDelivery ? "rotate-180" : ""}`} />
-                </button>
-                {showAdvancedDelivery && (
-                  <div className="px-4 pb-4">
-                    <ProductDeliveryControl
-                      sameDayDistricts={form.same_day_districts}
-                      nextDayDistricts={form.next_day_districts}
-                      standardDeliveryDays={form.standard_delivery_days}
-                      onChange={(next) =>
-                        setForm({
-                          ...form,
-                          same_day_districts: next.same_day_districts,
-                          next_day_districts: next.next_day_districts,
-                          standard_delivery_days: next.standard_delivery_days,
-                        })
-                      }
-                    />
-                  </div>
-                )}
-              </div>
-
+              {/* Delivery is now controlled globally in Settings → Delivery Presets. */}
               {/* Categories with Checkboxes */}
               <div className="space-y-3">
                 <Label>Categories (select multiple)</Label>
