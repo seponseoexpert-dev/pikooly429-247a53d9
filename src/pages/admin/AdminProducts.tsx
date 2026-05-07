@@ -314,15 +314,30 @@ const AdminProducts = () => {
                   <Label>Delivery Type *</Label>
                   <select
                     value={form.delivery_type}
-                    onChange={(e) => setForm({ ...form, delivery_type: e.target.value as any })}
+                    onChange={(e) => {
+                      const t = e.target.value as any;
+                      const fee = presetFee(t);
+                      const days = presetDays(t);
+                      setForm({
+                        ...form,
+                        delivery_type: t,
+                        // Auto-fill preset fee only if override is empty (don't overwrite user customization)
+                        delivery_fee_override: form.delivery_fee_override === "" || form.delivery_fee_override === null
+                          ? fee
+                          : form.delivery_fee_override,
+                        standard_delivery_days: (t === "standard" || t === "economy") && days != null
+                          ? days
+                          : form.standard_delivery_days,
+                      });
+                    }}
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base"
                   >
-                    <option value="same_day">Same Day Delivery</option>
-                    <option value="next_day">Next Day Delivery</option>
-                    <option value="standard">Standard Delivery</option>
-                    <option value="economy">Economy Delivery</option>
+                    <option value="same_day">Same Day Delivery {presetFee("same_day") !== "" ? `(৳${presetFee("same_day")})` : ""}</option>
+                    <option value="next_day">Next Day Delivery {presetFee("next_day") !== "" ? `(৳${presetFee("next_day")})` : ""}</option>
+                    <option value="standard">Standard Delivery {presetFee("standard") !== "" ? `(৳${presetFee("standard")})` : ""}</option>
+                    <option value="economy">Economy Delivery {presetFee("economy") !== "" ? `(৳${presetFee("economy")})` : ""}</option>
                   </select>
-                  <p className="text-[11px] text-muted-foreground">Choose the delivery speed for this product.</p>
+                  <p className="text-[11px] text-muted-foreground">Preset fees auto-fill from Settings → Delivery Presets.</p>
                 </div>
                 <div className="space-y-2">
                   <Label>Delivery Fee Override (৳)</Label>
@@ -331,28 +346,45 @@ const AdminProducts = () => {
                     min={0}
                     value={form.delivery_fee_override}
                     onChange={(e) => setForm({ ...form, delivery_fee_override: e.target.value })}
-                    placeholder="e.g. 250"
+                    placeholder="Auto from preset"
                   />
                   <p className="text-[11px] text-muted-foreground">
-                    Custom fee for this product. Leave empty to use district default.
+                    Leave empty to use the global preset above.
                   </p>
                 </div>
               </div>
 
-              {/* Per-product delivery control */}
-              <ProductDeliveryControl
-                sameDayDistricts={form.same_day_districts}
-                nextDayDistricts={form.next_day_districts}
-                standardDeliveryDays={form.standard_delivery_days}
-                onChange={(next) =>
-                  setForm({
-                    ...form,
-                    same_day_districts: next.same_day_districts,
-                    next_day_districts: next.next_day_districts,
-                    standard_delivery_days: next.standard_delivery_days,
-                  })
-                }
-              />
+              {/* Advanced (collapsed) per-product district selector */}
+              <div className="border border-border rounded-lg bg-muted/10">
+                <button
+                  type="button"
+                  onClick={() => setShowAdvancedDelivery((v) => !v)}
+                  className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium hover:bg-muted/30 rounded-lg"
+                >
+                  <span className="flex items-center gap-2">
+                    <Truck className="h-4 w-4 text-muted-foreground" />
+                    Advanced — Per-district Override
+                  </span>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${showAdvancedDelivery ? "rotate-180" : ""}`} />
+                </button>
+                {showAdvancedDelivery && (
+                  <div className="px-4 pb-4">
+                    <ProductDeliveryControl
+                      sameDayDistricts={form.same_day_districts}
+                      nextDayDistricts={form.next_day_districts}
+                      standardDeliveryDays={form.standard_delivery_days}
+                      onChange={(next) =>
+                        setForm({
+                          ...form,
+                          same_day_districts: next.same_day_districts,
+                          next_day_districts: next.next_day_districts,
+                          standard_delivery_days: next.standard_delivery_days,
+                        })
+                      }
+                    />
+                  </div>
+                )}
+              </div>
 
               {/* Categories with Checkboxes */}
               <div className="space-y-3">
