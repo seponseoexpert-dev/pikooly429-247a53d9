@@ -593,6 +593,59 @@ const AdminProducts = () => {
         </Select>
       </div>
 
+      {/* Bulk Apply Delivery Type */}
+      <div className="mb-4 border border-border rounded-lg bg-muted/20 p-3 flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-2">
+          <Checkbox
+            checked={selectedIds.length > 0 && selectedIds.length === filtered.length}
+            onCheckedChange={(c) => setSelectedIds(c ? filtered.map((p) => p.id) : [])}
+          />
+          <span className="text-sm font-medium">
+            {selectedIds.length > 0 ? `${selectedIds.length} selected` : "Select all"}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 ml-auto">
+          <Truck className="h-4 w-4 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground hidden sm:inline">Bulk apply delivery type:</span>
+          <Select
+            disabled={selectedIds.length === 0 || bulkApplying}
+            onValueChange={async (type) => {
+              if (selectedIds.length === 0) return;
+              setBulkApplying(true);
+              const fee = presetFee(type);
+              const days = presetDays(type);
+              const updates: any = {
+                delivery_type: type,
+                delivery_fee_override: fee === "" ? null : fee,
+              };
+              if ((type === "standard" || type === "economy") && days != null) {
+                updates.standard_delivery_days = days;
+              }
+              const { error } = await supabase
+                .from("products")
+                .update(updates)
+                .in("id", selectedIds);
+              setBulkApplying(false);
+              if (error) {
+                toast({ title: "Error", description: error.message, variant: "destructive" });
+              } else {
+                toast({ title: `Applied to ${selectedIds.length} product(s)` });
+                setSelectedIds([]);
+                fetchData();
+              }
+            }}
+          >
+            <SelectTrigger className="w-[200px]"><SelectValue placeholder="Choose type..." /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="same_day">Same Day {presetFee("same_day") !== "" ? `(৳${presetFee("same_day")})` : ""}</SelectItem>
+              <SelectItem value="next_day">Next Day {presetFee("next_day") !== "" ? `(৳${presetFee("next_day")})` : ""}</SelectItem>
+              <SelectItem value="standard">Standard {presetFee("standard") !== "" ? `(৳${presetFee("standard")})` : ""}</SelectItem>
+              <SelectItem value="economy">Economy {presetFee("economy") !== "" ? `(৳${presetFee("economy")})` : ""}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
       {/* Mobile Card Layout */}
       <div className="sm:hidden space-y-3">
         {loading ? (
