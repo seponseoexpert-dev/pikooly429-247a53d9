@@ -41,11 +41,7 @@ const settingSections = [
   { key: "sms_gateway", label: "SMS Gateway", icon: MessageSquare },
   { key: "payment_gateway", label: "Payment Gateway", icon: CreditCard },
   { key: "about", label: "About Section", icon: FileText },
-  { key: "about_page", label: "About Us Page", icon: FileText },
-  { key: "contact_page", label: "Contact Us Page", icon: Phone },
-  { key: "refund_policy", label: "Refund & Return Policy", icon: FileText },
-  { key: "privacy_policy", label: "Privacy Policy", icon: Shield },
-  { key: "terms_conditions", label: "Terms & Conditions", icon: FileText },
+  { key: "pages", label: "Pages", icon: FileText },
   { key: "faq", label: "FAQ Section", icon: MessageSquare },
   { key: "push_notification", label: "Push Notification", icon: Bell },
   { key: "social_login", label: "Social Login", icon: Share2 },
@@ -1568,6 +1564,57 @@ const LanguagesSection = ({
   );
 };
 
+const PagesSection = ({
+  formValues,
+  setFormValues,
+}: {
+  formValues: Record<string, string>;
+  setFormValues: (v: Record<string, string>) => void;
+}) => {
+  const pageTabs = [
+    { key: "about_page", label: "About Us" },
+    { key: "contact_page", label: "Contact Us" },
+    { key: "refund_policy", label: "Refund & Return" },
+    { key: "privacy_policy", label: "Privacy Policy" },
+    { key: "terms_conditions", label: "Terms & Conditions" },
+  ];
+  const [active, setActive] = useState(pageTabs[0].key);
+  const fields = sectionFields[active] || [];
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap gap-2 border-b pb-3">
+        {pageTabs.map((t) => (
+          <button
+            key={t.key}
+            type="button"
+            onClick={() => setActive(t.key)}
+            className={cn(
+              "px-3 py-1.5 rounded-md text-sm transition-colors",
+              active === t.key
+                ? "bg-primary text-primary-foreground font-medium"
+                : "bg-muted text-muted-foreground hover:bg-muted/70"
+            )}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+        {fields.map((field) => (
+          <div key={field.key} className={cn("space-y-1.5", field.fullWidth && "md:col-span-2")}>
+            <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{field.label}</label>
+            <FieldRenderer
+              field={field}
+              value={formValues[field.key] || ""}
+              onChange={(val) => setFormValues({ ...formValues, [field.key]: val })}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const AdminSettings = () => {
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -1627,6 +1674,15 @@ const AdminSettings = () => {
     }
     if (activeSection === "social_login") {
       return socialLoginProviders.flatMap((p) => p.fields.map((f) => f.key));
+    }
+    if (activeSection === "pages") {
+      return [
+        ...(sectionFields["about_page"] || []),
+        ...(sectionFields["contact_page"] || []),
+        ...(sectionFields["refund_policy"] || []),
+        ...(sectionFields["privacy_policy"] || []),
+        ...(sectionFields["terms_conditions"] || []),
+      ].map((f) => f.key);
     }
     return (sectionFields[activeSection] || []).map((f) => f.key);
   };
@@ -1754,6 +1810,8 @@ const AdminSettings = () => {
                     <LanguagesSection formValues={formValues} setFormValues={setFormValues} />
                   ) : activeSection === "social_login" ? (
                     <SocialLoginSection formValues={formValues} setFormValues={setFormValues} />
+                  ) : activeSection === "pages" ? (
+                    <PagesSection formValues={formValues} setFormValues={setFormValues} />
                   ) : currentFields.length === 0 ? (
                     <p className="text-muted-foreground text-sm py-4 text-center">No settings available for this section yet.</p>
                   ) : (
