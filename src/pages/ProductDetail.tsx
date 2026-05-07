@@ -424,9 +424,31 @@ const ProductDetail = () => {
               onClick={() => setLightboxOpen(true)}
             >
               <img src={currentImg} alt={product.name} className="w-full h-full object-contain p-2 sm:p-3" loading="eager" fetchPriority="high" />
+              {/* Best Seller badge - FNP style */}
+              {((product as any).is_bestseller || (product.review_count || 0) > 10) && (
+                <div className="absolute top-3 left-3 z-10 bg-[hsl(200_30%_22%)] text-white text-[11px] sm:text-xs font-semibold px-3 py-1.5 rounded-sm shadow-md pointer-events-none">
+                  Best Seller
+                </div>
+              )}
+              {/* Wishlist heart - top right */}
+              <button
+                onClick={(e) => { e.stopPropagation(); }}
+                className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center shadow-md hover:scale-110 active:scale-95 transition-transform"
+                aria-label="Add to Wishlist"
+              >
+                <Heart size={17} className="text-foreground/70" strokeWidth={2} />
+              </button>
+              {/* Floating Share button - bottom right (FNP style) */}
+              <button
+                onClick={(e) => { e.stopPropagation(); handleCopyLink(); }}
+                className="absolute bottom-3 right-3 z-10 w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-transform"
+                aria-label="Share product"
+              >
+                {copied ? <Check size={17} className="text-primary" strokeWidth={2.4} /> : <Share2 size={17} className="text-primary" strokeWidth={2} />}
+              </button>
               {/* Delivery time badge */}
               {deliveryBadge && (
-                <div className={`absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-gradient-to-br ${deliveryBadge.gradient} ${deliveryBadge.glow} backdrop-blur-sm ring-1 ring-white/30 pointer-events-none`}>
+                <div className={`absolute top-14 left-3 z-10 inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-gradient-to-br ${deliveryBadge.gradient} ${deliveryBadge.glow} backdrop-blur-sm ring-1 ring-white/30 pointer-events-none`}>
                   <deliveryBadge.Icon size={13} className="text-white" strokeWidth={2.5} />
                   <span className="text-[11px] sm:text-xs font-bold text-white uppercase tracking-wide leading-none whitespace-nowrap">
                     {deliveryBadge.label}
@@ -445,10 +467,23 @@ const ProductDetail = () => {
                   }}
                 />
               )}
-              <span className="absolute bottom-3 right-3 bg-background/80 backdrop-blur-sm text-foreground text-xs px-2.5 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              <span className="absolute bottom-3 left-3 bg-background/80 backdrop-blur-sm text-foreground text-xs px-2.5 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                 Click to expand
               </span>
             </div>
+            {/* Mobile dots indicator (FNP style) */}
+            {allImages.length > 1 && (
+              <div className="flex md:hidden justify-center gap-1.5 mt-3">
+                {allImages.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setSelectedImage(i)}
+                    aria-label={`Go to image ${i + 1}`}
+                    className={`h-1.5 rounded-full transition-all ${selectedImage === i ? "w-5 bg-primary" : "w-1.5 bg-border"}`}
+                  />
+                ))}
+              </div>
+            )}
             {allImages.length > 1 && (
               <div className="flex md:hidden gap-2 overflow-x-auto pb-1 scrollbar-hide mt-3">
                 {allImages.map((img, i) => (
