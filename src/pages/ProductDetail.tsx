@@ -543,11 +543,19 @@ const ProductDetail = () => {
             {product.name}
           </h1>
 
-          <div className="flex items-center gap-1 mb-3">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} size={14} className={i < Math.floor(product.rating || 0) ? "fill-[hsl(var(--gold))] text-[hsl(var(--gold))]" : "text-border"} />
-            ))}
-            <span className="text-xs text-muted-foreground ml-1">({product.review_count || 0} Reviews)</span>
+          {/* FNP-style green rating badge */}
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-flex items-center gap-1 bg-[hsl(142_65%_38%)] text-white text-xs sm:text-sm font-bold px-2 py-0.5 rounded">
+              <Star size={12} className="fill-white text-white" strokeWidth={0} />
+              {(product.rating || 0).toFixed(1)}
+            </span>
+            <span className="text-xs sm:text-sm text-muted-foreground">•</span>
+            <button
+              onClick={() => setActiveTab("reviews")}
+              className="text-xs sm:text-sm text-primary font-medium hover:underline"
+            >
+              {product.review_count || 0} Reviews
+            </button>
           </div>
 
           <div className="flex items-center gap-3 mb-3 pb-4 border-b border-border/60">
