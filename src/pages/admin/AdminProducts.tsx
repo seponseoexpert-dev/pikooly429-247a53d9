@@ -111,11 +111,6 @@ const AdminProducts = () => {
       seo_title: (p as any).seo_title || "", seo_description: (p as any).seo_description || "",
       delivery_time: (p as any).delivery_time || "",
       instructions: (p as any).instructions || "", delivery_info: (p as any).delivery_info || "",
-      same_day_districts: (p as any).same_day_districts || [],
-      next_day_districts: (p as any).next_day_districts || [],
-      standard_delivery_days: (p as any).standard_delivery_days ?? 3,
-      delivery_type: ((p as any).delivery_type as any) || "standard",
-      delivery_fee_override: (p as any).delivery_fee_override ?? "",
     });
     setImageFile(null);
     setDialogOpen(true);
@@ -157,14 +152,6 @@ const AdminProducts = () => {
       seo_title: form.seo_title.trim() || null, seo_description: form.seo_description.trim() || null,
       delivery_time: form.delivery_time.trim() || null,
       instructions: form.instructions || null, delivery_info: form.delivery_info || null,
-      same_day_districts: form.same_day_districts,
-      next_day_districts: form.next_day_districts,
-      standard_delivery_days: form.standard_delivery_days,
-      delivery_type: form.delivery_type,
-      delivery_fee_override:
-        form.delivery_fee_override === "" || form.delivery_fee_override === null
-          ? null
-          : Number(form.delivery_fee_override),
     };
 
     let productId: string | null = null;
