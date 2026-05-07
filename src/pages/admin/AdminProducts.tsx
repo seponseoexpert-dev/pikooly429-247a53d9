@@ -165,6 +165,11 @@ const AdminProducts = () => {
       same_day_districts: form.same_day_districts,
       next_day_districts: form.next_day_districts,
       standard_delivery_days: form.standard_delivery_days,
+      delivery_type: form.delivery_type,
+      delivery_fee_override:
+        form.delivery_fee_override === "" || form.delivery_fee_override === null
+          ? null
+          : Number(form.delivery_fee_override),
     };
 
     let productId: string | null = null;
