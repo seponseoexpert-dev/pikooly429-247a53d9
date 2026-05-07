@@ -12,12 +12,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Search, Package, ChevronDown, Truck } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Package } from "lucide-react";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import ProductVariantsManager, { saveProductVariants } from "@/components/admin/ProductVariantsManager";
-import ProductDeliveryControl from "@/components/admin/ProductDeliveryControl";
 import { useCurrency } from "@/hooks/useCurrency";
-import { useSiteSettings } from "@/hooks/useSiteSettings";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Product = Tables<"products">;
