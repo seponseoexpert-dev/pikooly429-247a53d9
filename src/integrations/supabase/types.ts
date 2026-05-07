@@ -401,6 +401,38 @@ export type Database = {
         }
         Relationships: []
       }
+      category_delivery_modes: {
+        Row: {
+          category_id: string
+          created_at: string
+          id: string
+          mode_id: string
+          updated_at: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          id?: string
+          mode_id: string
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          id?: string
+          mode_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "category_delivery_modes_mode_id_fkey"
+            columns: ["mode_id"]
+            isOneToOne: false
+            referencedRelation: "delivery_modes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       celebrations: {
         Row: {
           bg_color: string | null
@@ -523,6 +555,86 @@ export type Database = {
           is_default?: boolean
           name?: string
           symbol?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      delivery_mode_cities: {
+        Row: {
+          city_name: string
+          created_at: string
+          id: string
+          mode_id: string
+        }
+        Insert: {
+          city_name: string
+          created_at?: string
+          id?: string
+          mode_id: string
+        }
+        Update: {
+          city_name?: string
+          created_at?: string
+          id?: string
+          mode_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "delivery_mode_cities_mode_id_fkey"
+            columns: ["mode_id"]
+            isOneToOne: false
+            referencedRelation: "delivery_modes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      delivery_modes: {
+        Row: {
+          badge_text: string | null
+          charge_type: string
+          created_at: string
+          delivery_time: string
+          flat_charge: number
+          icon: string | null
+          id: string
+          is_active: boolean
+          key: string
+          max_charge: number
+          min_charge: number
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          badge_text?: string | null
+          charge_type?: string
+          created_at?: string
+          delivery_time?: string
+          flat_charge?: number
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          key: string
+          max_charge?: number
+          min_charge?: number
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          badge_text?: string | null
+          charge_type?: string
+          created_at?: string
+          delivery_time?: string
+          flat_charge?: number
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          key?: string
+          max_charge?: number
+          min_charge?: number
+          name?: string
+          sort_order?: number
           updated_at?: string
         }
         Relationships: []

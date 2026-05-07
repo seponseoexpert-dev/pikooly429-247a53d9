@@ -1,419 +1,300 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Save, Trash2, Truck, ChevronDown, ChevronUp, Tag, Zap, Calendar } from "lucide-react";
-import { useCurrency } from "@/hooks/useCurrency";
-import { cn } from "@/lib/utils";
+import { Rocket, Package, Shield, Save, Plus, X, Truck } from "lucide-react";
+import {
+  useDeliveryModes,
+  useDeliveryCities,
+  useCategoryDeliveryModes,
+  type DeliveryMode,
+} from "@/hooks/useDeliveryModes";
 
-interface District {
-  id: string;
-  name: string;
-  postal_code: string | null;
-  delivery_fee: number;
-  delivery_label: string;
-  same_day_fee: number | null;
-  next_day_fee: number | null;
-  same_day_label: string;
-  next_day_label: string;
-  is_active: boolean;
-  display_order: number;
-}
-
-interface CategoryFee {
-  id: string;
-  district_id: string;
-  category_id: string;
-  delivery_fee: number;
-  delivery_label: string;
-  same_day_fee: number | null;
-  next_day_fee: number | null;
-}
-
-const emptyForm = {
-  name: "",
-  postal_code: "",
-  same_day_fee: "",
-  same_day_label: "Same Day Delivery",
-  next_day_fee: "",
-  next_day_label: "Next Day Delivery",
-};
-
-const emptyCatForm = {
-  category_id: "",
-  same_day_fee: "",
-  next_day_fee: "",
-};
+const ICONS: Record<string, any> = { rocket: Rocket, package: Package, shield: Shield, truck: Truck };
 
 const AdminShipping = () => {
-  const { formatCurrency } = useCurrency();
   const { toast } = useToast();
   const qc = useQueryClient();
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState(emptyForm);
-  const [expandedDistrict, setExpandedDistrict] = useState<string | null>(null);
-  const [catFeeForm, setCatFeeForm] = useState(emptyCatForm);
-
-  const { data: districts = [], isLoading } = useQuery({
-    queryKey: ["admin-shipping-districts"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("shipping_districts")
-        .select("*")
-        .order("display_order");
-      if (error) throw error;
-      return data as District[];
-    },
-  });
+  const { data: modes = [] } = useDeliveryModes();
+  const { data: cities = [] } = useDeliveryCities();
+  const { data: catModes = [] } = useCategoryDeliveryModes();
 
   const { data: categories = [] } = useQuery({
-    queryKey: ["admin-categories-list"],
+    queryKey: ["categories-for-delivery"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("categories")
         .select("id, name")
+        .eq("is_active", true)
         .order("name");
       if (error) throw error;
-      return data as { id: string; name: string }[];
+      return data || [];
     },
   });
 
-  const { data: categoryFees = [] } = useQuery({
-    queryKey: ["admin-shipping-category-fees"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("shipping_category_fees")
-        .select("*");
-      if (error) throw error;
-      return data as CategoryFee[];
-    },
-  });
+  const [drafts, setDrafts] = useState<Record<string, Partial<DeliveryMode>>>({});
+  useEffect(() => {
+    const seed: Record<string, Partial<DeliveryMode>> = {};
+    modes.forEach((m) => (seed[m.id] = { ...m }));
+    setDrafts(seed);
+  }, [modes]);
 
-  const saveMutation = useMutation({
-    mutationFn: async (values: typeof form & { id?: string }) => {
-      // Empty string => option NOT available (null). 0 => available & free.
-      const sameDayRaw = values.same_day_fee.trim();
-      const nextDayRaw = values.next_day_fee.trim();
-      const sameDay = sameDayRaw === "" ? null : (parseFloat(sameDayRaw) || 0);
-      const nextDay = nextDayRaw === "" ? null : (parseFloat(nextDayRaw) || 0);
-      if (sameDay === null && nextDay === null) {
-        throw new Error("At least one delivery option (Same Day or Next Day) must have a fee");
-      }
-      const payload: any = {
-        name: values.name.trim(),
-        postal_code: values.postal_code.trim() || null,
-        delivery_fee: sameDay ?? 0,
-        delivery_label: values.same_day_label.trim() || "Same Day Delivery",
-        same_day_fee: sameDay,
-        same_day_label: values.same_day_label.trim() || "Same Day Delivery",
-        next_day_fee: nextDay,
-        next_day_label: values.next_day_label.trim() || "Next Day Delivery",
-      };
-      if (values.id) {
-        const { error } = await supabase.from("shipping_districts").update(payload).eq("id", values.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from("shipping_districts").insert(payload);
-        if (error) throw error;
-      }
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["admin-shipping-districts"] });
-      toast({ title: "District saved ✓" });
-      setForm(emptyForm);
-      setEditingId(null);
-    },
-    onError: (e: any) => toast({ title: "Error", description: e.message, variant: "destructive" }),
-  });
+  const [newCity, setNewCity] = useState<Record<string, string>>({});
 
-  const toggleMutation = useMutation({
-    mutationFn: async ({ id, is_active }: { id: string; is_active: boolean }) => {
-      const { error } = await supabase.from("shipping_districts").update({ is_active }).eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-shipping-districts"] }),
-  });
+  const updateMode = async (id: string) => {
+    const d = drafts[id];
+    if (!d) return;
+    const { error } = await supabase
+      .from("delivery_modes")
+      .update({
+        name: d.name,
+        delivery_time: d.delivery_time,
+        badge_text: d.badge_text,
+        flat_charge: Number(d.flat_charge ?? 0),
+        min_charge: Number(d.min_charge ?? 0),
+        max_charge: Number(d.max_charge ?? 0),
+        is_active: d.is_active,
+      })
+      .eq("id", id);
+    if (error) toast({ title: "Save failed", description: error.message, variant: "destructive" });
+    else {
+      toast({ title: "Saved" });
+      qc.invalidateQueries({ queryKey: ["delivery-modes"] });
+    }
+  };
 
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("shipping_districts").delete().eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["admin-shipping-districts"] });
-      toast({ title: "District deleted" });
-    },
-    onError: (e: any) => toast({ title: "Error", description: e.message, variant: "destructive" }),
-  });
+  const addCity = async (modeId: string) => {
+    const name = (newCity[modeId] || "").trim();
+    if (!name) return;
+    const { error } = await supabase.from("delivery_mode_cities").insert({ mode_id: modeId, city_name: name });
+    if (error) toast({ title: "Add failed", description: error.message, variant: "destructive" });
+    else {
+      setNewCity((p) => ({ ...p, [modeId]: "" }));
+      qc.invalidateQueries({ queryKey: ["delivery-mode-cities"] });
+    }
+  };
 
-  const saveCatFeeMutation = useMutation({
-    mutationFn: async (values: { district_id: string; category_id: string; same_day_fee: string; next_day_fee: string; id?: string }) => {
-      const sameDayRaw = values.same_day_fee.trim();
-      const nextDayRaw = values.next_day_fee.trim();
-      const sameDay = sameDayRaw === "" ? null : (parseFloat(sameDayRaw) || 0);
-      const nextDay = nextDayRaw === "" ? null : (parseFloat(nextDayRaw) || 0);
+  const removeCity = async (id: string) => {
+    await supabase.from("delivery_mode_cities").delete().eq("id", id);
+    qc.invalidateQueries({ queryKey: ["delivery-mode-cities"] });
+  };
 
-      if (sameDay === null && nextDay === null) {
-        throw new Error("At least one delivery option must have a fee");
-      }
+  const assignCategory = async (categoryId: string, modeId: string) => {
+    const existing = catModes.find((c) => c.category_id === categoryId);
+    if (existing) {
+      await supabase.from("category_delivery_modes").update({ mode_id: modeId }).eq("id", existing.id);
+    } else {
+      await supabase.from("category_delivery_modes").insert({ category_id: categoryId, mode_id: modeId });
+    }
+    qc.invalidateQueries({ queryKey: ["category-delivery-modes"] });
+    toast({ title: "Updated" });
+  };
 
-      const payload = {
-        district_id: values.district_id,
-        category_id: values.category_id,
-        delivery_fee: sameDay ?? nextDay ?? 0,
-        delivery_label: sameDay !== null ? "Same Day Delivery" : "Next Day Delivery",
-        same_day_fee: sameDay,
-        next_day_fee: nextDay,
-      };
-      if (values.id) {
-        const { error } = await supabase.from("shipping_category_fees").update(payload).eq("id", values.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from("shipping_category_fees").insert(payload);
-        if (error) throw error;
-      }
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["admin-shipping-category-fees"] });
-      toast({ title: "Category fee saved ✓" });
-      setCatFeeForm(emptyCatForm);
-    },
-    onError: (e: any) => toast({ title: "Error", description: e.message, variant: "destructive" }),
-  });
-
-  const deleteCatFeeMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("shipping_category_fees").delete().eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["admin-shipping-category-fees"] });
-      toast({ title: "Category fee deleted" });
-    },
-    onError: (e: any) => toast({ title: "Error", description: e.message, variant: "destructive" }),
-  });
-
-  const handleEdit = (d: District) => {
-    setEditingId(d.id);
-    setForm({
-      name: d.name,
-      postal_code: d.postal_code || "",
-      same_day_fee: d.same_day_fee === null || d.same_day_fee === undefined ? "" : String(d.same_day_fee),
-      same_day_label: d.same_day_label || "Same Day Delivery",
-      next_day_fee: d.next_day_fee === null || d.next_day_fee === undefined ? "" : String(d.next_day_fee),
-      next_day_label: d.next_day_label || "Next Day Delivery",
+  const citiesByMode = useMemo(() => {
+    const m: Record<string, typeof cities> = {};
+    cities.forEach((c) => {
+      (m[c.mode_id] ||= [] as any).push(c);
     });
-  };
-
-  const handleSave = () => {
-    if (!form.name.trim()) return toast({ title: "Name is required", variant: "destructive" });
-    saveMutation.mutate(editingId ? { ...form, id: editingId } : form);
-  };
-
-  const handleSaveCatFee = (districtId: string) => {
-    if (!catFeeForm.category_id) return toast({ title: "Select a category", variant: "destructive" });
-    saveCatFeeMutation.mutate({ ...catFeeForm, district_id: districtId });
-  };
-
-  const getDistrictCategoryFees = (districtId: string) =>
-    categoryFees.filter((cf) => cf.district_id === districtId);
-
-  const getCategoryName = (categoryId: string) =>
-    categories.find((c) => c.id === categoryId)?.name || "Unknown";
-
-  const getAvailableCategories = (districtId: string) => {
-    const usedCatIds = getDistrictCategoryFees(districtId).map((cf) => cf.category_id);
-    return categories.filter((c) => !usedCatIds.includes(c.id));
-  };
+    return m;
+  }, [cities]);
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl sm:text-2xl font-display font-bold">Shipping Districts</h2>
-          <p className="text-muted-foreground text-sm">Same Day & Next Day delivery fees per district</p>
-        </div>
+    <div className="space-y-6 max-w-5xl">
+      <div>
+        <h1 className="text-2xl font-bold">Delivery & Shipping</h1>
+        <p className="text-sm text-muted-foreground">
+          Manage your 3 delivery modes, cities, and category assignments.
+        </p>
       </div>
 
-      {/* Add/Edit form */}
-      <div className="bg-card border rounded-lg p-4">
-        <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
-          <Truck className="h-4 w-4 text-primary" />
-          {editingId ? "Edit District" : "Add New District"}
-        </h3>
-        <div className="space-y-3">
-          <div className="grid grid-cols-1 sm:grid-cols-[1fr_140px] gap-2">
-            <Input placeholder="District Name (e.g., Dhaka)" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-            <Input placeholder="Postal Code (e.g., 1212)" value={form.postal_code} onChange={(e) => setForm({ ...form, postal_code: e.target.value })} />
-          </div>
-          <div className="rounded-md bg-muted/50 border border-dashed border-border px-3 py-2 text-xs text-muted-foreground">
-            💡 <strong>Tip:</strong> Leave a fee field <em>empty</em> if that delivery option is NOT available in this district. Enter <code className="px-1 bg-background rounded">0</code> to offer it for FREE.
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
-                <Zap className="h-3 w-3 text-amber-500" /> Same Day Fee (৳) <span className="text-[10px] text-muted-foreground/70 font-normal">— blank = unavailable</span>
-              </label>
-              <Input placeholder="Empty = not available" type="number" value={form.same_day_fee} onChange={(e) => setForm({ ...form, same_day_fee: e.target.value })} />
-              <Input placeholder="Label" value={form.same_day_label} onChange={(e) => setForm({ ...form, same_day_label: e.target.value })} className="text-xs" />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
-                <Calendar className="h-3 w-3 text-blue-500" /> Next Day Fee (৳) <span className="text-[10px] text-muted-foreground/70 font-normal">— blank = unavailable</span>
-              </label>
-              <Input placeholder="Empty = not available" type="number" value={form.next_day_fee} onChange={(e) => setForm({ ...form, next_day_fee: e.target.value })} />
-              <Input placeholder="Label" value={form.next_day_label} onChange={(e) => setForm({ ...form, next_day_label: e.target.value })} className="text-xs" />
-            </div>
-          </div>
-        </div>
-        <div className="flex gap-2 mt-3">
-          <Button size="sm" onClick={handleSave} disabled={saveMutation.isPending}>
-            <Save className="h-4 w-4 mr-1" />
-            {editingId ? "Update" : "Add"}
-          </Button>
-          {editingId && (
-            <Button size="sm" variant="outline" onClick={() => { setEditingId(null); setForm(emptyForm); }}>
-              Cancel
-            </Button>
-          )}
-        </div>
-      </div>
-
-      {/* List */}
-      <div className="space-y-2">
-        {isLoading ? (
-          <div className="bg-card border rounded-lg p-4">
-            {Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-12 bg-muted rounded animate-pulse mb-2" />)}
-          </div>
-        ) : districts.length === 0 ? (
-          <div className="bg-card border rounded-lg p-8 text-center text-muted-foreground">No districts added yet</div>
-        ) : (
-          districts.map((d) => {
-            const districtCatFees = getDistrictCategoryFees(d.id);
-            const isExpanded = expandedDistrict === d.id;
-            const availableCats = getAvailableCategories(d.id);
-
-            return (
-              <div key={d.id} className="bg-card border rounded-lg overflow-hidden">
-                {/* District row */}
-                <div className="flex flex-wrap items-center gap-2 sm:gap-3 p-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium text-sm flex items-center gap-2 flex-wrap">
-                      <span>{d.name}</span>
-                      {d.postal_code && (
-                        <span className="text-[11px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground">{d.postal_code}</span>
-                      )}
-                    </div>
-                    <div className="text-xs text-muted-foreground flex flex-wrap gap-x-3 gap-y-0.5 mt-0.5">
-                      <span className={cn(
-                        "inline-flex items-center gap-1",
-                        (d.same_day_fee === null || d.same_day_fee === undefined) && "text-muted-foreground/50 line-through"
-                      )}>
-                        <Zap className="h-3 w-3 text-amber-500" />
-                        Same Day: {(d.same_day_fee === null || d.same_day_fee === undefined) ? "N/A" : formatCurrency(d.same_day_fee)}
-                      </span>
-                      <span className={cn(
-                        "inline-flex items-center gap-1",
-                        (d.next_day_fee === null || d.next_day_fee === undefined) && "text-muted-foreground/50 line-through"
-                      )}>
-                        <Calendar className="h-3 w-3 text-blue-500" />
-                        Next Day: {(d.next_day_fee === null || d.next_day_fee === undefined) ? "N/A" : formatCurrency(d.next_day_fee)}
-                      </span>
-                      {districtCatFees.length > 0 && (
-                        <span className="text-primary">({districtCatFees.length} category override{districtCatFees.length > 1 ? "s" : ""})</span>
-                      )}
-                    </div>
+      {/* DELIVERY MODES */}
+      <div className="space-y-4">
+        {modes.map((m) => {
+          const Icon = ICONS[m.icon || "truck"] || Truck;
+          const d = drafts[m.id] || {};
+          const modeCities = citiesByMode[m.id] || [];
+          return (
+            <Card key={m.id} className="overflow-hidden">
+              <CardHeader className="flex flex-row items-center justify-between gap-3 pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Icon className="h-5 w-5 text-primary" />
                   </div>
+                  <CardTitle className="text-lg">{m.name}</CardTitle>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Label className="text-xs text-muted-foreground">Active</Label>
                   <Switch
-                    checked={d.is_active}
-                    onCheckedChange={(checked) => toggleMutation.mutate({ id: d.id, is_active: checked })}
+                    checked={!!d.is_active}
+                    onCheckedChange={(v) => setDrafts((p) => ({ ...p, [m.id]: { ...p[m.id], is_active: v } }))}
                   />
-                  <Button size="sm" variant="outline" onClick={() => setExpandedDistrict(isExpanded ? null : d.id)}>
-                    <Tag className="h-3.5 w-3.5 mr-1" />
-                    Fees
-                    {isExpanded ? <ChevronUp className="h-3.5 w-3.5 ml-1" /> : <ChevronDown className="h-3.5 w-3.5 ml-1" />}
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => handleEdit(d)}>Edit</Button>
-                  <Button size="sm" variant="ghost" className="text-destructive" onClick={() => deleteMutation.mutate(d.id)}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-xs">Display name</Label>
+                    <Input
+                      value={d.name || ""}
+                      onChange={(e) => setDrafts((p) => ({ ...p, [m.id]: { ...p[m.id], name: e.target.value } }))}
+                      style={{ fontSize: 16 }}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Delivery time text</Label>
+                    <Input
+                      value={d.delivery_time || ""}
+                      placeholder="e.g. 2-3 Hours"
+                      onChange={(e) =>
+                        setDrafts((p) => ({ ...p, [m.id]: { ...p[m.id], delivery_time: e.target.value } }))
+                      }
+                      style={{ fontSize: 16 }}
+                    />
+                  </div>
+                  {m.charge_type === "flat" ? (
+                    <div>
+                      <Label className="text-xs">Flat charge (৳)</Label>
+                      <Input
+                        type="number"
+                        value={d.flat_charge ?? 0}
+                        onChange={(e) =>
+                          setDrafts((p) => ({ ...p, [m.id]: { ...p[m.id], flat_charge: Number(e.target.value) } }))
+                        }
+                        style={{ fontSize: 16 }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-2 sm:col-span-2">
+                      <div>
+                        <Label className="text-xs">Min charge (৳)</Label>
+                        <Input
+                          type="number"
+                          value={d.min_charge ?? 0}
+                          onChange={(e) =>
+                            setDrafts((p) => ({ ...p, [m.id]: { ...p[m.id], min_charge: Number(e.target.value) } }))
+                          }
+                          style={{ fontSize: 16 }}
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Max charge (৳)</Label>
+                        <Input
+                          type="number"
+                          value={d.max_charge ?? 0}
+                          onChange={(e) =>
+                            setDrafts((p) => ({ ...p, [m.id]: { ...p[m.id], max_charge: Number(e.target.value) } }))
+                          }
+                          style={{ fontSize: 16 }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                  <div className="sm:col-span-2">
+                    <Label className="text-xs">Badge text (optional)</Label>
+                    <Input
+                      value={d.badge_text || ""}
+                      placeholder="e.g. Protected Packaging Included"
+                      onChange={(e) =>
+                        setDrafts((p) => ({ ...p, [m.id]: { ...p[m.id], badge_text: e.target.value } }))
+                      }
+                      style={{ fontSize: 16 }}
+                    />
+                  </div>
                 </div>
 
-                {/* Expanded: Category-specific fees */}
-                {isExpanded && (
-                  <div className="border-t bg-muted/30 p-3 space-y-3">
-                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Category-Specific Delivery Fees</h4>
-                    <p className="text-xs text-muted-foreground">
-                      যদি কোনো ক্যাটেগরির জন্য আলাদা Same Day / Next Day ফি সেট করেন, সেটা ডিফল্ট ফি এর বদলে ব্যবহার হবে।
-                    </p>
-
-                    {/* Existing category fees */}
-                    {districtCatFees.length > 0 && (
-                      <div className="space-y-1.5">
-                        {districtCatFees.map((cf) => (
-                          <div key={cf.id} className="flex flex-wrap items-center gap-2 bg-background rounded-md px-3 py-2 text-sm">
-                            <Tag className="h-3.5 w-3.5 text-primary shrink-0" />
-                            <span className="font-medium flex-1 min-w-0 truncate">{getCategoryName(cf.category_id)}</span>
-                            <span className="text-xs inline-flex items-center gap-1 text-amber-600 dark:text-amber-400">
-                              <Zap className="h-3 w-3" /> {cf.same_day_fee === null ? "N/A" : formatCurrency(cf.same_day_fee)}
-                            </span>
-                            <span className="text-xs inline-flex items-center gap-1 text-blue-600 dark:text-blue-400">
-                              <Calendar className="h-3 w-3" /> {cf.next_day_fee === null ? "N/A" : formatCurrency(cf.next_day_fee)}
-                            </span>
-                            <Button size="sm" variant="ghost" className="text-destructive h-7 w-7 p-0" onClick={() => deleteCatFeeMutation.mutate(cf.id)}>
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Add new category fee */}
-                    {availableCats.length > 0 && (
-                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-end">
-                        <select
-                          className="h-9 rounded-md border border-input bg-background px-3 text-sm"
-                          value={catFeeForm.category_id}
-                          onChange={(e) => setCatFeeForm({ ...catFeeForm, category_id: e.target.value })}
-                        >
-                          <option value="">Select Category</option>
-                          {availableCats.map((c) => (
-                            <option key={c.id} value={c.id}>{c.name}</option>
-                          ))}
-                        </select>
-                        <Input
-                          placeholder="Same Day Fee or blank"
-                          type="number"
-                          className="h-9"
-                          value={catFeeForm.same_day_fee}
-                          onChange={(e) => setCatFeeForm({ ...catFeeForm, same_day_fee: e.target.value })}
-                        />
-                        <Input
-                          placeholder="Next Day Fee or blank"
-                          type="number"
-                          className="h-9"
-                          value={catFeeForm.next_day_fee}
-                          onChange={(e) => setCatFeeForm({ ...catFeeForm, next_day_fee: e.target.value })}
-                        />
-                        <Button size="sm" className="h-9" onClick={() => handleSaveCatFee(d.id)} disabled={saveCatFeeMutation.isPending}>
-                          <Plus className="h-3.5 w-3.5 mr-1" /> Add
-                        </Button>
-                      </div>
-                    )}
-
-                    {availableCats.length === 0 && districtCatFees.length > 0 && (
-                      <p className="text-xs text-muted-foreground">All categories have custom fees set.</p>
-                    )}
+                {/* Cities (only for fast/range modes that have city restrictions) */}
+                {m.key === "fast" && (
+                  <div className="rounded-lg border p-3 bg-muted/30">
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="text-sm font-semibold">Available cities</Label>
+                      <span className="text-xs text-muted-foreground">{modeCities.length} cities</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5 mb-2">
+                      {modeCities.map((c) => (
+                        <Badge key={c.id} variant="secondary" className="gap-1 pr-1">
+                          {c.city_name}
+                          <button
+                            onClick={() => removeCity(c.id)}
+                            className="hover:bg-destructive/20 rounded p-0.5"
+                            aria-label={`Remove ${c.city_name}`}
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </Badge>
+                      ))}
+                      {modeCities.length === 0 && (
+                        <p className="text-xs text-muted-foreground">No cities yet — add below.</p>
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Add city name"
+                        value={newCity[m.id] || ""}
+                        onChange={(e) => setNewCity((p) => ({ ...p, [m.id]: e.target.value }))}
+                        onKeyDown={(e) => e.key === "Enter" && addCity(m.id)}
+                        style={{ fontSize: 16 }}
+                      />
+                      <Button size="sm" onClick={() => addCity(m.id)}>
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 )}
-              </div>
-            );
-          })
-        )}
+
+                <Button onClick={() => updateMode(m.id)} className="w-full sm:w-auto">
+                  <Save className="h-4 w-4 mr-2" /> Save changes
+                </Button>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
+
+      {/* CATEGORY ASSIGNMENT */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Category → Delivery Mode</CardTitle>
+          <p className="text-xs text-muted-foreground">
+            Assign each category to a delivery mode. Customers see split shipments when cart mixes modes.
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="divide-y">
+            {categories.map((c: any) => {
+              const current = catModes.find((cm) => cm.category_id === c.id)?.mode_id || "";
+              return (
+                <div key={c.id} className="py-2.5 flex items-center justify-between gap-3">
+                  <span className="text-sm font-medium">{c.name}</span>
+                  <div className="w-48">
+                    <Select value={current || "none"} onValueChange={(v) => v !== "none" && assignCategory(c.id, v)}>
+                      <SelectTrigger style={{ fontSize: 16 }}>
+                        <SelectValue placeholder="— select —" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {modes.map((m) => (
+                          <SelectItem key={m.id} value={m.id}>
+                            {m.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              );
+            })}
+            {categories.length === 0 && (
+              <p className="text-sm text-muted-foreground py-4">No categories found.</p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

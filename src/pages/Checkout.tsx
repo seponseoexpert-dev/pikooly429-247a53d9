@@ -23,6 +23,8 @@ import { SameDayAnimation, NextDayAnimation } from "@/components/checkout/Delive
 import SEOHead from "@/components/seo/SEOHead";
 import { AddressAutocomplete } from "@/components/checkout/AddressAutocomplete";
 import { resolveEffectiveDeliveryFees, type CategoryDeliveryFee, type DistrictFees } from "@/lib/deliveryResolver";
+import { useCheckoutDelivery } from "@/hooks/useCheckoutDelivery";
+import DeliveryModeCards from "@/components/checkout/DeliveryModeCards";
 
 const countryPhoneCodes: Record<string, string> = {
   "Afghanistan": "+93", "Albania": "+355", "Algeria": "+213", "Andorra": "+376", "Angola": "+244",
@@ -405,12 +407,10 @@ const Checkout = () => {
     }
   }, [activeDistrict, sameDayAvailable, nextDayAvailable, deliveryType]);
 
-  const deliveryFee = deliveryType === "same_day" ? sameDayFee : nextDayFee;
-
-  const deliveryLabel =
-    deliveryType === "same_day"
-      ? (activeDistrict?.same_day_label || "Same Day Delivery")
-      : (activeDistrict?.next_day_label || "Next Day Delivery");
+  // NEW: split-shipment delivery (3-mode system) — overrides legacy district-based fee
+  const { groups: deliveryGroups, totalDeliveryFee, isSplit, primaryLabel } = useCheckoutDelivery(items as any);
+  const deliveryFee = totalDeliveryFee;
+  const deliveryLabel = primaryLabel || "Delivery";
 
   // Coupon discount calculation
   const couponDiscount = appliedCoupon
@@ -494,18 +494,8 @@ const Checkout = () => {
       return;
     }
 
-    if (!selectedDistrict) {
-      toast.error("Please select a shipping district");
-      return;
-    }
-
     if (items.length === 0) {
       toast.error("Your cart is empty");
-      return;
-    }
-
-    if (hasDeliveryMismatch) {
-      toast.error(`${incompatibleItems.length} item(s) don't support ${deliveryType === "same_day" ? "Same Day" : "Next Day"} delivery. Please switch delivery option or remove them.`);
       return;
     }
 
@@ -519,14 +509,14 @@ const Checkout = () => {
         customer_phone: form.phone.trim(),
         customer_email: form.email.trim() || null,
         billing_country: form.billingCountry.trim() || 'Bangladesh',
-        delivery_address: `${activeDistrict?.name || ""} - ${form.address.trim()}`,
+        delivery_address: `${activeDistrict?.name ? activeDistrict.name + " - " : ""}${form.address.trim()}`,
         notes: form.notes.trim() || null,
         recipient_name: form.recipientName.trim() || null,
         alt_phone: form.recipientPhone.trim() || null,
         gift_message: form.giftMessage.trim() || null,
         delivery_date: form.deliveryDate || null,
         delivery_time: form.deliveryTime || null,
-        delivery_type: deliveryType,
+        delivery_type: deliveryGroups.map((g) => g.mode.key).join("+") || "standard",
         payment_method: form.paymentMethod,
         subtotal: totalPrice,
         delivery_fee: deliveryFee,
@@ -942,8 +932,13 @@ const Checkout = () => {
                     <Label htmlFor="giftMessage">Gift Message (Optional)</Label>
                     <Textarea id="giftMessage" placeholder="Write a special message for the recipient..." value={form.giftMessage} onChange={(e) => handleChange("giftMessage", e.target.value)} className="mt-1.5 min-h-[80px]" maxLength={500} />
                   </div>
+                  {deliveryGroups.length > 0 && (
+                    <div>
+                      <Label className="text-sm font-semibold mb-2 block">Delivery Method</Label>
+                      <DeliveryModeCards groups={deliveryGroups} formatPrice={formatPrice} />
+                    </div>
+                  )}
                   <div>
-                    <Label className="text-sm font-semibold mb-2 block">Select Delivery Date & Time Slot</Label>
                     <div className="grid grid-cols-2 gap-2.5">
                       <label
                         className={cn(
@@ -1133,9 +1128,11 @@ const Checkout = () => {
                       <span className="text-muted-foreground">Subtotal</span>
                       <span className="font-medium tabular-nums">{formatPrice(totalPrice)}</span>
                     </div>
-                    {activeDistrict && (
+                    {deliveryGroups.length > 0 && (
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Delivery</span>
+                        <span className="text-muted-foreground">
+                          Delivery{isSplit ? ` (${deliveryGroups.length} shipments)` : ""}
+                        </span>
                         <span className="font-medium tabular-nums">{formatPrice(deliveryFee)}</span>
                       </div>
                     )}
@@ -1154,7 +1151,7 @@ const Checkout = () => {
                     <span className="text-2xl sm:text-3xl font-bold text-primary tabular-nums" style={{ fontFamily: "'Lora', serif" }}>{formatPrice(grandTotal)}</span>
                   </div>
 
-                  <Button type="submit" className="btn-luxe w-full mt-5 h-12 sm:h-13 text-sm sm:text-base" disabled={loading || hasDeliveryMismatch}>
+                  <Button type="submit" className="btn-luxe w-full mt-5 h-12 sm:h-13 text-sm sm:text-base" disabled={loading}>
                     {loading ? (
                       <><Loader2 className="animate-spin mr-2" size={18} /> Processing…</>
                     ) : (
