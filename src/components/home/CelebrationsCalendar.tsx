@@ -77,14 +77,6 @@ const CelebrationsCalendar = memo(() => {
                   className="relative aspect-[4/5] overflow-hidden rounded-[22px] transition-transform duration-300 ease-out group-hover:scale-[1.02]"
                   style={{ backgroundColor: bgColor }}
                 >
-                  <div className="absolute left-1/2 top-2 z-10 -translate-x-1/2">
-                    <div className="rounded-md border-2 border-primary bg-white px-3 py-1 shadow-sm">
-                      <span className="whitespace-nowrap text-[10px] font-bold tracking-wide text-foreground sm:text-[11px] md:text-xs">
-                        <DateLabel label={celebration.date_label} />
-                      </span>
-                    </div>
-                  </div>
-
                   <img
                     src={celebration.image_url || "/placeholder.svg"}
                     alt={celebration.name}
@@ -96,10 +88,6 @@ const CelebrationsCalendar = memo(() => {
                     sizes="(max-width: 640px) 43vw, (max-width: 768px) 29vw, (max-width: 1200px) 18vw, 16vw"
                   />
                 </div>
-
-                <p className="mt-2 text-center text-[12px] font-medium text-foreground transition-colors group-hover:text-primary sm:text-sm">
-                  {celebration.name}
-                </p>
               </div>
             );
 
