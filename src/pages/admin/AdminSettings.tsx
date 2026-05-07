@@ -1582,22 +1582,24 @@ const PagesSection = ({
   const fields = sectionFields[active] || [];
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap gap-2 border-b pb-3">
-        {pageTabs.map((t) => (
-          <button
-            key={t.key}
-            type="button"
-            onClick={() => setActive(t.key)}
-            className={cn(
-              "px-3 py-1.5 rounded-md text-sm transition-colors",
-              active === t.key
-                ? "bg-primary text-primary-foreground font-medium"
-                : "bg-muted text-muted-foreground hover:bg-muted/70"
-            )}
-          >
-            {t.label}
-          </button>
-        ))}
+      <div className="-mx-1 overflow-x-auto border-b pb-3 scrollbar-hide">
+        <div className="flex gap-2 px-1 min-w-max">
+          {pageTabs.map((t) => (
+            <button
+              key={t.key}
+              type="button"
+              onClick={() => setActive(t.key)}
+              className={cn(
+                "shrink-0 px-3 py-1.5 rounded-full text-xs sm:text-sm whitespace-nowrap transition-colors",
+                active === t.key
+                  ? "bg-primary text-primary-foreground font-medium"
+                  : "bg-muted text-muted-foreground hover:bg-muted/70"
+              )}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         {fields.map((field) => (
