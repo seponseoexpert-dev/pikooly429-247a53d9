@@ -550,16 +550,29 @@ const ProductDetail = () => {
             <span className="text-xs text-muted-foreground ml-1">({product.review_count || 0} Reviews)</span>
           </div>
 
-          <div className="flex items-center gap-3 mb-4 pb-4 border-b border-border/60">
+          <div className="flex items-center gap-3 mb-3 pb-4 border-b border-border/60">
             <span className="text-2xl sm:text-3xl md:text-4xl font-display font-semibold text-foreground tracking-tight tabular-nums">{formatPrice(effectivePrice)}</span>
             {product.original_price && product.original_price > product.price && (
               <>
                 <span className="text-sm sm:text-base text-muted-foreground line-through tabular-nums">{formatPrice(product.original_price + sizeExtra)}</span>
-                <span className="chip-luxe">
-                  {Math.round((1 - product.price / product.original_price) * 100)}% off
+                <span className="text-sm sm:text-base font-bold text-[hsl(35_95%_50%)] tabular-nums">
+                  {Math.round((1 - product.price / product.original_price) * 100)}% OFF
                 </span>
               </>
             )}
+          </div>
+
+          {/* Earliest Delivery line - FNP style */}
+          <div className="flex items-center gap-2 mb-4 text-sm">
+            <Truck size={18} className="text-muted-foreground" strokeWidth={1.8} />
+            <span className="text-muted-foreground">Earliest Delivery:</span>
+            <span className="font-semibold text-primary">
+              {getEarliestDeliveryLabel({
+                same_day_districts: (product as any).same_day_districts,
+                next_day_districts: (product as any).next_day_districts,
+                standard_delivery_days: (product as any).standard_delivery_days,
+              })}
+            </span>
           </div>
 
           {/* Variants — clean "ADD SOMETHING EXTRA" style table */}
