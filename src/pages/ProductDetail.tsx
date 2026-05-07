@@ -562,18 +562,6 @@ const ProductDetail = () => {
             )}
           </div>
 
-          {/* Earliest Delivery line - FNP style */}
-          <div className="flex items-center gap-2 mb-4 text-sm">
-            <Truck size={18} className="text-muted-foreground" strokeWidth={1.8} />
-            <span className="text-muted-foreground">Earliest Delivery:</span>
-            <span className="font-semibold text-primary">
-              {getEarliestDeliveryLabel({
-                same_day_districts: (product as any).same_day_districts,
-                next_day_districts: (product as any).next_day_districts,
-                standard_delivery_days: (product as any).standard_delivery_days,
-              })}
-            </span>
-          </div>
 
           {/* Variants — clean "ADD SOMETHING EXTRA" style table */}
           {(sizes.length > 0 || colors.length > 0) && (
