@@ -31,7 +31,6 @@ interface Subcategory {
 
 const AdminProducts = () => {
   const { formatCurrency } = useCurrency();
-  const { settings } = useSiteSettings();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
@@ -43,22 +42,7 @@ const AdminProducts = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [search, setSearch] = useState("");
   const [filterCategory, setFilterCategory] = useState<string>("all");
-  const [showAdvancedDelivery, setShowAdvancedDelivery] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [bulkApplying, setBulkApplying] = useState(false);
-
-  const presetFee = (type: string): number | "" => {
-    const v = settings[`delivery_preset_${type}_fee`];
-    if (!v) return "";
-    const n = parseFloat(v);
-    return isNaN(n) ? "" : n;
-  };
-  const presetDays = (type: string): number | null => {
-    const v = settings[`delivery_preset_${type}_days`];
-    if (!v) return null;
-    const n = parseInt(v);
-    return isNaN(n) ? null : n;
-  };
 
   const defaultForm = {
     name: "", slug: "", short_description: "", description: "", price: 0, original_price: 0,
@@ -67,11 +51,6 @@ const AdminProducts = () => {
     specifications: [] as Array<{ item: string; value: string }>,
     seo_title: "", seo_description: "", delivery_time: "",
     instructions: "", delivery_info: "",
-    same_day_districts: [] as string[],
-    next_day_districts: [] as string[],
-    standard_delivery_days: 3,
-    delivery_type: "standard" as "same_day" | "next_day" | "standard" | "economy",
-    delivery_fee_override: "" as string | number,
   };
   const [form, setForm] = useState(defaultForm);
 
