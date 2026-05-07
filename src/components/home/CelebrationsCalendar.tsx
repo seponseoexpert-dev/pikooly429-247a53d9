@@ -77,12 +77,9 @@ const CelebrationsCalendar = memo(() => {
                   className="relative aspect-[4/5] overflow-hidden rounded-[22px] transition-transform duration-300 ease-out group-hover:scale-[1.02]"
                   style={{ backgroundColor: bgColor }}
                 >
-                  <div className="absolute inset-x-0 top-0 z-10 flex justify-center px-3 pt-0">
-                    <div
-                      className="w-full rounded-b-[16px] py-2 text-center"
-                      style={{ backgroundColor: "rgba(255,255,255,0.7)", backdropFilter: "blur(6px)" }}
-                    >
-                      <span className="text-[10px] font-bold tracking-wide text-foreground sm:text-[11px] md:text-xs">
+                  <div className="absolute left-1/2 top-2 z-10 -translate-x-1/2">
+                    <div className="rounded-md border-2 border-primary bg-white px-3 py-1 shadow-sm">
+                      <span className="whitespace-nowrap text-[10px] font-bold tracking-wide text-foreground sm:text-[11px] md:text-xs">
                         <DateLabel label={celebration.date_label} />
                       </span>
                     </div>
