@@ -499,6 +499,21 @@ const ProductDetail = () => {
                 ))}
               </div>
             )}
+
+            {/* FNP-style trust badges row */}
+            <div className="hidden md:grid grid-cols-3 gap-3 mt-6 pt-6 border-t border-border/40">
+              {[
+                { icon: "😊", title: "20+ Mn Smiles", sub: "Delivered" },
+                { icon: "📍", title: "20000+", sub: "Pincodes Covered" },
+                { icon: "🚚", title: "620+ Cities Enjoying", sub: "same-day delivery" },
+              ].map((b, i) => (
+                <div key={i} className="flex flex-col items-center text-center gap-1.5">
+                  <span className="text-2xl">{b.icon}</span>
+                  <p className="text-[12px] font-semibold text-foreground leading-tight">{b.title}</p>
+                  <p className="text-[11px] text-muted-foreground leading-tight">{b.sub}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
