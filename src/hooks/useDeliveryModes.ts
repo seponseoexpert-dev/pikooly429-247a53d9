@@ -1,0 +1,69 @@
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+
+export interface DeliveryMode {
+  id: string;
+  key: string;
+  name: string;
+  icon: string | null;
+  badge_text: string | null;
+  delivery_time: string;
+  charge_type: "flat" | "range";
+  flat_charge: number;
+  min_charge: number;
+  max_charge: number;
+  is_active: boolean;
+  sort_order: number;
+}
+
+export interface DeliveryModeCity {
+  id: string;
+  mode_id: string;
+  city_name: string;
+}
+
+export interface CategoryDeliveryMode {
+  id: string;
+  category_id: string;
+  mode_id: string;
+}
+
+/** Effective charge for a mode (flat → flat_charge, range → min_charge as shown to customer). */
+export const modeCharge = (m: Pick<DeliveryMode, "charge_type" | "flat_charge" | "min_charge">) =>
+  m.charge_type === "flat" ? Number(m.flat_charge || 0) : Number(m.min_charge || 0);
+
+export const useDeliveryModes = () =>
+  useQuery({
+    queryKey: ["delivery-modes"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("delivery_modes")
+        .select("*")
+        .order("sort_order");
+      if (error) throw error;
+      return (data || []) as DeliveryMode[];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+export const useDeliveryCities = () =>
+  useQuery({
+    queryKey: ["delivery-mode-cities"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("delivery_mode_cities").select("*");
+      if (error) throw error;
+      return (data || []) as DeliveryModeCity[];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+export const useCategoryDeliveryModes = () =>
+  useQuery({
+    queryKey: ["category-delivery-modes"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("category_delivery_modes").select("*");
+      if (error) throw error;
+      return (data || []) as CategoryDeliveryMode[];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
