@@ -252,12 +252,21 @@ const AdminProducts = () => {
                   <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
                 </div>
                 <div className="space-y-2">
-                  <Label>Price (৳)</Label>
+                  <Label>Sale Price (৳) <span className="text-xs text-muted-foreground">— customer pays this</span></Label>
                   <Input type="number" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: parseFloat(e.target.value) || 0 })} />
                 </div>
                 <div className="space-y-2">
-                  <Label>Original Price (৳)</Label>
-                  <Input type="number" step="0.01" value={form.original_price} onChange={(e) => setForm({ ...form, original_price: parseFloat(e.target.value) || 0 })} />
+                  <Label>Regular Price / MRP (৳) <span className="text-xs text-muted-foreground">— must be higher than Sale Price for discount</span></Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={form.original_price}
+                    onChange={(e) => setForm({ ...form, original_price: parseFloat(e.target.value) || 0 })}
+                    placeholder="Leave 0 if no discount"
+                  />
+                  {form.original_price > 0 && form.original_price <= form.price && (
+                    <p className="text-xs text-destructive">⚠ Regular Price must be greater than Sale Price to show a discount.</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label>Stock</Label>
