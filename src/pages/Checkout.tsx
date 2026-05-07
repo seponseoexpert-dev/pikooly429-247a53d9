@@ -23,6 +23,8 @@ import { SameDayAnimation, NextDayAnimation } from "@/components/checkout/Delive
 import SEOHead from "@/components/seo/SEOHead";
 import { AddressAutocomplete } from "@/components/checkout/AddressAutocomplete";
 import { resolveEffectiveDeliveryFees, type CategoryDeliveryFee, type DistrictFees } from "@/lib/deliveryResolver";
+import { useCheckoutDelivery } from "@/hooks/useCheckoutDelivery";
+import DeliveryModeCards from "@/components/checkout/DeliveryModeCards";
 
 const countryPhoneCodes: Record<string, string> = {
   "Afghanistan": "+93", "Albania": "+355", "Algeria": "+213", "Andorra": "+376", "Angola": "+244",
