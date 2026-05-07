@@ -251,21 +251,24 @@ const AdminProducts = () => {
                   <Label>Slug</Label>
                   <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
                 </div>
-                <div className="space-y-2">
-                  <Label>Sale Price (৳) <span className="text-xs text-muted-foreground">— customer pays this</span></Label>
+                <div className="space-y-1.5">
+                  <Label>Sale Price (৳)</Label>
                   <Input type="number" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: parseFloat(e.target.value) || 0 })} />
+                  <p className="text-[11px] text-muted-foreground leading-tight">Customer pays this</p>
                 </div>
-                <div className="space-y-2">
-                  <Label>Regular Price / MRP (৳) <span className="text-xs text-muted-foreground">— must be higher than Sale Price for discount</span></Label>
+                <div className="space-y-1.5">
+                  <Label>Regular Price (৳)</Label>
                   <Input
                     type="number"
                     step="0.01"
                     value={form.original_price}
                     onChange={(e) => setForm({ ...form, original_price: parseFloat(e.target.value) || 0 })}
-                    placeholder="Leave 0 if no discount"
+                    placeholder="0 = no discount"
                   />
-                  {form.original_price > 0 && form.original_price <= form.price && (
-                    <p className="text-xs text-destructive">⚠ Regular Price must be greater than Sale Price to show a discount.</p>
+                  {form.original_price > 0 && form.original_price <= form.price ? (
+                    <p className="text-[11px] text-destructive leading-tight">⚠ Must be higher than Sale Price</p>
+                  ) : (
+                    <p className="text-[11px] text-muted-foreground leading-tight">Higher than Sale Price for discount</p>
                   )}
                 </div>
                 <div className="space-y-2">
