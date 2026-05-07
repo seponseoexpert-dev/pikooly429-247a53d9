@@ -334,6 +334,21 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "contactpage_website_url", label: "Website URL", placeholder: "https://pikooly.com.bd" },
     { key: "contactpage_website_label", label: "Website Label", placeholder: "pikooly.com.bd" },
   ],
+  refund_policy: [
+    { key: "refundpage_title", label: "Page Title", fullWidth: true, placeholder: "Refund & Return Policy" },
+    { key: "refundpage_subtitle", label: "Page Subtitle", fullWidth: true, placeholder: "Our commitment to your satisfaction" },
+    { key: "refundpage_content", label: "Page Content", type: "richtext", fullWidth: true, placeholder: "Write your full refund & return policy here..." },
+  ],
+  privacy_policy: [
+    { key: "privacypage_title", label: "Page Title", fullWidth: true, placeholder: "Privacy Policy" },
+    { key: "privacypage_subtitle", label: "Page Subtitle", fullWidth: true, placeholder: "How we protect and use your information" },
+    { key: "privacypage_content", label: "Page Content", type: "richtext", fullWidth: true, placeholder: "Write your full privacy policy here..." },
+  ],
+  terms_conditions: [
+    { key: "termspage_title", label: "Page Title", fullWidth: true, placeholder: "Terms & Conditions" },
+    { key: "termspage_subtitle", label: "Page Subtitle", fullWidth: true, placeholder: "Please read carefully before using our service" },
+    { key: "termspage_content", label: "Page Content", type: "richtext", fullWidth: true, placeholder: "Write your full terms & conditions here..." },
+  ],
   faq: [
     { key: "faq_section_title", label: "Section Title", placeholder: "Frequently Asked Questions" },
     { key: "faq_section_subtitle", label: "Section Subtitle", placeholder: "Everything you need to know about our services" },
