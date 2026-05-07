@@ -5,6 +5,7 @@ export interface DistrictFees {
   id?: string;
   same_day_fee?: number | null;
   next_day_fee?: number | null;
+  delivery_fee?: number | null;
   same_day_available?: boolean | null;
   next_day_available?: boolean | null;
 }
