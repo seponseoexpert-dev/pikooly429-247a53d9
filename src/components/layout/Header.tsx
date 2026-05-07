@@ -235,17 +235,8 @@ const Header = () => {
 
             {/* Right Actions */}
             <div className="flex items-center gap-0 sm:gap-0.5 ml-auto">
-              {/* Mobile search icon - visible only when scrolled */}
-              <button
-                type="button"
-                onClick={() => navigate("/search")}
-                className={`touch-target lg:hidden relative flex flex-col items-center justify-center gap-0.5 rounded-xl px-1.5 py-1.5 text-foreground/70 transition-all duration-200 hover:text-primary hover:bg-muted/50 active:scale-95 ${
-                  scrolled && !mobileSearchExpanded ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden pointer-events-none"
-                }`}
-                aria-label="Search"
-              >
-                <Search size={19} strokeWidth={1.8} />
-              </button>
+              {/* Mobile search icon - always visible on mobile */}
+              <IconBtn icon={Search} label={t("search") || "Search"} onClick={() => navigate("/search")} className="lg:hidden" />
 
               <IconBtn
                 icon={theme === "dark" ? Sun : Moon}
@@ -330,24 +321,7 @@ const Header = () => {
             </div>
           </div>
 
-          {/* === MOBILE SEARCH === */}
-          {/* Full search bar - shown when not scrolled OR when expanded */}
-          <div
-            className={`lg:hidden relative ${
-              !scrolled || mobileSearchExpanded ? "pb-2 opacity-100" : "pb-0 opacity-0 pointer-events-none"
-            }`}
-          >
-            <div className={`transition-all duration-100 ease-out overflow-hidden ${
-              !scrolled || mobileSearchExpanded ? "max-h-[60px]" : "max-h-0"
-            }`}>
-            <div className="relative group cursor-pointer" onClick={() => navigate("/search")}>
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" size={15} />
-              <div className="w-full rounded-full border border-border/60 bg-muted/50 py-2.5 pl-10 pr-9 text-[13px] text-muted-foreground/60 shadow-[0_20px_40px_-32px_hsl(var(--foreground)/0.45)]">
-                {t("search_placeholder")}
-              </div>
-            </div>
-            </div>
-          </div>
+          {/* Mobile search bar removed — using header icon instead */}
 
           {/* === NAV BAR (Desktop/Tablet) === */}
           <div ref={navRef} className="relative hidden md:block border-t border-border/30">
