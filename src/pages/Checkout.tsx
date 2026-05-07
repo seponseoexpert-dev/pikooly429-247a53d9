@@ -516,7 +516,7 @@ const Checkout = () => {
         gift_message: form.giftMessage.trim() || null,
         delivery_date: form.deliveryDate || null,
         delivery_time: form.deliveryTime || null,
-        delivery_type: deliveryType,
+        delivery_type: deliveryGroups.map((g) => g.mode.key).join("+") || "standard",
         payment_method: form.paymentMethod,
         subtotal: totalPrice,
         delivery_fee: deliveryFee,
