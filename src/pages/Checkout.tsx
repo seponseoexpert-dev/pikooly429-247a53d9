@@ -942,8 +942,13 @@ const Checkout = () => {
                     <Label htmlFor="giftMessage">Gift Message (Optional)</Label>
                     <Textarea id="giftMessage" placeholder="Write a special message for the recipient..." value={form.giftMessage} onChange={(e) => handleChange("giftMessage", e.target.value)} className="mt-1.5 min-h-[80px]" maxLength={500} />
                   </div>
+                  {deliveryGroups.length > 0 && (
+                    <div>
+                      <Label className="text-sm font-semibold mb-2 block">Delivery Method</Label>
+                      <DeliveryModeCards groups={deliveryGroups} formatPrice={formatPrice} />
+                    </div>
+                  )}
                   <div>
-                    <Label className="text-sm font-semibold mb-2 block">Select Delivery Date & Time Slot</Label>
                     <div className="grid grid-cols-2 gap-2.5">
                       <label
                         className={cn(
