@@ -1133,9 +1133,11 @@ const Checkout = () => {
                       <span className="text-muted-foreground">Subtotal</span>
                       <span className="font-medium tabular-nums">{formatPrice(totalPrice)}</span>
                     </div>
-                    {activeDistrict && (
+                    {deliveryGroups.length > 0 && (
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Delivery</span>
+                        <span className="text-muted-foreground">
+                          Delivery{isSplit ? ` (${deliveryGroups.length} shipments)` : ""}
+                        </span>
                         <span className="font-medium tabular-nums">{formatPrice(deliveryFee)}</span>
                       </div>
                     )}
