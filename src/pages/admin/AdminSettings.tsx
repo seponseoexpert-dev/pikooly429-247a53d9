@@ -907,6 +907,88 @@ const PaymentGatewaySection = ({
 };
 
 
+const TestGoogleMapsKeyButton = ({ apiKey }: { apiKey: string }) => {
+  const [testing, setTesting] = useState(false);
+  const [result, setResult] = useState<null | { ok: boolean; message: string }>(null);
+  const { toast } = useToast();
+
+  const handleTest = async () => {
+    const key = (apiKey || "").trim();
+    if (!key) {
+      toast({ title: "No key", description: "Please enter a Google Maps API Key first.", variant: "destructive" });
+      return;
+    }
+    setTesting(true);
+    setResult(null);
+
+    // Load Maps JS in an isolated way; listen for gm_authFailure (invalid/restricted key)
+    await new Promise<void>((resolve) => {
+      let settled = false;
+      const finish = (ok: boolean, message: string) => {
+        if (settled) return;
+        settled = true;
+        setResult({ ok, message });
+        if (ok) toast({ title: "Key works ✅", description: message });
+        else toast({ title: "Key failed ❌", description: message, variant: "destructive" });
+        resolve();
+      };
+
+      // gm_authFailure fires when key is invalid / referrer blocked / billing issue
+      (window as any).gm_authFailure = () => finish(false, "Google rejected this key (invalid, restricted, or billing not enabled).");
+
+      // Use a unique callback to verify the script actually initialized
+      const cbName = `__gmapsTest_${Date.now()}`;
+      (window as any)[cbName] = () => {
+        try {
+          const ok = !!(window as any).google?.maps?.places?.Autocomplete;
+          finish(ok, ok ? "Maps JS + Places library loaded successfully." : "Maps loaded but Places library missing. Enable Places API.");
+        } catch {
+          finish(false, "Maps loaded but Places library not available.");
+        } finally {
+          delete (window as any)[cbName];
+        }
+      };
+
+      // If script already cached for a previous key, force a fresh script tag
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&libraries=places&callback=${cbName}&loading=async`;
+      script.async = true;
+      script.defer = true;
+      script.onerror = () => finish(false, "Failed to load Google Maps script (network or key blocked).");
+      document.head.appendChild(script);
+
+      // Safety timeout
+      setTimeout(() => finish(false, "Timed out waiting for Google Maps. Key may be blocked or referrer-restricted."), 8000);
+    });
+
+    setTesting(false);
+  };
+
+  return (
+    <div className="mt-2 rounded-lg border border-border p-4 bg-muted/30">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div>
+          <p className="text-sm font-medium text-foreground">Validate Google Maps API Key</p>
+          <p className="text-xs text-muted-foreground mt-0.5">Tests if the key loads Maps JS + Places (used for address autocomplete).</p>
+        </div>
+        <Button type="button" onClick={handleTest} disabled={testing} variant="outline" size="sm">
+          {testing ? "Testing..." : "Test Key"}
+        </Button>
+      </div>
+      {result && (
+        <div className={cn(
+          "mt-3 text-xs rounded-md px-3 py-2 border",
+          result.ok
+            ? "bg-green-50 border-green-200 text-green-800 dark:bg-green-950/30 dark:border-green-900 dark:text-green-300"
+            : "bg-red-50 border-red-200 text-red-800 dark:bg-red-950/30 dark:border-red-900 dark:text-red-300"
+        )}>
+          {result.ok ? "✅ " : "❌ "}{result.message}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const SendTestEmailButton = () => {
   const [testEmail, setTestEmail] = useState("");
   const [sending, setSending] = useState(false);
