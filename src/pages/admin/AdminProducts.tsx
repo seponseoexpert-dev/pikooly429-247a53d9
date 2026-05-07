@@ -667,6 +667,13 @@ const AdminProducts = () => {
             <Card key={p.id} className="overflow-hidden hover:shadow-md transition-shadow">
               <CardContent className="p-0">
                 <div className="flex items-start gap-3 p-3">
+                  <Checkbox
+                    className="mt-1"
+                    checked={selectedIds.includes(p.id)}
+                    onCheckedChange={(c) =>
+                      setSelectedIds(c ? [...selectedIds, p.id] : selectedIds.filter((id) => id !== p.id))
+                    }
+                  />
                   {p.image_url ? (
                     <img src={p.image_url} alt="" className="h-16 w-16 object-cover rounded-xl shrink-0 border border-border" />
                   ) : (
@@ -718,6 +725,12 @@ const AdminProducts = () => {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-10">
+                    <Checkbox
+                      checked={selectedIds.length > 0 && selectedIds.length === filtered.length}
+                      onCheckedChange={(c) => setSelectedIds(c ? filtered.map((p) => p.id) : [])}
+                    />
+                  </TableHead>
                   <TableHead>Image</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Price</TableHead>
@@ -729,7 +742,15 @@ const AdminProducts = () => {
               </TableHeader>
               <TableBody>
                 {filtered.map((p) => (
-                  <TableRow key={p.id}>
+                  <TableRow key={p.id} data-state={selectedIds.includes(p.id) ? "selected" : undefined}>
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedIds.includes(p.id)}
+                        onCheckedChange={(c) =>
+                          setSelectedIds(c ? [...selectedIds, p.id] : selectedIds.filter((id) => id !== p.id))
+                        }
+                      />
+                    </TableCell>
                     <TableCell>
                       {p.image_url ? <img src={p.image_url} alt="" className="h-10 w-10 object-cover rounded" /> : <div className="h-10 w-10 bg-muted rounded" />}
                     </TableCell>
