@@ -235,17 +235,8 @@ const Header = () => {
 
             {/* Right Actions */}
             <div className="flex items-center gap-0 sm:gap-0.5 ml-auto">
-              {/* Mobile search icon - visible only when scrolled */}
-              <button
-                type="button"
-                onClick={() => navigate("/search")}
-                className={`touch-target lg:hidden relative flex flex-col items-center justify-center gap-0.5 rounded-xl px-1.5 py-1.5 text-foreground/70 transition-all duration-200 hover:text-primary hover:bg-muted/50 active:scale-95 ${
-                  scrolled && !mobileSearchExpanded ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden pointer-events-none"
-                }`}
-                aria-label="Search"
-              >
-                <Search size={19} strokeWidth={1.8} />
-              </button>
+              {/* Mobile search icon - always visible on mobile */}
+              <IconBtn icon={Search} label={t("search") || "Search"} onClick={() => navigate("/search")} className="lg:hidden" />
 
               <IconBtn
                 icon={theme === "dark" ? Sun : Moon}
