@@ -60,6 +60,9 @@ const AdminDashboard = lazy(() => lazyRetry(() => import("./pages/AdminDashboard
 const EpsCallback = lazy(() => lazyRetry(() => import("./pages/EpsCallback")));
 const AboutUs = lazy(() => lazyRetry(() => import("./pages/AboutUs")));
 const ContactUs = lazy(() => lazyRetry(() => import("./pages/ContactUs")));
+const RefundPolicy = lazy(() => lazyRetry(() => import("./pages/RefundPolicy")));
+const PrivacyPolicy = lazy(() => lazyRetry(() => import("./pages/PrivacyPolicy")));
+const TermsConditions = lazy(() => lazyRetry(() => import("./pages/TermsConditions")));
 const Reviews = lazy(() => lazyRetry(() => import("./pages/Reviews")));
 const AdminProducts = lazy(() => lazyRetry(() => import("./pages/admin/AdminProducts")));
 const AdminCategories = lazy(() => lazyRetry(() => import("./pages/admin/AdminCategories")));
@@ -209,6 +212,12 @@ const App = () => (
               <Route path="/eps-callback" element={<PublicLayout><EpsCallback /></PublicLayout>} />
               <Route path="/about-us" element={<PublicLayout><AboutUs /></PublicLayout>} />
               <Route path="/contact-us" element={<PublicLayout><ContactUs /></PublicLayout>} />
+              <Route path="/refund-policy" element={<PublicLayout><RefundPolicy /></PublicLayout>} />
+              <Route path="/privacy-policy" element={<PublicLayout><PrivacyPolicy /></PublicLayout>} />
+              <Route path="/terms-conditions" element={<PublicLayout><TermsConditions /></PublicLayout>} />
+              <Route path="/return-policy" element={<PublicLayout><RefundPolicy /></PublicLayout>} />
+              <Route path="/privacy" element={<PublicLayout><PrivacyPolicy /></PublicLayout>} />
+              <Route path="/terms" element={<PublicLayout><TermsConditions /></PublicLayout>} />
               <Route path="/reviews" element={<PublicLayout><Reviews /></PublicLayout>} />
               <Route path="/custom-bouquet" element={<PublicLayout><BouquetBuilder /></PublicLayout>} />
               <Route path="/install" element={<PublicLayout><Install /></PublicLayout>} />
