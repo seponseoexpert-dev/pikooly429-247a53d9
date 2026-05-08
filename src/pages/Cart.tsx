@@ -40,19 +40,7 @@ const CartPage = () => {
     <>
       <SEOHead title="Your Cart" description="Review the items in your cart and proceed to checkout." />
       <main className="min-h-screen bg-background pb-32">
-        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-3xl">
-          <div className="flex items-center gap-2.5 mb-4">
-            <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-[hsl(var(--gold-light))] border border-[hsl(var(--gold)/0.3)] text-[hsl(var(--gold-deep))]">
-              <ShoppingBag size={17} />
-            </span>
-            <div>
-              <p className="eyebrow text-[10px]">Your Selection</p>
-              <h1 className="font-display text-lg sm:text-xl font-semibold text-foreground leading-none mt-0.5">
-                Cart <span className="text-muted-foreground font-normal">· {totalItems}</span>
-              </h1>
-            </div>
-          </div>
-
+        <div className="container mx-auto px-3 sm:px-4 pt-8 sm:pt-10 pb-4 max-w-3xl">
           {items.length === 0 ? (
             <div className="text-center py-20 text-muted-foreground bg-card rounded-2xl border border-border/40">
               <div className="w-20 h-20 mx-auto mb-5 rounded-full bg-muted flex items-center justify-center">
@@ -83,9 +71,9 @@ const CartPage = () => {
                     className="bg-card rounded-2xl border border-border/40 hover:border-border/70 transition-colors overflow-hidden"
                   >
                     {badge && (
-                      <div className="flex items-center gap-2 px-3.5 py-2 bg-primary/[0.06] border-b border-border/40 text-[12px]">
+                      <div className="flex items-center gap-2 px-3.5 py-2 bg-olive-light border-b border-border/40 text-[12px]">
                         <span className="font-semibold text-foreground">Express Delivery</span>
-                        <span className={cn("inline-flex items-center gap-1 font-semibold text-primary")}>
+                        <span className={cn("inline-flex items-center gap-1 font-semibold text-olive")}>
                           <badge.Icon size={13} className="shrink-0" />
                           {badge.label}
                         </span>
@@ -125,7 +113,7 @@ const CartPage = () => {
                               )}
                             </div>
                           )}
-                          <p className="text-primary font-bold text-sm sm:text-base mt-1">{formatPrice(lineUnit)}</p>
+                          <p className="text-olive font-bold text-sm sm:text-base mt-1">{formatPrice(lineUnit)}</p>
                           {item.customImages && item.customImages.length > 0 && (
                             <p className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1">
                               <ImagePlus size={12} className="text-primary" /> {item.customImages.length} custom photo(s)
@@ -133,7 +121,7 @@ const CartPage = () => {
                           )}
                         </div>
                         <div className="flex items-center justify-between mt-2">
-                          <div className="flex items-center gap-1.5 bg-primary/95 text-primary-foreground rounded-full px-1 py-0.5">
+                          <div className="flex items-center gap-1.5 bg-olive text-primary-foreground rounded-full px-1 py-0.5">
                             <button
                               onClick={() => updateQuantity(item.product.id, item.quantity - 1, variantKey)}
                               className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-primary-foreground/15 transition-colors"
@@ -219,17 +207,17 @@ const CartPage = () => {
             <div className="container mx-auto max-w-3xl px-3 sm:px-4 py-3 flex items-center gap-3">
               <button
                 onClick={() => setSummaryOpen((v) => !v)}
-                className="flex-1 flex items-center justify-between gap-2 rounded-xl bg-primary/10 border border-primary/20 px-3.5 py-2.5 text-left"
+                className="flex-1 flex items-center justify-between gap-2 rounded-2xl bg-olive-light border border-olive/20 px-3.5 py-2.5 text-left"
                 aria-expanded={summaryOpen}
               >
                 <div>
                   <p className="text-[11px] text-muted-foreground uppercase tracking-wide font-semibold">Total</p>
-                  <p className="text-primary font-bold text-base sm:text-lg leading-none mt-0.5">{formatPrice(totalPrice)}</p>
+                  <p className="text-olive font-bold text-base sm:text-lg leading-none mt-0.5">{formatPrice(totalPrice)}</p>
                 </div>
-                {summaryOpen ? <ChevronDown size={18} className="text-primary" /> : <ChevronUp size={18} className="text-primary" />}
+                {summaryOpen ? <ChevronDown size={18} className="text-olive" /> : <ChevronUp size={18} className="text-olive" />}
               </button>
               <Link to="/checkout" className="flex-[1.4]">
-                <Button className="btn-luxe w-full h-12 text-sm sm:text-base rounded-xl">PLACE ORDER</Button>
+                <Button className="w-full h-12 text-sm sm:text-base rounded-2xl bg-olive text-primary-foreground hover:bg-olive/90 font-bold tracking-wide">PLACE ORDER</Button>
               </Link>
             </div>
             {summaryOpen && (
