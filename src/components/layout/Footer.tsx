@@ -10,8 +10,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 const Footer = memo(() => {
   const { settings } = useSiteSettings();
   const { t } = useLanguage();
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  if (location.pathname === "/cart") return null;
 
   const storeName = settings.store_name || "Pikooly";
   const phone = settings.store_phone || "+880 1XXX-XXXXXX";
