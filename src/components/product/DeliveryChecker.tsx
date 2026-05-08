@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { MapPin, Check, X, Rocket, Package, Shield, Truck } from "lucide-react";
 import {
   useDeliveryModes,
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 
 const ICONS: Record<string, any> = { rocket: Rocket, package: Package, shield: Shield, truck: Truck };
+const STORAGE_KEY = "pikooly_delivery_city";
 
 interface Props {
   productId?: string;
@@ -26,7 +27,13 @@ const DeliveryChecker = ({ categoryId }: Props) => {
   const { data: modes = [] } = useDeliveryModes();
   const { data: cities = [] } = useDeliveryCities();
   const { data: catModes = [] } = useCategoryDeliveryModes();
-  const [selectedCity, setSelectedCity] = useState<string>("");
+  const [selectedCity, setSelectedCity] = useState<string>(
+    () => (typeof window !== "undefined" && localStorage.getItem(STORAGE_KEY)) || ""
+  );
+
+  useEffect(() => {
+    if (selectedCity) localStorage.setItem(STORAGE_KEY, selectedCity);
+  }, [selectedCity]);
 
   const activeModes = modes.filter((m) => m.is_active);
   const cityList = useMemo(
@@ -52,15 +59,15 @@ const DeliveryChecker = ({ categoryId }: Props) => {
   const fastCities = cities
     .filter((c) => c.mode_id === fastMode?.id)
     .map((c) => c.city_name);
-  const fastAvailable = !!selectedCity && fastCities.includes(selectedCity);
+  const fastAvailable = !!selectedCity && selectedCity !== "__other__" && fastCities.includes(selectedCity);
 
-  // Decide what to show: if product is in Fast-mapped category AND city qualifies → Fast
-  // Otherwise show the product's mapped mode (or Standard fallback)
+  // If product's category maps to Fast but city doesn't qualify → fallback to Standard.
+  // If product's category maps to other modes (standard/premium), keep that mode regardless of city.
   const resolvedMode =
-    productMode.key === "fast" && fastAvailable
-      ? fastMode!
-      : productMode.key === "fast" && !fastAvailable
-      ? standardMode || productMode
+    productMode.key === "fast"
+      ? fastAvailable
+        ? fastMode!
+        : standardMode || productMode
       : productMode;
 
   const Icon = ICONS[resolvedMode.icon || "truck"] || Truck;
@@ -84,7 +91,6 @@ const DeliveryChecker = ({ categoryId }: Props) => {
               <SelectItem key={c} value={c}>{c}</SelectItem>
             ))
           )}
-          {/* Allow "Other" so customers outside Fast cities still see Standard */}
           <SelectItem value="__other__">Other district (Bangladesh)</SelectItem>
         </SelectContent>
       </Select>
@@ -103,6 +109,9 @@ const DeliveryChecker = ({ categoryId }: Props) => {
               {resolvedMode.delivery_time}
               {selectedCity !== "__other__" && ` · ${selectedCity}`}
             </p>
+            {resolvedMode.badge_text && (
+              <p className="text-[11px] text-primary font-medium mt-1">{resolvedMode.badge_text}</p>
+            )}
           </div>
           <p className="text-base font-bold text-primary tabular-nums shrink-0">
             ৳{modeCharge(resolvedMode)}

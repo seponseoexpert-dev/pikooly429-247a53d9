@@ -6,6 +6,7 @@ import { useCart, buildVariantKey } from "@/contexts/CartContext";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { parseDeliveryBadge } from "@/lib/deliveryBadge";
+import { useCheckoutDelivery } from "@/hooks/useCheckoutDelivery";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Minus, Trash2, ShoppingBag, Receipt, Ticket, ChevronUp, ChevronDown } from "lucide-react";
@@ -33,6 +34,16 @@ const Cart = () => {
   const addonsHeading = settings.cart_addons_heading || "Your last minute add-ons";
   const savingsTpl = settings.cart_savings_heading || "You have saved {amount} on this order";
   const billHeading = settings.cart_bill_summary_heading || "Bill Summary";
+
+  // Resolve each item's delivery mode via category mapping
+  const { groups: deliveryGroups } = useCheckoutDelivery(items);
+  const productModeMap = useMemo(() => {
+    const m = new Map<string, { name: string; delivery_time: string; badge_text: string | null }>();
+    deliveryGroups.forEach((g) => {
+      g.productIds.forEach((pid) => m.set(pid, { name: g.mode.name, delivery_time: g.mode.delivery_time, badge_text: g.mode.badge_text }));
+    });
+    return m;
+  }, [deliveryGroups]);
 
   // ------- Coupon (mirrors Checkout logic, simplified) -------
   const [couponCode, setCouponCode] = useState("");
@@ -139,24 +150,27 @@ const Cart = () => {
           {expressEnabled && items.map((item) => {
             const variantKey = buildVariantKey(item.variant);
             const lineUnit = item.product.price + (item.variant?.size?.extraPrice || 0);
-            let badge = parseDeliveryBadge(item.product.deliveryTime);
-            if (!badge) {
-              const sd = item.product.sameDayDistricts;
-              const nd = item.product.nextDayDistricts;
-              if (Array.isArray(sd) && sd.length > 0) badge = parseDeliveryBadge("same day");
-              else if (Array.isArray(nd) && nd.length > 0) badge = parseDeliveryBadge("next day");
-              else badge = parseDeliveryBadge("standard");
-            }
+            const resolved = productModeMap.get(item.product.id);
+            const badge = resolved
+              ? parseDeliveryBadge(resolved.delivery_time)
+              : parseDeliveryBadge(item.product.deliveryTime) || parseDeliveryBadge("standard");
+            const modeLabel = resolved?.name || expressHeading;
+            const modeBadgeText = resolved?.badge_text;
             const orig = item.product.originalPrice;
             return (
               <div key={`${item.product.id}-${variantKey}`} className="bg-white rounded-2xl border border-[#e6e8ec] overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
                 {badge && (
-                  <div className="flex items-center gap-2 px-4 py-2.5 bg-[#eaf3f8] border-b border-[#dfe8ef] text-[13px]">
-                    <span className="font-bold" style={{ color: accent }}>{expressHeading}</span>
+                  <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 bg-[#eaf3f8] border-b border-[#dfe8ef] text-[13px]">
+                    <span className="font-bold" style={{ color: accent }}>{modeLabel}</span>
                     <span className="inline-flex items-center gap-1 font-semibold" style={{ color: accent }}>
                       <badge.Icon size={14} className="shrink-0" />
                       {badge.label}
                     </span>
+                    {modeBadgeText && (
+                      <span className="text-[11px] font-medium opacity-80" style={{ color: accent }}>
+                        · {modeBadgeText}
+                      </span>
+                    )}
                   </div>
                 )}
                 <div className="flex gap-3 p-3">
