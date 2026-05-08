@@ -1,4 +1,4 @@
-import { Plus, Minus, ShoppingBag, Trash2, ImagePlus } from "lucide-react";
+import { Plus, Minus, ShoppingBag, Trash2, ImagePlus, ChevronUp, ReceiptText } from "lucide-react";
 import { useCart, buildVariantKey } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
@@ -38,7 +38,7 @@ const CartPage = () => {
   return (
     <>
       <SEOHead title="Your Cart" description="Review the items in your cart and proceed to checkout." />
-      <main className="min-h-screen bg-background pb-32">
+      <main className="min-h-screen bg-muted/30 pb-32">
         <div className="container mx-auto px-3 sm:px-4 pt-8 sm:pt-10 pb-4 max-w-3xl">
           {items.length === 0 ? (
             <div className="text-center py-20 text-muted-foreground bg-card rounded-2xl border border-border/40">
@@ -67,15 +67,15 @@ const CartPage = () => {
                 return (
                   <div
                     key={`${item.product.id}-${variantKey}`}
-                    className="bg-card rounded-2xl border border-border/40 hover:border-border/70 transition-colors overflow-hidden"
+                    className="bg-card rounded-2xl border border-border/50 shadow-sm overflow-hidden"
                   >
                     {badge && (
-                      <div className="flex items-center gap-2 px-3.5 py-2 bg-[hsl(205_60%_94%)] border-b border-border/40 text-[12px]">
-                        <span className={cn("inline-flex items-center gap-1 font-bold text-[hsl(190_60%_22%)]")}>
+                      <div className="flex items-center gap-2 px-3.5 py-2 bg-cart-delivery border-b border-border/40 text-[12px]">
+                        <span className={cn("inline-flex items-center gap-1 font-bold text-cart-teal")}>
                           <badge.Icon size={13} className="shrink-0" />
                           Fast Delivery {badge.label}
                         </span>
-                        <span className="text-muted-foreground">· bike. CNG. Private Car</span>
+                        <span className="text-cart-teal/70">· bike. CNG. Private Car</span>
                       </div>
                     )}
                     <div className="flex gap-3.5 p-3">
@@ -112,15 +112,15 @@ const CartPage = () => {
                               )}
                             </div>
                           )}
-                          <p className="text-[hsl(190_60%_22%)] font-bold text-sm sm:text-base mt-1">{formatPrice(lineUnit)}</p>
+                          <p className="text-cart-teal font-bold text-sm sm:text-base mt-1">{formatPrice(lineUnit)}</p>
                           {item.customImages && item.customImages.length > 0 && (
                             <p className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1">
-                              <ImagePlus size={12} className="text-primary" /> {item.customImages.length} custom photo(s)
+                              <ImagePlus size={12} className="text-cart-teal" /> {item.customImages.length} custom photo(s)
                             </p>
                           )}
                         </div>
                         <div className="flex items-center justify-between mt-2">
-                          <div className="flex items-center gap-1.5 bg-[hsl(190_60%_22%)] text-white rounded-full px-1 py-0.5">
+                          <div className="flex items-center gap-1.5 bg-cart-teal text-primary-foreground rounded-full px-1 py-0.5">
                             <button
                               onClick={() => updateQuantity(item.product.id, item.quantity - 1, variantKey)}
                               className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-primary-foreground/15 transition-colors"
