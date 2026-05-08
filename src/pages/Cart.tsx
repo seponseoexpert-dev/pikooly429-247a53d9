@@ -35,6 +35,16 @@ const Cart = () => {
   const savingsTpl = settings.cart_savings_heading || "You have saved {amount} on this order";
   const billHeading = settings.cart_bill_summary_heading || "Bill Summary";
 
+  // Resolve each item's delivery mode via category mapping
+  const { groups: deliveryGroups } = useCheckoutDelivery(items);
+  const productModeMap = useMemo(() => {
+    const m = new Map<string, { name: string; delivery_time: string; badge_text: string | null }>();
+    deliveryGroups.forEach((g) => {
+      g.productIds.forEach((pid) => m.set(pid, { name: g.mode.name, delivery_time: g.mode.delivery_time, badge_text: g.mode.badge_text }));
+    });
+    return m;
+  }, [deliveryGroups]);
+
   // ------- Coupon (mirrors Checkout logic, simplified) -------
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
