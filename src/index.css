@@ -55,6 +55,11 @@
     --cream: 36 35% 96%;
     --ivory: 38 30% 97%;
     --warm-gray: 150 6% 42%;
+    --cart-teal: 190 60% 22%;
+    --cart-teal-dark: 190 60% 18%;
+    --cart-delivery: 205 60% 94%;
+    --cart-addon: 27 100% 93%;
+    --cart-addon-border: 27 80% 88%;
 
     /* Premium gradients */
     --gradient-gold: linear-gradient(135deg, hsl(38 65% 52%) 0%, hsl(36 70% 42%) 50%, hsl(34 60% 52%) 100%);
@@ -129,6 +134,11 @@
     --cream: 150 18% 9%;
     --ivory: 150 14% 12%;
     --warm-gray: 36 10% 62%;
+    --cart-teal: 190 55% 58%;
+    --cart-teal-dark: 190 55% 48%;
+    --cart-delivery: 190 22% 15%;
+    --cart-addon: 27 22% 15%;
+    --cart-addon-border: 27 24% 22%;
 
     --gradient-gold: linear-gradient(135deg, hsl(38 65% 55%) 0%, hsl(36 70% 45%) 50%, hsl(34 60% 55%) 100%);
     --gradient-luxe: linear-gradient(135deg, hsl(152 38% 50%) 0%, hsl(152 45% 32%) 100%);
