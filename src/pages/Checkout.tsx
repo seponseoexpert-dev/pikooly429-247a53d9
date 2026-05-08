@@ -576,6 +576,11 @@ const Checkout = () => {
 
       if (itemsError) throw itemsError;
 
+      // Fire-and-forget Google Sheets sync (admin-controlled)
+      supabase.functions.invoke("google-sheets-sync", {
+        body: { order_id: order.id },
+      }).catch((e) => console.error("google-sheets-sync error", e));
+
       // Increment coupon used_count
       if (appliedCoupon) {
         await supabase
