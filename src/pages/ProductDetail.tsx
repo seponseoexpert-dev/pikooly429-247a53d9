@@ -16,6 +16,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
+import { isPreorder, getAdvancePercent, getPreorderNote } from "@/lib/preorder";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -328,13 +329,13 @@ const ProductDetail = () => {
   };
 
   const buyNowTotal = effectivePrice * qty + addonInCartTotal;
+  const preorderActive = isPreorder(product as any);
+  const advancePct = getAdvancePercent(product as any);
+  const advanceAmount = preorderActive ? Math.round((buyNowTotal * advancePct) / 100) : 0;
 
   const handleBuyNow = () => {
     if (!validateVariants()) return;
-    if (product.stock <= 0) {
-      toast.error("This product is out of stock");
-      return;
-    }
+    // Allow buy now even if stock is 0 — it becomes a pre-order
     const variant = buildVariantPayload();
     // Quick checkout: keep selected addons, replace main product line with this one at selected qty
     const keptAddons = cartItems.filter(i => addonIds.has(i.product.id));
