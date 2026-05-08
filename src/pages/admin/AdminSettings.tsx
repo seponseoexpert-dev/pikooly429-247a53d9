@@ -51,6 +51,7 @@ const settingSections = [
   { key: "checkout", label: "Checkout", icon: CreditCard },
   { key: "cart_page", label: "Cart Page", icon: ShoppingCart },
   { key: "delivery_presets", label: "Delivery Presets", icon: Truck },
+  { key: "google_sheets", label: "Google Sheets", icon: FileText },
 ];
 
 type FieldDef = {
@@ -424,6 +425,10 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "delivery_preset_economy_fee", label: "Economy Delivery Fee (৳)", placeholder: "80" },
     { key: "delivery_preset_standard_days", label: "Standard Delivery Days", placeholder: "3" },
     { key: "delivery_preset_economy_days", label: "Economy Delivery Days", placeholder: "5" },
+  ],
+  google_sheets: [
+    { key: "google_sheets_enabled", label: "Enable Google Sheets Sync", type: "switch", fullWidth: true },
+    { key: "google_sheets_webhook_url", label: "Apps Script Web App URL", placeholder: "https://script.google.com/macros/s/AKfycb.../exec", fullWidth: true },
   ],
 };
 
