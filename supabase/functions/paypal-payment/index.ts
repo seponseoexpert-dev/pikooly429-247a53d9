@@ -99,7 +99,8 @@ Deno.serve(async (req) => {
 
       // Order total stored in default currency (BDT). Convert -> USD.
       const usdRate = Number(usdCur?.exchange_rate) || 0.0085;
-      const totalStr = (Number(order.total) * usdRate).toFixed(2);
+      const chargeAmount = Number(order.is_preorder ? (order.advance_amount || order.total) : order.total);
+      const totalStr = (chargeAmount * usdRate).toFixed(2);
       const brandName = settings.store_name || "Pikooly";
 
       const createRes = await fetch(`${baseUrl}/v2/checkout/orders`, {

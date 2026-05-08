@@ -169,7 +169,7 @@ Deno.serve(async (req) => {
         transactionTypeId: 1,
         financialEntityId: 0,
         transitionStatusId: 0,
-        totalAmount: Number(order.total),
+        totalAmount: Number(order.is_preorder ? (order.advance_amount || order.total) : order.total),
         ipAddress: "0.0.0.0",
         version: "1",
         successUrl,
