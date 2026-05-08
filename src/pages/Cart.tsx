@@ -17,7 +17,6 @@ type CartAddonProduct = {
   original_price: number | null;
   image_url: string | null;
   is_active: boolean | null;
-  stock_quantity: number | null;
 };
 
 const CartPage = () => {
@@ -33,7 +32,7 @@ const CartPage = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("cart_addons")
-        .select("product_id, sort_order, products!inner(id, name, slug, price, original_price, image_url, is_active, stock_quantity)")
+        .select("product_id, sort_order, products!inner(id, name, slug, price, original_price, image_url, is_active)")
         .eq("is_active", true)
         .order("sort_order", { ascending: true });
       if (error) throw error;
@@ -192,7 +191,7 @@ const CartPage = () => {
                                   originalPrice: p.original_price ?? undefined,
                                   image: p.image_url || "/placeholder.svg",
                                   category: "",
-                                  inStock: (p.stock_quantity ?? 1) > 0,
+                                  inStock: true,
                                 },
                                 undefined,
                                 true
