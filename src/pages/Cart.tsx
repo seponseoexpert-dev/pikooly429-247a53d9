@@ -6,6 +6,7 @@ import { useCart, buildVariantKey } from "@/contexts/CartContext";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { parseDeliveryBadge } from "@/lib/deliveryBadge";
+import { useCheckoutDelivery } from "@/hooks/useCheckoutDelivery";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Minus, Trash2, ShoppingBag, Receipt, Ticket, ChevronUp, ChevronDown } from "lucide-react";
