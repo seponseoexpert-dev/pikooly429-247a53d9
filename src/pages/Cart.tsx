@@ -108,7 +108,7 @@ const CartPage = () => {
                       <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                         <div>
                           <Link to={`/product/${item.product.id}`}>
-                            <h4 className="font-semibold text-sm sm:text-[15px] text-foreground line-clamp-2 hover:text-primary transition-colors leading-snug">
+                            <h4 className="font-bold text-[16px] sm:text-[17px] text-foreground line-clamp-2 hover:text-primary transition-colors leading-snug">
                               {item.product.name}
                             </h4>
                           </Link>
@@ -130,7 +130,14 @@ const CartPage = () => {
                               )}
                             </div>
                           )}
-                          <p className="text-cart-teal font-bold text-sm sm:text-base mt-1">{formatPrice(lineUnit)}</p>
+                          <div className="flex items-baseline gap-2 mt-1.5">
+                            <p className="text-cart-teal font-bold text-[17px] sm:text-[18px]">{formatPrice(lineUnit)}</p>
+                            {item.product.originalPrice && item.product.originalPrice > item.product.price && (
+                              <span className="text-[13px] text-muted-foreground line-through">
+                                {formatPrice(item.product.originalPrice + (item.variant?.size?.extraPrice || 0))}
+                              </span>
+                            )}
+                          </div>
                           {item.customImages && item.customImages.length > 0 && (
                             <p className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1">
                               <ImagePlus size={12} className="text-cart-teal" /> {item.customImages.length} custom photo(s)
