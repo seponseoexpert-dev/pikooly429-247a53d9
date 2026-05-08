@@ -300,6 +300,8 @@ const ProductDetail = () => {
     deliveryTime: (product as any).delivery_time ?? null,
     sameDayDistricts: (product as any).same_day_districts ?? null,
     nextDayDistricts: (product as any).next_day_districts ?? null,
+    isPreorder: isPreorder(product as any),
+    preorderAdvancePercent: getAdvancePercent(product as any),
   };
 
   const buildVariantPayload = (): VariantSelection | undefined => {
