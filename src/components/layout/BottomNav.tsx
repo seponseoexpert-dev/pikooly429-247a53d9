@@ -20,7 +20,8 @@ const BottomNav = () => {
 
   const hideBottomNav =
     location.pathname.startsWith("/checkout") ||
-    location.pathname.startsWith("/product/");
+    location.pathname.startsWith("/product/") ||
+    location.pathname.startsWith("/cart");
 
   const items: NavItem[] = useMemo(
     () => [
