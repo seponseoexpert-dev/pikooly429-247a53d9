@@ -1,4 +1,4 @@
-import { Plus, Minus, ShoppingBag, Trash2, ImagePlus, ChevronUp, ChevronDown } from "lucide-react";
+import { Plus, Minus, ShoppingBag, Trash2, ImagePlus } from "lucide-react";
 import { useCart, buildVariantKey } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,14 +7,13 @@ import { parseDeliveryBadge } from "@/lib/deliveryBadge";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import SEOHead from "@/components/seo/SEOHead";
 
 const CartPage = () => {
   const { items, removeItem, updateQuantity, totalPrice, totalItems, addItem, setIsOpen } = useCart();
   const { formatPrice } = useMultiCurrency();
   const navigate = useNavigate();
-  const [summaryOpen, setSummaryOpen] = useState(false);
 
   // Make sure the drawer is never open while on the dedicated cart page
   useEffect(() => { setIsOpen(false); }, [setIsOpen]);
@@ -71,12 +70,12 @@ const CartPage = () => {
                     className="bg-card rounded-2xl border border-border/40 hover:border-border/70 transition-colors overflow-hidden"
                   >
                     {badge && (
-                      <div className="flex items-center gap-2 px-3.5 py-2 bg-olive-light border-b border-border/40 text-[12px]">
-                        <span className="font-semibold text-foreground">Express Delivery</span>
-                        <span className={cn("inline-flex items-center gap-1 font-semibold text-olive")}>
+                      <div className="flex items-center gap-2 px-3.5 py-2 bg-[hsl(205_60%_94%)] border-b border-border/40 text-[12px]">
+                        <span className={cn("inline-flex items-center gap-1 font-bold text-[hsl(190_60%_22%)]")}>
                           <badge.Icon size={13} className="shrink-0" />
-                          {badge.label}
+                          Fast Delivery {badge.label}
                         </span>
+                        <span className="text-muted-foreground">· bike. CNG. Private Car</span>
                       </div>
                     )}
                     <div className="flex gap-3.5 p-3">
@@ -113,7 +112,7 @@ const CartPage = () => {
                               )}
                             </div>
                           )}
-                          <p className="text-olive font-bold text-sm sm:text-base mt-1">{formatPrice(lineUnit)}</p>
+                          <p className="text-[hsl(190_60%_22%)] font-bold text-sm sm:text-base mt-1">{formatPrice(lineUnit)}</p>
                           {item.customImages && item.customImages.length > 0 && (
                             <p className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1">
                               <ImagePlus size={12} className="text-primary" /> {item.customImages.length} custom photo(s)
@@ -121,7 +120,7 @@ const CartPage = () => {
                           )}
                         </div>
                         <div className="flex items-center justify-between mt-2">
-                          <div className="flex items-center gap-1.5 bg-olive text-primary-foreground rounded-full px-1 py-0.5">
+                          <div className="flex items-center gap-1.5 bg-[hsl(190_60%_22%)] text-white rounded-full px-1 py-0.5">
                             <button
                               onClick={() => updateQuantity(item.product.id, item.quantity - 1, variantKey)}
                               className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-primary-foreground/15 transition-colors"
@@ -201,33 +200,43 @@ const CartPage = () => {
           )}
         </div>
 
+        {/* Bill Summary */}
+        {items.length > 0 && (
+          <div className="container mx-auto px-3 sm:px-4 max-w-3xl mt-4">
+            <div className="bg-card rounded-2xl border border-border/40 p-4">
+              <div className="flex items-center justify-between pb-3 border-b border-dashed border-border">
+                <h3 className="font-bold text-[hsl(190_60%_22%)] text-base">Bill Summary</h3>
+                <span className="text-[hsl(190_60%_22%)] font-semibold text-sm">{totalItems} {totalItems === 1 ? "Item" : "Items"}</span>
+              </div>
+              <div className="flex items-center justify-between py-3 border-b border-dashed border-border">
+                <span className="text-[hsl(190_60%_22%)] font-semibold text-sm">Order Total</span>
+                <span className="font-bold text-foreground">{formatPrice(totalPrice)}</span>
+              </div>
+              <div className="flex items-center justify-between pt-3">
+                <span className="text-[hsl(190_60%_22%)] font-bold">Grand Total</span>
+                <span className="font-bold text-[hsl(190_60%_22%)] text-lg">{formatPrice(totalPrice)}</span>
+              </div>
+            </div>
+            <p className="text-center text-sm text-muted-foreground mt-4 px-2">
+              <span className="font-bold text-foreground">Have a Coupon Code?</span> You can apply the discount coupon in the Checkout Process.
+            </p>
+          </div>
+        )}
+
         {/* Sticky bottom bar */}
         {items.length > 0 && (
           <div className="fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/95 backdrop-blur-md">
             <div className="container mx-auto max-w-3xl px-3 sm:px-4 py-3 flex items-center gap-3">
-              <button
-                onClick={() => setSummaryOpen((v) => !v)}
-                className="flex-1 flex items-center justify-between gap-2 rounded-2xl bg-olive-light border border-olive/20 px-3.5 py-2.5 text-left"
-                aria-expanded={summaryOpen}
-              >
+              <div className="flex-1 flex items-center justify-between gap-2 rounded-2xl bg-[hsl(205_60%_94%)] px-3.5 py-2.5">
                 <div>
-                  <p className="text-[11px] text-muted-foreground uppercase tracking-wide font-semibold">Total</p>
-                  <p className="text-olive font-bold text-base sm:text-lg leading-none mt-0.5">{formatPrice(totalPrice)}</p>
-                </div>
-                {summaryOpen ? <ChevronDown size={18} className="text-olive" /> : <ChevronUp size={18} className="text-olive" />}
-              </button>
-              <Link to="/checkout" className="flex-[1.4]">
-                <Button className="w-full h-12 text-sm sm:text-base rounded-2xl bg-olive text-primary-foreground hover:bg-olive/90 font-bold tracking-wide">PLACE ORDER</Button>
-              </Link>
-            </div>
-            {summaryOpen && (
-              <div className="container mx-auto max-w-3xl px-3 sm:px-4 pb-3 -mt-1 text-xs text-muted-foreground">
-                <div className="flex items-baseline justify-between border-t border-border/60 pt-2">
-                  <span>{totalItems} {totalItems === 1 ? "item" : "items"}</span>
-                  <span>Taxes & delivery at checkout</span>
+                  <p className="text-[11px] text-muted-foreground font-semibold">Total</p>
+                  <p className="text-[hsl(190_60%_22%)] font-bold text-base sm:text-lg leading-none mt-0.5">{formatPrice(totalPrice)}</p>
                 </div>
               </div>
-            )}
+              <Link to="/checkout" className="flex-[1.4]">
+                <Button className="w-full h-12 text-sm sm:text-base rounded-2xl bg-[hsl(190_60%_22%)] text-white hover:bg-[hsl(190_60%_18%)] font-bold tracking-wide">PLACE ORDER</Button>
+              </Link>
+            </div>
           </div>
         )}
       </main>
