@@ -59,6 +59,17 @@ const CartPage = () => {
       <main className="min-h-screen bg-muted/30 pb-32 lg:pb-12">
         <div className="container mx-auto px-3 sm:px-4 pt-8 sm:pt-10 pb-4 max-w-3xl lg:max-w-6xl lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-6 lg:items-start">
           {items.length === 0 ? (
+            <div className="lg:col-span-2 text-center py-20 text-muted-foreground bg-card rounded-2xl border border-border/40">
+              <div className="w-20 h-20 mx-auto mb-5 rounded-full bg-muted flex items-center justify-center">
+                <ShoppingBag size={36} className="opacity-40" />
+              </div>
+              <p className="font-semibold text-base text-foreground">Your cart is empty</p>
+              <p className="text-sm mt-1.5">Start adding some beautiful gifts!</p>
+              <Button variant="outline" className="mt-5 rounded-full" onClick={() => navigate("/")}>
+                Continue Shopping
+              </Button>
+            </div>
+          ) : false ? (
             <div className="text-center py-20 text-muted-foreground bg-card rounded-2xl border border-border/40">
               <div className="w-20 h-20 mx-auto mb-5 rounded-full bg-muted flex items-center justify-center">
                 <ShoppingBag size={36} className="opacity-40" />
