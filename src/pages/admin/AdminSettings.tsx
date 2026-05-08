@@ -51,6 +51,7 @@ const settingSections = [
   { key: "checkout", label: "Checkout", icon: CreditCard },
   { key: "cart_page", label: "Cart Page", icon: ShoppingCart },
   { key: "delivery_presets", label: "Delivery Presets", icon: Truck },
+  { key: "google_sheets", label: "Google Sheets", icon: FileText },
 ];
 
 type FieldDef = {
