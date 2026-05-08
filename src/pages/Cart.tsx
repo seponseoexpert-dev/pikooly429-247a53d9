@@ -69,17 +69,6 @@ const CartPage = () => {
                 Continue Shopping
               </Button>
             </div>
-          ) : false ? (
-            <div className="text-center py-20 text-muted-foreground bg-card rounded-2xl border border-border/40">
-              <div className="w-20 h-20 mx-auto mb-5 rounded-full bg-muted flex items-center justify-center">
-                <ShoppingBag size={36} className="opacity-40" />
-              </div>
-              <p className="font-semibold text-base text-foreground">Your cart is empty</p>
-              <p className="text-sm mt-1.5">Start adding some beautiful gifts!</p>
-              <Button variant="outline" className="mt-5 rounded-full" onClick={() => navigate("/")}>
-                Continue Shopping
-              </Button>
-            </div>
           ) : (
             <div className="space-y-3">
               {items.map((item) => {
