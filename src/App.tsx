@@ -48,7 +48,7 @@ const Blog = lazy(() => lazyRetry(() => import("./pages/Blog")));
 const BlogDetail = lazy(() => lazyRetry(() => import("./pages/BlogDetail")));
 const AllGifts = lazy(() => lazyRetry(() => import("./pages/AllGifts")));
 const Checkout = lazy(() => lazyRetry(() => import("./pages/Checkout")));
-const Cart = lazy(() => lazyRetry(() => import("./pages/Cart")));
+
 const OrderSuccess = lazy(() => lazyRetry(() => import("./pages/OrderSuccess")));
 const TrackOrder = lazy(() => lazyRetry(() => import("./pages/TrackOrder")));
 const NotFound = lazy(() => lazyRetry(() => import("./pages/NotFound")));
