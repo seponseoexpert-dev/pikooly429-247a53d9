@@ -717,14 +717,14 @@ const ProductDetail = () => {
                 onClick={handleAddToCart}
                 className="h-[52px] rounded-sm bg-white border border-primary text-primary text-[13px] font-bold tracking-[0.12em] uppercase hover:bg-primary/5 active:scale-[0.98] transition-all"
               >
-                Add to Cart
+                {preorderActive ? "Pre-order" : "Add to Cart"}
               </button>
               <button
                 onClick={handleBuyNow}
                 className="h-[52px] rounded-sm bg-[hsl(200_30%_22%)] hover:bg-[hsl(200_35%_18%)] text-white text-[13px] font-bold tracking-[0.12em] uppercase flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all"
               >
-                <span>Buy Now</span>
-                <span className="font-bold tabular-nums normal-case tracking-normal">| {formatPrice(buyNowTotal)}</span>
+                <span>{preorderActive ? `Pre-order Now` : "Buy Now"}</span>
+                <span className="font-bold tabular-nums normal-case tracking-normal">| {formatPrice(preorderActive ? advanceAmount : buyNowTotal)}</span>
               </button>
             </div>
 
@@ -932,13 +932,13 @@ const ProductDetail = () => {
             onClick={handleAddToCart}
             className="h-11 rounded-sm bg-white border border-primary text-primary text-[11px] font-bold tracking-[0.12em] uppercase flex items-center justify-center active:scale-[0.97] transition-transform"
           >
-            Add to Cart
+            {preorderActive ? "Pre-order" : "Add to Cart"}
           </button>
           <button
             onClick={handleBuyNow}
             className="h-11 rounded-sm bg-[hsl(200_30%_22%)] text-white text-[11px] font-bold tracking-[0.12em] uppercase flex items-center justify-center gap-1 active:scale-[0.97] transition-transform"
           >
-            Buy Now <span className="tabular-nums normal-case tracking-normal">| {formatPrice(buyNowTotal)}</span>
+            {preorderActive ? "Pre-order" : "Buy Now"} <span className="tabular-nums normal-case tracking-normal">| {formatPrice(preorderActive ? advanceAmount : buyNowTotal)}</span>
           </button>
         </div>
       </div>
