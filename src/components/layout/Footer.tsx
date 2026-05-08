@@ -1,6 +1,6 @@
 import { memo, useState } from "react";
 import paymentMethodsImg from "@/assets/payment-methods.webp";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Facebook, Instagram, Twitter, Youtube, Send, Phone, Mail, MapPin, Heart } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { supabase } from "@/integrations/supabase/client";
