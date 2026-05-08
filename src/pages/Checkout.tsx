@@ -1174,15 +1174,28 @@ const Checkout = () => {
                   <div className="gold-divider my-4" />
 
                   <div className="flex justify-between items-baseline">
-                    <span className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Total</span>
+                    <span className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">{hasPreorder ? "Order Total" : "Total"}</span>
                     <span className="text-2xl sm:text-3xl font-bold text-primary tabular-nums" style={{ fontFamily: "'Lora', serif" }}>{formatPrice(grandTotal)}</span>
                   </div>
+
+                  {hasPreorder && (
+                    <div className="mt-3 rounded-lg border border-amber-300 bg-amber-50 p-3 space-y-1.5">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-amber-900 font-semibold">📦 Pay Now (Advance)</span>
+                        <span className="font-bold tabular-nums text-amber-900">{formatPrice(advanceDueNow)}</span>
+                      </div>
+                      <div className="flex justify-between text-xs text-amber-800">
+                        <span>Due on Delivery</span>
+                        <span className="tabular-nums">{formatPrice(dueOnDelivery)}</span>
+                      </div>
+                    </div>
+                  )}
 
                   <Button type="submit" className="btn-luxe w-full mt-5 h-12 sm:h-13 text-sm sm:text-base" disabled={loading}>
                     {loading ? (
                       <><Loader2 className="animate-spin mr-2" size={18} /> Processing…</>
                     ) : (
-                      <>Place Order · <span className="tabular-nums ml-1">{formatPrice(grandTotal)}</span></>
+                      <>{hasPreorder ? "Place Pre-order · " : "Place Order · "}<span className="tabular-nums ml-1">{formatPrice(hasPreorder ? advanceDueNow : grandTotal)}</span></>
                     )}
                   </Button>
 
