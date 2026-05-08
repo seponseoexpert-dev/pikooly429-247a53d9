@@ -10,6 +10,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
 import SEOHead from "@/components/seo/SEOHead";
 
+type CartAddonProduct = {
+  id: string;
+  name: string;
+  price: number;
+  original_price: number | null;
+  image_url: string | null;
+  is_active: boolean | null;
+  stock_quantity: number | null;
+};
+
 const CartPage = () => {
   const { items, removeItem, updateQuantity, totalPrice, totalItems, addItem, setIsOpen } = useCart();
   const { formatPrice } = useMultiCurrency();
@@ -18,7 +28,7 @@ const CartPage = () => {
   // Make sure the drawer is never open while on the dedicated cart page
   useEffect(() => { setIsOpen(false); }, [setIsOpen]);
 
-  const { data: addonProducts = [] } = useQuery({
+  const { data: addonProducts = [] } = useQuery<CartAddonProduct[]>({
     queryKey: ["cart-page-addons"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -27,13 +37,14 @@ const CartPage = () => {
         .eq("is_active", true)
         .order("sort_order", { ascending: true });
       if (error) throw error;
-      return (data as any[]).map((r) => r.products).filter((p: any) => p && p.is_active);
+      const rows = (data ?? []) as Array<{ products: CartAddonProduct | null }>;
+      return rows.map((r) => r.products).filter((p): p is CartAddonProduct => Boolean(p?.is_active));
     },
     staleTime: 5 * 60 * 1000,
   });
 
   const inCartIds = new Set(items.map((i) => i.product.id));
-  const addons = addonProducts.filter((p: any) => !inCartIds.has(p.id)).slice(0, 8);
+  const addons = addonProducts.filter((p) => !inCartIds.has(p.id)).slice(0, 8);
 
   return (
     <>
@@ -158,10 +169,10 @@ const CartPage = () => {
                     Your last minute add-ons
                   </h3>
                   <div className="grid grid-cols-2 gap-3">
-                    {addons.map((p: any) => (
+                    {addons.map((p) => (
                       <div key={p.id} className="bg-card rounded-xl border border-border/40 overflow-hidden flex flex-col">
                         <Link to={`/product/${p.id}`} className="block aspect-square bg-muted">
-                          <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
+                          <img src={p.image_url || "/placeholder.svg"} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
                         </Link>
                         <div className="p-2.5 flex flex-col flex-1">
                           <Link to={`/product/${p.id}`} className="font-semibold text-[13px] text-foreground line-clamp-2 leading-snug hover:text-primary">
@@ -179,7 +190,7 @@ const CartPage = () => {
                                   name: p.name,
                                   price: p.price,
                                   originalPrice: p.original_price ?? undefined,
-                                  image: p.image_url,
+                                  image: p.image_url || "/placeholder.svg",
                                   category: "",
                                   inStock: (p.stock_quantity ?? 1) > 0,
                                 },
