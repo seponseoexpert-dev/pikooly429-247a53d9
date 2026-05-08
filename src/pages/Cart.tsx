@@ -71,12 +71,12 @@ const CartPage = () => {
                     className="bg-card rounded-2xl border border-border/40 hover:border-border/70 transition-colors overflow-hidden"
                   >
                     {badge && (
-                      <div className="flex items-center gap-2 px-3.5 py-2 bg-olive-light border-b border-border/40 text-[12px]">
-                        <span className="font-semibold text-foreground">Express Delivery</span>
-                        <span className={cn("inline-flex items-center gap-1 font-semibold text-olive")}>
+                      <div className="flex items-center gap-2 px-3.5 py-2 bg-[hsl(205_60%_94%)] border-b border-border/40 text-[12px]">
+                        <span className={cn("inline-flex items-center gap-1 font-bold text-[hsl(190_60%_22%)]")}>
                           <badge.Icon size={13} className="shrink-0" />
-                          {badge.label}
+                          Fast Delivery {badge.label}
                         </span>
+                        <span className="text-muted-foreground">· bike. CNG. Private Car</span>
                       </div>
                     )}
                     <div className="flex gap-3.5 p-3">
