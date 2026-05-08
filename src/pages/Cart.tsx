@@ -1,4 +1,4 @@
-import { Plus, Minus, ShoppingBag, Trash2, ImagePlus, ChevronUp, ChevronDown } from "lucide-react";
+import { Plus, Minus, ShoppingBag, Trash2, ImagePlus } from "lucide-react";
 import { useCart, buildVariantKey } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,14 +7,13 @@ import { parseDeliveryBadge } from "@/lib/deliveryBadge";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import SEOHead from "@/components/seo/SEOHead";
 
 const CartPage = () => {
   const { items, removeItem, updateQuantity, totalPrice, totalItems, addItem, setIsOpen } = useCart();
   const { formatPrice } = useMultiCurrency();
   const navigate = useNavigate();
-  const [summaryOpen, setSummaryOpen] = useState(false);
 
   // Make sure the drawer is never open while on the dedicated cart page
   useEffect(() => { setIsOpen(false); }, [setIsOpen]);
