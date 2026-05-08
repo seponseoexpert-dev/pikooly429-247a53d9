@@ -56,10 +56,10 @@ const CartPage = () => {
   return (
     <>
       <SEOHead title="Your Cart" description="Review the items in your cart and proceed to checkout." />
-      <main className="min-h-screen bg-muted/30 pb-32">
-        <div className="container mx-auto px-3 sm:px-4 pt-8 sm:pt-10 pb-4 max-w-3xl">
+      <main className="min-h-screen bg-muted/30 pb-32 lg:pb-12">
+        <div className="container mx-auto px-3 sm:px-4 pt-8 sm:pt-10 pb-4 max-w-3xl lg:max-w-6xl lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-6 lg:items-start">
           {items.length === 0 ? (
-            <div className="text-center py-20 text-muted-foreground bg-card rounded-2xl border border-border/40">
+            <div className="lg:col-span-2 text-center py-20 text-muted-foreground bg-card rounded-2xl border border-border/40">
               <div className="w-20 h-20 mx-auto mb-5 rounded-full bg-muted flex items-center justify-center">
                 <ShoppingBag size={36} className="opacity-40" />
               </div>
@@ -229,49 +229,53 @@ const CartPage = () => {
               )}
             </div>
           )}
-        </div>
 
-        {/* Bill Summary */}
-        {items.length > 0 && (
-          <div className="container mx-auto px-3 sm:px-4 max-w-3xl mt-4">
-            {savings > 0 && (
-              <div className="flex justify-center -mb-3 relative z-10">
-                <span className="inline-block bg-cart-delivery text-cart-teal text-[13px] font-semibold px-4 py-1.5 rounded-full border border-cart-teal/15 shadow-sm">
-                  You have saved {formatPrice(savings)} on this order
-                </span>
+          {/* Bill Summary - right column on desktop */}
+          {items.length > 0 && (
+            <aside className="mt-4 lg:mt-0 lg:sticky lg:top-24">
+              {savings > 0 && (
+                <div className="flex justify-center -mb-3 relative z-10">
+                  <span className="inline-block bg-cart-delivery text-cart-teal text-[13px] font-semibold px-4 py-1.5 rounded-full border border-cart-teal/15 shadow-sm">
+                    You have saved {formatPrice(savings)} on this order
+                  </span>
+                </div>
+              )}
+              <div className="bg-card rounded-2xl border border-border/40 p-4 pt-5 shadow-sm">
+                <div className="flex items-center justify-between pb-3 border-b border-dashed border-border">
+                  <h3 className="font-bold text-cart-teal text-base lg:text-lg">Bill Summary</h3>
+                  <span className="text-cart-teal font-semibold text-sm">{totalItems} {totalItems === 1 ? "Item" : "Items"}</span>
+                </div>
+                <div className="flex items-center justify-between py-3 border-b border-dashed border-border">
+                  <span className="inline-flex items-center gap-2 text-foreground text-sm">
+                    <ReceiptText size={18} className="text-cart-teal" />
+                    <span>Order Total</span>
+                  </span>
+                  <span className="flex items-baseline gap-2">
+                    {savings > 0 && (
+                      <span className="text-[13px] text-muted-foreground line-through">{formatPrice(originalTotal)}</span>
+                    )}
+                    <span className="font-bold text-foreground">{formatPrice(totalPrice)}</span>
+                  </span>
+                </div>
+                <div className="flex items-center justify-between pt-3 pb-1">
+                  <span className="text-cart-teal font-bold">Grand Total</span>
+                  <span className="font-bold text-cart-teal text-lg">{formatPrice(totalPrice)}</span>
+                </div>
+                {/* Desktop-only Place Order button inside summary */}
+                <Link to="/checkout" className="hidden lg:block mt-4">
+                  <Button className="w-full h-12 text-base rounded-xl bg-cart-teal text-primary-foreground hover:bg-cart-teal-dark font-bold tracking-wide">PLACE ORDER</Button>
+                </Link>
               </div>
-            )}
-            <div className="bg-card rounded-2xl border border-border/40 p-4 pt-5 shadow-sm">
-              <div className="flex items-center justify-between pb-3 border-b border-dashed border-border">
-                <h3 className="font-bold text-cart-teal text-base">Bill Summary</h3>
-                <span className="text-cart-teal font-semibold text-sm">{totalItems} {totalItems === 1 ? "Item" : "Items"}</span>
-              </div>
-              <div className="flex items-center justify-between py-3 border-b border-dashed border-border">
-                <span className="inline-flex items-center gap-2 text-foreground text-sm">
-                  <ReceiptText size={18} className="text-cart-teal" />
-                  <span>Order Total</span>
-                </span>
-                <span className="flex items-baseline gap-2">
-                  {savings > 0 && (
-                    <span className="text-[13px] text-muted-foreground line-through">{formatPrice(originalTotal)}</span>
-                  )}
-                  <span className="font-bold text-foreground">{formatPrice(totalPrice)}</span>
-                </span>
-              </div>
-              <div className="flex items-center justify-between pt-3">
-                <span className="text-cart-teal font-bold">Grand Total</span>
-                <span className="font-bold text-cart-teal text-lg">{formatPrice(totalPrice)}</span>
-              </div>
-            </div>
-            <p className="text-center text-sm text-muted-foreground mt-4 px-2 leading-7">
-              <span className="font-bold text-foreground">Have a Coupon Code?</span> You can apply the discount coupon in the Checkout Process.
-            </p>
-          </div>
-        )}
+              <p className="text-center text-sm text-muted-foreground mt-4 px-2 leading-7">
+                <span className="font-bold text-foreground">Have a Coupon Code?</span> You can apply the discount coupon in the Checkout Process.
+              </p>
+            </aside>
+          )}
+        </div>
 
         {/* Sticky bottom bar */}
         {items.length > 0 && (
-          <div className="fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/95 backdrop-blur-md">
+          <div className="fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/95 backdrop-blur-md lg:hidden">
             <div className="container mx-auto max-w-3xl px-3 sm:px-4 py-3 flex items-center gap-3">
               <div className="flex-1 flex items-center justify-between gap-2 rounded-2xl bg-cart-delivery px-3.5 py-2.5">
                 <div>
