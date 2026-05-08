@@ -24,6 +24,14 @@ const CartPage = () => {
   const { formatPrice } = useMultiCurrency();
   const navigate = useNavigate();
 
+  // Compute totals & savings (Floweraura-style)
+  const originalTotal = items.reduce((sum, i) => {
+    const base = i.product.originalPrice ?? i.product.price;
+    const unit = base + (i.variant?.size?.extraPrice || 0);
+    return sum + unit * i.quantity;
+  }, 0);
+  const savings = Math.max(0, originalTotal - totalPrice);
+
   // Make sure the drawer is never open while on the dedicated cart page
   useEffect(() => { setIsOpen(false); }, [setIsOpen]);
 
@@ -100,7 +108,7 @@ const CartPage = () => {
                       <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                         <div>
                           <Link to={`/product/${item.product.id}`}>
-                            <h4 className="font-semibold text-sm sm:text-[15px] text-foreground line-clamp-2 hover:text-primary transition-colors leading-snug">
+                            <h4 className="font-bold text-[16px] sm:text-[17px] text-foreground line-clamp-2 hover:text-primary transition-colors leading-snug">
                               {item.product.name}
                             </h4>
                           </Link>
@@ -122,7 +130,14 @@ const CartPage = () => {
                               )}
                             </div>
                           )}
-                          <p className="text-cart-teal font-bold text-sm sm:text-base mt-1">{formatPrice(lineUnit)}</p>
+                          <div className="flex items-baseline gap-2 mt-1.5">
+                            <p className="text-cart-teal font-bold text-[17px] sm:text-[18px]">{formatPrice(lineUnit)}</p>
+                            {item.product.originalPrice && item.product.originalPrice > item.product.price && (
+                              <span className="text-[13px] text-muted-foreground line-through">
+                                {formatPrice(item.product.originalPrice + (item.variant?.size?.extraPrice || 0))}
+                              </span>
+                            )}
+                          </div>
                           {item.customImages && item.customImages.length > 0 && (
                             <p className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1">
                               <ImagePlus size={12} className="text-cart-teal" /> {item.customImages.length} custom photo(s)
@@ -219,7 +234,14 @@ const CartPage = () => {
         {/* Bill Summary */}
         {items.length > 0 && (
           <div className="container mx-auto px-3 sm:px-4 max-w-3xl mt-4">
-            <div className="bg-card rounded-2xl border border-border/40 p-4 shadow-sm">
+            {savings > 0 && (
+              <div className="flex justify-center -mb-3 relative z-10">
+                <span className="inline-block bg-cart-delivery text-cart-teal text-[13px] font-semibold px-4 py-1.5 rounded-full border border-cart-teal/15 shadow-sm">
+                  You have saved {formatPrice(savings)} on this order
+                </span>
+              </div>
+            )}
+            <div className="bg-card rounded-2xl border border-border/40 p-4 pt-5 shadow-sm">
               <div className="flex items-center justify-between pb-3 border-b border-dashed border-border">
                 <h3 className="font-bold text-cart-teal text-base">Bill Summary</h3>
                 <span className="text-cart-teal font-semibold text-sm">{totalItems} {totalItems === 1 ? "Item" : "Items"}</span>
@@ -229,7 +251,12 @@ const CartPage = () => {
                   <ReceiptText size={18} className="text-cart-teal" />
                   <span>Order Total</span>
                 </span>
-                <span className="font-bold text-foreground">{formatPrice(totalPrice)}</span>
+                <span className="flex items-baseline gap-2">
+                  {savings > 0 && (
+                    <span className="text-[13px] text-muted-foreground line-through">{formatPrice(originalTotal)}</span>
+                  )}
+                  <span className="font-bold text-foreground">{formatPrice(totalPrice)}</span>
+                </span>
               </div>
               <div className="flex items-center justify-between pt-3">
                 <span className="text-cart-teal font-bold">Grand Total</span>
@@ -249,7 +276,12 @@ const CartPage = () => {
               <div className="flex-1 flex items-center justify-between gap-2 rounded-2xl bg-cart-delivery px-3.5 py-2.5">
                 <div>
                   <p className="text-[11px] text-muted-foreground font-semibold">Total</p>
-                  <p className="text-cart-teal font-bold text-base sm:text-lg leading-none mt-0.5">{formatPrice(totalPrice)}</p>
+                  <div className="flex items-baseline gap-1.5 mt-0.5">
+                    <p className="text-cart-teal font-bold text-base sm:text-lg leading-none">{formatPrice(totalPrice)}</p>
+                    {savings > 0 && (
+                      <span className="text-[11px] text-muted-foreground line-through leading-none">{formatPrice(originalTotal)}</span>
+                    )}
+                  </div>
                 </div>
                 <ChevronUp size={18} className="text-cart-teal" />
               </div>

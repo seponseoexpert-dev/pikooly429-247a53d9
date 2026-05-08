@@ -1,6 +1,6 @@
 import { memo, useState } from "react";
 import paymentMethodsImg from "@/assets/payment-methods.webp";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Facebook, Instagram, Twitter, Youtube, Send, Phone, Mail, MapPin, Heart } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,8 +10,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 const Footer = memo(() => {
   const { settings } = useSiteSettings();
   const { t } = useLanguage();
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  if (location.pathname === "/cart") return null;
 
   const storeName = settings.store_name || "Pikooly";
   const phone = settings.store_phone || "+880 1XXX-XXXXXX";
