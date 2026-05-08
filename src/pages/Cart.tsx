@@ -24,6 +24,14 @@ const CartPage = () => {
   const { formatPrice } = useMultiCurrency();
   const navigate = useNavigate();
 
+  // Compute totals & savings (Floweraura-style)
+  const originalTotal = items.reduce((sum, i) => {
+    const base = i.product.originalPrice ?? i.product.price;
+    const unit = base + (i.variant?.size?.extraPrice || 0);
+    return sum + unit * i.quantity;
+  }, 0);
+  const savings = Math.max(0, originalTotal - totalPrice);
+
   // Make sure the drawer is never open while on the dedicated cart page
   useEffect(() => { setIsOpen(false); }, [setIsOpen]);
 
