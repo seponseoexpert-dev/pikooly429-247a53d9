@@ -21,6 +21,7 @@ interface ProductCardProps {
     inStock?: boolean;
     stock?: number;
     delivery_time?: string | null;
+    is_preorder?: boolean | null;
   };
   index?: number;
 }
@@ -60,6 +61,11 @@ const ProductCard = memo(({ product }: ProductCardProps) => {
           className="w-full h-full object-cover transition-transform duration-700 ease-luxe group-hover:scale-[1.04]"
           sizes="(max-width: 480px) 46vw, (max-width: 768px) 30vw, (max-width: 1024px) 22vw, 18vw"
         />
+        {(product.is_preorder || (typeof product.stock === "number" && product.stock <= 0)) && (
+          <span className="absolute top-2 left-2 bg-amber-500 text-white text-[10px] sm:text-[11px] font-bold px-2 py-1 rounded-md shadow-sm uppercase tracking-wide">
+            Pre-order
+          </span>
+        )}
         {product.delivery_time && (
           <span className="absolute bottom-2 left-2 bg-white/95 text-[hsl(280_60%_35%)] text-[10px] sm:text-[11px] font-semibold px-2 py-1 rounded-md shadow-sm">
             ⚡ {product.delivery_time}
