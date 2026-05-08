@@ -698,6 +698,18 @@ const ProductDetail = () => {
             />
           </div>
 
+          {/* Pre-order banner */}
+          {preorderActive && (
+            <div className="mb-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2.5 flex items-start gap-2">
+              <span className="text-base leading-none mt-0.5">📦</span>
+              <div className="text-[13px] leading-snug text-amber-900">
+                <strong>Pre-order:</strong> {getPreorderNote(product as any)}.
+                Pay <strong>{advancePct}% advance</strong> ({formatPrice(advanceAmount)}) now,
+                rest on delivery.
+              </div>
+            </div>
+          )}
+
           {/* Primary actions: hidden on mobile (rendered as sticky bar below) */}
           <div className="hidden md:block">
             <div className="grid grid-cols-2 gap-3 mb-3">
