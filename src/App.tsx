@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { CartProvider } from "@/contexts/CartContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
@@ -48,7 +48,7 @@ const Blog = lazy(() => lazyRetry(() => import("./pages/Blog")));
 const BlogDetail = lazy(() => lazyRetry(() => import("./pages/BlogDetail")));
 const AllGifts = lazy(() => lazyRetry(() => import("./pages/AllGifts")));
 const Checkout = lazy(() => lazyRetry(() => import("./pages/Checkout")));
-const Cart = lazy(() => lazyRetry(() => import("./pages/Cart")));
+
 const OrderSuccess = lazy(() => lazyRetry(() => import("./pages/OrderSuccess")));
 const TrackOrder = lazy(() => lazyRetry(() => import("./pages/TrackOrder")));
 const NotFound = lazy(() => lazyRetry(() => import("./pages/NotFound")));
@@ -205,7 +205,7 @@ const App = () => (
               <Route path="/product/:id" element={<PublicLayout><ProductDetail /></PublicLayout>} />
               <Route path="/blog" element={<PublicLayout><Blog /></PublicLayout>} />
               <Route path="/blog/:slug" element={<PublicLayout><BlogDetail /></PublicLayout>} />
-              <Route path="/cart" element={<PublicLayout><Cart /></PublicLayout>} />
+              <Route path="/cart" element={<Navigate to="/" replace />} />
               <Route path="/checkout" element={<PublicLayout><Checkout /></PublicLayout>} />
               <Route path="/order-success/:orderNumber" element={<PublicLayout><OrderSuccess /></PublicLayout>} />
               <Route path="/track-order" element={<PublicLayout><TrackOrder /></PublicLayout>} />

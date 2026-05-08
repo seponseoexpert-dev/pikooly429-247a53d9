@@ -19,7 +19,6 @@ const BottomNav = () => {
   const reduced = useReducedMotion();
 
   const hideBottomNav =
-    location.pathname === "/cart" ||
     location.pathname.startsWith("/checkout") ||
     location.pathname.startsWith("/product/");
 
