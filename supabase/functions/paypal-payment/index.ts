@@ -170,6 +170,19 @@ Deno.serve(async (req) => {
           .from("orders")
           .update({ payment_status: "paid", status: "confirmed" })
           .eq("id", order_id);
+
+        try {
+          await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/google-sheets-sync`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+            },
+            body: JSON.stringify({ order_id }),
+          });
+        } catch (e) {
+          console.error("Google Sheets sync failed:", e);
+        }
       }
 
       return new Response(

@@ -480,6 +480,20 @@ Deno.serve(async (req) => {
               status: "confirmed",
             })
             .eq("id", orderId);
+
+          // Sync to Google Sheets (fire-and-forget)
+          try {
+            await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/google-sheets-sync`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+              },
+              body: JSON.stringify({ order_id: orderId }),
+            });
+          } catch (e) {
+            console.error("Google Sheets sync failed:", e);
+          }
         }
       }
 
