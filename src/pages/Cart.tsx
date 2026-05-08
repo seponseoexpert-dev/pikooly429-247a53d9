@@ -153,8 +153,8 @@ const CartPage = () => {
 
               {/* Last minute add-ons */}
               {addons.length > 0 && (
-                <section className="mt-5 rounded-2xl bg-[hsl(var(--gold-light)/0.5)] border border-[hsl(var(--gold)/0.25)] p-3 sm:p-4">
-                  <h3 className="font-display text-base sm:text-lg font-semibold text-foreground mb-3">
+                <section className="mt-5 rounded-2xl bg-cart-addon border border-cart-addon-border p-3 sm:p-4">
+                  <h3 className="font-display text-base sm:text-lg font-semibold text-cart-teal mb-3">
                     Your last minute add-ons
                   </h3>
                   <div className="grid grid-cols-2 gap-3">
@@ -167,11 +167,11 @@ const CartPage = () => {
                           <Link to={`/product/${p.id}`} className="font-semibold text-[13px] text-foreground line-clamp-2 leading-snug hover:text-primary">
                             {p.name}
                           </Link>
-                          <p className="text-primary font-bold text-sm mt-1">{formatPrice(p.price)}</p>
+                          <p className="text-cart-teal font-bold text-sm mt-1">{formatPrice(p.price)}</p>
                           <Button
                             variant="outline"
                             size="sm"
-                            className="rounded-full mt-2 h-8 text-xs"
+                            className="rounded-full mt-2 h-8 text-xs border-cart-teal text-cart-teal hover:bg-cart-delivery"
                             onClick={() =>
                               addItem(
                                 {
@@ -203,21 +203,24 @@ const CartPage = () => {
         {/* Bill Summary */}
         {items.length > 0 && (
           <div className="container mx-auto px-3 sm:px-4 max-w-3xl mt-4">
-            <div className="bg-card rounded-2xl border border-border/40 p-4">
+            <div className="bg-card rounded-2xl border border-border/40 p-4 shadow-sm">
               <div className="flex items-center justify-between pb-3 border-b border-dashed border-border">
-                <h3 className="font-bold text-[hsl(190_60%_22%)] text-base">Bill Summary</h3>
-                <span className="text-[hsl(190_60%_22%)] font-semibold text-sm">{totalItems} {totalItems === 1 ? "Item" : "Items"}</span>
+                <h3 className="font-bold text-cart-teal text-base">Bill Summary</h3>
+                <span className="text-cart-teal font-semibold text-sm">{totalItems} {totalItems === 1 ? "Item" : "Items"}</span>
               </div>
               <div className="flex items-center justify-between py-3 border-b border-dashed border-border">
-                <span className="text-[hsl(190_60%_22%)] font-semibold text-sm">Order Total</span>
+                <span className="inline-flex items-center gap-2 text-foreground text-sm">
+                  <ReceiptText size={18} className="text-cart-teal" />
+                  <span>Order Total</span>
+                </span>
                 <span className="font-bold text-foreground">{formatPrice(totalPrice)}</span>
               </div>
               <div className="flex items-center justify-between pt-3">
-                <span className="text-[hsl(190_60%_22%)] font-bold">Grand Total</span>
-                <span className="font-bold text-[hsl(190_60%_22%)] text-lg">{formatPrice(totalPrice)}</span>
+                <span className="text-cart-teal font-bold">Grand Total</span>
+                <span className="font-bold text-cart-teal text-lg">{formatPrice(totalPrice)}</span>
               </div>
             </div>
-            <p className="text-center text-sm text-muted-foreground mt-4 px-2">
+            <p className="text-center text-sm text-muted-foreground mt-4 px-2 leading-7">
               <span className="font-bold text-foreground">Have a Coupon Code?</span> You can apply the discount coupon in the Checkout Process.
             </p>
           </div>
@@ -227,14 +230,15 @@ const CartPage = () => {
         {items.length > 0 && (
           <div className="fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/95 backdrop-blur-md">
             <div className="container mx-auto max-w-3xl px-3 sm:px-4 py-3 flex items-center gap-3">
-              <div className="flex-1 flex items-center justify-between gap-2 rounded-2xl bg-[hsl(205_60%_94%)] px-3.5 py-2.5">
+              <div className="flex-1 flex items-center justify-between gap-2 rounded-2xl bg-cart-delivery px-3.5 py-2.5">
                 <div>
                   <p className="text-[11px] text-muted-foreground font-semibold">Total</p>
-                  <p className="text-[hsl(190_60%_22%)] font-bold text-base sm:text-lg leading-none mt-0.5">{formatPrice(totalPrice)}</p>
+                  <p className="text-cart-teal font-bold text-base sm:text-lg leading-none mt-0.5">{formatPrice(totalPrice)}</p>
                 </div>
+                <ChevronUp size={18} className="text-cart-teal" />
               </div>
               <Link to="/checkout" className="flex-[1.4]">
-                <Button className="w-full h-12 text-sm sm:text-base rounded-2xl bg-[hsl(190_60%_22%)] text-white hover:bg-[hsl(190_60%_18%)] font-bold tracking-wide">PLACE ORDER</Button>
+                <Button className="w-full h-12 text-sm sm:text-base rounded-2xl bg-cart-teal text-primary-foreground hover:bg-cart-teal-dark font-bold tracking-wide">PLACE ORDER</Button>
               </Link>
             </div>
           </div>
