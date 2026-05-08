@@ -1042,6 +1042,7 @@ export type Database = {
       }
       orders: {
         Row: {
+          advance_amount: number
           alt_phone: string | null
           billing_country: string | null
           created_at: string
@@ -1056,8 +1057,10 @@ export type Database = {
           delivery_time: string | null
           delivery_type: string | null
           discount: number
+          due_amount: number
           gift_message: string | null
           id: string
+          is_preorder: boolean
           notes: string | null
           order_number: string
           payment_method: string
@@ -1070,6 +1073,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          advance_amount?: number
           alt_phone?: string | null
           billing_country?: string | null
           created_at?: string
@@ -1084,8 +1088,10 @@ export type Database = {
           delivery_time?: string | null
           delivery_type?: string | null
           discount?: number
+          due_amount?: number
           gift_message?: string | null
           id?: string
+          is_preorder?: boolean
           notes?: string | null
           order_number: string
           payment_method?: string
@@ -1098,6 +1104,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          advance_amount?: number
           alt_phone?: string | null
           billing_country?: string | null
           created_at?: string
@@ -1112,8 +1119,10 @@ export type Database = {
           delivery_time?: string | null
           delivery_type?: string | null
           discount?: number
+          due_amount?: number
           gift_message?: string | null
           id?: string
+          is_preorder?: boolean
           notes?: string | null
           order_number?: string
           payment_method?: string
@@ -1577,8 +1586,11 @@ export type Database = {
           instructions: string | null
           is_active: boolean
           is_featured: boolean
+          is_preorder: boolean
           name: string
           original_price: number | null
+          preorder_advance_percent: number
+          preorder_note: string | null
           price: number
           rating: number | null
           review_count: number | null
@@ -1606,8 +1618,11 @@ export type Database = {
           instructions?: string | null
           is_active?: boolean
           is_featured?: boolean
+          is_preorder?: boolean
           name: string
           original_price?: number | null
+          preorder_advance_percent?: number
+          preorder_note?: string | null
           price?: number
           rating?: number | null
           review_count?: number | null
@@ -1635,8 +1650,11 @@ export type Database = {
           instructions?: string | null
           is_active?: boolean
           is_featured?: boolean
+          is_preorder?: boolean
           name?: string
           original_price?: number | null
+          preorder_advance_percent?: number
+          preorder_note?: string | null
           price?: number
           rating?: number | null
           review_count?: number | null
