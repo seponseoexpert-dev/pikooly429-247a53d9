@@ -426,6 +426,10 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "delivery_preset_standard_days", label: "Standard Delivery Days", placeholder: "3" },
     { key: "delivery_preset_economy_days", label: "Economy Delivery Days", placeholder: "5" },
   ],
+  google_sheets: [
+    { key: "google_sheets_enabled", label: "Enable Google Sheets Sync", type: "switch", fullWidth: true },
+    { key: "google_sheets_webhook_url", label: "Apps Script Web App URL", placeholder: "https://script.google.com/macros/s/AKfycb.../exec", fullWidth: true },
+  ],
 };
 
 // Notification Alert fields per channel
