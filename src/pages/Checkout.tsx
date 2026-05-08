@@ -421,6 +421,25 @@ const Checkout = () => {
 
   const grandTotal = totalPrice + deliveryFee - couponDiscount;
 
+  // Pre-order: compute weighted advance based on per-item advance percent
+  // Items with isPreorder=true contribute (line_total * pct/100) as advance.
+  // Non pre-order items contribute their full price as advance (must be paid now).
+  const hasPreorder = items.some((it: any) => it.product?.isPreorder);
+  const preorderAdvanceItems = items.reduce((sum: number, it: any) => {
+    const lineUnit = it.product.price + (it.variant?.size?.extraPrice || 0);
+    const lineTotal = lineUnit * it.quantity;
+    if (it.product?.isPreorder) {
+      const pct = it.product?.preorderAdvancePercent ?? 50;
+      return sum + Math.round((lineTotal * pct) / 100);
+    }
+    return sum + lineTotal;
+  }, 0);
+  // Final amount due now: advance for items + delivery fee - discount
+  const advanceDueNow = hasPreorder
+    ? Math.max(0, preorderAdvanceItems + deliveryFee - couponDiscount)
+    : grandTotal;
+  const dueOnDelivery = hasPreorder ? Math.max(0, grandTotal - advanceDueNow) : 0;
+
   const handleApplyCoupon = async () => {
     const code = couponCode.trim().toUpperCase();
     if (!code) return;
@@ -522,6 +541,9 @@ const Checkout = () => {
         delivery_fee: deliveryFee,
         discount: couponDiscount,
         total: grandTotal,
+        is_preorder: hasPreorder,
+        advance_amount: hasPreorder ? advanceDueNow : 0,
+        due_amount: hasPreorder ? dueOnDelivery : 0,
         user_id: userId,
         order_number: "temp",
       };
