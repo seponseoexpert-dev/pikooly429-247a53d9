@@ -51,6 +51,7 @@ const AdminProducts = () => {
     specifications: [] as Array<{ item: string; value: string }>,
     seo_title: "", seo_description: "", delivery_time: "",
     instructions: "", delivery_info: "",
+    is_preorder: false, preorder_note: "", preorder_advance_percent: 50,
   };
   const [form, setForm] = useState(defaultForm);
 
@@ -111,6 +112,9 @@ const AdminProducts = () => {
       seo_title: (p as any).seo_title || "", seo_description: (p as any).seo_description || "",
       delivery_time: (p as any).delivery_time || "",
       instructions: (p as any).instructions || "", delivery_info: (p as any).delivery_info || "",
+      is_preorder: (p as any).is_preorder || false,
+      preorder_note: (p as any).preorder_note || "",
+      preorder_advance_percent: (p as any).preorder_advance_percent ?? 50,
     });
     setImageFile(null);
     setDialogOpen(true);
@@ -152,6 +156,9 @@ const AdminProducts = () => {
       seo_title: form.seo_title.trim() || null, seo_description: form.seo_description.trim() || null,
       delivery_time: form.delivery_time.trim() || null,
       instructions: form.instructions || null, delivery_info: form.delivery_info || null,
+      is_preorder: form.is_preorder,
+      preorder_note: form.preorder_note.trim() || null,
+      preorder_advance_percent: form.preorder_advance_percent || 50,
     };
 
     let productId: string | null = null;
@@ -458,6 +465,41 @@ const AdminProducts = () => {
                   <Switch checked={form.allow_custom_text} onCheckedChange={(c) => setForm({ ...form, allow_custom_text: c })} />
                   <Label>✏️ Custom Text</Label>
                 </div>
+              </div>
+
+              {/* Pre-order Section */}
+              <div className="border border-amber-200 dark:border-amber-900/40 bg-amber-50/50 dark:bg-amber-950/10 rounded-lg p-3 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Switch checked={form.is_preorder} onCheckedChange={(c) => setForm({ ...form, is_preorder: c })} />
+                  <Label className="font-semibold">📦 Pre-order Mode</Label>
+                </div>
+                <p className="text-xs text-muted-foreground -mt-1">
+                  Auto-enabled when stock = 0. Manual toggle works even with stock available.
+                </p>
+                {(form.is_preorder || form.stock <= 0) && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-xs">Pre-order Note</Label>
+                      <Input
+                        value={form.preorder_note}
+                        onChange={(e) => setForm({ ...form, preorder_note: e.target.value })}
+                        placeholder="e.g. Ships in 7-10 days"
+                        style={{ fontSize: 16 }}
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Advance Payment %</Label>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={100}
+                        value={form.preorder_advance_percent}
+                        onChange={(e) => setForm({ ...form, preorder_advance_percent: parseInt(e.target.value) || 50 })}
+                        style={{ fontSize: 16 }}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
               <Button type="submit" className="w-full" disabled={saving}>{saving ? "Saving..." : editing ? "Update" : "Create"}</Button>
             </form>

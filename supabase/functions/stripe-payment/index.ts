@@ -100,24 +100,34 @@ Deno.serve(async (req) => {
       params.append("metadata[order_id]", order.id);
       params.append("metadata[order_number]", order.order_number);
 
-      // Stripe minimum charge ~$0.50 USD equivalent → smallest unit 50
+      // For pre-orders, charge only the advance amount as a single line item
       let idx = 0;
-      (itemsData || []).forEach((it: any) => {
-        const converted = Number(it.price) * conversionRate;
+      if (order.is_preorder && Number(order.advance_amount) > 0) {
+        const advanceConverted = Number(order.advance_amount) * conversionRate;
         params.append(`line_items[${idx}][price_data][currency]`, checkoutCurrency);
-        params.append(`line_items[${idx}][price_data][product_data][name]`, it.product_name);
-        params.append(`line_items[${idx}][price_data][unit_amount]`, String(Math.max(50, Math.round(converted * 100))));
-        params.append(`line_items[${idx}][quantity]`, String(it.quantity));
-        idx++;
-      });
-
-      if (Number(order.delivery_fee) > 0) {
-        const convertedFee = Number(order.delivery_fee) * conversionRate;
-        params.append(`line_items[${idx}][price_data][currency]`, checkoutCurrency);
-        params.append(`line_items[${idx}][price_data][product_data][name]`, "Delivery Fee");
-        params.append(`line_items[${idx}][price_data][unit_amount]`, String(Math.round(convertedFee * 100)));
+        params.append(`line_items[${idx}][price_data][product_data][name]`, `Pre-order Advance (Order ${order.order_number})`);
+        params.append(`line_items[${idx}][price_data][unit_amount]`, String(Math.max(50, Math.round(advanceConverted * 100))));
         params.append(`line_items[${idx}][quantity]`, "1");
         idx++;
+      } else {
+        // Stripe minimum charge ~$0.50 USD equivalent → smallest unit 50
+        (itemsData || []).forEach((it: any) => {
+          const converted = Number(it.price) * conversionRate;
+          params.append(`line_items[${idx}][price_data][currency]`, checkoutCurrency);
+          params.append(`line_items[${idx}][price_data][product_data][name]`, it.product_name);
+          params.append(`line_items[${idx}][price_data][unit_amount]`, String(Math.max(50, Math.round(converted * 100))));
+          params.append(`line_items[${idx}][quantity]`, String(it.quantity));
+          idx++;
+        });
+
+        if (Number(order.delivery_fee) > 0) {
+          const convertedFee = Number(order.delivery_fee) * conversionRate;
+          params.append(`line_items[${idx}][price_data][currency]`, checkoutCurrency);
+          params.append(`line_items[${idx}][price_data][product_data][name]`, "Delivery Fee");
+          params.append(`line_items[${idx}][price_data][unit_amount]`, String(Math.round(convertedFee * 100)));
+          params.append(`line_items[${idx}][quantity]`, "1");
+          idx++;
+        }
       }
 
       const stripeRes = await fetch("https://api.stripe.com/v1/checkout/sessions", {

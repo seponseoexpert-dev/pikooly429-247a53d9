@@ -14,6 +14,8 @@ interface Product {
   deliveryTime?: string | null;
   sameDayDistricts?: string[] | null;
   nextDayDistricts?: string[] | null;
+  isPreorder?: boolean;
+  preorderAdvancePercent?: number;
 }
 
 export interface VariantSelection {

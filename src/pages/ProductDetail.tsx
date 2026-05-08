@@ -16,6 +16,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
+import { isPreorder, getAdvancePercent, getPreorderNote } from "@/lib/preorder";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -299,6 +300,8 @@ const ProductDetail = () => {
     deliveryTime: (product as any).delivery_time ?? null,
     sameDayDistricts: (product as any).same_day_districts ?? null,
     nextDayDistricts: (product as any).next_day_districts ?? null,
+    isPreorder: isPreorder(product as any),
+    preorderAdvancePercent: getAdvancePercent(product as any),
   };
 
   const buildVariantPayload = (): VariantSelection | undefined => {
@@ -328,13 +331,13 @@ const ProductDetail = () => {
   };
 
   const buyNowTotal = effectivePrice * qty + addonInCartTotal;
+  const preorderActive = isPreorder(product as any);
+  const advancePct = getAdvancePercent(product as any);
+  const advanceAmount = preorderActive ? Math.round((buyNowTotal * advancePct) / 100) : 0;
 
   const handleBuyNow = () => {
     if (!validateVariants()) return;
-    if (product.stock <= 0) {
-      toast.error("This product is out of stock");
-      return;
-    }
+    // Allow buy now even if stock is 0 — it becomes a pre-order
     const variant = buildVariantPayload();
     // Quick checkout: keep selected addons, replace main product line with this one at selected qty
     const keptAddons = cartItems.filter(i => addonIds.has(i.product.id));
@@ -697,6 +700,18 @@ const ProductDetail = () => {
             />
           </div>
 
+          {/* Pre-order banner */}
+          {preorderActive && (
+            <div className="mb-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2.5 flex items-start gap-2">
+              <span className="text-base leading-none mt-0.5">📦</span>
+              <div className="text-[13px] leading-snug text-amber-900">
+                <strong>Pre-order:</strong> {getPreorderNote(product as any)}.
+                Pay <strong>{advancePct}% advance</strong> ({formatPrice(advanceAmount)}) now,
+                rest on delivery.
+              </div>
+            </div>
+          )}
+
           {/* Primary actions: hidden on mobile (rendered as sticky bar below) */}
           <div className="hidden md:block">
             <div className="grid grid-cols-2 gap-3 mb-3">
@@ -704,14 +719,14 @@ const ProductDetail = () => {
                 onClick={handleAddToCart}
                 className="h-[52px] rounded-sm bg-white border border-primary text-primary text-[13px] font-bold tracking-[0.12em] uppercase hover:bg-primary/5 active:scale-[0.98] transition-all"
               >
-                Add to Cart
+                {preorderActive ? "Pre-order" : "Add to Cart"}
               </button>
               <button
                 onClick={handleBuyNow}
                 className="h-[52px] rounded-sm bg-[hsl(200_30%_22%)] hover:bg-[hsl(200_35%_18%)] text-white text-[13px] font-bold tracking-[0.12em] uppercase flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all"
               >
-                <span>Buy Now</span>
-                <span className="font-bold tabular-nums normal-case tracking-normal">| {formatPrice(buyNowTotal)}</span>
+                <span>{preorderActive ? `Pre-order Now` : "Buy Now"}</span>
+                <span className="font-bold tabular-nums normal-case tracking-normal">| {formatPrice(preorderActive ? advanceAmount : buyNowTotal)}</span>
               </button>
             </div>
 
@@ -919,13 +934,13 @@ const ProductDetail = () => {
             onClick={handleAddToCart}
             className="h-11 rounded-sm bg-white border border-primary text-primary text-[11px] font-bold tracking-[0.12em] uppercase flex items-center justify-center active:scale-[0.97] transition-transform"
           >
-            Add to Cart
+            {preorderActive ? "Pre-order" : "Add to Cart"}
           </button>
           <button
             onClick={handleBuyNow}
             className="h-11 rounded-sm bg-[hsl(200_30%_22%)] text-white text-[11px] font-bold tracking-[0.12em] uppercase flex items-center justify-center gap-1 active:scale-[0.97] transition-transform"
           >
-            Buy Now <span className="tabular-nums normal-case tracking-normal">| {formatPrice(buyNowTotal)}</span>
+            {preorderActive ? "Pre-order" : "Buy Now"} <span className="tabular-nums normal-case tracking-normal">| {formatPrice(preorderActive ? advanceAmount : buyNowTotal)}</span>
           </button>
         </div>
       </div>
