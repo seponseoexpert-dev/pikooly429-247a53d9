@@ -313,7 +313,7 @@ const Header = () => {
                 )}
               </div>
 
-              <IconBtn icon={ShoppingCart} label={t("cart")} href="/cart" badge={totalItems} />
+              <IconBtn icon={ShoppingCart} label={t("cart")} onClick={() => setIsOpen(true)} badge={totalItems} />
 
               <span className="hidden sm:inline-flex">
                 <IconBtn icon={User} label={user ? t("account") : t("sign_in")} href={user ? "/account" : "/auth"} />
