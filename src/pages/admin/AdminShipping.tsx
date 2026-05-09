@@ -264,26 +264,49 @@ const AdminShipping = () => {
         <CardHeader>
           <CardTitle className="text-lg">Category → Delivery Mode</CardTitle>
           <p className="text-xs text-muted-foreground">
-            Assign each category to a delivery mode. Customers see split shipments when cart mixes modes.
+            <strong>Primary</strong> applies when the customer's city qualifies (e.g. Fast Delivery cities).
+            <strong> Fallback</strong> auto-applies for cities outside that list. Leave Fallback empty to always use Primary.
           </p>
         </CardHeader>
         <CardContent>
           <div className="divide-y">
             {categories.map((c: any) => {
-              const current = catModes.find((cm) => cm.category_id === c.id)?.mode_id || "";
+              const row = catModes.find((cm) => cm.category_id === c.id);
+              const current = row?.mode_id || "";
+              const fallback = row?.fallback_mode_id || "";
               return (
-                <div key={c.id} className="py-2.5 flex items-center justify-between gap-3">
+                <div key={c.id} className="py-3 grid grid-cols-1 sm:grid-cols-[1fr_auto_auto] items-center gap-3">
                   <span className="text-sm font-medium">{c.name}</span>
-                  <div className="w-48">
-                    <Select value={current || "none"} onValueChange={(v) => v !== "none" && assignCategory(c.id, v)}>
-                      <SelectTrigger style={{ fontSize: 16 }}>
+                  <div className="w-full sm:w-44">
+                    <Label className="text-[10px] text-muted-foreground uppercase tracking-wide">Primary</Label>
+                    <Select
+                      value={current || "none"}
+                      onValueChange={(v) => v !== "none" && assignCategory(c.id, v, fallback || null)}
+                    >
+                      <SelectTrigger style={{ fontSize: 16 }} className="h-9">
                         <SelectValue placeholder="— select —" />
                       </SelectTrigger>
                       <SelectContent>
                         {modes.map((m) => (
-                          <SelectItem key={m.id} value={m.id}>
-                            {m.name}
-                          </SelectItem>
+                          <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="w-full sm:w-44">
+                    <Label className="text-[10px] text-muted-foreground uppercase tracking-wide">Fallback (other cities)</Label>
+                    <Select
+                      value={fallback || "none"}
+                      onValueChange={(v) => current && assignCategory(c.id, current, v === "none" ? null : v)}
+                      disabled={!current}
+                    >
+                      <SelectTrigger style={{ fontSize: 16 }} className="h-9">
+                        <SelectValue placeholder="— none —" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">— None (use Primary) —</SelectItem>
+                        {modes.filter((m) => m.id !== current).map((m) => (
+                          <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
