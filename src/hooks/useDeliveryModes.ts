@@ -26,7 +26,28 @@ export interface CategoryDeliveryMode {
   id: string;
   category_id: string;
   mode_id: string;
+  fallback_mode_id?: string | null;
 }
+
+/**
+ * Resolve which delivery mode applies for a customer's selected city.
+ * - If primary mode is city-restricted (e.g. Fast) AND city is NOT in the list AND a fallback exists → use fallback.
+ * - Otherwise → use primary.
+ */
+export const resolveModeForCity = (
+  primary: DeliveryMode | undefined,
+  fallback: DeliveryMode | undefined,
+  selectedCity: string | undefined,
+  citiesForPrimary: string[]
+): DeliveryMode | undefined => {
+  if (!primary) return fallback;
+  if (!fallback) return primary;
+  // Only Fast mode (or any mode with city list) restricts by city.
+  const isRestricted = primary.key === "fast" && citiesForPrimary.length > 0;
+  if (!isRestricted) return primary;
+  if (!selectedCity || selectedCity === "__other__") return fallback;
+  return citiesForPrimary.includes(selectedCity) ? primary : fallback;
+};
 
 /** Effective charge for a mode (flat → flat_charge, range → min_charge as shown to customer). */
 export const modeCharge = (m: Pick<DeliveryMode, "charge_type" | "flat_charge" | "min_charge">) =>

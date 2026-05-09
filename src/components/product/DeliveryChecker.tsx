@@ -5,6 +5,7 @@ import {
   useDeliveryCities,
   useCategoryDeliveryModes,
   modeCharge,
+  resolveModeForCity,
 } from "@/hooks/useDeliveryModes";
 import {
   Select,
@@ -42,33 +43,35 @@ const DeliveryChecker = ({ categoryId }: Props) => {
   );
 
   // Determine which mode this product's category maps to (default Standard fallback)
+  const mapping = useMemo(() => catModes.find((cm) => cm.category_id === categoryId), [catModes, categoryId]);
   const productMode = useMemo(() => {
-    const mapped = catModes.find((cm) => cm.category_id === categoryId);
-    if (mapped) {
-      const m = activeModes.find((a) => a.id === mapped.mode_id);
+    if (mapping) {
+      const m = activeModes.find((a) => a.id === mapping.mode_id);
       if (m) return m;
     }
     return activeModes.find((m) => m.key === "standard") || activeModes[0];
-  }, [catModes, categoryId, activeModes]);
+  }, [mapping, activeModes]);
+
+  const fallbackMode = useMemo(
+    () => (mapping?.fallback_mode_id ? activeModes.find((m) => m.id === mapping.fallback_mode_id) : undefined),
+    [mapping, activeModes]
+  );
 
   if (!productMode) return null;
 
-  // Check if city has Fast Delivery available
-  const fastMode = activeModes.find((m) => m.key === "fast");
-  const standardMode = activeModes.find((m) => m.key === "standard");
   const fastCities = cities
-    .filter((c) => c.mode_id === fastMode?.id)
+    .filter((c) => c.mode_id === productMode.id)
     .map((c) => c.city_name);
-  const fastAvailable = !!selectedCity && selectedCity !== "__other__" && fastCities.includes(selectedCity);
 
-  // If product's category maps to Fast but city doesn't qualify → fallback to Standard.
-  // If product's category maps to other modes (standard/premium), keep that mode regardless of city.
+  // Resolve based on customer's city: primary if city qualifies, else fallback (if set), else primary.
   const resolvedMode =
-    productMode.key === "fast"
-      ? fastAvailable
-        ? fastMode!
-        : standardMode || productMode
-      : productMode;
+    resolveModeForCity(productMode, fallbackMode, selectedCity || undefined, fastCities) || productMode;
+
+  const fastAvailable =
+    productMode.key === "fast" &&
+    !!selectedCity &&
+    selectedCity !== "__other__" &&
+    fastCities.includes(selectedCity);
 
   const Icon = ICONS[resolvedMode.icon || "truck"] || Truck;
 
@@ -122,7 +125,8 @@ const DeliveryChecker = ({ categoryId }: Props) => {
       {selectedCity && productMode.key === "fast" && !fastAvailable && (
         <p className="flex items-start gap-1.5 text-[11px] text-muted-foreground">
           <X className="h-3.5 w-3.5 text-amber-600 mt-0.5 shrink-0" />
-          Fast Delivery not available in {selectedCity === "__other__" ? "this area" : selectedCity}. Standard delivery shown above.
+          Fast Delivery not available in {selectedCity === "__other__" ? "this area" : selectedCity}.
+          {fallbackMode ? ` ${fallbackMode.name} shown above.` : " Primary charge shown above."}
         </p>
       )}
     </div>

@@ -405,6 +405,7 @@ export type Database = {
         Row: {
           category_id: string
           created_at: string
+          fallback_mode_id: string | null
           id: string
           mode_id: string
           updated_at: string
@@ -412,6 +413,7 @@ export type Database = {
         Insert: {
           category_id: string
           created_at?: string
+          fallback_mode_id?: string | null
           id?: string
           mode_id: string
           updated_at?: string
@@ -419,6 +421,7 @@ export type Database = {
         Update: {
           category_id?: string
           created_at?: string
+          fallback_mode_id?: string | null
           id?: string
           mode_id?: string
           updated_at?: string

@@ -3,10 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
   useDeliveryModes,
+  useDeliveryCities,
   useCategoryDeliveryModes,
   modeCharge,
+  resolveModeForCity,
   type DeliveryMode,
 } from "@/hooks/useDeliveryModes";
+
+const CITY_STORAGE_KEY = "pikooly_delivery_city";
 
 export interface DeliveryGroup {
   mode: DeliveryMode;
@@ -23,9 +27,13 @@ interface CartItemLike {
  * Splits cart items into delivery groups based on each product's category → delivery mode.
  * Each unique mode = one shipment with its own charge.
  */
-export const useCheckoutDelivery = (items: CartItemLike[]) => {
+export const useCheckoutDelivery = (items: CartItemLike[], cityOverride?: string) => {
   const { data: modes = [] } = useDeliveryModes();
+  const { data: cities = [] } = useDeliveryCities();
   const { data: catModes = [] } = useCategoryDeliveryModes();
+
+  const selectedCity =
+    cityOverride ?? (typeof window !== "undefined" ? localStorage.getItem(CITY_STORAGE_KEY) || undefined : undefined);
 
   // Resolve each cart product's category_id (if not already on the cart item)
   const productIds = items.map((i) => i.product.id).filter((id) => !id.startsWith("bouquet-"));
@@ -46,10 +54,10 @@ export const useCheckoutDelivery = (items: CartItemLike[]) => {
   const groups = useMemo<DeliveryGroup[]>(() => {
     if (!modes.length || !items.length) return [];
     const activeModes = modes.filter((m) => m.is_active);
-    const fallback = activeModes.find((m) => m.key === "standard") || activeModes[0];
-    if (!fallback) return [];
+    const defaultMode = activeModes.find((m) => m.key === "standard") || activeModes[0];
+    if (!defaultMode) return [];
 
-    const catLookup = new Map(catModes.map((cm) => [cm.category_id, cm.mode_id]));
+    const catLookup = new Map(catModes.map((cm) => [cm.category_id, cm]));
     const productCatLookup = new Map(productCats.map((p) => [p.id, p.category_id]));
 
     const byMode = new Map<string, DeliveryGroup>();
@@ -60,8 +68,14 @@ export const useCheckoutDelivery = (items: CartItemLike[]) => {
         (item.product as any).category_id ||
         productCatLookup.get(item.product.id) ||
         null;
-      const modeId = catId ? catLookup.get(catId) : null;
-      const mode = (modeId && activeModes.find((m) => m.id === modeId)) || fallback;
+      const mapping = catId ? catLookup.get(catId) : null;
+      const primary = mapping ? activeModes.find((m) => m.id === mapping.mode_id) : undefined;
+      const fb = mapping?.fallback_mode_id ? activeModes.find((m) => m.id === mapping.fallback_mode_id) : undefined;
+      const citiesForPrimary = primary
+        ? cities.filter((c) => c.mode_id === primary.id).map((c) => c.city_name)
+        : [];
+      const mode =
+        resolveModeForCity(primary, fb, selectedCity, citiesForPrimary) || defaultMode;
       const key = mode.id;
       if (!byMode.has(key)) {
         byMode.set(key, { mode, productIds: [], productNames: [], charge: modeCharge(mode) });
@@ -72,7 +86,7 @@ export const useCheckoutDelivery = (items: CartItemLike[]) => {
     });
 
     return Array.from(byMode.values()).sort((a, b) => a.mode.sort_order - b.mode.sort_order);
-  }, [modes, catModes, productCats, items]);
+  }, [modes, cities, catModes, productCats, items, selectedCity]);
 
   const totalDeliveryFee = groups.reduce((s, g) => s + g.charge, 0);
   const isSplit = groups.length > 1;
