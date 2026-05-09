@@ -125,7 +125,8 @@ const DeliveryChecker = ({ categoryId }: Props) => {
       {selectedCity && productMode.key === "fast" && !fastAvailable && (
         <p className="flex items-start gap-1.5 text-[11px] text-muted-foreground">
           <X className="h-3.5 w-3.5 text-amber-600 mt-0.5 shrink-0" />
-          Fast Delivery not available in {selectedCity === "__other__" ? "this area" : selectedCity}. Standard delivery shown above.
+          Fast Delivery not available in {selectedCity === "__other__" ? "this area" : selectedCity}.
+          {fallbackMode ? ` ${fallbackMode.name} shown above.` : " Primary charge shown above."}
         </p>
       )}
     </div>
