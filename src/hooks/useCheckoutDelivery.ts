@@ -3,10 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
   useDeliveryModes,
+  useDeliveryCities,
   useCategoryDeliveryModes,
   modeCharge,
+  resolveModeForCity,
   type DeliveryMode,
 } from "@/hooks/useDeliveryModes";
+
+const CITY_STORAGE_KEY = "pikooly_delivery_city";
 
 export interface DeliveryGroup {
   mode: DeliveryMode;
