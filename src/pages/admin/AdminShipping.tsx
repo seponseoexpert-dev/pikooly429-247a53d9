@@ -86,12 +86,14 @@ const AdminShipping = () => {
     qc.invalidateQueries({ queryKey: ["delivery-mode-cities"] });
   };
 
-  const assignCategory = async (categoryId: string, modeId: string) => {
+  const assignCategory = async (categoryId: string, modeId: string, fallbackModeId?: string | null) => {
     const existing = catModes.find((c) => c.category_id === categoryId);
+    const payload: any = { mode_id: modeId };
+    if (fallbackModeId !== undefined) payload.fallback_mode_id = fallbackModeId;
     if (existing) {
-      await supabase.from("category_delivery_modes").update({ mode_id: modeId }).eq("id", existing.id);
+      await supabase.from("category_delivery_modes").update(payload).eq("id", existing.id);
     } else {
-      await supabase.from("category_delivery_modes").insert({ category_id: categoryId, mode_id: modeId });
+      await supabase.from("category_delivery_modes").insert({ category_id: categoryId, ...payload });
     }
     qc.invalidateQueries({ queryKey: ["category-delivery-modes"] });
     toast({ title: "Updated" });
