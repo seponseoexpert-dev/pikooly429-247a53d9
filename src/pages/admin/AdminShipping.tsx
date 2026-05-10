@@ -231,44 +231,109 @@ const AdminShipping = () => {
                   </div>
                 </div>
 
-                {/* Cities (only for fast/range modes that have city restrictions) */}
-                {m.key === "fast" && (
-                  <div className="rounded-lg border p-3 bg-muted/30">
-                    <div className="flex items-center justify-between mb-2">
-                      <Label className="text-sm font-semibold">Available cities</Label>
-                      <span className="text-xs text-muted-foreground">{modeCities.length} cities</span>
-                    </div>
-                    <div className="flex flex-wrap gap-1.5 mb-2">
-                      {modeCities.map((c) => (
-                        <Badge key={c.id} variant="secondary" className="gap-1 pr-1">
-                          {c.city_name}
-                          <button
+                {/* Cities & thanas — supported on all modes (e.g. Fast = service area; Premium Safe = far-zone overrides) */}
+                <div className="rounded-lg border p-3 bg-muted/30 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm font-semibold">Available cities / thanas</Label>
+                    <span className="text-xs text-muted-foreground">{modeCities.length} entries</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground -mt-1">
+                    Add cities (and optional thana) where this mode is available. Leave charge override empty to use the mode's default charge; set a value for far/special zones.
+                  </p>
+
+                  <div className="space-y-2">
+                    {modeCities.map((c) => {
+                      const draft = cityDrafts[c.id] ?? {
+                        thana: c.thana || "",
+                        charge: c.charge_override != null ? String(c.charge_override) : "",
+                      };
+                      return (
+                        <div key={c.id} className="grid grid-cols-[1fr_auto] sm:grid-cols-[1.2fr_1fr_100px_auto_auto] gap-2 items-center bg-background rounded-md border p-2">
+                          <div className="text-sm font-medium truncate">{c.city_name}</div>
+                          <Input
+                            placeholder="Thana (optional)"
+                            value={draft.thana}
+                            onChange={(e) =>
+                              setCityDrafts((p) => ({ ...p, [c.id]: { ...draft, thana: e.target.value } }))
+                            }
+                            className="h-9 col-span-2 sm:col-span-1"
+                            style={{ fontSize: 16 }}
+                          />
+                          <Input
+                            type="number"
+                            placeholder="৳ override"
+                            value={draft.charge}
+                            onChange={(e) =>
+                              setCityDrafts((p) => ({ ...p, [c.id]: { ...draft, charge: e.target.value } }))
+                            }
+                            className="h-9"
+                            style={{ fontSize: 16 }}
+                          />
+                          <Button size="sm" variant="outline" onClick={() => saveCity(c.id)} className="h-9">
+                            <Save className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
                             onClick={() => removeCity(c.id)}
-                            className="hover:bg-destructive/20 rounded p-0.5"
+                            className="h-9 text-destructive hover:text-destructive"
                             aria-label={`Remove ${c.city_name}`}
                           >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </Badge>
-                      ))}
-                      {modeCities.length === 0 && (
-                        <p className="text-xs text-muted-foreground">No cities yet — add below.</p>
-                      )}
-                    </div>
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="Add city name"
-                        value={newCity[m.id] || ""}
-                        onChange={(e) => setNewCity((p) => ({ ...p, [m.id]: e.target.value }))}
-                        onKeyDown={(e) => e.key === "Enter" && addCity(m.id)}
-                        style={{ fontSize: 16 }}
-                      />
-                      <Button size="sm" onClick={() => addCity(m.id)}>
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      );
+                    })}
+                    {modeCities.length === 0 && (
+                      <p className="text-xs text-muted-foreground">No cities yet — add below.</p>
+                    )}
                   </div>
-                )}
+
+                  <div className="grid grid-cols-1 sm:grid-cols-[1.2fr_1fr_100px_auto] gap-2">
+                    <Input
+                      placeholder="City name"
+                      value={(newCity[m.id]?.name) || ""}
+                      onChange={(e) =>
+                        setNewCity((p) => ({
+                          ...p,
+                          [m.id]: { name: e.target.value, thana: p[m.id]?.thana || "", charge: p[m.id]?.charge || "" },
+                        }))
+                      }
+                      onKeyDown={(e) => e.key === "Enter" && addCity(m.id)}
+                      className="h-9"
+                      style={{ fontSize: 16 }}
+                    />
+                    <Input
+                      placeholder="Thana (optional)"
+                      value={(newCity[m.id]?.thana) || ""}
+                      onChange={(e) =>
+                        setNewCity((p) => ({
+                          ...p,
+                          [m.id]: { name: p[m.id]?.name || "", thana: e.target.value, charge: p[m.id]?.charge || "" },
+                        }))
+                      }
+                      className="h-9"
+                      style={{ fontSize: 16 }}
+                    />
+                    <Input
+                      type="number"
+                      placeholder="৳ override"
+                      value={(newCity[m.id]?.charge) || ""}
+                      onChange={(e) =>
+                        setNewCity((p) => ({
+                          ...p,
+                          [m.id]: { name: p[m.id]?.name || "", thana: p[m.id]?.thana || "", charge: e.target.value },
+                        }))
+                      }
+                      className="h-9"
+                      style={{ fontSize: 16 }}
+                    />
+                    <Button size="sm" onClick={() => addCity(m.id)} className="h-9">
+                      <Plus className="h-4 w-4 mr-1" /> Add
+                    </Button>
+                  </div>
+                </div>
+
 
                 <Button onClick={() => updateMode(m.id)} className="w-full sm:w-auto">
                   <Save className="h-4 w-4 mr-2" /> Save changes
