@@ -50,7 +50,7 @@ const settingSections = [
   { key: "cloudinary", label: "Cloudinary", icon: Cloud },
   { key: "checkout", label: "Checkout", icon: CreditCard },
   { key: "cart_page", label: "Cart Page", icon: ShoppingCart },
-  { key: "delivery_presets", label: "Delivery Presets", icon: Truck },
+  
   { key: "google_sheets", label: "Google Sheets", icon: FileText },
 ];
 
@@ -417,14 +417,6 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "cart_accent_color", label: "Accent Color (hex)", placeholder: "#0a4d5c" },
     { key: "cart_addons_bg_color", label: "Add-ons Background Color (hex)", placeholder: "#fde9d9" },
     { key: "cart_savings_bg_color", label: "Savings Banner Background (hex)", placeholder: "#d4edf7" },
-  ],
-  delivery_presets: [
-    { key: "delivery_preset_same_day_fee", label: "Same Day Delivery Fee (৳)", placeholder: "250" },
-    { key: "delivery_preset_next_day_fee", label: "Next Day Delivery Fee (৳)", placeholder: "450" },
-    { key: "delivery_preset_standard_fee", label: "Standard Delivery Fee (৳)", placeholder: "120" },
-    { key: "delivery_preset_economy_fee", label: "Economy Delivery Fee (৳)", placeholder: "80" },
-    { key: "delivery_preset_standard_days", label: "Standard Delivery Days", placeholder: "3" },
-    { key: "delivery_preset_economy_days", label: "Economy Delivery Days", placeholder: "5" },
   ],
   google_sheets: [
     { key: "google_sheets_enabled", label: "Enable Google Sheets Sync", type: "switch", fullWidth: true },
