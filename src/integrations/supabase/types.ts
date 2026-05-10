@@ -564,22 +564,28 @@ export type Database = {
       }
       delivery_mode_cities: {
         Row: {
+          charge_override: number | null
           city_name: string
           created_at: string
           id: string
           mode_id: string
+          thana: string | null
         }
         Insert: {
+          charge_override?: number | null
           city_name: string
           created_at?: string
           id?: string
           mode_id: string
+          thana?: string | null
         }
         Update: {
+          charge_override?: number | null
           city_name?: string
           created_at?: string
           id?: string
           mode_id?: string
+          thana?: string | null
         }
         Relationships: [
           {
