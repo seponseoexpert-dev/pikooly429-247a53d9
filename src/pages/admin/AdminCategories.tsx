@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { toast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, GripVertical, PlusCircle, MinusCircle, ChevronDown, ChevronRight, Tag } from "lucide-react";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
+import { ensureAdminSession } from "@/lib/ensureAdmin";
 import type { Tables } from "@/integrations/supabase/types";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 
