@@ -100,23 +100,6 @@ const AdminShipping = () => {
       qc.invalidateQueries({ queryKey: ["delivery-mode-cities"] });
     }
   };
-    if (error) toast({ title: "Save failed", description: error.message, variant: "destructive" });
-    else {
-      toast({ title: "Saved" });
-      qc.invalidateQueries({ queryKey: ["delivery-modes"] });
-    }
-  };
-
-  const addCity = async (modeId: string) => {
-    const name = (newCity[modeId] || "").trim();
-    if (!name) return;
-    const { error } = await supabase.from("delivery_mode_cities").insert({ mode_id: modeId, city_name: name });
-    if (error) toast({ title: "Add failed", description: error.message, variant: "destructive" });
-    else {
-      setNewCity((p) => ({ ...p, [modeId]: "" }));
-      qc.invalidateQueries({ queryKey: ["delivery-mode-cities"] });
-    }
-  };
 
   const removeCity = async (id: string) => {
     await supabase.from("delivery_mode_cities").delete().eq("id", id);
