@@ -108,6 +108,13 @@ const AdminCategories = () => {
     if (!form.name.trim()) return;
     setSaving(true);
 
+    const authErr = await ensureAdminSession();
+    if (authErr) {
+      toast({ title: "Permission denied", description: authErr, variant: "destructive" });
+      setSaving(false);
+      return;
+    }
+
     let imageUrl = form.image_url;
     if (imageFile) {
       const uploaded = await uploadImage(imageFile, "categories");
