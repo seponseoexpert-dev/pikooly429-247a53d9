@@ -4,8 +4,8 @@ import {
   useDeliveryModes,
   useDeliveryCities,
   useCategoryDeliveryModes,
-  modeCharge,
   resolveModeForCity,
+  effectiveCharge,
 } from "@/hooks/useDeliveryModes";
 import {
   Select,
@@ -117,7 +117,7 @@ const DeliveryChecker = ({ categoryId }: Props) => {
             )}
           </div>
           <p className="text-base font-bold text-primary tabular-nums shrink-0">
-            ৳{modeCharge(resolvedMode)}
+            ৳{effectiveCharge(resolvedMode, cities, selectedCity)}
           </p>
         </div>
       )}

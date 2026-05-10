@@ -7,6 +7,7 @@ import {
   useCategoryDeliveryModes,
   modeCharge,
   resolveModeForCity,
+  effectiveCharge,
   type DeliveryMode,
 } from "@/hooks/useDeliveryModes";
 
@@ -78,7 +79,7 @@ export const useCheckoutDelivery = (items: CartItemLike[], cityOverride?: string
         resolveModeForCity(primary, fb, selectedCity, citiesForPrimary) || defaultMode;
       const key = mode.id;
       if (!byMode.has(key)) {
-        byMode.set(key, { mode, productIds: [], productNames: [], charge: modeCharge(mode) });
+        byMode.set(key, { mode, productIds: [], productNames: [], charge: effectiveCharge(mode, cities, selectedCity) });
       }
       const g = byMode.get(key)!;
       g.productIds.push(item.product.id);
