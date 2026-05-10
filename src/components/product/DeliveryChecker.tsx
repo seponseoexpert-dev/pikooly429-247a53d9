@@ -4,7 +4,6 @@ import {
   useDeliveryModes,
   useDeliveryCities,
   useCategoryDeliveryModes,
-  modeCharge,
   resolveModeForCity,
   effectiveCharge,
 } from "@/hooks/useDeliveryModes";
