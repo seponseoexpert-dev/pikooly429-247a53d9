@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Search, Package } from "lucide-react";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
+import { ensureAdminSession } from "@/lib/ensureAdmin";
 import ProductVariantsManager, { saveProductVariants } from "@/components/admin/ProductVariantsManager";
 import { useCurrency } from "@/hooks/useCurrency";
 import type { Tables } from "@/integrations/supabase/types";
@@ -136,6 +137,13 @@ const AdminProducts = () => {
     e.preventDefault();
     if (!form.name.trim()) return;
     setSaving(true);
+
+    const authErr = await ensureAdminSession();
+    if (authErr) {
+      toast({ title: "Permission denied", description: authErr, variant: "destructive" });
+      setSaving(false);
+      return;
+    }
 
     let imageUrl = form.image_url;
     const slug = form.slug || generateSlug(form.name);
