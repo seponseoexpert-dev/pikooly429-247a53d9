@@ -138,6 +138,13 @@ const AdminProducts = () => {
     if (!form.name.trim()) return;
     setSaving(true);
 
+    const authErr = await ensureAdminSession();
+    if (authErr) {
+      toast({ title: "Permission denied", description: authErr, variant: "destructive" });
+      setSaving(false);
+      return;
+    }
+
     let imageUrl = form.image_url;
     const slug = form.slug || generateSlug(form.name);
     const tags = form.tags ? form.tags.split(",").map((t) => t.trim()).filter(Boolean) : [];
