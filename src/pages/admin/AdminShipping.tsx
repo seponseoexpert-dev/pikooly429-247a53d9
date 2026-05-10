@@ -46,7 +46,8 @@ const AdminShipping = () => {
     setDrafts(seed);
   }, [modes]);
 
-  const [newCity, setNewCity] = useState<Record<string, string>>({});
+  const [newCity, setNewCity] = useState<Record<string, { name: string; thana: string; charge: string }>>({});
+  const [cityDrafts, setCityDrafts] = useState<Record<string, { thana: string; charge: string }>>({});
 
   const updateMode = async (id: string) => {
     const d = drafts[id];
@@ -63,6 +64,42 @@ const AdminShipping = () => {
         is_active: d.is_active,
       })
       .eq("id", id);
+    if (error) toast({ title: "Save failed", description: error.message, variant: "destructive" });
+    else {
+      toast({ title: "Saved" });
+      qc.invalidateQueries({ queryKey: ["delivery-modes"] });
+    }
+  };
+
+  const addCity = async (modeId: string) => {
+    const draft = newCity[modeId] || { name: "", thana: "", charge: "" };
+    const name = draft.name.trim();
+    if (!name) return;
+    const payload: any = { mode_id: modeId, city_name: name };
+    if (draft.thana.trim()) payload.thana = draft.thana.trim();
+    if (draft.charge.trim() !== "") payload.charge_override = Number(draft.charge);
+    const { error } = await supabase.from("delivery_mode_cities").insert(payload);
+    if (error) toast({ title: "Add failed", description: error.message, variant: "destructive" });
+    else {
+      setNewCity((p) => ({ ...p, [modeId]: { name: "", thana: "", charge: "" } }));
+      qc.invalidateQueries({ queryKey: ["delivery-mode-cities"] });
+    }
+  };
+
+  const saveCity = async (cityId: string) => {
+    const d = cityDrafts[cityId];
+    if (!d) return;
+    const payload: any = {
+      thana: d.thana.trim() || null,
+      charge_override: d.charge.trim() === "" ? null : Number(d.charge),
+    };
+    const { error } = await supabase.from("delivery_mode_cities").update(payload).eq("id", cityId);
+    if (error) toast({ title: "Save failed", description: error.message, variant: "destructive" });
+    else {
+      toast({ title: "City updated" });
+      qc.invalidateQueries({ queryKey: ["delivery-mode-cities"] });
+    }
+  };
     if (error) toast({ title: "Save failed", description: error.message, variant: "destructive" });
     else {
       toast({ title: "Saved" });
