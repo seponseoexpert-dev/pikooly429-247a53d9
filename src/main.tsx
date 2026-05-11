@@ -20,8 +20,8 @@ if (isPreviewHost || isInIframe) {
     registrations.forEach((r) => r.unregister());
   });
 } else if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/sw-push.js").catch((err) => {
-    console.log("SW registration failed:", err);
+  navigator.serviceWorker.register("/sw-push.js").catch(() => {
+    /* SW registration is best-effort; silent failure */
   });
 }
 

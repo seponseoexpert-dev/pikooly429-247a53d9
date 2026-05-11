@@ -61,7 +61,7 @@ const HeroSection = memo(() => {
     if (slides.length <= 1) return;
     const timer = setInterval(() => {
       setCurrent((p) => (p + 1) % slides.length);
-    }, 20000);
+    }, 7000);
     return () => clearInterval(timer);
   }, [slides.length]);
 

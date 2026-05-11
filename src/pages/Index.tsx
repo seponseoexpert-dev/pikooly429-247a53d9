@@ -34,7 +34,13 @@ const Index = () => {
       queryClient.prefetchQuery({
         queryKey: ["shop-products"],
         queryFn: async () => {
-          const { data } = await supabase.from("products").select("id, name, slug, price, original_price, image_url, rating, stock, is_featured, delivery_time, category_id, categories(name, slug), product_categories(category_id, categories(name, slug)), product_subcategories(subcategory_id)").eq("is_active", true).order("created_at", { ascending: false }).limit(200);
+          // Lightweight prefetch — full data hydrated on Shop page mount
+          const { data } = await supabase
+            .from("products")
+            .select("id, name, slug, price, original_price, image_url, rating, stock, is_featured, delivery_time, category_id")
+            .eq("is_active", true)
+            .order("created_at", { ascending: false })
+            .limit(60);
           return data;
         },
       });
