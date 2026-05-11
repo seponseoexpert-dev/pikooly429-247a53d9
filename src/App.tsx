@@ -92,6 +92,7 @@ const AdminAccount = lazy(() => lazyRetry(() => import("./pages/admin/AdminAccou
 const AdminSecurity = lazy(() => lazyRetry(() => import("./pages/admin/AdminSecurity")));
 const AdminActivityLog = lazy(() => lazyRetry(() => import("./pages/admin/AdminActivityLog")));
 const AdminCartAddons = lazy(() => lazyRetry(() => import("./pages/admin/AdminCartAddons")));
+const AdminBulkOrders = lazy(() => lazyRetry(() => import("./pages/admin/AdminBulkOrders")));
 const SearchPage = lazy(() => lazyRetry(() => import("./pages/Search")));
 
 const queryClient = new QueryClient({
@@ -253,6 +254,7 @@ const App = () => (
               <Route path="/admin/security" element={<AdminRoute><AdminSecurity /></AdminRoute>} />
               <Route path="/admin/activity" element={<AdminRoute><AdminActivityLog /></AdminRoute>} />
               <Route path="/admin/cart-addons" element={<AdminRoute><AdminCartAddons /></AdminRoute>} />
+              <Route path="/admin/bulk-orders" element={<AdminRoute><AdminBulkOrders /></AdminRoute>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>

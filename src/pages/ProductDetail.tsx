@@ -17,6 +17,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { isPreorder, getAdvancePercent, getPreorderNote } from "@/lib/preorder";
+import BulkQuoteDialog from "@/components/product/BulkQuoteDialog";
+import { Building2 } from "lucide-react";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -28,6 +30,7 @@ const ProductDetail = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [activeTab, setActiveTab] = useState<"description" | "instructions" | "delivery" | "reviews">("description");
   const [customImages, setCustomImages] = useState<File[]>([]);
+  const [bulkOpen, setBulkOpen] = useState(false);
   const [customText, setCustomText] = useState("");
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
@@ -700,6 +703,39 @@ const ProductDetail = () => {
             />
           </div>
 
+          {/* Bulk / Corporate Order banner */}
+          {(product as any).bulk_order_enabled && (
+            <div className="mb-3 rounded-lg border border-blue-300 bg-blue-50 p-3 space-y-2">
+              <div className="flex items-start gap-2">
+                <Building2 className="h-4 w-4 text-blue-700 mt-0.5 shrink-0" />
+                <div className="text-[13px] leading-snug text-blue-900 flex-1">
+                  <strong>Bulk / Corporate Order Available</strong>
+                  <p className="text-[12px] mt-0.5">
+                    Order {(product as any).bulk_min_quantity || 10}+ units for special pricing.
+                    {Array.isArray((product as any).bulk_pricing_tiers) && (product as any).bulk_pricing_tiers.length > 0 && " Volume discounts:"}
+                  </p>
+                  {Array.isArray((product as any).bulk_pricing_tiers) && (product as any).bulk_pricing_tiers.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-1.5">
+                      {[...(product as any).bulk_pricing_tiers]
+                        .sort((a: any, b: any) => a.min_qty - b.min_qty)
+                        .map((t: any, i: number) => (
+                          <span key={i} className="text-[11px] px-2 py-0.5 rounded-full bg-white border border-blue-200 text-blue-800 font-medium">
+                            {t.min_qty}+ → {t.discount_percent}% OFF
+                          </span>
+                        ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={() => setBulkOpen(true)}
+                className="w-full h-10 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-semibold transition-colors"
+              >
+                Request Bulk Quote
+              </button>
+            </div>
+          )}
+
           {/* Pre-order banner */}
           {preorderActive && (
             <div className="mb-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2.5 flex items-start gap-2">
@@ -926,6 +962,17 @@ const ProductDetail = () => {
         </section>
       )}
 
+
+      {/* Bulk Quote Dialog */}
+      {(product as any).bulk_order_enabled && (
+        <BulkQuoteDialog
+          open={bulkOpen}
+          onOpenChange={setBulkOpen}
+          productId={product.id}
+          productName={product.name}
+          minQuantity={(product as any).bulk_min_quantity || 10}
+        />
+      )}
 
       {/* Mobile sticky action bar — Add to Cart + Buy Now only */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-border shadow-[0_-4px_16px_rgba(0,0,0,0.08)] px-3 pt-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom))]">

@@ -53,6 +53,8 @@ const AdminProducts = () => {
     seo_title: "", seo_description: "", delivery_time: "",
     instructions: "", delivery_info: "",
     is_preorder: false, preorder_note: "", preorder_advance_percent: 50,
+    bulk_order_enabled: false, bulk_min_quantity: 10,
+    bulk_pricing_tiers: [] as Array<{ min_qty: number; discount_percent: number }>,
   };
   const [form, setForm] = useState(defaultForm);
 
@@ -116,6 +118,9 @@ const AdminProducts = () => {
       is_preorder: (p as any).is_preorder || false,
       preorder_note: (p as any).preorder_note || "",
       preorder_advance_percent: (p as any).preorder_advance_percent ?? 50,
+      bulk_order_enabled: (p as any).bulk_order_enabled || false,
+      bulk_min_quantity: (p as any).bulk_min_quantity ?? 10,
+      bulk_pricing_tiers: Array.isArray((p as any).bulk_pricing_tiers) ? (p as any).bulk_pricing_tiers : [],
     });
     setImageFile(null);
     setDialogOpen(true);
@@ -167,7 +172,10 @@ const AdminProducts = () => {
       is_preorder: form.is_preorder,
       preorder_note: form.preorder_note.trim() || null,
       preorder_advance_percent: form.preorder_advance_percent || 50,
-    };
+      bulk_order_enabled: form.bulk_order_enabled,
+      bulk_min_quantity: form.bulk_min_quantity || 10,
+      bulk_pricing_tiers: (form.bulk_pricing_tiers || []).filter(t => t.min_qty > 0).sort((a, b) => a.min_qty - b.min_qty),
+    } as any;
 
     let productId: string | null = null;
 
@@ -505,6 +513,87 @@ const AdminProducts = () => {
                         onChange={(e) => setForm({ ...form, preorder_advance_percent: parseInt(e.target.value) || 50 })}
                         style={{ fontSize: 16 }}
                       />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Bulk / Corporate Order Section */}
+              <div className="border border-blue-200 dark:border-blue-900/40 bg-blue-50/50 dark:bg-blue-950/10 rounded-lg p-3 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={form.bulk_order_enabled}
+                    onCheckedChange={(c) => setForm({ ...form, bulk_order_enabled: c })}
+                  />
+                  <Label className="font-semibold">🏢 Bulk / Corporate Order</Label>
+                </div>
+                <p className="text-xs text-muted-foreground -mt-1">
+                  Customers will see a "Request Bulk Quote" button + automatic discount tiers.
+                </p>
+                {form.bulk_order_enabled && (
+                  <div className="space-y-3">
+                    <div>
+                      <Label className="text-xs">Minimum Bulk Quantity</Label>
+                      <Input
+                        type="number"
+                        min={1}
+                        value={form.bulk_min_quantity}
+                        onChange={(e) => setForm({ ...form, bulk_min_quantity: parseInt(e.target.value) || 10 })}
+                        style={{ fontSize: 16 }}
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Volume Discount Tiers (optional)</Label>
+                      <div className="space-y-2">
+                        {form.bulk_pricing_tiers.map((t, idx) => (
+                          <div key={idx} className="flex gap-2 items-center">
+                            <Input
+                              type="number"
+                              min={1}
+                              placeholder="Min Qty"
+                              value={t.min_qty}
+                              onChange={(e) => {
+                                const tiers = [...form.bulk_pricing_tiers];
+                                tiers[idx] = { ...tiers[idx], min_qty: parseInt(e.target.value) || 0 };
+                                setForm({ ...form, bulk_pricing_tiers: tiers });
+                              }}
+                              style={{ fontSize: 16 }}
+                            />
+                            <Input
+                              type="number"
+                              min={0}
+                              max={90}
+                              placeholder="% Off"
+                              value={t.discount_percent}
+                              onChange={(e) => {
+                                const tiers = [...form.bulk_pricing_tiers];
+                                tiers[idx] = { ...tiers[idx], discount_percent: parseInt(e.target.value) || 0 };
+                                setForm({ ...form, bulk_pricing_tiers: tiers });
+                              }}
+                              style={{ fontSize: 16 }}
+                            />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => setForm({ ...form, bulk_pricing_tiers: form.bulk_pricing_tiers.filter((_, i) => i !== idx) })}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </div>
+                        ))}
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setForm({ ...form, bulk_pricing_tiers: [...form.bulk_pricing_tiers, { min_qty: 10, discount_percent: 5 }] })}
+                        >
+                          <Plus className="h-3.5 w-3.5 mr-1" /> Add Tier
+                        </Button>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        Example: 10 units → 5% off, 50 units → 15% off. Discount auto-applies in cart.
+                      </p>
                     </div>
                   </div>
                 )}

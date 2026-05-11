@@ -300,6 +300,57 @@ export type Database = {
         }
         Relationships: []
       }
+      bulk_quote_requests: {
+        Row: {
+          admin_notes: string | null
+          company_name: string | null
+          created_at: string
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string
+          id: string
+          message: string | null
+          product_id: string | null
+          product_name: string | null
+          quantity: number
+          required_by: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          company_name?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name: string
+          customer_phone: string
+          id?: string
+          message?: string | null
+          product_id?: string | null
+          product_name?: string | null
+          quantity: number
+          required_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          company_name?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string
+          id?: string
+          message?: string | null
+          product_id?: string | null
+          product_name?: string | null
+          quantity?: number
+          required_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       cart_addons: {
         Row: {
           created_at: string
@@ -1584,6 +1635,9 @@ export type Database = {
         Row: {
           allow_custom_image: boolean
           allow_custom_text: boolean
+          bulk_min_quantity: number
+          bulk_order_enabled: boolean
+          bulk_pricing_tiers: Json
           category_id: string | null
           created_at: string
           delivery_info: string | null
@@ -1616,6 +1670,9 @@ export type Database = {
         Insert: {
           allow_custom_image?: boolean
           allow_custom_text?: boolean
+          bulk_min_quantity?: number
+          bulk_order_enabled?: boolean
+          bulk_pricing_tiers?: Json
           category_id?: string | null
           created_at?: string
           delivery_info?: string | null
@@ -1648,6 +1705,9 @@ export type Database = {
         Update: {
           allow_custom_image?: boolean
           allow_custom_text?: boolean
+          bulk_min_quantity?: number
+          bulk_order_enabled?: boolean
+          bulk_pricing_tiers?: Json
           category_id?: string | null
           created_at?: string
           delivery_info?: string | null
