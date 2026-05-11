@@ -517,6 +517,87 @@ const AdminProducts = () => {
                   </div>
                 )}
               </div>
+
+              {/* Bulk / Corporate Order Section */}
+              <div className="border border-blue-200 dark:border-blue-900/40 bg-blue-50/50 dark:bg-blue-950/10 rounded-lg p-3 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={form.bulk_order_enabled}
+                    onCheckedChange={(c) => setForm({ ...form, bulk_order_enabled: c })}
+                  />
+                  <Label className="font-semibold">🏢 Bulk / Corporate Order</Label>
+                </div>
+                <p className="text-xs text-muted-foreground -mt-1">
+                  Customers will see a "Request Bulk Quote" button + automatic discount tiers.
+                </p>
+                {form.bulk_order_enabled && (
+                  <div className="space-y-3">
+                    <div>
+                      <Label className="text-xs">Minimum Bulk Quantity</Label>
+                      <Input
+                        type="number"
+                        min={1}
+                        value={form.bulk_min_quantity}
+                        onChange={(e) => setForm({ ...form, bulk_min_quantity: parseInt(e.target.value) || 10 })}
+                        style={{ fontSize: 16 }}
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Volume Discount Tiers (optional)</Label>
+                      <div className="space-y-2">
+                        {form.bulk_pricing_tiers.map((t, idx) => (
+                          <div key={idx} className="flex gap-2 items-center">
+                            <Input
+                              type="number"
+                              min={1}
+                              placeholder="Min Qty"
+                              value={t.min_qty}
+                              onChange={(e) => {
+                                const tiers = [...form.bulk_pricing_tiers];
+                                tiers[idx] = { ...tiers[idx], min_qty: parseInt(e.target.value) || 0 };
+                                setForm({ ...form, bulk_pricing_tiers: tiers });
+                              }}
+                              style={{ fontSize: 16 }}
+                            />
+                            <Input
+                              type="number"
+                              min={0}
+                              max={90}
+                              placeholder="% Off"
+                              value={t.discount_percent}
+                              onChange={(e) => {
+                                const tiers = [...form.bulk_pricing_tiers];
+                                tiers[idx] = { ...tiers[idx], discount_percent: parseInt(e.target.value) || 0 };
+                                setForm({ ...form, bulk_pricing_tiers: tiers });
+                              }}
+                              style={{ fontSize: 16 }}
+                            />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => setForm({ ...form, bulk_pricing_tiers: form.bulk_pricing_tiers.filter((_, i) => i !== idx) })}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </div>
+                        ))}
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setForm({ ...form, bulk_pricing_tiers: [...form.bulk_pricing_tiers, { min_qty: 10, discount_percent: 5 }] })}
+                        >
+                          <Plus className="h-3.5 w-3.5 mr-1" /> Add Tier
+                        </Button>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        Example: 10 units → 5% off, 50 units → 15% off. Discount auto-applies in cart.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
               <Button type="submit" className="w-full" disabled={saving}>{saving ? "Saving..." : editing ? "Update" : "Create"}</Button>
             </form>
           </DialogContent>
