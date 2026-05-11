@@ -17,6 +17,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { isPreorder, getAdvancePercent, getPreorderNote } from "@/lib/preorder";
+import BulkQuoteDialog from "@/components/product/BulkQuoteDialog";
+import { Building2 } from "lucide-react";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -28,6 +30,7 @@ const ProductDetail = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [activeTab, setActiveTab] = useState<"description" | "instructions" | "delivery" | "reviews">("description");
   const [customImages, setCustomImages] = useState<File[]>([]);
+  const [bulkOpen, setBulkOpen] = useState(false);
   const [customText, setCustomText] = useState("");
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
