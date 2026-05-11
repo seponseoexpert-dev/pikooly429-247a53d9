@@ -439,10 +439,76 @@ const Header = () => {
                 );
               })}
 
+              {/* Grouped: Our Services (Event Service + Photography) */}
+              {(() => {
+                const servicesId = "__services__";
+                const serviceLinks = [
+                  { label: "Event Service", href: "/events", match: (p: string) => p.startsWith("/events") },
+                  { label: "Photography", href: "/photography", match: (p: string) => p === "/photography" },
+                ];
+                const isActive = serviceLinks.some((l) => l.match(location.pathname));
+                const isHovered = hoveredCat === servicesId || pinnedMegaMenu === servicesId;
+                return (
+                  <div
+                    key={servicesId}
+                    className="static"
+                    onMouseEnter={() => { if (canUseHover) openMegaMenu(servicesId); }}
+                    onMouseLeave={() => { if (canUseHover && pinnedMegaMenu !== servicesId) closeMegaMenu(); }}
+                  >
+                    <button
+                      type="button"
+                      aria-expanded={isHovered}
+                      onClick={() => {
+                        if (canUseHover) {
+                          const next = hoveredCat === servicesId ? null : servicesId;
+                          if (megaMenuCloseTimer.current) { window.clearTimeout(megaMenuCloseTimer.current); megaMenuCloseTimer.current = null; }
+                          setPinnedMegaMenu(null);
+                          setHoveredCat(next);
+                          return;
+                        }
+                        const next = pinnedMegaMenu === servicesId ? null : servicesId;
+                        setPinnedMegaMenu(next);
+                        setHoveredCat(next ?? null);
+                      }}
+                      className={`group relative flex items-center gap-1 px-3 md:px-3.5 lg:px-4 xl:px-5 py-2.5 md:py-3 text-[12px] md:text-[13px] lg:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
+                        isActive || isHovered ? "text-primary" : "text-foreground/65 hover:text-foreground"
+                      }`}
+                    >
+                      Our Services
+                      <ChevronDown size={12} className={`text-muted-foreground/60 transition-transform duration-200 ${isHovered ? "rotate-180 text-primary" : ""}`} />
+                      <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] rounded-full bg-primary transition-all duration-300 ${
+                        isActive ? "w-2/3" : isHovered ? "w-1/3" : "w-0 group-hover:w-1/4"
+                      }`} />
+                    </button>
+
+                    {isHovered && (
+                      <div
+                        className="absolute right-0 top-full z-50 pt-2 animate-in fade-in-0 slide-in-from-top-1 duration-200"
+                        onMouseEnter={() => { if (canUseHover) openMegaMenu(servicesId); }}
+                        onMouseLeave={() => { if (canUseHover) closeMegaMenu(); }}
+                      >
+                        <div className="min-w-[200px] overflow-hidden rounded-2xl border border-border/50 bg-card shadow-[0_16px_48px_-12px_hsl(var(--foreground)/0.15)] py-1.5">
+                          {serviceLinks.map((l) => (
+                            <Link
+                              key={l.href}
+                              to={l.href}
+                              onClick={() => { setHoveredCat(null); setPinnedMegaMenu(null); }}
+                              className={`block px-4 py-2.5 text-[13px] font-medium transition-colors hover:bg-primary/5 hover:text-primary ${
+                                l.match(location.pathname) ? "text-primary bg-primary/5" : "text-foreground/80"
+                              }`}
+                            >
+                              {l.label}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+
               {/* Static links */}
               {[
-                { label: "Event Service", href: "/events", match: (p: string) => p.startsWith("/events") },
-                { label: "Photography", href: "/photography", match: (p: string) => p === "/photography" },
                 { label: "Custom Bouquet", href: "/custom-bouquet", match: (p: string) => p === "/custom-bouquet" },
               ].map((link) => {
                 const isDuplicate = categories.some(
