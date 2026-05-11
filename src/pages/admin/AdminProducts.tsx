@@ -53,6 +53,8 @@ const AdminProducts = () => {
     seo_title: "", seo_description: "", delivery_time: "",
     instructions: "", delivery_info: "",
     is_preorder: false, preorder_note: "", preorder_advance_percent: 50,
+    bulk_order_enabled: false, bulk_min_quantity: 10,
+    bulk_pricing_tiers: [] as Array<{ min_qty: number; discount_percent: number }>,
   };
   const [form, setForm] = useState(defaultForm);
 
@@ -116,6 +118,9 @@ const AdminProducts = () => {
       is_preorder: (p as any).is_preorder || false,
       preorder_note: (p as any).preorder_note || "",
       preorder_advance_percent: (p as any).preorder_advance_percent ?? 50,
+      bulk_order_enabled: (p as any).bulk_order_enabled || false,
+      bulk_min_quantity: (p as any).bulk_min_quantity ?? 10,
+      bulk_pricing_tiers: Array.isArray((p as any).bulk_pricing_tiers) ? (p as any).bulk_pricing_tiers : [],
     });
     setImageFile(null);
     setDialogOpen(true);
@@ -167,7 +172,10 @@ const AdminProducts = () => {
       is_preorder: form.is_preorder,
       preorder_note: form.preorder_note.trim() || null,
       preorder_advance_percent: form.preorder_advance_percent || 50,
-    };
+      bulk_order_enabled: form.bulk_order_enabled,
+      bulk_min_quantity: form.bulk_min_quantity || 10,
+      bulk_pricing_tiers: (form.bulk_pricing_tiers || []).filter(t => t.min_qty > 0).sort((a, b) => a.min_qty - b.min_qty),
+    } as any;
 
     let productId: string | null = null;
 
