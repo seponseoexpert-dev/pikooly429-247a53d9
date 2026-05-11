@@ -483,23 +483,60 @@ const Header = () => {
 
                     {isHovered && (
                       <div
-                        className="absolute right-0 top-full z-50 pt-2 animate-in fade-in-0 slide-in-from-top-1 duration-200"
+                        className="absolute inset-x-0 top-full z-50 pt-2 animate-in fade-in-0 slide-in-from-top-1 duration-200"
                         onMouseEnter={() => { if (canUseHover) openMegaMenu(servicesId); }}
                         onMouseLeave={() => { if (canUseHover) closeMegaMenu(); }}
                       >
-                        <div className="min-w-[200px] overflow-hidden rounded-2xl border border-border/50 bg-card shadow-[0_16px_48px_-12px_hsl(var(--foreground)/0.15)] py-1.5">
-                          {serviceLinks.map((l) => (
-                            <Link
-                              key={l.href}
-                              to={l.href}
-                              onClick={() => { setHoveredCat(null); setPinnedMegaMenu(null); }}
-                              className={`block px-4 py-2.5 text-[13px] font-medium transition-colors hover:bg-primary/5 hover:text-primary ${
-                                l.match(location.pathname) ? "text-primary bg-primary/5" : "text-foreground/80"
-                              }`}
-                            >
-                              {l.label}
-                            </Link>
-                          ))}
+                        <div className="mx-auto w-full max-w-[960px] px-3 xl:px-0">
+                          <div className="overflow-hidden rounded-2xl border border-border/50 bg-card shadow-[0_16px_48px_-12px_hsl(var(--foreground)/0.15)]">
+                            <div className="flex flex-col xl:flex-row xl:items-stretch">
+                              {/* Featured sidebar */}
+                              <div className="flex items-center gap-3 border-b border-border/40 bg-muted/25 px-4 py-3 xl:w-[200px] xl:flex-col xl:items-start xl:gap-0 xl:border-b-0 xl:border-r xl:px-5 xl:py-5">
+                                <div className="hidden xl:inline-flex items-center gap-1.5 rounded-full bg-primary/8 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.18em] text-primary">
+                                  <Sparkles size={11} />
+                                  Featured
+                                </div>
+                                <h3 className="text-sm font-display font-semibold text-foreground xl:mt-3 xl:text-xl">Our Services</h3>
+                                <p className="hidden xl:block mt-1.5 text-xs leading-5 text-muted-foreground">
+                                  Premium event & photography services.
+                                </p>
+                                <Link
+                                  to="/events"
+                                  onClick={() => { setHoveredCat(null); setPinnedMegaMenu(null); }}
+                                  className="ml-auto shrink-0 inline-flex items-center rounded-full bg-primary px-3.5 py-1.5 text-[11px] font-semibold text-primary-foreground shadow-sm hover:shadow-md transition-all hover:scale-[1.02] xl:ml-0 xl:mt-4 xl:px-4 xl:py-2 xl:text-xs"
+                                >
+                                  View all
+                                </Link>
+                              </div>
+
+                              {/* Service links */}
+                              <div className="flex-1 px-3 py-3 md:px-4 md:py-3.5 xl:px-5 xl:py-5">
+                                <div className="mb-2.5 flex items-center justify-between border-b border-border/40 pb-2 xl:mb-3">
+                                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Services</p>
+                                  <span className="rounded-full bg-muted/60 px-2 py-0.5 text-[9px] font-semibold text-muted-foreground">{serviceLinks.length} items</span>
+                                </div>
+                                <div className="grid grid-cols-2 gap-1.5 xl:grid-cols-3 xl:gap-2">
+                                  {serviceLinks.map((l) => (
+                                    <Link
+                                      key={l.href}
+                                      to={l.href}
+                                      onClick={() => { setHoveredCat(null); setPinnedMegaMenu(null); }}
+                                      className={`group/item flex items-center justify-between gap-2 rounded-xl border border-transparent bg-muted/15 px-3 py-2 text-[12px] md:text-[13px] font-medium transition-all duration-200 hover:border-primary/15 hover:bg-primary/5 hover:text-primary xl:rounded-xl xl:px-3.5 xl:py-2.5 ${
+                                        l.match(location.pathname) ? "text-primary" : "text-foreground/80"
+                                      }`}
+                                    >
+                                      <span className="flex min-w-0 items-center gap-2">
+                                        <span className="flex h-5 w-5 xl:h-6 xl:w-6 shrink-0 items-center justify-center rounded-full bg-background text-primary ring-1 ring-border/60 transition-all group-hover/item:bg-primary group-hover/item:text-primary-foreground group-hover/item:ring-primary/30">
+                                          <span className="h-1 w-1 rounded-full bg-current" />
+                                        </span>
+                                        <span className="truncate text-[12px] xl:text-[13px] leading-5">{l.label}</span>
+                                      </span>
+                                    </Link>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     )}
