@@ -963,6 +963,17 @@ const ProductDetail = () => {
       )}
 
 
+      {/* Bulk Quote Dialog */}
+      {(product as any).bulk_order_enabled && (
+        <BulkQuoteDialog
+          open={bulkOpen}
+          onOpenChange={setBulkOpen}
+          productId={product.id}
+          productName={product.name}
+          minQuantity={(product as any).bulk_min_quantity || 10}
+        />
+      )}
+
       {/* Mobile sticky action bar — Add to Cart + Buy Now only */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-border shadow-[0_-4px_16px_rgba(0,0,0,0.08)] px-3 pt-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom))]">
         <div className="grid grid-cols-2 gap-2">
