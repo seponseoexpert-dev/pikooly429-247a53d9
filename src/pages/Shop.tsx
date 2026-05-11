@@ -1,6 +1,5 @@
-import { useState, useMemo, useEffect, useRef, useTransition } from "react";
+import { useState, useMemo, useEffect, useRef, useTransition, lazy, Suspense } from "react";
 import { useSearchParams, useParams, Link } from "react-router-dom";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ShoppingCart } from "lucide-react";
 import ProductCard from "@/components/product/ProductCard";
 import { ProductCardSkeleton } from "@/components/ui/skeletons";
@@ -8,6 +7,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import SEOHead from "@/components/seo/SEOHead";
+
+const ShopFaqAccordion = lazy(() => import("@/components/shop/ShopFaqAccordion"));
 
 const normalizeSearchText = (value: string | null | undefined) =>
   (value || "")
@@ -52,6 +53,7 @@ const Shop = () => {
   const [needsTruncation, setNeedsTruncation] = useState(false);
 
   const [sortBy, setSortBy] = useState("newest");
+  const [, startTransition] = useTransition();
 
   const { data: products = [], isLoading: productsLoading, isFetching } = useQuery({
     queryKey: ["shop-products"],
@@ -285,7 +287,10 @@ const Shop = () => {
         <div className="relative shrink-0">
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
+            onChange={(e) => {
+              const v = e.target.value;
+              startTransition(() => setSortBy(v));
+            }}
             className="appearance-none text-[11px] sm:text-sm bg-card border border-border rounded-lg px-3 py-2 pr-7 sm:px-4 sm:py-2.5 sm:pr-9 sm:w-[200px] md:w-[220px] outline-none text-foreground cursor-pointer shadow-sm hover:border-primary/40 focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all"
           >
             <option value="newest">Default sorting</option>
@@ -367,38 +372,11 @@ const Shop = () => {
         </div>
       )}
 
-      {activeContent && (() => {
-        const faqs = (activeContent as any).faq;
-        if (!Array.isArray(faqs) || faqs.length === 0) return null;
-        return (
-          <div className="mt-14 mb-8">
-            <div className="text-center mb-8">
-              <h2 className="text-xl md:text-2xl font-display font-semibold text-foreground">
-                Frequently Asked Questions
-              </h2>
-              <p className="text-sm text-muted-foreground mt-1">Find answers to common questions about {(activeContent as any)?.name}</p>
-            </div>
-            <div className="max-w-3xl mx-auto">
-              <Accordion type="single" collapsible className="w-full space-y-3">
-                {faqs.map((faq: any, i: number) => (
-                  <AccordionItem
-                    key={i}
-                    value={`faq-${i}`}
-                    className="border border-border/60 rounded-xl px-5 bg-card shadow-sm data-[state=open]:shadow-md transition-shadow duration-200"
-                  >
-                    <AccordionTrigger className="text-sm md:text-base font-medium text-left text-foreground py-4 hover:no-underline">
-                      {faq.question}
-                    </AccordionTrigger>
-                    <AccordionContent className="text-sm text-muted-foreground pb-4 leading-relaxed">
-                      {faq.answer}
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </div>
-          </div>
-        );
-      })()}
+      {activeContent && Array.isArray((activeContent as any).faq) && (activeContent as any).faq.length > 0 && (
+        <Suspense fallback={<div className="mt-14 mb-8 h-32" />}>
+          <ShopFaqAccordion faqs={(activeContent as any).faq} contentName={(activeContent as any)?.name} />
+        </Suspense>
+      )}
     </main>
   );
 };
