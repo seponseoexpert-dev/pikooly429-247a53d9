@@ -53,6 +53,7 @@ const Shop = () => {
   const [needsTruncation, setNeedsTruncation] = useState(false);
 
   const [sortBy, setSortBy] = useState("newest");
+  const [, startTransition] = useTransition();
 
   const { data: products = [], isLoading: productsLoading, isFetching } = useQuery({
     queryKey: ["shop-products"],
@@ -286,7 +287,10 @@ const Shop = () => {
         <div className="relative shrink-0">
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
+            onChange={(e) => {
+              const v = e.target.value;
+              startTransition(() => setSortBy(v));
+            }}
             className="appearance-none text-[11px] sm:text-sm bg-card border border-border rounded-lg px-3 py-2 pr-7 sm:px-4 sm:py-2.5 sm:pr-9 sm:w-[200px] md:w-[220px] outline-none text-foreground cursor-pointer shadow-sm hover:border-primary/40 focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all"
           >
             <option value="newest">Default sorting</option>
