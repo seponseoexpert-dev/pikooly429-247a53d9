@@ -1,6 +1,5 @@
-import { useState, useMemo, useEffect, useRef, useTransition } from "react";
+import { useState, useMemo, useEffect, useRef, useTransition, lazy, Suspense } from "react";
 import { useSearchParams, useParams, Link } from "react-router-dom";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ShoppingCart } from "lucide-react";
 import ProductCard from "@/components/product/ProductCard";
 import { ProductCardSkeleton } from "@/components/ui/skeletons";
@@ -8,6 +7,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import SEOHead from "@/components/seo/SEOHead";
+
+const ShopFaqAccordion = lazy(() => import("@/components/shop/ShopFaqAccordion"));
 
 const normalizeSearchText = (value: string | null | undefined) =>
   (value || "")
