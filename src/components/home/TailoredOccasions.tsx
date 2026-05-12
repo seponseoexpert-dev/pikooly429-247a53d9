@@ -152,7 +152,7 @@ const TailoredOccasions = memo(() => {
   if (occasionTabs.length === 0 && !isLoading) return null;
 
   return (
-    <section className="bg-background py-6 sm:py-10 md:py-12" aria-label="Tailored For Your Occasions">
+    <section className="bg-background pt-2 pb-6 sm:pt-3 sm:pb-8 md:pt-4 md:pb-10" aria-label="Tailored For Your Occasions">
       <div className="section-container">
         {/* Title - FNP style: bold, left-aligned, no eyebrow */}
         <div className="mb-3 sm:mb-4">
