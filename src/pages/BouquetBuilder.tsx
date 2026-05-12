@@ -544,7 +544,7 @@ const BouquetBuilder = () => {
                 <p className="text-xs text-muted-foreground mt-1">You can continue to review your bouquet.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+              <div className="flex gap-4 overflow-x-auto snap-x scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 pb-2.5">
                 {addonProducts.map((p: any) => {
                   const qty = selectedAddons[p.id] || 0;
                   const isSelected = qty > 0;
@@ -552,12 +552,12 @@ const BouquetBuilder = () => {
                     <div
                       key={p.id}
                       className={cn(
-                        "relative rounded-xl border-2 overflow-hidden transition-all bg-card",
-                        isSelected ? "border-primary shadow-md" : "border-border/50 hover:border-primary/30"
+                        "snap-start shrink-0 w-[114px] sm:w-[132px] md:w-[150px] lg:w-[166px] bg-card rounded-md border shadow-sm overflow-hidden flex flex-col transition-colors",
+                        isSelected ? "border-primary" : "border-border/70"
                       )}
                     >
                       <div
-                        className="aspect-square bg-secondary/20 overflow-hidden cursor-pointer relative"
+                        className="block p-2 pb-1 bg-card cursor-pointer relative"
                         onClick={() =>
                           setSelectedAddons((prev) => {
                             const c = prev[p.id] || 0;
@@ -567,18 +567,23 @@ const BouquetBuilder = () => {
                           })
                         }
                       >
-                        <img src={p.image_url || "/placeholder.svg"} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
+                        <img
+                          src={p.image_url || "/placeholder.svg"}
+                          alt={p.name}
+                          loading="lazy"
+                          className="w-full aspect-square object-cover rounded-[4px] bg-muted/20"
+                        />
                         {isSelected && (
-                          <div className="absolute top-2 right-2 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
-                            <Check className="h-3.5 w-3.5" />
+                          <div className="absolute top-3 right-3 w-5 h-5 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
+                            <Check className="h-3 w-3" />
                           </div>
                         )}
                       </div>
-                      <div className="p-2.5 sm:p-3">
-                        <h3 className="font-medium text-sm text-foreground line-clamp-1">{p.name}</h3>
-                        <p className="text-primary font-bold text-sm mt-0.5">{formatPrice(Number(p.price))}</p>
+                      <div className="px-2 pb-2 pt-1 flex flex-col gap-1 flex-1">
+                        <p className="text-[12px] sm:text-[13px] text-foreground line-clamp-2 leading-[1.18] min-h-[2.36em]">{p.name}</p>
+                        <p className="text-[13px] sm:text-sm font-bold text-foreground tabular-nums leading-tight">{formatPrice(Number(p.price))}</p>
                         {isSelected ? (
-                          <div className="flex items-center gap-2 mt-2">
+                          <div className="mt-1 h-8 rounded-[4px] border border-primary flex items-center justify-between px-1">
                             <button
                               onClick={() =>
                                 setSelectedAddons((prev) => {
@@ -588,20 +593,20 @@ const BouquetBuilder = () => {
                                   return { ...prev, [p.id]: n };
                                 })
                               }
-                              className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-foreground font-bold text-sm"
+                              className="w-6 h-6 flex items-center justify-center text-primary font-bold"
                             >−</button>
-                            <span className="text-sm font-semibold min-w-[20px] text-center">{qty}</span>
+                            <span className="text-[13px] font-bold text-foreground tabular-nums">{qty}</span>
                             <button
                               onClick={() => setSelectedAddons((prev) => ({ ...prev, [p.id]: (prev[p.id] || 0) + 1 }))}
-                              className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm"
+                              className="w-6 h-6 flex items-center justify-center text-primary font-bold"
                             >+</button>
                           </div>
                         ) : (
                           <button
                             onClick={() => setSelectedAddons((prev) => ({ ...prev, [p.id]: 1 }))}
-                            className="mt-2 w-full text-xs font-medium text-primary border border-primary/40 hover:bg-primary/5 rounded-md py-1 flex items-center justify-center gap-1 transition-colors"
+                            className="mt-1 h-8 rounded-[4px] border border-primary text-primary text-[13px] font-bold tracking-wide uppercase hover:bg-primary hover:text-primary-foreground transition-colors"
                           >
-                            <Plus className="h-3 w-3" /> Add
+                            Add
                           </button>
                         )}
                       </div>

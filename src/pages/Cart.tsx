@@ -14,6 +14,7 @@ import DeliveryModeCards from "@/components/checkout/DeliveryModeCards";
 
 type CartAddonProduct = {
   id: string;
+  slug?: string | null;
   name: string;
   price: number;
   original_price: number | null;
@@ -189,52 +190,52 @@ const CartPage = () => {
 
               {/* Last minute add-ons */}
               {addons.length > 0 && (
-                <section className="mt-5 rounded-2xl bg-cart-addon border border-cart-addon-border p-3 sm:p-4">
-                  <h3 className="text-lg sm:text-xl font-bold text-cart-teal mb-3 px-1">
-                    Your last minute add-ons
-                  </h3>
-                  <div className="-mx-3 sm:-mx-4 px-3 sm:px-4 overflow-x-auto scrollbar-hide">
-                    <div className="flex gap-3 pb-1" style={{ width: "max-content" }}>
-                      {addons.map((p) => (
-                        <div
-                          key={p.id}
-                          className="bg-card rounded-xl border border-border/40 overflow-hidden flex flex-col"
-                          style={{ width: "calc((100vw - 2rem - 1.5rem) / 2.3)", maxWidth: "200px" }}
-                        >
-                          <Link to={`/product/${p.id}`} className="block aspect-square bg-muted">
-                            <img src={p.image_url || "/placeholder.svg"} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
-                          </Link>
-                          <div className="p-2.5 flex flex-col flex-1">
-                            <Link to={`/product/${p.id}`} className="text-[14px] text-foreground line-clamp-2 leading-snug hover:text-primary">
-                              {p.name}
-                            </Link>
-                            <p className="text-foreground font-bold text-[15px] mt-1.5">{formatPrice(p.price)}</p>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="rounded-md mt-2 h-9 text-[13px] font-semibold border-cart-teal text-cart-teal hover:bg-cart-delivery bg-card"
-                              onClick={() =>
-                                addItem(
-                                  {
-                                    id: p.id,
-                                    name: p.name,
-                                    price: p.price,
-                                    originalPrice: p.original_price ?? undefined,
-                                    image: p.image_url || "/placeholder.svg",
-                                    category: "",
-                                    inStock: true,
-                                  },
-                                  undefined,
-                                  true
-                                )
-                              }
-                            >
-                              Add to Cart
-                            </Button>
-                          </div>
+                <section className="mt-5 sm:mt-8 md:mt-10">
+                  <div className="mb-3">
+                    <h2 className="text-foreground font-medium leading-tight" style={{ fontSize: "clamp(0.92rem, 1vw + 0.55rem, 1.05rem)" }}>
+                      Recommended Addon Products
+                    </h2>
+                  </div>
+                  <div className="flex gap-4 sm:gap-4 overflow-x-auto snap-x scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 pb-2.5">
+                    {addons.map((p) => (
+                      <div
+                        key={p.id}
+                        className="snap-start shrink-0 w-[114px] sm:w-[132px] md:w-[150px] lg:w-[166px] bg-card rounded-md border border-border/70 shadow-sm overflow-hidden flex flex-col"
+                      >
+                        <Link to={`/product/${p.slug || p.id}`} className="block p-2 pb-1 bg-card">
+                          <img
+                            src={p.image_url || "/placeholder.svg"}
+                            alt={p.name}
+                            loading="lazy"
+                            className="w-full aspect-square object-cover rounded-[4px] bg-muted/20"
+                          />
+                        </Link>
+                        <div className="px-2 pb-2 pt-1 flex flex-col gap-1 flex-1">
+                          <p className="text-[12px] sm:text-[13px] text-foreground line-clamp-2 leading-[1.18] min-h-[2.36em]">{p.name}</p>
+                          <p className="text-[13px] sm:text-sm font-bold text-foreground tabular-nums leading-tight">{formatPrice(p.price)}</p>
+                          <button
+                            onClick={() =>
+                              addItem(
+                                {
+                                  id: p.id,
+                                  name: p.name,
+                                  price: p.price,
+                                  originalPrice: p.original_price ?? undefined,
+                                  image: p.image_url || "/placeholder.svg",
+                                  category: "",
+                                  inStock: true,
+                                },
+                                undefined,
+                                true
+                              )
+                            }
+                            className="mt-1 h-8 rounded-[4px] border border-primary text-primary text-[13px] font-bold tracking-wide uppercase hover:bg-primary hover:text-primary-foreground transition-colors"
+                          >
+                            Add
+                          </button>
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    ))}
                   </div>
                 </section>
               )}
