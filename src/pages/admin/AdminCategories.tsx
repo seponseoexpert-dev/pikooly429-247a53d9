@@ -152,7 +152,7 @@ const AdminCategories = () => {
   };
 
   // Subcategory handlers
-  const resetSubForm = () => { setSubForm({ name: "", slug: "", description: "", image_url: "", is_active: true, display_order: 0, category_id: "", seo_title: "", short_description: "", long_description: "", faq: "[]", show_in_tailored: false }); setEditingSub(null); setSubImageFile(null); };
+  const resetSubForm = () => { setSubForm({ name: "", slug: "", description: "", image_url: "", is_active: true, display_order: 0, category_id: "", seo_title: "", short_description: "", long_description: "", faq: "[]", show_in_tailored: false, mega_menu_group: "" }); setEditingSub(null); setSubImageFile(null); };
 
   const openCreateSub = (categoryId: string) => {
     resetSubForm();
