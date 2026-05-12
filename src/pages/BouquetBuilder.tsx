@@ -33,8 +33,7 @@ const BouquetBuilder = () => {
   const [selectedFlowers, setSelectedFlowers] = useState<Record<string, number>>({});
   const [designImages, setDesignImages] = useState<File[]>([]);
   const [designPreviews, setDesignPreviews] = useState<string[]>([]);
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const [selectedColorId, setSelectedColorId] = useState<string | null>(null);
+  const [selectedAddons, setSelectedAddons] = useState<Record<string, number>>({});
   const [giftMessage, setGiftMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedDistrict, setSelectedDistrict] = useState<string>(() =>
