@@ -18,16 +18,11 @@ import { toast } from "sonner";
 const STEPS = [
   { id: 1, label: "Flowers", icon: Flower2 },
   { id: 2, label: "Design", icon: Upload },
-  { id: 3, label: "Size & Color", icon: Ruler },
+  { id: 3, label: "Add-ons", icon: Gift },
   { id: 4, label: "Review", icon: MessageSquare },
 ];
 
-const FIXED_SIZES = [
-  { id: "s", name: "S", description: "Small bouquet" },
-  { id: "m", name: "M", description: "Medium bouquet" },
-  { id: "l", name: "L", description: "Large bouquet" },
-  { id: "xl", name: "XL", description: "Extra large bouquet" },
-];
+const DESIGN_SERVICE_CHARGE = 150;
 
 const BouquetBuilder = () => {
   const navigate = useNavigate();
