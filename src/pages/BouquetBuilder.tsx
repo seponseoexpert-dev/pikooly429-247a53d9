@@ -445,127 +445,171 @@ const BouquetBuilder = () => {
 
         {step === 2 && (
           <div>
-            <h2 className="text-xl md:text-2xl font-display font-bold text-foreground mb-1">Upload Your Design</h2>
-            <p className="text-sm text-muted-foreground mb-6">Upload your preferred bouquet design (optional, max 3 images)</p>
+            <h2 className="text-xl md:text-2xl font-display font-bold text-foreground mb-1">Choose Your Design</h2>
+            <p className="text-sm text-muted-foreground mb-6">Upload a design photo, or skip for our default plain white wrap (no extra charge).</p>
 
-            <div className="max-w-md space-y-4">
-              <div className="flex gap-3 flex-wrap">
-                {designPreviews.map((src, i) => (
-                  <div key={i} className="relative w-24 h-24 rounded-xl overflow-hidden border-2 border-border group">
-                    <img src={src} alt={`Design ${i + 1}`} className="w-full h-full object-cover" />
+            <div className="grid sm:grid-cols-2 gap-3 max-w-2xl mb-6">
+              <button
+                type="button"
+                onClick={() => {
+                  designPreviews.forEach((p) => URL.revokeObjectURL(p));
+                  setDesignImages([]);
+                  setDesignPreviews([]);
+                }}
+                className={cn(
+                  "rounded-xl border-2 p-4 text-left transition-all bg-card",
+                  designImages.length === 0
+                    ? "border-primary shadow-md bg-primary/5"
+                    : "border-border/50 hover:border-primary/30"
+                )}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-semibold text-foreground">Plain White Wrap</span>
+                  <span className="text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded-full">FREE</span>
+                </div>
+                <p className="text-xs text-muted-foreground">No custom design — flowers wrapped beautifully in our signature plain white sleeve. No extra charge.</p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className={cn(
+                  "rounded-xl border-2 p-4 text-left transition-all bg-card",
+                  designImages.length > 0
+                    ? "border-primary shadow-md bg-primary/5"
+                    : "border-border/50 hover:border-primary/30"
+                )}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-semibold text-foreground">Upload Custom Design</span>
+                  <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">+{formatPrice(DESIGN_SERVICE_CHARGE)}</span>
+                </div>
+                <p className="text-xs text-muted-foreground">Share up to 3 photos of your dream bouquet. Our designer will craft it to match your vision.</p>
+              </button>
+            </div>
+
+            {designImages.length > 0 && (
+              <div className="max-w-md space-y-3">
+                <div className="flex gap-3 flex-wrap">
+                  {designPreviews.map((src, i) => (
+                    <div key={i} className="relative w-24 h-24 rounded-xl overflow-hidden border-2 border-border group">
+                      <img src={src} alt={`Design ${i + 1}`} className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => removeDesignImage(i)}
+                        className="absolute top-1 right-1 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ))}
+                  {designImages.length < 3 && (
                     <button
                       type="button"
-                      onClick={() => removeDesignImage(i)}
-                      className="absolute top-1 right-1 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-24 h-24 rounded-xl border-2 border-dashed border-primary/40 flex flex-col items-center justify-center gap-1.5 text-primary/60 hover:border-primary hover:text-primary transition-colors"
                     >
-                      <X size={14} />
+                      <ImagePlus size={24} />
+                      <span className="text-[10px] font-medium">Add More</span>
                     </button>
-                  </div>
-                ))}
-
-                {designImages.length < 3 && (
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="w-24 h-24 rounded-xl border-2 border-dashed border-primary/40 flex flex-col items-center justify-center gap-1.5 text-primary/60 hover:border-primary hover:text-primary transition-colors"
-                  >
-                    <ImagePlus size={24} />
-                    <span className="text-[10px] font-medium">Add Photo</span>
-                  </button>
-                )}
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground">Max 3 images, 5MB each. Designer service charge: {formatPrice(DESIGN_SERVICE_CHARGE)}.</p>
               </div>
+            )}
 
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                multiple
-                className="hidden"
-                onChange={(e) => {
-                  handleDesignUpload(e.target.files);
-                  e.target.value = "";
-                }}
-              />
-
-              <p className="text-xs text-muted-foreground">
-                Share a photo of how you'd like your bouquet to look. We'll try to match it as closely as possible.
-              </p>
-            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              multiple
+              className="hidden"
+              onChange={(e) => {
+                handleDesignUpload(e.target.files);
+                e.target.value = "";
+              }}
+            />
           </div>
         )}
 
         {step === 3 && (
           <div>
-            <h2 className="text-xl md:text-2xl font-display font-bold text-foreground mb-1">Choose Size & Color</h2>
-            <p className="text-sm text-muted-foreground mb-6">Pick your bouquet size and color theme</p>
+            <h2 className="text-xl md:text-2xl font-display font-bold text-foreground mb-1">Recommended Add-ons</h2>
+            <p className="text-sm text-muted-foreground mb-6">Make your gift extra special with these popular add-ons (optional).</p>
 
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <Ruler className="h-4 w-4 text-primary" /> Size
-                </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {FIXED_SIZES.map((size) => {
-                    const isSelected = selectedSize === size.id;
-                    return (
+            {addonProducts.length === 0 ? (
+              <div className="text-center py-12 border-2 border-dashed border-border rounded-xl bg-muted/30">
+                <Gift className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
+                <p className="text-sm font-medium text-foreground">No add-ons available right now</p>
+                <p className="text-xs text-muted-foreground mt-1">You can continue to review your bouquet.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                {addonProducts.map((p: any) => {
+                  const qty = selectedAddons[p.id] || 0;
+                  const isSelected = qty > 0;
+                  return (
+                    <div
+                      key={p.id}
+                      className={cn(
+                        "relative rounded-xl border-2 overflow-hidden transition-all bg-card",
+                        isSelected ? "border-primary shadow-md" : "border-border/50 hover:border-primary/30"
+                      )}
+                    >
                       <div
-                        key={size.id}
-                        onClick={() => setSelectedSize(size.id)}
-                        className={cn(
-                          "rounded-xl border-2 p-4 cursor-pointer transition-all bg-card text-center",
-                          isSelected ? "border-primary shadow-md bg-primary/5" : "border-border/50 hover:border-primary/30"
-                        )}
+                        className="aspect-square bg-secondary/20 overflow-hidden cursor-pointer relative"
+                        onClick={() =>
+                          setSelectedAddons((prev) => {
+                            const c = prev[p.id] || 0;
+                            if (c === 0) return { ...prev, [p.id]: 1 };
+                            const { [p.id]: _, ...rest } = prev;
+                            return rest;
+                          })
+                        }
                       >
-                        <div className="text-2xl font-display font-bold text-foreground mb-1">{size.name}</div>
-                        <p className="text-xs text-muted-foreground">{size.description}</p>
+                        <img src={p.image_url || "/placeholder.svg"} alt={p.name} className="w-full h-full object-cover" loading="lazy" />
                         {isSelected && (
-                          <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto mt-2">
+                          <div className="absolute top-2 right-2 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
                             <Check className="h-3.5 w-3.5" />
                           </div>
                         )}
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {bouquetColors.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                    <Palette className="h-4 w-4 text-primary" /> Color Theme
-                  </h3>
-                  <div className="flex flex-wrap gap-3">
-                    {bouquetColors.map((c: any) => {
-                      const active = selectedColorId === c.id;
-                      return (
-                        <button
-                          key={c.id}
-                          type="button"
-                          onClick={() => setSelectedColorId(c.id)}
-                          className={cn(
-                            "flex flex-col items-center gap-1.5 transition-all",
-                            active ? "scale-105" : "opacity-80 hover:opacity-100"
-                          )}
-                        >
-                          <span
-                            className={cn(
-                              "w-12 h-12 rounded-full border-2 shadow-sm flex items-center justify-center",
-                              active ? "border-primary ring-2 ring-primary/30" : "border-border"
-                            )}
-                            style={{ backgroundColor: c.hex_code }}
+                      <div className="p-2.5 sm:p-3">
+                        <h3 className="font-medium text-sm text-foreground line-clamp-1">{p.name}</h3>
+                        <p className="text-primary font-bold text-sm mt-0.5">{formatPrice(Number(p.price))}</p>
+                        {isSelected ? (
+                          <div className="flex items-center gap-2 mt-2">
+                            <button
+                              onClick={() =>
+                                setSelectedAddons((prev) => {
+                                  const c = prev[p.id] || 0;
+                                  const n = Math.max(0, c - 1);
+                                  if (n === 0) { const { [p.id]: _, ...rest } = prev; return rest; }
+                                  return { ...prev, [p.id]: n };
+                                })
+                              }
+                              className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-foreground font-bold text-sm"
+                            >−</button>
+                            <span className="text-sm font-semibold min-w-[20px] text-center">{qty}</span>
+                            <button
+                              onClick={() => setSelectedAddons((prev) => ({ ...prev, [p.id]: (prev[p.id] || 0) + 1 }))}
+                              className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm"
+                            >+</button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setSelectedAddons((prev) => ({ ...prev, [p.id]: 1 }))}
+                            className="mt-2 w-full text-xs font-medium text-primary border border-primary/40 hover:bg-primary/5 rounded-md py-1 flex items-center justify-center gap-1 transition-colors"
                           >
-                            {active && <Check className="h-5 w-5 text-white drop-shadow" />}
-                          </span>
-                          <span className={cn("text-[11px] font-medium", active ? "text-primary" : "text-muted-foreground")}>
-                            {c.name}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
+                            <Plus className="h-3 w-3" /> Add
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 
