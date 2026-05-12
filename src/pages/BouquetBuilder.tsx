@@ -641,19 +641,15 @@ const BouquetBuilder = () => {
                 </div>
               )}
 
-              {selectedSizeItem && (
-                <div className="bg-card border border-border rounded-xl p-4 space-y-2">
-                  <h3 className="font-semibold text-foreground flex items-center gap-2"><Ruler className="h-4 w-4 text-primary" /> Size & Color</h3>
-                  <div className="text-sm text-foreground">{selectedSizeItem.name} — {selectedSizeItem.description}</div>
-                  {selectedColor && (
-                    <div className="flex items-center gap-2 text-sm text-foreground">
-                      <span
-                        className="w-4 h-4 rounded-full border border-border"
-                        style={{ backgroundColor: selectedColor.hex_code }}
-                      />
-                      <span>Color: <span className="font-medium">{selectedColor.name}</span></span>
+              {selectedAddonsList.length > 0 && (
+                <div className="bg-card border border-border rounded-xl p-4">
+                  <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2"><Gift className="h-4 w-4 text-primary" /> Add-ons</h3>
+                  {selectedAddonsList.map((a) => (
+                    <div key={a.id} className="flex justify-between items-center py-1.5 text-sm">
+                      <span className="text-foreground">{a.name} × {a.qty}</span>
+                      <span className="text-muted-foreground">{formatPrice(Number(a.price) * a.qty)}</span>
                     </div>
-                  )}
+                  ))}
                 </div>
               )}
 
@@ -667,7 +663,7 @@ const BouquetBuilder = () => {
                 />
               </div>
 
-              <div className="bg-card border border-border rounded-xl p-4">
+              <div className="bg-card border border-border rounded-xl p-4 space-y-2">
                 <div className="flex justify-between items-center text-sm">
                   <div>
                     <span className="text-foreground font-medium">Bouquet Making Charge</span>
@@ -675,6 +671,15 @@ const BouquetBuilder = () => {
                   </div>
                   <span className="text-muted-foreground font-medium">{formatPrice(MAKING_CHARGE)}</span>
                 </div>
+                {designCharge > 0 && (
+                  <div className="flex justify-between items-center text-sm pt-2 border-t border-border">
+                    <div>
+                      <span className="text-foreground font-medium">Designer Service</span>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">Custom design crafted from your photo</p>
+                    </div>
+                    <span className="text-muted-foreground font-medium">{formatPrice(designCharge)}</span>
+                  </div>
+                )}
               </div>
 
               <div className="bg-primary/5 border-2 border-primary rounded-xl p-4 flex justify-between items-center">
