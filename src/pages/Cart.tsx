@@ -9,6 +9,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
 import SEOHead from "@/components/seo/SEOHead";
+import { useCheckoutDelivery } from "@/hooks/useCheckoutDelivery";
+import DeliveryModeCards from "@/components/checkout/DeliveryModeCards";
 
 type CartAddonProduct = {
   id: string;
@@ -23,6 +25,7 @@ const CartPage = () => {
   const { items, removeItem, updateQuantity, totalPrice, totalItems, addItem, setIsOpen } = useCart();
   const { formatPrice } = useMultiCurrency();
   const navigate = useNavigate();
+  const { groups: deliveryGroups } = useCheckoutDelivery(items as any);
 
   // Compute totals & savings (Floweraura-style)
   const originalTotal = items.reduce((sum, i) => {
@@ -175,6 +178,14 @@ const CartPage = () => {
                   </div>
                 );
               })}
+
+              {/* Delivery Method */}
+              {deliveryGroups.length > 0 && (
+                <div className="mt-2">
+                  <h3 className="text-base font-bold text-foreground mb-2 px-1">Delivery Method</h3>
+                  <DeliveryModeCards groups={deliveryGroups} formatPrice={formatPrice} />
+                </div>
+              )}
 
               {/* Last minute add-ons */}
               {addons.length > 0 && (
