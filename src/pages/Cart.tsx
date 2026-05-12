@@ -179,6 +179,14 @@ const CartPage = () => {
                 );
               })}
 
+              {/* Delivery Method */}
+              {deliveryGroups.length > 0 && (
+                <div className="mt-2">
+                  <h3 className="text-base font-bold text-foreground mb-2 px-1">Delivery Method</h3>
+                  <DeliveryModeCards groups={deliveryGroups} formatPrice={formatPrice} />
+                </div>
+              )}
+
               {/* Last minute add-ons */}
               {addons.length > 0 && (
                 <section className="mt-5 rounded-2xl bg-cart-addon border border-cart-addon-border p-3 sm:p-4">
