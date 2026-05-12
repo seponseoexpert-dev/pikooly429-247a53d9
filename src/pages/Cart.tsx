@@ -61,7 +61,7 @@ const CartPage = () => {
     <>
       <SEOHead title="Your Cart" description="Review the items in your cart and proceed to checkout." />
       <main className="min-h-screen bg-muted/30 pb-32 lg:pb-12">
-        <div className="container mx-auto px-3 sm:px-4 pt-8 sm:pt-10 pb-4 max-w-3xl lg:max-w-6xl lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-6 lg:items-start">
+        <div className="container mx-auto px-3 sm:px-4 pt-3 sm:pt-5 pb-4 max-w-3xl lg:max-w-6xl lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-6 lg:items-start">
           {items.length === 0 ? (
             <div className="lg:col-span-2 text-center py-20 text-muted-foreground bg-card rounded-2xl border border-border/40">
               <div className="w-20 h-20 mx-auto mb-5 rounded-full bg-muted flex items-center justify-center">
