@@ -802,32 +802,32 @@ const ProductDetail = () => {
 
       {/* Recommended Addon Products */}
       {addonProducts.length > 0 && (
-        <section className="mt-6 sm:mt-10 md:mt-12">
-          <div className="mb-3 sm:mb-4">
-            <h2 className="text-foreground font-semibold" style={{ fontSize: "clamp(0.95rem, 1.2vw + 0.55rem, 1.15rem)" }}>
+        <section className="mt-5 sm:mt-8 md:mt-10">
+          <div className="mb-3">
+            <h2 className="text-foreground font-medium leading-tight" style={{ fontSize: "clamp(0.92rem, 1vw + 0.55rem, 1.05rem)" }}>
               Recommended Addon Products
             </h2>
           </div>
-          <div className="flex gap-2.5 sm:gap-3 overflow-x-auto snap-x scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 pb-2">
+          <div className="flex gap-4 sm:gap-4 overflow-x-auto snap-x scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 pb-2.5">
             {addonProducts.slice(0, 12).map((p: any) => (
               <div
                 key={p.id}
-                className="snap-start shrink-0 basis-[40%] sm:basis-[26%] md:basis-[20%] lg:basis-[15.5%] bg-white rounded-xl border border-border/60 overflow-hidden flex flex-col"
+                className="snap-start shrink-0 w-[114px] sm:w-[132px] md:w-[150px] lg:w-[166px] bg-card rounded-md border border-border/70 shadow-sm overflow-hidden flex flex-col"
               >
-                <Link to={`/product/${p.slug || p.id}`} className="block aspect-square bg-muted/20">
+                <Link to={`/product/${p.slug || p.id}`} className="block p-2 pb-1 bg-card">
                   <img
                     src={p.image_url || "/placeholder.svg"}
                     alt={p.name}
                     loading="lazy"
-                    className="w-full h-full object-cover"
+                    className="w-full aspect-square object-cover rounded-[4px] bg-muted/20"
                   />
                 </Link>
-                <div className="p-2 sm:p-2.5 flex flex-col gap-1 flex-1">
-                  <p className="text-[12px] sm:text-[13px] text-foreground line-clamp-2 leading-snug min-h-[2.4em]">{p.name}</p>
-                  <p className="text-[13px] sm:text-sm font-semibold text-foreground tabular-nums">{formatPrice(Number(p.price))}</p>
+                <div className="px-2 pb-2 pt-1 flex flex-col gap-1 flex-1">
+                  <p className="text-[12px] sm:text-[13px] text-foreground line-clamp-2 leading-[1.18] min-h-[2.36em]">{p.name}</p>
+                  <p className="text-[13px] sm:text-sm font-bold text-foreground tabular-nums leading-tight">{formatPrice(Number(p.price))}</p>
                   <button
                     onClick={() => handleAddAddon(p)}
-                    className="mt-1 h-8 rounded-full border border-primary text-primary text-[11px] font-bold tracking-wider uppercase hover:bg-primary hover:text-primary-foreground transition-colors"
+                    className="mt-1 h-8 rounded-[4px] border border-primary text-primary text-[13px] font-bold tracking-wide uppercase hover:bg-primary hover:text-primary-foreground transition-colors"
                   >
                     Add
                   </button>
