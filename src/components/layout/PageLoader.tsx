@@ -7,22 +7,89 @@ const PageLoader = () => {
   const letter = (brandName.trim()[0] || "P").toUpperCase();
 
   return (
-    <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
+    <div className="min-h-[60vh] flex flex-col items-center justify-center gap-6">
       <motion.div
-        className="relative w-16 h-16 flex items-center justify-center"
-        initial={{ opacity: 0, scale: 0.8 }}
+        className="relative w-28 h-28 flex items-center justify-center"
+        initial={{ opacity: 0, scale: 0.85 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.2 }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       >
-        <div className="absolute inset-0 rounded-full border-[3px] border-muted" />
-        <div className="absolute inset-0 rounded-full border-[3px] border-primary border-t-transparent animate-spin" />
-        <span
-          className="relative text-primary font-bold text-2xl leading-none"
-          style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}
+        {/* Outer soft glow */}
+        <motion.div
+          className="absolute inset-0 rounded-full blur-2xl"
+          style={{
+            background:
+              "radial-gradient(circle, hsl(var(--primary) / 0.45) 0%, transparent 70%)",
+          }}
+          animate={{ scale: [1, 1.15, 1], opacity: [0.6, 0.9, 0.6] }}
+          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+        />
+
+        {/* Rotating gradient ring */}
+        <motion.div
+          className="absolute inset-0 rounded-full p-[2px]"
+          style={{
+            background:
+              "conic-gradient(from 0deg, transparent 0%, hsl(var(--primary)) 35%, hsl(var(--primary-glow)) 55%, transparent 80%)",
+            WebkitMask:
+              "radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px))",
+            mask: "radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px))",
+          }}
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1.6, repeat: Infinity, ease: "linear" }}
+        />
+
+        {/* Inner static track */}
+        <div className="absolute inset-[6px] rounded-full border border-border/60 bg-background/80 backdrop-blur-sm shadow-inner" />
+
+        {/* Letter with subtle pulse */}
+        <motion.span
+          className="relative text-3xl font-bold leading-none bg-clip-text text-transparent"
+          style={{
+            fontFamily:
+              '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
+            backgroundImage:
+              "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-glow)) 100%)",
+            letterSpacing: "-0.04em",
+          }}
+          animate={{ scale: [1, 1.06, 1] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
         >
           {letter}
-        </span>
+        </motion.span>
+
+        {/* Orbit dot */}
+        <motion.div
+          className="absolute inset-0"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 2.2, repeat: Infinity, ease: "linear" }}
+        >
+          <div
+            className="absolute left-1/2 -top-1 -translate-x-1/2 w-2 h-2 rounded-full"
+            style={{
+              background: "hsl(var(--primary))",
+              boxShadow: "0 0 12px hsl(var(--primary) / 0.8)",
+            }}
+          />
+        </motion.div>
       </motion.div>
+
+      {/* Animated dots */}
+      <div className="flex items-center gap-1.5">
+        {[0, 1, 2].map((i) => (
+          <motion.span
+            key={i}
+            className="w-1.5 h-1.5 rounded-full bg-primary/60"
+            animate={{ opacity: [0.2, 1, 0.2], y: [0, -3, 0] }}
+            transition={{
+              duration: 1.2,
+              repeat: Infinity,
+              delay: i * 0.15,
+              ease: "easeInOut",
+            }}
+          />
+        ))}
+      </div>
     </div>
   );
 };
