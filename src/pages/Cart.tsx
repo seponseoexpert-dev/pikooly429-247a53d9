@@ -25,6 +25,7 @@ const CartPage = () => {
   const { items, removeItem, updateQuantity, totalPrice, totalItems, addItem, setIsOpen } = useCart();
   const { formatPrice } = useMultiCurrency();
   const navigate = useNavigate();
+  const { groups: deliveryGroups } = useCheckoutDelivery(items as any);
 
   // Compute totals & savings (Floweraura-style)
   const originalTotal = items.reduce((sum, i) => {
