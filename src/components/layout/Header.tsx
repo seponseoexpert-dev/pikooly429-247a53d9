@@ -60,7 +60,7 @@ const Header = () => {
       const [{ data: subs, error: subsErr }, { data: prods, error: prodErr }] = await Promise.all([
         supabase
           .from("subcategories")
-          .select("id, name, slug, category_id, image_url")
+          .select("id, name, slug, category_id, image_url, mega_menu_group")
           .eq("is_active", true)
           .order("display_order"),
         supabase
@@ -420,31 +420,89 @@ const Header = () => {
 
                               {/* Subcategories */}
                               <div className="flex-1 px-3 py-3 md:px-4 md:py-3.5 xl:px-5 xl:py-5">
-                                <div className="max-h-[50vh] overflow-y-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent pr-1">
+                                <div className="max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent pr-1">
                                   <div className="mb-2.5 flex items-center justify-between border-b border-border/40 pb-2 xl:mb-3">
                                     <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Subcategories</p>
                                     <span className="rounded-full bg-muted/60 px-2 py-0.5 text-[9px] font-semibold text-muted-foreground">{subs.length} items</span>
                                   </div>
-                                  <div className="grid grid-cols-2 gap-1.5 xl:grid-cols-3 xl:gap-2">
-                                    {subs.map((sub) => (
-                                      <Link
-                                        key={sub.id}
-                                        to={`/product-category/${cat.slug}/${sub.slug}`}
-                                        onClick={() => { setHoveredCat(null); setPinnedMegaMenu(null); }}
-                                        className="group/item flex items-center justify-between gap-2 rounded-xl border border-transparent bg-muted/15 px-3 py-2 text-[12px] md:text-[13px] font-medium text-foreground/80 transition-all duration-200 hover:border-primary/15 hover:bg-primary/5 hover:text-primary xl:rounded-xl xl:px-3.5 xl:py-2.5"
-                                      >
-                                        <span className="flex min-w-0 items-center gap-2">
-                                          <span className="flex h-5 w-5 xl:h-6 xl:w-6 shrink-0 items-center justify-center rounded-full bg-background text-primary ring-1 ring-border/60 transition-all group-hover/item:bg-primary group-hover/item:text-primary-foreground group-hover/item:ring-primary/30">
-                                            <span className="h-1 w-1 rounded-full bg-current" />
-                                          </span>
-                                          <span className="truncate text-[12px] xl:text-[13px] leading-5">{sub.name}</span>
-                                        </span>
-                                        <span className="shrink-0 rounded-full bg-background/80 px-1.5 py-0.5 text-[9px] font-semibold tabular-nums text-muted-foreground ring-1 ring-border/50 transition-colors group-hover/item:bg-primary/8 group-hover/item:text-primary">
-                                          {sub.product_count}
-                                        </span>
-                                      </Link>
-                                    ))}
-                                  </div>
+                                  {(() => {
+                                    const groups = new Map<string, typeof subs>();
+                                    const ungrouped: typeof subs = [];
+                                    subs.forEach((s) => {
+                                      const g = ((s as any).mega_menu_group || "").trim();
+                                      if (!g) { ungrouped.push(s); return; }
+                                      if (!groups.has(g)) groups.set(g, []);
+                                      groups.get(g)!.push(s);
+                                    });
+                                    const groupEntries = Array.from(groups.entries());
+                                    const hasGroups = groupEntries.length > 0;
+                                    if (!hasGroups) {
+                                      return (
+                                        <div className="grid grid-cols-2 gap-1.5 xl:grid-cols-3 xl:gap-2">
+                                          {subs.map((sub) => (
+                                            <Link
+                                              key={sub.id}
+                                              to={`/product-category/${cat.slug}/${sub.slug}`}
+                                              onClick={() => { setHoveredCat(null); setPinnedMegaMenu(null); }}
+                                              className="group/item flex items-center justify-between gap-2 rounded-xl border border-transparent bg-muted/15 px-3 py-2 text-[12px] md:text-[13px] font-medium text-foreground/80 transition-all duration-200 hover:border-primary/15 hover:bg-primary/5 hover:text-primary xl:rounded-xl xl:px-3.5 xl:py-2.5"
+                                            >
+                                              <span className="flex min-w-0 items-center gap-2">
+                                                <span className="flex h-5 w-5 xl:h-6 xl:w-6 shrink-0 items-center justify-center rounded-full bg-background text-primary ring-1 ring-border/60 transition-all group-hover/item:bg-primary group-hover/item:text-primary-foreground group-hover/item:ring-primary/30">
+                                                  <span className="h-1 w-1 rounded-full bg-current" />
+                                                </span>
+                                                <span className="truncate text-[12px] xl:text-[13px] leading-5">{sub.name}</span>
+                                              </span>
+                                              <span className="shrink-0 rounded-full bg-background/80 px-1.5 py-0.5 text-[9px] font-semibold tabular-nums text-muted-foreground ring-1 ring-border/50 transition-colors group-hover/item:bg-primary/8 group-hover/item:text-primary">
+                                                {sub.product_count}
+                                              </span>
+                                            </Link>
+                                          ))}
+                                        </div>
+                                      );
+                                    }
+                                    return (
+                                      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-5 gap-y-4">
+                                        {groupEntries.map(([groupName, items]) => (
+                                          <div key={groupName} className="min-w-0">
+                                            <h4 className="text-[12px] xl:text-[13px] font-bold text-foreground mb-2 select-none cursor-default">
+                                              {groupName}
+                                            </h4>
+                                            <ul className="space-y-1">
+                                              {items.map((sub) => (
+                                                <li key={sub.id}>
+                                                  <Link
+                                                    to={`/product-category/${cat.slug}/${sub.slug}`}
+                                                    onClick={() => { setHoveredCat(null); setPinnedMegaMenu(null); }}
+                                                    className="block truncate text-[12px] xl:text-[13px] text-foreground/70 hover:text-primary transition-colors py-0.5"
+                                                  >
+                                                    {sub.name}
+                                                  </Link>
+                                                </li>
+                                              ))}
+                                            </ul>
+                                          </div>
+                                        ))}
+                                        {ungrouped.length > 0 && (
+                                          <div className="min-w-0">
+                                            <h4 className="text-[12px] xl:text-[13px] font-bold text-foreground mb-2 select-none cursor-default">More</h4>
+                                            <ul className="space-y-1">
+                                              {ungrouped.map((sub) => (
+                                                <li key={sub.id}>
+                                                  <Link
+                                                    to={`/product-category/${cat.slug}/${sub.slug}`}
+                                                    onClick={() => { setHoveredCat(null); setPinnedMegaMenu(null); }}
+                                                    className="block truncate text-[12px] xl:text-[13px] text-foreground/70 hover:text-primary transition-colors py-0.5"
+                                                  >
+                                                    {sub.name}
+                                                  </Link>
+                                                </li>
+                                              ))}
+                                            </ul>
+                                          </div>
+                                        )}
+                                      </div>
+                                    );
+                                  })()}
                                 </div>
                               </div>
                             </div>

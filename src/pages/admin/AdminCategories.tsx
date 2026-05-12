@@ -31,6 +31,7 @@ interface Subcategory {
   display_order: number;
   is_active: boolean;
   show_in_tailored: boolean;
+  mega_menu_group?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -48,7 +49,7 @@ const AdminCategories = () => {
   // Subcategory state
   const [subDialogOpen, setSubDialogOpen] = useState(false);
   const [editingSub, setEditingSub] = useState<Subcategory | null>(null);
-  const [subForm, setSubForm] = useState({ name: "", slug: "", description: "", image_url: "", is_active: true, display_order: 0, category_id: "", seo_title: "", short_description: "", long_description: "", faq: "[]", show_in_tailored: false });
+  const [subForm, setSubForm] = useState({ name: "", slug: "", description: "", image_url: "", is_active: true, display_order: 0, category_id: "", seo_title: "", short_description: "", long_description: "", faq: "[]", show_in_tailored: false, mega_menu_group: "" });
   const [subImageFile, setSubImageFile] = useState<File | null>(null);
   const [savingSub, setSavingSub] = useState(false);
   const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set());
@@ -151,7 +152,7 @@ const AdminCategories = () => {
   };
 
   // Subcategory handlers
-  const resetSubForm = () => { setSubForm({ name: "", slug: "", description: "", image_url: "", is_active: true, display_order: 0, category_id: "", seo_title: "", short_description: "", long_description: "", faq: "[]", show_in_tailored: false }); setEditingSub(null); setSubImageFile(null); };
+  const resetSubForm = () => { setSubForm({ name: "", slug: "", description: "", image_url: "", is_active: true, display_order: 0, category_id: "", seo_title: "", short_description: "", long_description: "", faq: "[]", show_in_tailored: false, mega_menu_group: "" }); setEditingSub(null); setSubImageFile(null); };
 
   const openCreateSub = (categoryId: string) => {
     resetSubForm();
@@ -161,7 +162,7 @@ const AdminCategories = () => {
 
   const openEditSub = (sub: Subcategory) => {
     setEditingSub(sub);
-    setSubForm({ name: sub.name, slug: sub.slug, description: sub.description || "", image_url: sub.image_url || "", is_active: sub.is_active, display_order: sub.display_order, category_id: sub.category_id, seo_title: sub.seo_title || "", short_description: sub.short_description || "", long_description: sub.long_description || "", faq: JSON.stringify(sub.faq || []), show_in_tailored: sub.show_in_tailored ?? false });
+    setSubForm({ name: sub.name, slug: sub.slug, description: sub.description || "", image_url: sub.image_url || "", is_active: sub.is_active, display_order: sub.display_order, category_id: sub.category_id, seo_title: sub.seo_title || "", short_description: sub.short_description || "", long_description: sub.long_description || "", faq: JSON.stringify(sub.faq || []), show_in_tailored: sub.show_in_tailored ?? false, mega_menu_group: (sub as any).mega_menu_group || "" });
     setSubImageFile(null);
     setSubDialogOpen(true);
   };
@@ -180,7 +181,7 @@ const AdminCategories = () => {
     const slug = subForm.slug || generateSlug(subForm.name);
     let parsedSubFaq: any[] = [];
     try { parsedSubFaq = JSON.parse(subForm.faq); } catch { parsedSubFaq = []; }
-    const payload = { name: subForm.name.trim(), slug, description: subForm.description || null, image_url: imageUrl || null, is_active: subForm.is_active, display_order: subForm.display_order, category_id: subForm.category_id, seo_title: subForm.seo_title || null, short_description: subForm.short_description || null, long_description: subForm.long_description || null, faq: parsedSubFaq, show_in_tailored: subForm.show_in_tailored } as any;
+    const payload = { name: subForm.name.trim(), slug, description: subForm.description || null, image_url: imageUrl || null, is_active: subForm.is_active, display_order: subForm.display_order, category_id: subForm.category_id, seo_title: subForm.seo_title || null, short_description: subForm.short_description || null, long_description: subForm.long_description || null, faq: parsedSubFaq, show_in_tailored: subForm.show_in_tailored, mega_menu_group: subForm.mega_menu_group?.trim() || null } as any;
 
     if (editingSub) {
       const { error } = await supabase.from("subcategories").update(payload).eq("id", editingSub.id);
@@ -449,6 +450,15 @@ const AdminCategories = () => {
             <div className="space-y-2">
               <Label>Display Order</Label>
               <Input type="number" value={subForm.display_order} onChange={(e) => setSubForm({ ...subForm, display_order: parseInt(e.target.value) || 0 })} />
+            </div>
+            <div className="space-y-2">
+              <Label>Mega Menu Group <span className="text-xs text-muted-foreground font-normal">(optional, e.g. "Collection", "Shop By Flower Type", "Cities")</span></Label>
+              <Input
+                value={subForm.mega_menu_group}
+                onChange={(e) => setSubForm({ ...subForm, mega_menu_group: e.target.value })}
+                placeholder="Group label shown as a bold non-clickable header in the mega menu"
+              />
+              <p className="text-xs text-muted-foreground">Subcategories sharing the same group label will be listed under one bold header in the website's category dropdown.</p>
             </div>
             <div className="flex items-center gap-2">
               <Switch checked={subForm.is_active} onCheckedChange={(c) => setSubForm({ ...subForm, is_active: c })} />
