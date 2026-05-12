@@ -451,6 +451,15 @@ const AdminCategories = () => {
               <Label>Display Order</Label>
               <Input type="number" value={subForm.display_order} onChange={(e) => setSubForm({ ...subForm, display_order: parseInt(e.target.value) || 0 })} />
             </div>
+            <div className="space-y-2">
+              <Label>Mega Menu Group <span className="text-xs text-muted-foreground font-normal">(optional, e.g. "Collection", "Shop By Flower Type", "Cities")</span></Label>
+              <Input
+                value={subForm.mega_menu_group}
+                onChange={(e) => setSubForm({ ...subForm, mega_menu_group: e.target.value })}
+                placeholder="Group label shown as a bold non-clickable header in the mega menu"
+              />
+              <p className="text-xs text-muted-foreground">Subcategories sharing the same group label will be listed under one bold header in the website's category dropdown.</p>
+            </div>
             <div className="flex items-center gap-2">
               <Switch checked={subForm.is_active} onCheckedChange={(c) => setSubForm({ ...subForm, is_active: c })} />
               <Label>Active</Label>
