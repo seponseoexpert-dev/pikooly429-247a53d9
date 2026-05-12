@@ -60,7 +60,7 @@ const Header = () => {
       const [{ data: subs, error: subsErr }, { data: prods, error: prodErr }] = await Promise.all([
         supabase
           .from("subcategories")
-          .select("id, name, slug, category_id, image_url")
+          .select("id, name, slug, category_id, image_url, mega_menu_group")
           .eq("is_active", true)
           .order("display_order"),
         supabase
