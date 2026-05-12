@@ -2112,6 +2112,7 @@ export type Database = {
           image_url: string | null
           is_active: boolean
           long_description: string | null
+          mega_menu_group: string | null
           name: string
           seo_title: string | null
           short_description: string | null
@@ -2129,6 +2130,7 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean
           long_description?: string | null
+          mega_menu_group?: string | null
           name: string
           seo_title?: string | null
           short_description?: string | null
@@ -2146,6 +2148,7 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean
           long_description?: string | null
+          mega_menu_group?: string | null
           name?: string
           seo_title?: string | null
           short_description?: string | null
