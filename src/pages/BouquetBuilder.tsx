@@ -65,20 +65,20 @@ const BouquetBuilder = () => {
     };
   }, []);
 
-  const { data: bouquetColors = [] } = useQuery({
-    queryKey: ["bouquet-colors-public"],
+  const { data: addonProducts = [] } = useQuery<any[]>({
+    queryKey: ["bouquet-builder-addons"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("bouquet_colors")
-        .select("*")
+        .from("cart_addons")
+        .select("product_id, sort_order, products!inner(id, name, slug, price, original_price, image_url, is_active)")
         .eq("is_active", true)
-        .order("display_order");
+        .order("sort_order", { ascending: true });
       if (error) throw error;
-      return data;
+      const rows = (data ?? []) as Array<{ products: any | null }>;
+      return rows.map((r) => r.products).filter((p: any) => Boolean(p?.is_active));
     },
+    staleTime: 5 * 60 * 1000,
   });
-
-  const selectedColor = bouquetColors.find((c: any) => c.id === selectedColorId);
 
   const { data: allFlowers = [] } = useQuery({
     queryKey: ["bouquet-flowers"],
