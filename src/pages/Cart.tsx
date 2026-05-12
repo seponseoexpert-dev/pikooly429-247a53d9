@@ -9,6 +9,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
 import SEOHead from "@/components/seo/SEOHead";
+import { useCheckoutDelivery } from "@/hooks/useCheckoutDelivery";
+import DeliveryModeCards from "@/components/checkout/DeliveryModeCards";
 
 type CartAddonProduct = {
   id: string;
