@@ -57,13 +57,30 @@ const Header = () => {
   const { data: subcategories = [] } = useQuery({
     queryKey: ["header-subcategories"],
     queryFn: async () => {
-      const { data: subs, error } = await supabase
-        .from("subcategories")
-        .select("id, name, slug, category_id, image_url")
-        .eq("is_active", true)
-        .order("display_order");
-      if (error) throw error;
-      return (subs || []).map((s) => ({ ...s, product_count: 0 }));
+      const [{ data: subs, error: subsErr }, { data: prods, error: prodErr }] = await Promise.all([
+        supabase
+          .from("subcategories")
+          .select("id, name, slug, category_id, image_url")
+          .eq("is_active", true)
+          .order("display_order"),
+        supabase
+          .from("products")
+          .select("id, subcategory_id, product_subcategories(subcategory_id)")
+          .eq("is_active", true),
+      ]);
+      if (subsErr) throw subsErr;
+      if (prodErr) throw prodErr;
+
+      const counts: Record<string, number> = {};
+      for (const p of prods || []) {
+        const seen = new Set<string>();
+        if ((p as any).subcategory_id) seen.add((p as any).subcategory_id);
+        for (const ps of (p as any).product_subcategories || []) {
+          if (ps.subcategory_id) seen.add(ps.subcategory_id);
+        }
+        for (const sid of seen) counts[sid] = (counts[sid] || 0) + 1;
+      }
+      return (subs || []).map((s) => ({ ...s, product_count: counts[s.id] || 0 }));
     },
     staleTime: 10 * 60 * 1000,
     placeholderData: (prev) => prev,
