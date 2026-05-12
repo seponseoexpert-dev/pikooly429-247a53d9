@@ -31,6 +31,7 @@ interface Subcategory {
   display_order: number;
   is_active: boolean;
   show_in_tailored: boolean;
+  mega_menu_group?: string | null;
   created_at: string;
   updated_at: string;
 }
