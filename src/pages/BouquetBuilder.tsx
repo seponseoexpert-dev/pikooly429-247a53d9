@@ -154,9 +154,18 @@ const BouquetBuilder = () => {
       .filter(Boolean) as any[];
   }, [selectedFlowers, allFlowers]);
 
-  const selectedSizeItem = FIXED_SIZES.find((s) => s.id === selectedSize);
+  const selectedAddonsList = useMemo(() => {
+    return Object.entries(selectedAddons)
+      .filter(([, qty]) => qty > 0)
+      .map(([id, qty]) => {
+        const p = addonProducts.find((ap: any) => ap.id === id);
+        return p ? { ...p, qty } : null;
+      })
+      .filter(Boolean) as any[];
+  }, [selectedAddons, addonProducts]);
 
   const MAKING_CHARGE = 420;
+  const designCharge = designImages.length > 0 ? DESIGN_SERVICE_CHARGE : 0;
 
   const flowersPrice = useMemo(() => {
     let total = 0;
@@ -164,7 +173,13 @@ const BouquetBuilder = () => {
     return total;
   }, [selectedFlowersList]);
 
-  const totalPrice = flowersPrice + MAKING_CHARGE;
+  const addonsPrice = useMemo(() => {
+    let total = 0;
+    selectedAddonsList.forEach((a) => { total += Number(a.price) * a.qty; });
+    return total;
+  }, [selectedAddonsList]);
+
+  const totalPrice = flowersPrice + MAKING_CHARGE + designCharge + addonsPrice;
 
   const toggleFlower = (id: string) => {
     setSelectedFlowers((prev) => {
