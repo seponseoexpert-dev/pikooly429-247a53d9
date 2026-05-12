@@ -49,7 +49,7 @@ const AdminCategories = () => {
   // Subcategory state
   const [subDialogOpen, setSubDialogOpen] = useState(false);
   const [editingSub, setEditingSub] = useState<Subcategory | null>(null);
-  const [subForm, setSubForm] = useState({ name: "", slug: "", description: "", image_url: "", is_active: true, display_order: 0, category_id: "", seo_title: "", short_description: "", long_description: "", faq: "[]", show_in_tailored: false });
+  const [subForm, setSubForm] = useState({ name: "", slug: "", description: "", image_url: "", is_active: true, display_order: 0, category_id: "", seo_title: "", short_description: "", long_description: "", faq: "[]", show_in_tailored: false, mega_menu_group: "" });
   const [subImageFile, setSubImageFile] = useState<File | null>(null);
   const [savingSub, setSavingSub] = useState(false);
   const [expandedCats, setExpandedCats] = useState<Set<string>>(new Set());
