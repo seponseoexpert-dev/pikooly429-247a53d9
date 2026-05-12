@@ -163,9 +163,6 @@ const CategoryItem = ({ cat, idx, variant }: { cat: Category; idx: number; varia
         />
       </div>
       <span className={textClass}>{cat.name}</span>
-      {cat.product_count ? (
-        <span className={countClass}>{cat.product_count} items</span>
-      ) : null}
     </Link>
   );
 };
