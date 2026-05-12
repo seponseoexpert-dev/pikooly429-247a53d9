@@ -82,33 +82,28 @@ const ProductGrid = memo(() => {
       </div>
 
       {productsLoading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-2.5 gap-y-4 sm:gap-x-3.5 sm:gap-y-5 md:gap-4">
+        <ProductCarousel>
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={`s-${i}`}>
+            <div key={`s-${i}`} className={`${cardWidthClass} shrink-0 snap-start`}>
               <div className="aspect-square rounded-xl bg-muted animate-pulse" />
               <div className="mt-2 h-3 w-3/4 rounded bg-muted animate-pulse" />
               <div className="mt-1.5 h-3 w-1/2 rounded bg-muted animate-pulse" />
             </div>
           ))}
-        </div>
+        </ProductCarousel>
       ) : trendingProducts.length === 0 ? (
         <div className="text-center py-16 px-4">
           <Gift className="w-10 h-10 mx-auto text-muted-foreground/30 mb-3" />
           <p className="text-muted-foreground text-sm">No products found in this category</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-2.5 gap-y-4 sm:gap-x-3.5 sm:gap-y-5 md:gap-4">
-          {trendingProducts.slice(0, 10).map((product: any, idx: number) => {
-            const hideClass =
-              idx >= 6 && idx < 8 ? "hidden md:block" :
-              idx >= 8 ? "hidden lg:block" : "";
-            return (
-              <div key={product.id} className={hideClass}>
-                <ProductCard product={product} />
-              </div>
-            );
-          })}
-        </div>
+        <ProductCarousel>
+          {trendingProducts.map((product: any) => (
+            <div key={product.id} className={`${cardWidthClass} shrink-0 snap-start`}>
+              <ProductCard product={product} />
+            </div>
+          ))}
+        </ProductCarousel>
       )}
     </section>
   );
