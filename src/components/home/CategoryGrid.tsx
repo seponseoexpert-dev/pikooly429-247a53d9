@@ -9,6 +9,7 @@ type Category = {
   name: string;
   slug: string;
   image_url: string | null;
+  product_count?: number;
 };
 
 const CategoryGrid = memo(() => {
@@ -24,13 +25,44 @@ const CategoryGrid = memo(() => {
       if (error) throw error;
       return (data || []).filter((c: any) => {
         const types: string[] = (c.category_types && c.category_types.length > 0) ? c.category_types : [c.category_type].filter(Boolean);
-        // Strict: only show categories explicitly marked as "category" type
         return types.includes("category");
       });
     },
     staleTime: 5 * 60 * 1000,
     placeholderData: (prev) => prev,
   });
+
+  const { data: productCounts = {} } = useQuery({
+    queryKey: ["category-product-counts"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("id, category_id, product_categories(category_id)")
+        .eq("is_active", true);
+      if (error) throw error;
+
+      const counts: Record<string, number> = {};
+      for (const p of data || []) {
+        const countedCats = new Set<string>();
+        if (p.category_id) countedCats.add(p.category_id);
+        for (const pc of (p as any).product_categories || []) {
+          if (pc.category_id) countedCats.add(pc.category_id);
+        }
+        for (const catId of countedCats) {
+          counts[catId] = (counts[catId] || 0) + 1;
+        }
+      }
+      return counts;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const categoriesWithCount = useMemo(() => {
+    return categories.map((cat: any) => ({
+      ...cat,
+      product_count: productCounts[cat.id] || 0,
+    }));
+  }, [categories, productCounts]);
 
   if (isLoading) return (
     <section className="py-3 sm:py-4 lg:py-6" style={{ minHeight: "280px" }}>
@@ -61,15 +93,15 @@ const CategoryGrid = memo(() => {
     </section>
   );
 
-  if (categories.length === 0) return null;
+  if (categoriesWithCount.length === 0) return null;
 
-  const mobileItems = categories.slice(0, 8);
-  const tabletItems = categories.slice(0, 8);
-  const desktopItems = categories.slice(0, 9);
+  const mobileItems = categoriesWithCount.slice(0, 8);
+  const tabletItems = categoriesWithCount.slice(0, 8);
+  const desktopItems = categoriesWithCount.slice(0, 9);
 
   return (
     <section className="py-2 sm:py-3 lg:py-4" aria-label="Shop by Category" style={{ contain: "layout style" }}>
-      {/* Mobile: 2 rows × 4 columns */}
+      {/* Mobile: 2 rows x 4 columns */}
       <div className="grid grid-cols-4 gap-x-3 gap-y-4 px-4 md:hidden">
         {mobileItems.map((cat, idx) => (
           <CategoryItem key={cat.id} cat={cat} idx={idx} variant="mobile" />
@@ -110,6 +142,10 @@ const CategoryItem = ({ cat, idx, variant }: { cat: Category; idx: number; varia
     ? "w-full text-center text-[11px] sm:text-xs font-medium leading-tight line-clamp-2 text-foreground/85 group-hover:text-primary transition-colors duration-500"
     : "w-full text-center text-[13px] font-medium leading-tight line-clamp-2 text-foreground/85 transition-colors duration-500 group-hover:text-primary";
 
+  const countClass = variant === "mobile"
+    ? "text-[10px] text-muted-foreground leading-none"
+    : "text-[11px] text-muted-foreground leading-none";
+
   return (
     <Link to={`/product-category/${cat.slug}`} className={`group ${containerClass}`}>
       <div className={iconBoxClass}>
@@ -127,6 +163,9 @@ const CategoryItem = ({ cat, idx, variant }: { cat: Category; idx: number; varia
         />
       </div>
       <span className={textClass}>{cat.name}</span>
+      {cat.product_count ? (
+        <span className={countClass}>{cat.product_count} items</span>
+      ) : null}
     </Link>
   );
 };
