@@ -236,19 +236,16 @@ const BouquetBuilder = () => {
   const canProceed = () => {
     if (step === 1) return selectedFlowersList.length > 0;
     if (step === 2) return true; // design upload is optional
-    if (step === 3) {
-      if (!selectedSize) return false;
-      // If admin has configured colors, require selection
-      if (bouquetColors.length > 0 && !selectedColorId) return false;
-      return true;
-    }
+    if (step === 3) return true; // addons are optional
     return true;
   };
 
   const handleOrder = () => {
-    const sizeLabel = selectedSizeItem ? ` ${selectedSizeItem.name}` : "";
-    const colorLabel = selectedColor ? ` - ${selectedColor.name}` : "";
-    const bouquetName = `Custom Bouquet${sizeLabel}${colorLabel} (${selectedFlowersList.map((f) => `${f.name} x${f.qty}`).join(", ")})`;
+    const addonLabel = selectedAddonsList.length > 0
+      ? ` + Addons: ${selectedAddonsList.map((a) => `${a.name} x${a.qty}`).join(", ")}`
+      : "";
+    const designLabel = designImages.length > 0 ? " + Custom Design" : "";
+    const bouquetName = `Custom Bouquet (${selectedFlowersList.map((f) => `${f.name} x${f.qty}`).join(", ")})${designLabel}${addonLabel}`;
     addItem({
       id: `bouquet-${Date.now()}`,
       name: bouquetName,
@@ -256,9 +253,7 @@ const BouquetBuilder = () => {
       image: selectedFlowersList[0]?.image_url || "/placeholder.svg",
       category: "Custom Bouquet",
       inStock: true,
-    }, undefined, true, selectedColor ? {
-      color: { name: selectedColor.name, hex: selectedColor.hex_code },
-    } : undefined);
+    }, undefined, true);
     navigate("/checkout");
   };
 
