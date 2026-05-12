@@ -14,6 +14,7 @@ import DeliveryModeCards from "@/components/checkout/DeliveryModeCards";
 
 type CartAddonProduct = {
   id: string;
+  slug?: string | null;
   name: string;
   price: number;
   original_price: number | null;
