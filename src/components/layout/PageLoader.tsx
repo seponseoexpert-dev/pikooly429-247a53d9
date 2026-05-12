@@ -7,9 +7,9 @@ const PageLoader = () => {
   const letter = (brandName.trim()[0] || "P").toUpperCase();
 
   return (
-    <div className="min-h-[60vh] flex flex-col items-center justify-center gap-6">
+    <div className="min-h-[50vh] sm:min-h-[60vh] flex flex-col items-center justify-center gap-4 sm:gap-5 md:gap-6 px-4">
       <motion.div
-        className="relative w-28 h-28 flex items-center justify-center"
+        className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 flex items-center justify-center"
         initial={{ opacity: 0, scale: 0.85 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
@@ -44,7 +44,7 @@ const PageLoader = () => {
 
         {/* Letter with subtle pulse */}
         <motion.span
-          className="relative text-3xl font-bold leading-none bg-clip-text text-transparent"
+          className="relative text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-none bg-clip-text text-transparent"
           style={{
             fontFamily:
               '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
