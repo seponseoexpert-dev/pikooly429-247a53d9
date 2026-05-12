@@ -4,7 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Gift, ChevronRight } from "lucide-react";
 import ProductCard from "@/components/product/ProductCard";
+import ProductCarousel from "@/components/home/ProductCarousel";
 import { getOptimizedCloudinaryUrl } from "@/lib/imageUtils";
+
+const cardWidthClass = "w-[44vw] sm:w-[180px] md:w-[200px] lg:w-[210px] xl:w-[220px]";
 
 const TailoredOccasions = memo(() => {
   const [activeSlug, setActiveSlug] = useState("");
@@ -210,9 +213,9 @@ const TailoredOccasions = memo(() => {
 
         {/* Products */}
         {isLoading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+          <ProductCarousel>
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-xl overflow-hidden shadow-sm">
+              <div key={i} className={`${cardWidthClass} shrink-0 snap-start bg-white rounded-xl overflow-hidden shadow-sm`}>
                 <div className="aspect-square bg-muted animate-pulse" />
                 <div className="p-3 space-y-2">
                   <div className="h-3 w-3/4 rounded bg-muted animate-pulse" />
@@ -220,7 +223,7 @@ const TailoredOccasions = memo(() => {
                 </div>
               </div>
             ))}
-          </div>
+          </ProductCarousel>
         ) : filteredProducts.length === 0 ? (
           <div className="text-center py-12 px-4">
             <Gift className="w-10 h-10 mx-auto text-muted-foreground/30 mb-3" />
@@ -228,22 +231,13 @@ const TailoredOccasions = memo(() => {
           </div>
         ) : (
           <div key={animKey} className="motion-safe:animate-fade-in-up">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-2.5 gap-y-4 sm:gap-x-3.5 sm:gap-y-5 md:gap-4">
-              {filteredProducts.slice(0, 10).map((product: any, i: number) => {
-                const hideClass =
-                  i >= 6 && i < 8 ? "hidden md:block" :
-                  i >= 8 ? "hidden lg:block" : "";
-                return (
-                  <div
-                    key={product.id}
-                    style={{ animationDelay: `${i * 60}ms` }}
-                    className={`motion-safe:animate-fade-in-up ${hideClass}`}
-                  >
-                    <ProductCard product={product} />
-                  </div>
-                );
-              })}
-            </div>
+            <ProductCarousel>
+              {filteredProducts.map((product: any) => (
+                <div key={product.id} className={`${cardWidthClass} shrink-0 snap-start`}>
+                  <ProductCard product={product} />
+                </div>
+              ))}
+            </ProductCarousel>
           </div>
         )}
 
