@@ -44,7 +44,7 @@ const PageLoader = () => {
 
         {/* Letter with subtle pulse */}
         <motion.span
-          className="relative text-3xl font-bold leading-none bg-clip-text text-transparent"
+          className="relative text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-none bg-clip-text text-transparent"
           style={{
             fontFamily:
               '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
