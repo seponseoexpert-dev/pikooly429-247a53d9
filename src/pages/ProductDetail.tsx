@@ -802,18 +802,17 @@ const ProductDetail = () => {
 
       {/* Recommended Addon Products */}
       {addonProducts.length > 0 && (
-        <section className="mt-8 sm:mt-12 md:mt-14">
-          <div className="mb-4 sm:mb-5">
-            <span className="eyebrow mb-2">Pair It Up</span>
-            <h2 className="display-heading text-foreground mt-1.5" style={{ fontSize: "clamp(1.25rem, 2.4vw + 0.5rem, 2rem)" }}>
+        <section className="mt-6 sm:mt-10 md:mt-12">
+          <div className="mb-3 sm:mb-4">
+            <h2 className="text-foreground font-semibold" style={{ fontSize: "clamp(0.95rem, 1.2vw + 0.55rem, 1.15rem)" }}>
               Recommended Addon Products
             </h2>
           </div>
-          <div className="flex gap-2 sm:gap-3 lg:gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 pb-2">
+          <div className="flex gap-2.5 sm:gap-3 overflow-x-auto snap-x scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 pb-2">
             {addonProducts.slice(0, 12).map((p: any) => (
               <div
                 key={p.id}
-                className="snap-start shrink-0 basis-[30%] sm:basis-[22%] lg:basis-[15.5%] bg-white rounded-2xl border border-border/60 overflow-hidden flex flex-col"
+                className="snap-start shrink-0 basis-[40%] sm:basis-[26%] md:basis-[20%] lg:basis-[15.5%] bg-white rounded-xl border border-border/60 overflow-hidden flex flex-col"
               >
                 <Link to={`/product/${p.slug || p.id}`} className="block aspect-square bg-muted/20">
                   <img
@@ -823,12 +822,12 @@ const ProductDetail = () => {
                     className="w-full h-full object-cover"
                   />
                 </Link>
-                <div className="p-2.5 sm:p-3 flex flex-col gap-1.5 flex-1">
-                  <p className="text-xs sm:text-sm text-foreground line-clamp-2 leading-snug min-h-[2.5em]">{p.name}</p>
-                  <p className="text-sm font-semibold text-foreground tabular-nums">{formatPrice(Number(p.price))}</p>
+                <div className="p-2 sm:p-2.5 flex flex-col gap-1 flex-1">
+                  <p className="text-[12px] sm:text-[13px] text-foreground line-clamp-2 leading-snug min-h-[2.4em]">{p.name}</p>
+                  <p className="text-[13px] sm:text-sm font-semibold text-foreground tabular-nums">{formatPrice(Number(p.price))}</p>
                   <button
                     onClick={() => handleAddAddon(p)}
-                    className="mt-auto h-9 rounded-md border-2 border-primary text-primary text-[12px] font-bold tracking-wider uppercase hover:bg-primary hover:text-primary-foreground transition-colors"
+                    className="mt-1 h-8 rounded-full border border-primary text-primary text-[11px] font-bold tracking-wider uppercase hover:bg-primary hover:text-primary-foreground transition-colors"
                   >
                     Add
                   </button>
