@@ -135,20 +135,91 @@ const AllGifts = () => {
               </div>
 
               {/* Subcategories */}
-              {hasSubs && isExpanded && (
-                <div className="border-t border-border/40 px-3 pb-2">
-                  {subs.map((sub: any) => (
-                    <Link
-                      key={sub.id}
-                      to={`/product-category/${sub.slug}`}
-                      className="flex items-center justify-between py-3 px-3 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted/50"
-                    >
-                      <span>{sub.name}</span>
-                      <ChevronDown className="h-4 w-4 opacity-40" />
-                    </Link>
-                  ))}
-                </div>
-              )}
+              {hasSubs && isExpanded && (() => {
+                const groups = new Map<string, any[]>();
+                const ungrouped: any[] = [];
+                subs.forEach((s: any) => {
+                  const g = (s.mega_menu_group || "").trim();
+                  if (!g) { ungrouped.push(s); return; }
+                  if (!groups.has(g)) groups.set(g, []);
+                  groups.get(g)!.push(s);
+                });
+                const groupEntries = Array.from(groups.entries());
+                const hasGroups = groupEntries.length > 0;
+
+                if (!hasGroups) {
+                  return (
+                    <div className="border-t border-border/40 px-3 pb-2">
+                      {subs.map((sub: any) => (
+                        <Link
+                          key={sub.id}
+                          to={`/product-category/${sub.slug}`}
+                          className="flex items-center justify-between py-3 px-3 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted/50"
+                        >
+                          <span>{sub.name}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  );
+                }
+
+                return (
+                  <div className="border-t border-border/40 p-2 space-y-2">
+                    {groupEntries.map(([groupName, items]) => {
+                      const groupKey = `${cat.id}::${groupName}`;
+                      const isGroupOpen = expandedGroup === groupKey;
+                      return (
+                        <div key={groupKey} className="rounded-lg bg-muted/40 overflow-hidden">
+                          <button
+                            onClick={() => setExpandedGroup(prev => prev === groupKey ? null : groupKey)}
+                            className="w-full flex items-center justify-between px-3 py-3 text-sm font-semibold text-foreground"
+                          >
+                            <span>{groupName}</span>
+                            {isGroupOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                          </button>
+                          {isGroupOpen && (
+                            <div className="bg-background/60 px-2 pb-2">
+                              {items.map((sub: any) => (
+                                <Link
+                                  key={sub.id}
+                                  to={`/product-category/${sub.slug}`}
+                                  className="block py-2.5 px-3 text-sm text-muted-foreground hover:text-foreground rounded-md hover:bg-muted/50"
+                                >
+                                  {sub.name}
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                    {ungrouped.length > 0 && (
+                      <div className="rounded-lg bg-muted/40 overflow-hidden">
+                        <button
+                          onClick={() => setExpandedGroup(prev => prev === `${cat.id}::__more` ? null : `${cat.id}::__more`)}
+                          className="w-full flex items-center justify-between px-3 py-3 text-sm font-semibold text-foreground"
+                        >
+                          <span>More</span>
+                          {expandedGroup === `${cat.id}::__more` ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                        </button>
+                        {expandedGroup === `${cat.id}::__more` && (
+                          <div className="bg-background/60 px-2 pb-2">
+                            {ungrouped.map((sub: any) => (
+                              <Link
+                                key={sub.id}
+                                to={`/product-category/${sub.slug}`}
+                                className="block py-2.5 px-3 text-sm text-muted-foreground hover:text-foreground rounded-md hover:bg-muted/50"
+                              >
+                                {sub.name}
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           );
         })}
