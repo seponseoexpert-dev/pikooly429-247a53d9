@@ -412,6 +412,7 @@ const AdminProducts = () => {
               </div>
 
               <div className="space-y-2">
+                <Label>Short Description</Label>
                 <RichTextEditor value={form.short_description} onChange={(html) => setForm({ ...form, short_description: html })} />
               </div>
               <div className="space-y-2">
