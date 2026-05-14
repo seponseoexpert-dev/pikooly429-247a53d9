@@ -12,7 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Search, Package } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Package, Sparkles, Loader2 } from "lucide-react";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { ensureAdminSession } from "@/lib/ensureAdmin";
 import ProductVariantsManager, { saveProductVariants } from "@/components/admin/ProductVariantsManager";
@@ -44,6 +44,38 @@ const AdminProducts = () => {
   const [search, setSearch] = useState("");
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [aiGenerating, setAiGenerating] = useState(false);
+  const [aiKeywords, setAiKeywords] = useState("");
+
+  const handleAiGenerate = async () => {
+    if (!form.name.trim()) {
+      toast({ title: "Product name required", description: "Enter a product name first.", variant: "destructive" });
+      return;
+    }
+    setAiGenerating(true);
+    try {
+      const catName = categories.find((c) => c.id === form.category_id)?.name || "";
+      const { data, error } = await supabase.functions.invoke("ai-generate-product", {
+        body: { name: form.name, keywords: aiKeywords, category: catName, price: form.price },
+      });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      const d = data as any;
+      setForm((prev) => ({
+        ...prev,
+        short_description: d.short_description || prev.short_description,
+        description: d.description || prev.description,
+        seo_title: d.seo_title || prev.seo_title,
+        seo_description: d.seo_description || prev.seo_description,
+        tags: Array.isArray(d.tags) && d.tags.length ? d.tags.join(", ") : prev.tags,
+      }));
+      toast({ title: "✨ AI content generated", description: "Review and edit before saving." });
+    } catch (e: any) {
+      toast({ title: "AI failed", description: e.message || "Try again", variant: "destructive" });
+    } finally {
+      setAiGenerating(false);
+    }
+  };
 
   const defaultForm = {
     name: "", slug: "", short_description: "", description: "", price: 0, original_price: 0,
@@ -359,6 +391,25 @@ const AdminProducts = () => {
                   )}
                 </div>
               )}
+
+              {/* AI Content Generator */}
+              <div className="space-y-3 rounded-lg border border-primary/20 bg-gradient-to-br from-primary/5 to-transparent p-4">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  <Label className="font-semibold">AI Content Generator</Label>
+                  <span className="text-[10px] uppercase tracking-wider bg-primary/10 text-primary px-1.5 py-0.5 rounded">Beta</span>
+                </div>
+                <p className="text-xs text-muted-foreground">Auto-fill descriptions, SEO title, meta and tags from the product name.</p>
+                <Input
+                  value={aiKeywords}
+                  onChange={(e) => setAiKeywords(e.target.value)}
+                  placeholder="Optional keywords (e.g. romantic, anniversary, red roses)"
+                  className="bg-background"
+                />
+                <Button type="button" onClick={handleAiGenerate} disabled={aiGenerating || !form.name.trim()} className="w-full sm:w-auto">
+                  {aiGenerating ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Generating…</> : <><Sparkles className="h-4 w-4 mr-2" />Generate with AI</>}
+                </Button>
+              </div>
 
               <div className="space-y-2">
                 <Label>Short Description</Label>
