@@ -44,6 +44,38 @@ const AdminProducts = () => {
   const [search, setSearch] = useState("");
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [aiGenerating, setAiGenerating] = useState(false);
+  const [aiKeywords, setAiKeywords] = useState("");
+
+  const handleAiGenerate = async () => {
+    if (!form.name.trim()) {
+      toast({ title: "Product name required", description: "Enter a product name first.", variant: "destructive" });
+      return;
+    }
+    setAiGenerating(true);
+    try {
+      const catName = categories.find((c) => c.id === form.category_id)?.name || "";
+      const { data, error } = await supabase.functions.invoke("ai-generate-product", {
+        body: { name: form.name, keywords: aiKeywords, category: catName, price: form.price },
+      });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      const d = data as any;
+      setForm((prev) => ({
+        ...prev,
+        short_description: d.short_description || prev.short_description,
+        description: d.description || prev.description,
+        seo_title: d.seo_title || prev.seo_title,
+        seo_description: d.seo_description || prev.seo_description,
+        tags: Array.isArray(d.tags) && d.tags.length ? d.tags.join(", ") : prev.tags,
+      }));
+      toast({ title: "✨ AI content generated", description: "Review and edit before saving." });
+    } catch (e: any) {
+      toast({ title: "AI failed", description: e.message || "Try again", variant: "destructive" });
+    } finally {
+      setAiGenerating(false);
+    }
+  };
 
   const defaultForm = {
     name: "", slug: "", short_description: "", description: "", price: 0, original_price: 0,
