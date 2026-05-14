@@ -8,6 +8,7 @@ import SEOHead from "@/components/seo/SEOHead";
 const AllGifts = () => {
   const [activeTab, setActiveTab] = useState<"occasions" | "category">("occasions");
   const [expandedCat, setExpandedCat] = useState<string | null>(null);
+  const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
 
   const { data: categories = [] } = useQuery({
     queryKey: ["public-categories"],
