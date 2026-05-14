@@ -310,6 +310,8 @@ const Shop = () => {
         </div>
       </div>
 
+      <Suspense fallback={null}><AISmartSearch /></Suspense>
+
       {activeContent && (activeContent as any).short_description && (
         <div className="mb-6 max-w-none">
           <div
