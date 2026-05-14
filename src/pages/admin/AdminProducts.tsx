@@ -392,8 +392,26 @@ const AdminProducts = () => {
                 </div>
               )}
 
+              {/* AI Content Generator */}
+              <div className="space-y-3 rounded-lg border border-primary/20 bg-gradient-to-br from-primary/5 to-transparent p-4">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  <Label className="font-semibold">AI Content Generator</Label>
+                  <span className="text-[10px] uppercase tracking-wider bg-primary/10 text-primary px-1.5 py-0.5 rounded">Beta</span>
+                </div>
+                <p className="text-xs text-muted-foreground">Auto-fill descriptions, SEO title, meta and tags from the product name.</p>
+                <Input
+                  value={aiKeywords}
+                  onChange={(e) => setAiKeywords(e.target.value)}
+                  placeholder="Optional keywords (e.g. romantic, anniversary, red roses)"
+                  className="bg-background"
+                />
+                <Button type="button" onClick={handleAiGenerate} disabled={aiGenerating || !form.name.trim()} className="w-full sm:w-auto">
+                  {aiGenerating ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Generating…</> : <><Sparkles className="h-4 w-4 mr-2" />Generate with AI</>}
+                </Button>
+              </div>
+
               <div className="space-y-2">
-                <Label>Short Description</Label>
                 <RichTextEditor value={form.short_description} onChange={(html) => setForm({ ...form, short_description: html })} />
               </div>
               <div className="space-y-2">
