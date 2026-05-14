@@ -276,7 +276,7 @@ const Shop = () => {
       case "rating": return [...list].sort((a: any, b: any) => (b.rating || 0) - (a.rating || 0));
       default: return list;
     }
-  }, [selectedCat, selectedSub, searchParam, sameDayParam, sortBy, products, subcategories]);
+  }, [selectedCat, selectedSub, searchParam, sameDayParam, sortBy, products, subcategories, categories]);
 
   return (
     <main className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-3 sm:py-4 md:py-6 lg:py-8 pb-24 md:pb-10">
