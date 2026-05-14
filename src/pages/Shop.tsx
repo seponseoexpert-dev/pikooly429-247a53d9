@@ -232,26 +232,33 @@ const Shop = () => {
   }, [activeContent, activeCategory, activeSubcategory, settings]);
 
   const filtered = useMemo(() => {
-    let list = selectedCat
-      ? products.filter((p: any) => {
-          if (p.categories?.slug === selectedCat) return true;
-          if (p.product_categories?.some((pc: any) => pc.categories?.slug === selectedCat)) return true;
-          return false;
-        })
-      : products;
-
-    if (searchParam) {
-      list = list.filter((p: any) => matchesProductSearch(p, searchParam));
-    }
+    let list = products;
 
     if (selectedSub) {
       const sub = subcategories.find((s: any) => s.slug === selectedSub);
       if (sub) {
-        list = list.filter((p: any) => 
+        list = list.filter((p: any) =>
           (p as any).subcategory_id === sub.id ||
           (p as any).product_subcategories?.some((psc: any) => psc.subcategory_id === sub.id)
         );
       }
+    } else if (selectedCat) {
+      list = list.filter((p: any) => {
+        if (p.categories?.slug === selectedCat) return true;
+        if (p.product_categories?.some((pc: any) => pc.categories?.slug === selectedCat)) return true;
+        // also include products whose subcategory belongs to this category
+        const cat = categories.find((c: any) => c.slug === selectedCat);
+        if (cat) {
+          const subIds = subcategories.filter((s: any) => s.category_id === cat.id).map((s: any) => s.id);
+          if ((p as any).subcategory_id && subIds.includes((p as any).subcategory_id)) return true;
+          if ((p as any).product_subcategories?.some((psc: any) => subIds.includes(psc.subcategory_id))) return true;
+        }
+        return false;
+      });
+    }
+
+    if (searchParam) {
+      list = list.filter((p: any) => matchesProductSearch(p, searchParam));
     }
 
     if (sameDayParam) {
