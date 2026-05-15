@@ -336,14 +336,14 @@ const AdminProducts = () => {
               {/* Categories with Checkboxes */}
               <div className="space-y-3">
                 <Label>Categories (select multiple)</Label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 border border-border rounded-lg p-3 max-h-48 overflow-y-auto">
+                <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-1 border border-border rounded-lg p-2 max-h-48 overflow-y-auto">
                   {categories.map((c) => (
-                    <label key={c.id} className="flex items-center gap-2 cursor-pointer hover:bg-muted/50 rounded px-2 py-1.5 transition-colors">
+                    <label key={c.id} className="flex items-center gap-2 cursor-pointer hover:bg-muted/50 rounded px-2 py-1.5 transition-colors min-w-0">
                       <Checkbox
                         checked={form.category_ids.includes(c.id)}
                         onCheckedChange={() => toggleCategory(c.id)}
                       />
-                      <span className="text-sm">{c.name}</span>
+                      <span className="text-sm truncate flex-1 min-w-0">{c.name}</span>
                     </label>
                   ))}
                 </div>
