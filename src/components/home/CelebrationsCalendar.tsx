@@ -66,13 +66,13 @@ const CelebrationsCalendar = memo(() => {
       <div className="relative">
         <div
           ref={scrollRef}
-          className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth-ios pb-2 -mx-4 px-4 snap-x snap-mandatory sm:mx-0 sm:px-0 md:grid md:grid-cols-5 md:gap-4 md:overflow-visible"
+          className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide scroll-smooth-ios pb-2 -mx-4 px-4 snap-x snap-mandatory sm:mx-0 sm:px-0"
         >
           {celebrations.map((celebration, index) => {
             const bgColor = celebration.bg_color || PASTEL_COLORS[index % PASTEL_COLORS.length];
 
             const card = (
-              <div className="group w-[43vw] min-w-[43vw] flex-shrink-0 snap-start sm:w-[29vw] sm:min-w-[29vw] md:w-full md:min-w-0">
+              <div className="group w-[43vw] min-w-[43vw] flex-shrink-0 snap-start sm:w-[29vw] sm:min-w-[29vw] md:w-[18vw] md:min-w-[18vw] lg:w-[16vw] lg:min-w-[16vw]">
                 <div
                   className="relative aspect-[4/5] overflow-hidden rounded-[22px] transition-transform duration-300 ease-out group-hover:scale-[1.02]"
                   style={{ backgroundColor: bgColor }}
@@ -92,11 +92,11 @@ const CelebrationsCalendar = memo(() => {
             );
 
             return celebration.link ? (
-              <Link key={celebration.id} to={celebration.link} className="block md:min-w-0">
+              <Link key={celebration.id} to={celebration.link} className="block">
                 {card}
               </Link>
             ) : (
-              <div key={celebration.id} className="md:min-w-0">
+              <div key={celebration.id}>
                 {card}
               </div>
             );
