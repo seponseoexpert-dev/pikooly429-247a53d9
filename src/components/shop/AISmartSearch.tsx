@@ -79,14 +79,14 @@ export default function AISmartSearch() {
               </Button>
             </div>
 
-            {/* Suggestion chips */}
-            <div className="flex flex-wrap gap-1.5 mt-2">
+            {/* Suggestion chips - horizontal scroll, single row */}
+            <div className="flex gap-1.5 mt-2 overflow-x-auto scrollbar-hide -mx-1 px-1 pb-1">
               {SUGGESTIONS.map((s) => (
                 <button
                   key={s.label}
                   type="button"
                   onClick={() => run(s.label)}
-                  className="inline-flex items-center gap-1 text-[11px] sm:text-xs bg-background/80 hover:bg-primary hover:text-primary-foreground border border-border hover:border-primary text-foreground/80 rounded-full px-2 py-1 transition-colors"
+                  className="inline-flex items-center gap-1 text-[11px] sm:text-xs bg-background/80 hover:bg-primary hover:text-primary-foreground border border-border hover:border-primary text-foreground/80 rounded-full px-2 py-1 transition-colors whitespace-nowrap shrink-0"
                 >
                   <span>{s.emoji}</span>
                   <span>{s.label}</span>
