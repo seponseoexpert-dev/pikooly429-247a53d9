@@ -408,8 +408,9 @@ const AdminProducts = () => {
                 <Input
                   value={aiKeywords}
                   onChange={(e) => setAiKeywords(e.target.value)}
-                  placeholder="Optional keywords (e.g. romantic, anniversary, red roses)"
-                  className="bg-background"
+                  placeholder="Optional keywords (e.g. romantic, anniversary)"
+                  className="bg-background w-full"
+                  style={{ fontSize: 16 }}
                 />
                 <Button type="button" onClick={handleAiGenerate} disabled={aiGenerating || !form.name.trim()} className="w-full sm:w-auto">
                   {aiGenerating ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Generating…</> : <><Sparkles className="h-4 w-4 mr-2" />Generate with AI</>}
