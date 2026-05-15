@@ -63,8 +63,11 @@ const AdminProducts = () => {
       const d = data as any;
       setForm((prev) => ({
         ...prev,
+        slug: d.slug || prev.slug,
         short_description: d.short_description || prev.short_description,
         description: d.description || prev.description,
+        instructions: d.instructions || prev.instructions,
+        delivery_info: d.delivery_info || prev.delivery_info,
         seo_title: d.seo_title || prev.seo_title,
         seo_description: d.seo_description || prev.seo_description,
         tags: Array.isArray(d.tags) && d.tags.length ? d.tags.join(", ") : prev.tags,
