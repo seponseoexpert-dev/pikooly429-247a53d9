@@ -286,11 +286,11 @@ const AdminProducts = () => {
           <DialogTrigger asChild>
             <Button onClick={() => { resetForm(); setDialogOpen(true); }}><Plus className="h-4 w-4 mr-2" />Add Product</Button>
           </DialogTrigger>
-          <DialogContent className="w-[calc(100vw-1rem)] max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden p-3 sm:p-6">
-            <DialogHeader>
-              <DialogTitle>{editing ? "Edit Product" : "New Product"}</DialogTitle>
+          <DialogContent className="w-[calc(100vw-0.5rem)] max-w-2xl max-h-[92vh] overflow-y-auto overflow-x-hidden p-3 sm:p-6">
+            <DialogHeader className="pr-8">
+              <DialogTitle className="text-base sm:text-lg truncate">{editing ? "Edit Product" : "New Product"}</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4 min-w-0 w-full overflow-hidden">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div className="space-y-2 sm:col-span-2 min-w-0">
                   <Label>Name *</Label>
