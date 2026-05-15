@@ -66,7 +66,7 @@ const CelebrationsCalendar = memo(() => {
       <div className="relative">
         <div
           ref={scrollRef}
-          className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth-ios pb-2 -mx-4 px-4 snap-x snap-mandatory sm:mx-0 sm:px-0 md:grid md:grid-cols-5 md:gap-4 md:overflow-visible"
+          className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide scroll-smooth-ios pb-2 -mx-4 px-4 snap-x snap-mandatory sm:mx-0 sm:px-0"
         >
           {celebrations.map((celebration, index) => {
             const bgColor = celebration.bg_color || PASTEL_COLORS[index % PASTEL_COLORS.length];
