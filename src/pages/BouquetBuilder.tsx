@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/contexts/CartContext";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { useNavigate, Link } from "react-router-dom";
-import { Check, ChevronRight, ChevronLeft, Flower2, Upload, MessageSquare, ShoppingCart, ImagePlus, X, MapPin, Pencil, Gift, Plus } from "lucide-react";
+import { Check, ChevronRight, ChevronLeft, Flower2, Upload, MessageSquare, ShoppingCart, ImagePlus, X, MapPin, Pencil, Gift, Plus, Sparkles, Loader2, RefreshCw } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import SEOHead from "@/components/seo/SEOHead";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
