@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sparkles, Loader2, X, Wand2, ArrowRight } from "lucide-react";
+import { Sparkles, Loader2, X, Search, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -61,8 +61,8 @@ export default function AISmartSearch() {
 
           {/* Search bar */}
           <form onSubmit={(e) => { e.preventDefault(); run(); }}>
-            <div className="relative flex items-center gap-1.5 rounded-xl bg-background border border-border focus-within:border-primary transition-all p-1">
-              <Wand2 className="h-4 w-4 text-primary ml-2 shrink-0" />
+            <div className="relative flex items-center gap-1.5 rounded-full bg-background border border-border focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all p-1 pl-3">
+              <Search className="h-4 w-4 text-muted-foreground shrink-0" />
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -73,9 +73,9 @@ export default function AISmartSearch() {
               <Button
                 type="submit"
                 disabled={loading || !query.trim()}
-                className="rounded-lg h-9 sm:h-10 px-3 shrink-0 bg-gradient-to-r from-primary to-primary/80"
+                className="rounded-full h-9 sm:h-10 px-4 shrink-0 bg-gradient-to-r from-primary to-primary/80 gap-1.5"
               >
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Sparkles className="h-4 w-4" /><span className="hidden sm:inline text-xs font-semibold">Search</span></>}
               </Button>
             </div>
 
