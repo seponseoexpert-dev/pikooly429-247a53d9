@@ -72,7 +72,7 @@ const CelebrationsCalendar = memo(() => {
             const bgColor = celebration.bg_color || PASTEL_COLORS[index % PASTEL_COLORS.length];
 
             const card = (
-              <div className="group w-[43vw] min-w-[43vw] flex-shrink-0 snap-start sm:w-[29vw] sm:min-w-[29vw] md:w-full md:min-w-0">
+              <div className="group w-[43vw] min-w-[43vw] flex-shrink-0 snap-start sm:w-[29vw] sm:min-w-[29vw] md:w-[18vw] md:min-w-[18vw] lg:w-[16vw] lg:min-w-[16vw]">
                 <div
                   className="relative aspect-[4/5] overflow-hidden rounded-[22px] transition-transform duration-300 ease-out group-hover:scale-[1.02]"
                   style={{ backgroundColor: bgColor }}
