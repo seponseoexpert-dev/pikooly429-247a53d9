@@ -291,23 +291,25 @@ const AdminProducts = () => {
               <DialogTitle>{editing ? "Edit Product" : "New Product"}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2 col-span-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div className="space-y-2 sm:col-span-2 min-w-0">
                   <Label>Name *</Label>
-                  <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value, slug: generateSlug(e.target.value) })} required />
+                  <Input style={{ fontSize: 16 }} className="w-full" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value, slug: generateSlug(e.target.value) })} required />
                 </div>
-                <div className="space-y-2 col-span-2">
+                <div className="space-y-2 sm:col-span-2 min-w-0">
                   <Label>Slug</Label>
-                  <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
+                  <Input style={{ fontSize: 16 }} className="w-full" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
                 </div>
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 min-w-0">
                   <Label>Sale Price (৳)</Label>
-                  <Input type="number" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: parseFloat(e.target.value) || 0 })} />
+                  <Input style={{ fontSize: 16 }} className="w-full" type="number" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: parseFloat(e.target.value) || 0 })} />
                   <p className="text-[11px] text-muted-foreground leading-tight">Customer pays this</p>
                 </div>
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 min-w-0">
                   <Label>Regular Price (৳)</Label>
                   <Input
+                    style={{ fontSize: 16 }}
+                    className="w-full"
                     type="number"
                     step="0.01"
                     value={form.original_price}
@@ -320,13 +322,13 @@ const AdminProducts = () => {
                     <p className="text-[11px] text-muted-foreground leading-tight">Higher than Sale Price for discount</p>
                   )}
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 min-w-0">
                   <Label>Stock</Label>
-                  <Input type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: parseInt(e.target.value) || 0 })} />
+                  <Input style={{ fontSize: 16 }} className="w-full" type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: parseInt(e.target.value) || 0 })} />
                 </div>
-                <div className="space-y-2 col-span-2 sm:col-span-1">
+                <div className="space-y-2 min-w-0">
                   <Label>Delivery Time (Display Badge)</Label>
-                  <Input value={form.delivery_time} onChange={(e) => setForm({ ...form, delivery_time: e.target.value })} placeholder="e.g. 2 Hours" />
+                  <Input style={{ fontSize: 16 }} className="w-full" value={form.delivery_time} onChange={(e) => setForm({ ...form, delivery_time: e.target.value })} placeholder="e.g. 2 Hours" />
                 </div>
               </div>
 
