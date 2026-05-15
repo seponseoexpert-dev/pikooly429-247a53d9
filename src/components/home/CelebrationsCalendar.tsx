@@ -92,11 +92,11 @@ const CelebrationsCalendar = memo(() => {
             );
 
             return celebration.link ? (
-              <Link key={celebration.id} to={celebration.link} className="block md:min-w-0">
+              <Link key={celebration.id} to={celebration.link} className="block">
                 {card}
               </Link>
             ) : (
-              <div key={celebration.id} className="md:min-w-0">
+              <div key={celebration.id}>
                 {card}
               </div>
             );
