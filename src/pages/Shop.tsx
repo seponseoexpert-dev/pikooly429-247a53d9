@@ -9,7 +9,6 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
 import SEOHead from "@/components/seo/SEOHead";
 
 const ShopFaqAccordion = lazy(() => import("@/components/shop/ShopFaqAccordion"));
-const AISmartSearch = lazy(() => import("@/components/shop/AISmartSearch"));
 
 const normalizeSearchText = (value: string | null | undefined) =>
   (value || "")
@@ -310,7 +309,7 @@ const Shop = () => {
         </div>
       </div>
 
-      <Suspense fallback={null}><AISmartSearch /></Suspense>
+      
 
       {activeContent && (activeContent as any).short_description && (
         <div className="mb-6 max-w-none">

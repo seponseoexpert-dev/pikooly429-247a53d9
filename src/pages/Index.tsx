@@ -11,6 +11,7 @@ import sameDayDeliveryBanner from "@/assets/same-day-delivery-banner.png";
 
 // Lazy load all below-fold sections
 const OfferBanners = lazy(() => import("@/components/home/OfferBanners"));
+const AISmartSearch = lazy(() => import("@/components/shop/AISmartSearch"));
 const PopularGifting = lazy(() => import("@/components/home/PopularGifting"));
 const RelationshipGrid = lazy(() => import("@/components/home/RelationshipGrid"));
 const CelebrationsCalendar = lazy(() => import("@/components/home/CelebrationsCalendar"));
@@ -125,6 +126,11 @@ const Index = () => {
         </section>
       )}
       <CategoryGrid />
+      <div className="deferred-section">
+        <Suspense fallback={<LazyFallback />}>
+          <AISmartSearch />
+        </Suspense>
+      </div>
       <div className="deferred-section">
         <Suspense fallback={<LazyFallback />}>
           <OfferBanners />
