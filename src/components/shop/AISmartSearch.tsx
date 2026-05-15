@@ -45,66 +45,50 @@ export default function AISmartSearch() {
   };
 
   return (
-    <section className="container mx-auto px-3 sm:px-4 py-6 sm:py-10">
-      <div className="relative overflow-hidden rounded-3xl border border-primary/15 bg-gradient-to-br from-primary/8 via-background to-primary/5 shadow-[0_8px_40px_-12px_hsl(var(--primary)/0.25)]">
-        {/* Decorative blobs */}
-        <div className="pointer-events-none absolute -top-16 -right-16 h-48 w-48 rounded-full bg-primary/20 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-primary/10 blur-3xl" />
+    <section className="container mx-auto px-3 sm:px-4 py-3 sm:py-5">
+      <div className="relative overflow-hidden rounded-2xl border border-primary/15 bg-gradient-to-br from-primary/8 via-background to-primary/5">
+        <div className="pointer-events-none absolute -top-10 -right-10 h-28 w-28 rounded-full bg-primary/15 blur-2xl" />
 
-        <div className="relative p-5 sm:p-8">
-          {/* Header */}
-          <div className="flex items-center justify-center gap-2 mb-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-3 py-1 text-[10px] sm:text-xs font-semibold tracking-wider uppercase">
-              <Sparkles className="h-3 w-3 animate-pulse" />
-              AI Powered · Beta
-            </span>
+        <div className="relative p-3 sm:p-4">
+          {/* Compact header row */}
+          <div className="flex items-center gap-2 mb-2.5">
+            <Sparkles className="h-4 w-4 text-primary shrink-0" />
+            <h2 className="text-sm sm:text-base font-semibold leading-tight">
+              Ask AI for the <span className="text-primary">perfect gift</span>
+            </h2>
+            <span className="ml-auto text-[9px] font-bold tracking-wider uppercase bg-primary/10 text-primary px-1.5 py-0.5 rounded">Beta</span>
           </div>
 
-          <h2 className="text-center text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-2">
-            Find the <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">perfect gift</span> in seconds
-          </h2>
-          <p className="text-center text-sm sm:text-base text-muted-foreground mb-5 sm:mb-6 max-w-xl mx-auto">
-            Tell us the occasion, recipient, or budget — our AI will pick the best matches for you.
-          </p>
-
           {/* Search bar */}
-          <form onSubmit={(e) => { e.preventDefault(); run(); }} className="max-w-2xl mx-auto">
-            <div className="relative flex items-center gap-2 rounded-2xl bg-background border border-border shadow-sm focus-within:border-primary focus-within:shadow-[0_0_0_4px_hsl(var(--primary)/0.12)] transition-all p-1.5 sm:p-2">
-              <Wand2 className="h-5 w-5 text-primary ml-2 sm:ml-3 shrink-0" />
+          <form onSubmit={(e) => { e.preventDefault(); run(); }}>
+            <div className="relative flex items-center gap-1.5 rounded-xl bg-background border border-border focus-within:border-primary transition-all p-1">
+              <Wand2 className="h-4 w-4 text-primary ml-2 shrink-0" />
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="e.g. Romantic anniversary gift under 3000 BDT"
-                className="border-0 shadow-none focus-visible:ring-0 bg-transparent text-base px-0 h-11 sm:h-12"
+                placeholder="Romantic anniversary gift under 3000 BDT"
+                className="border-0 shadow-none focus-visible:ring-0 bg-transparent px-0 h-9 sm:h-10"
                 style={{ fontSize: 16 }}
               />
               <Button
                 type="submit"
                 disabled={loading || !query.trim()}
-                size="lg"
-                className="rounded-xl h-11 sm:h-12 px-3 sm:px-5 shrink-0 bg-gradient-to-r from-primary to-primary/80 hover:from-primary hover:to-primary shadow-md"
+                className="rounded-lg h-9 sm:h-10 px-3 shrink-0 bg-gradient-to-r from-primary to-primary/80"
               >
-                {loading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <>
-                    <Sparkles className="h-4 w-4 sm:mr-1.5" />
-                    <span className="hidden sm:inline">Ask AI</span>
-                  </>
-                )}
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
               </Button>
             </div>
 
             {/* Suggestion chips */}
-            <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2 mt-4">
+            <div className="flex flex-wrap gap-1.5 mt-2">
               {SUGGESTIONS.map((s) => (
                 <button
                   key={s.label}
                   type="button"
                   onClick={() => run(s.label)}
-                  className="group inline-flex items-center gap-1 text-xs sm:text-sm bg-background/80 hover:bg-primary hover:text-primary-foreground border border-border hover:border-primary text-foreground/80 rounded-full px-3 py-1.5 transition-all hover:shadow-md hover:-translate-y-0.5"
+                  className="inline-flex items-center gap-1 text-[11px] sm:text-xs bg-background/80 hover:bg-primary hover:text-primary-foreground border border-border hover:border-primary text-foreground/80 rounded-full px-2 py-1 transition-colors"
                 >
-                  <span className="text-sm">{s.emoji}</span>
+                  <span>{s.emoji}</span>
                   <span>{s.label}</span>
                 </button>
               ))}
