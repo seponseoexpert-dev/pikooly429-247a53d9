@@ -9,7 +9,6 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
 import SEOHead from "@/components/seo/SEOHead";
 
 const ShopFaqAccordion = lazy(() => import("@/components/shop/ShopFaqAccordion"));
-const AISmartSearch = lazy(() => import("@/components/shop/AISmartSearch"));
 
 const normalizeSearchText = (value: string | null | undefined) =>
   (value || "")
