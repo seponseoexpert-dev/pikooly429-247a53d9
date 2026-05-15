@@ -22,3 +22,6 @@ verify_jwt = false
 
 [functions.ai-smart-search]
 verify_jwt = false
+
+[functions.ai-bouquet-preview]
+verify_jwt = false
