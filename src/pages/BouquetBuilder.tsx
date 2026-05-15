@@ -565,6 +565,68 @@ const BouquetBuilder = () => {
                   )}
                 </div>
                 <p className="text-xs text-muted-foreground">Max 3 images, 5MB each. Designer service charge: {formatPrice(DESIGN_SERVICE_CHARGE)}.</p>
+
+                {/* AI Preview Section */}
+                <div className="rounded-xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-transparent p-4">
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="flex items-start gap-2 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <Sparkles className="h-4 w-4 text-primary" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-foreground">AI Bouquet Preview</p>
+                        <p className="text-[11px] text-muted-foreground leading-snug">
+                          See how your bouquet will look — generated from your design + selected flowers.
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={generateAiPreview}
+                      disabled={aiPreviewLoading || selectedFlowersList.length === 0}
+                      className="shrink-0 gap-1.5"
+                    >
+                      {aiPreviewLoading ? (
+                        <><Loader2 className="h-3.5 w-3.5 animate-spin" />Generating…</>
+                      ) : aiPreviewUrl ? (
+                        <><RefreshCw className="h-3.5 w-3.5" />Regenerate</>
+                      ) : (
+                        <><Sparkles className="h-3.5 w-3.5" />Generate</>
+                      )}
+                    </Button>
+                  </div>
+
+                  {selectedFlowersList.length === 0 && !aiPreviewUrl && !aiPreviewLoading && (
+                    <p className="text-[11px] text-amber-600 dark:text-amber-400 mb-2">
+                      ⚠ Go back to step 1 and select at least one flower to enable preview.
+                    </p>
+                  )}
+
+                  {aiPreviewLoading && (
+                    <div className="aspect-square rounded-lg bg-muted/50 border border-border flex flex-col items-center justify-center gap-2">
+                      <Loader2 className="h-7 w-7 text-primary animate-spin" />
+                      <p className="text-xs text-muted-foreground">Crafting your preview… (10–30s)</p>
+                    </div>
+                  )}
+
+                  {aiPreviewError && !aiPreviewLoading && (
+                    <div className="rounded-lg bg-destructive/10 border border-destructive/30 p-3 text-xs text-destructive">
+                      {aiPreviewError}
+                    </div>
+                  )}
+
+                  {aiPreviewUrl && !aiPreviewLoading && (
+                    <div className="space-y-2">
+                      <div className="aspect-square rounded-lg overflow-hidden border border-border bg-card">
+                        <img src={aiPreviewUrl} alt="AI generated bouquet preview" className="w-full h-full object-cover" />
+                      </div>
+                      <p className="text-[10px] text-muted-foreground italic">
+                        AI-generated preview for reference only. Final bouquet handcrafted by our designer.
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
