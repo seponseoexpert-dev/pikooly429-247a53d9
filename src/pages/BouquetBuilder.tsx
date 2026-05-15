@@ -227,6 +227,8 @@ const BouquetBuilder = () => {
     if (newFiles.length > 0) {
       setDesignImages((prev) => [...prev, ...newFiles]);
       setDesignPreviews((prev) => [...prev, ...newPreviews]);
+      setAiPreviewUrl(null);
+      setAiPreviewError(null);
     }
   };
 
