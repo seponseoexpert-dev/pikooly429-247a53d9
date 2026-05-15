@@ -286,11 +286,11 @@ const AdminProducts = () => {
           <DialogTrigger asChild>
             <Button onClick={() => { resetForm(); setDialogOpen(true); }}><Plus className="h-4 w-4 mr-2" />Add Product</Button>
           </DialogTrigger>
-          <DialogContent className="w-[calc(100vw-1rem)] max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden p-3 sm:p-6">
-            <DialogHeader>
-              <DialogTitle>{editing ? "Edit Product" : "New Product"}</DialogTitle>
+          <DialogContent className="w-[calc(100vw-0.5rem)] max-w-2xl max-h-[92vh] overflow-y-auto overflow-x-hidden p-3 sm:p-6">
+            <DialogHeader className="pr-8">
+              <DialogTitle className="text-base sm:text-lg truncate">{editing ? "Edit Product" : "New Product"}</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4 min-w-0 w-full overflow-hidden">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div className="space-y-2 sm:col-span-2 min-w-0">
                   <Label>Name *</Label>
@@ -336,14 +336,14 @@ const AdminProducts = () => {
               {/* Categories with Checkboxes */}
               <div className="space-y-3">
                 <Label>Categories (select multiple)</Label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 border border-border rounded-lg p-3 max-h-48 overflow-y-auto">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 border border-border rounded-lg p-2 max-h-48 overflow-y-auto">
                   {categories.map((c) => (
-                    <label key={c.id} className="flex items-center gap-2 cursor-pointer hover:bg-muted/50 rounded px-2 py-1.5 transition-colors">
+                    <label key={c.id} className="flex items-center gap-2 cursor-pointer hover:bg-muted/50 rounded px-2 py-1.5 transition-colors min-w-0">
                       <Checkbox
                         checked={form.category_ids.includes(c.id)}
                         onCheckedChange={() => toggleCategory(c.id)}
                       />
-                      <span className="text-sm">{c.name}</span>
+                      <span className="text-sm truncate flex-1 min-w-0">{c.name}</span>
                     </label>
                   ))}
                 </div>
@@ -408,8 +408,9 @@ const AdminProducts = () => {
                 <Input
                   value={aiKeywords}
                   onChange={(e) => setAiKeywords(e.target.value)}
-                  placeholder="Optional keywords (e.g. romantic, anniversary, red roses)"
-                  className="bg-background"
+                  placeholder="Optional keywords (e.g. romantic, anniversary)"
+                  className="bg-background w-full"
+                  style={{ fontSize: 16 }}
                 />
                 <Button type="button" onClick={handleAiGenerate} disabled={aiGenerating || !form.name.trim()} className="w-full sm:w-auto">
                   {aiGenerating ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Generating…</> : <><Sparkles className="h-4 w-4 mr-2" />Generate with AI</>}
