@@ -234,6 +234,51 @@ const BouquetBuilder = () => {
     URL.revokeObjectURL(designPreviews[index]);
     setDesignImages((prev) => prev.filter((_, i) => i !== index));
     setDesignPreviews((prev) => prev.filter((_, i) => i !== index));
+    setAiPreviewUrl(null);
+    setAiPreviewError(null);
+  };
+
+  const fileToDataUrl = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result as string);
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+
+  const generateAiPreview = async () => {
+    if (designImages.length === 0) {
+      toast.error("Upload a design photo first");
+      return;
+    }
+    if (selectedFlowersList.length === 0) {
+      toast.error("Select at least one flower in step 1");
+      return;
+    }
+    setAiPreviewLoading(true);
+    setAiPreviewError(null);
+    setAiPreviewUrl(null);
+    try {
+      const dataUrls = await Promise.all(designImages.map(fileToDataUrl));
+      const { data, error } = await supabase.functions.invoke("ai-bouquet-preview", {
+        body: {
+          flowers: selectedFlowersList.map((f) => ({ name: f.name, qty: f.qty })),
+          designImages: dataUrls,
+        },
+      });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      const url = (data as any)?.previewUrl;
+      if (!url) throw new Error("No preview returned");
+      setAiPreviewUrl(url);
+      toast.success("AI preview ready!");
+    } catch (e: any) {
+      const msg = e?.message || "Failed to generate preview";
+      setAiPreviewError(msg);
+      toast.error(msg);
+    } finally {
+      setAiPreviewLoading(false);
+    }
   };
 
   const canProceed = () => {
