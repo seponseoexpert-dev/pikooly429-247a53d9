@@ -63,6 +63,7 @@ const Footer = memo(() => {
   const defaultQuickLinks = [
     { label: "About Us", url: "/about-us" },
     { label: "Contact Us", url: "/contact-us" },
+    { label: "Affiliate Program", url: "/affiliate" },
     { label: "Privacy Policy", url: "#" },
     { label: "Terms & Conditions", url: "#" },
   ];
