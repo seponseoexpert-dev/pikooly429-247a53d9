@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { LogOut, Settings, HelpCircle, FileText, Shield } from "lucide-react";
+import { LogOut, Settings, HelpCircle, FileText, Shield, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { AccountSkeleton } from "@/components/ui/skeletons";
 import ProfileHeader from "@/components/account/ProfileHeader";
@@ -80,6 +80,7 @@ const Account = () => {
   const totalSpent = orders.reduce((sum: number, o: any) => sum + Number(o.total), 0);
 
   const quickLinks = [
+    { icon: Share2, label: "Affiliate", href: "/affiliate" },
     { icon: FileText, label: "Track Order", href: "/track-order" },
     { icon: HelpCircle, label: "Contact Us", href: "/contact-us" },
     { icon: Shield, label: "About Us", href: "/about-us" },
