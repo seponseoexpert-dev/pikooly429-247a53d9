@@ -15,6 +15,7 @@ import DynamicHead from "@/components/layout/DynamicHead";
 import ScrollToTop from "@/components/layout/ScrollToTop";
 import PageLoader from "@/components/layout/PageLoader";
 import WordPressRedirects from "@/components/layout/WordPressRedirects";
+import AffiliateTracker from "@/components/layout/AffiliateTracker";
 import PageTransition from "@/components/layout/PageTransition";
 import { lazy, Suspense, useEffect } from "react";
 
@@ -94,6 +95,8 @@ const AdminActivityLog = lazy(() => lazyRetry(() => import("./pages/admin/AdminA
 const AdminCartAddons = lazy(() => lazyRetry(() => import("./pages/admin/AdminCartAddons")));
 const AdminBulkOrders = lazy(() => lazyRetry(() => import("./pages/admin/AdminBulkOrders")));
 const SearchPage = lazy(() => lazyRetry(() => import("./pages/Search")));
+const Affiliate = lazy(() => lazyRetry(() => import("./pages/Affiliate")));
+const AdminAffiliates = lazy(() => lazyRetry(() => import("./pages/admin/AdminAffiliates")));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -196,6 +199,7 @@ const App = () => (
             <ScrollToTop />
             <RoutePrefetcher />
             <WordPressRedirects />
+            <AffiliateTracker />
             <Routes>
               {/* Public routes */}
               <Route path="/" element={<PublicLayout><Index /></PublicLayout>} />
@@ -229,6 +233,7 @@ const App = () => (
               <Route path="/auth" element={<PublicLayout><Auth /></PublicLayout>} />
               <Route path="/account" element={<PublicLayout><Account /></PublicLayout>} />
               <Route path="/reset-password" element={<PublicLayout><ResetPassword /></PublicLayout>} />
+              <Route path="/affiliate" element={<PublicLayout><Affiliate /></PublicLayout>} />
               {/* Admin routes */}
               <Route path="/admin/login" element={<Suspense fallback={<PageLoader />}><AdminLogin /></Suspense>} />
               <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
@@ -255,6 +260,7 @@ const App = () => (
               <Route path="/admin/activity" element={<AdminRoute><AdminActivityLog /></AdminRoute>} />
               <Route path="/admin/cart-addons" element={<AdminRoute><AdminCartAddons /></AdminRoute>} />
               <Route path="/admin/bulk-orders" element={<AdminRoute><AdminBulkOrders /></AdminRoute>} />
+              <Route path="/admin/affiliates" element={<AdminRoute><AdminAffiliates /></AdminRoute>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>
