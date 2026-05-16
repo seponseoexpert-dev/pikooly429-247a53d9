@@ -733,7 +733,7 @@ const Checkout = () => {
         supabase.functions.invoke("send-email", {
           body: {
             to: form.email.trim(),
-            subject: `Order Confirmed - ${order.order_number} | PikoolyFlora`,
+            subject: `Order Confirmed - ${order.order_number} | Pikooly`,
             html: emailHtml,
           },
         }).catch(console.error);
@@ -742,7 +742,7 @@ const Checkout = () => {
       // Send order SMS to customer (fire & forget) — respects admin toggle
       if (form.phone.trim() && shouldSendSms(alertSettings, "pending")) {
         const trackUrl = `${window.location.origin}/track-order`;
-        const smsMessage = `✅ Order Confirmed!\n\nOrder: ${order.order_number}\nTotal: ৳${grandTotal.toFixed(2)}\nDelivery: ${activeDistrict?.name || ""} - ${form.address.trim()}\n\n📦 Track your order:\n${trackUrl}\n\nThank you for shopping with PikoolyFlora! 🌸`;
+        const smsMessage = `✅ Order Confirmed!\n\nOrder: ${order.order_number}\nTotal: ৳${grandTotal.toFixed(2)}\nDelivery: ${activeDistrict?.name || ""} - ${form.address.trim()}\n\n📦 Track your order:\n${trackUrl}\n\nThank you for shopping with Pikooly! 🌸`;
 
         supabase.functions.invoke("send-sms", {
           body: {
@@ -798,7 +798,7 @@ const Checkout = () => {
         supabase.functions.invoke("send-email", {
           body: {
             to: adminEmail,
-            subject: `🛒 New Order - ${order.order_number} | PikoolyFlora`,
+            subject: `🛒 New Order - ${order.order_number} | Pikooly`,
             html: adminHtml,
           },
         }).catch(console.error);

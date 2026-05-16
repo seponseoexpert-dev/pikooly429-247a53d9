@@ -17,17 +17,17 @@ const buildContent = (
     case "approved":
       return {
         subject: "Your affiliate application is approved 🎉",
-        text: `Hi ${affName},\n\nGreat news! Your affiliate application has been approved. Your referral code is ${code}. Start sharing your link and earn commissions on every delivered order.\n\nThanks,\nPikoolyFlora`,
+        text: `Hi ${affName},\n\nGreat news! Your affiliate application has been approved. Your referral code is ${code}. Start sharing your link and earn commissions on every delivered order.\n\nThanks,\nPikooly`,
       };
     case "rejected":
       return {
         subject: "Affiliate application update",
-        text: `Hi ${affName},\n\nUnfortunately, your affiliate application was not approved at this time.${payload.notes ? `\n\nReason: ${payload.notes}` : ""}\n\nThanks,\nPikoolyFlora`,
+        text: `Hi ${affName},\n\nUnfortunately, your affiliate application was not approved at this time.${payload.notes ? `\n\nReason: ${payload.notes}` : ""}\n\nThanks,\nPikooly`,
       };
     case "commission_credited":
       return {
         subject: `Bonus credited: ${payload.commission_amount} BDT`,
-        text: `Hi ${affName},\n\nA commission of ${payload.commission_amount} BDT has been credited to your wallet for order ${payload.order_number}. Keep up the great work!\n\nThanks,\nPikoolyFlora`,
+        text: `Hi ${affName},\n\nA commission of ${payload.commission_amount} BDT has been credited to your wallet for order ${payload.order_number}. Keep up the great work!\n\nThanks,\nPikooly`,
       };
     default:
       return { subject: "Affiliate notification", text: `Update for ${affName}` };
