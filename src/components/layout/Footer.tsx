@@ -64,11 +64,22 @@ const Footer = memo(() => {
     { label: "About Us", url: "/about-us" },
     { label: "Contact Us", url: "/contact-us" },
     { label: "Affiliate Program", url: "/affiliate" },
-    { label: "Privacy Policy", url: "#" },
-    { label: "Terms & Conditions", url: "#" },
+    { label: "Refund & Return", url: "/refund-policy" },
+    { label: "Privacy Policy", url: "/privacy-policy" },
+    { label: "Terms & Conditions", url: "/terms-conditions" },
   ];
 
-  const finalQuickLinks = quickLinks.length > 0 ? quickLinks : defaultQuickLinks;
+  // Always include policy + affiliate links even when admin configured custom quick links
+  const policyLinks = [
+    { label: "Affiliate Program", url: "/affiliate" },
+    { label: "Refund & Return", url: "/refund-policy" },
+    { label: "Privacy Policy", url: "/privacy-policy" },
+    { label: "Terms & Conditions", url: "/terms-conditions" },
+  ];
+
+  const finalQuickLinks = quickLinks.length > 0
+    ? [...quickLinks, ...policyLinks.filter(p => !quickLinks.some(q => q.url === p.url))]
+    : defaultQuickLinks;
 
   const categoryLinks = [1, 2, 3, 4]
     .map((i) => ({
