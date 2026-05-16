@@ -64,6 +64,11 @@ const AdminAffiliates = () => {
     const { error } = await supabase.from("affiliates").update(patch).eq("id", id);
     if (error) { toast.error(error.message); return; }
     toast.success("Updated");
+    if (patch.status === "approved" || patch.status === "rejected") {
+      supabase.functions.invoke("notify-affiliate", {
+        body: { event: patch.status, affiliate_id: id, notes: patch.admin_notes || "" },
+      }).catch(() => {});
+    }
     qc.invalidateQueries({ queryKey: ["admin-affiliates"] });
   };
 

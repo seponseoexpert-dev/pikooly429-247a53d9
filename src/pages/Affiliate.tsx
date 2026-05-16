@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Copy, Share2, Wallet, TrendingUp, Clock, CheckCircle2, Link2 } from "lucide-react";
+import { Copy, Share2, Wallet, TrendingUp, Clock, CheckCircle2, Link2, MousePointerClick, ShoppingBag, Percent } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Affiliate = () => {
@@ -58,6 +58,18 @@ const Affiliate = () => {
     queryFn: async () => {
       const { data } = await supabase.from("affiliate_cashouts").select("*").eq("affiliate_id", affiliate!.id).order("created_at", { ascending: false });
       return data || [];
+    },
+  });
+
+  const { data: analytics } = useQuery({
+    queryKey: ["affiliate-analytics", affiliate?.id],
+    enabled: !!affiliate?.id,
+    queryFn: async () => {
+      const [clicksRes, ordersRes] = await Promise.all([
+        supabase.from("affiliate_clicks").select("id", { count: "exact", head: true }).eq("affiliate_id", affiliate!.id),
+        supabase.from("orders").select("id", { count: "exact", head: true }).eq("affiliate_id", affiliate!.id),
+      ]);
+      return { clicks: clicksRes.count || 0, attributedOrders: ordersRes.count || 0 };
     },
   });
 
@@ -234,6 +246,33 @@ const Affiliate = () => {
           <div className="text-xl font-bold">{commissions.length}</div>
         </CardContent></Card>
       </div>
+
+      {/* Referral analytics */}
+      <Card>
+        <CardHeader className="pb-2"><CardTitle className="text-base">Referral Analytics</CardTitle></CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="p-3 rounded-lg bg-muted/40">
+              <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1"><MousePointerClick className="w-3.5 h-3.5" /> Link Clicks</div>
+              <div className="text-xl font-bold">{analytics?.clicks ?? 0}</div>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/40">
+              <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1"><ShoppingBag className="w-3.5 h-3.5" /> Attributed Orders</div>
+              <div className="text-xl font-bold">{analytics?.attributedOrders ?? 0}</div>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/40">
+              <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1"><CheckCircle2 className="w-3.5 h-3.5" /> Conversions (paid)</div>
+              <div className="text-xl font-bold">{commissions.length}</div>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/40">
+              <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1"><Percent className="w-3.5 h-3.5" /> Conversion Rate</div>
+              <div className="text-xl font-bold">
+                {analytics?.clicks ? ((commissions.length / analytics.clicks) * 100).toFixed(1) : "0.0"}%
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Referral link */}
       <Card>

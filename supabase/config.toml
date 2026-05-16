@@ -25,3 +25,6 @@ verify_jwt = false
 
 [functions.ai-bouquet-preview]
 verify_jwt = false
+
+[functions.notify-affiliate]
+verify_jwt = false

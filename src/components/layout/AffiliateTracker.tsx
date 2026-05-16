@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const STORAGE_KEY = "affiliate_ref";
 const TS_KEY = "affiliate_ref_ts";
+const CLICK_KEY = "affiliate_click_logged";
 const DEFAULT_DAYS = 30;
 
 export const getStoredAffiliateCode = (cookieDays = DEFAULT_DAYS): string | null => {
@@ -23,17 +25,37 @@ export const getStoredAffiliateCode = (cookieDays = DEFAULT_DAYS): string | null
 };
 
 const AffiliateTracker = () => {
-  const { search } = useLocation();
+  const { search, pathname } = useLocation();
   useEffect(() => {
     const params = new URLSearchParams(search);
     const ref = params.get("ref");
-    if (ref && ref.length >= 3 && ref.length <= 32) {
-      try {
-        localStorage.setItem(STORAGE_KEY, ref.toUpperCase());
-        localStorage.setItem(TS_KEY, Date.now().toString());
-      } catch {}
-    }
-  }, [search]);
+    if (!ref || ref.length < 3 || ref.length > 32) return;
+    const code = ref.toUpperCase();
+    try {
+      localStorage.setItem(STORAGE_KEY, code);
+      localStorage.setItem(TS_KEY, Date.now().toString());
+    } catch {}
+    // De-dupe click per code per 6h
+    const last = localStorage.getItem(CLICK_KEY + code);
+    if (last && Date.now() - Number(last) < 6 * 60 * 60 * 1000) return;
+    (async () => {
+      const { data: aff } = await supabase
+        .from("affiliates")
+        .select("id")
+        .eq("code", code)
+        .eq("status", "approved")
+        .maybeSingle();
+      if (!aff?.id) return;
+      await supabase.from("affiliate_clicks").insert({
+        affiliate_id: aff.id,
+        affiliate_code: code,
+        user_agent: navigator.userAgent,
+        referer: document.referrer || null,
+        landing_path: pathname + search,
+      });
+      try { localStorage.setItem(CLICK_KEY + code, Date.now().toString()); } catch {}
+    })();
+  }, [search, pathname]);
   return null;
 };
 
