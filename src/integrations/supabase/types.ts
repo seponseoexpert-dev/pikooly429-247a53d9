@@ -100,6 +100,39 @@ export type Database = {
           },
         ]
       }
+      affiliate_clicks: {
+        Row: {
+          affiliate_code: string
+          affiliate_id: string
+          created_at: string
+          id: string
+          ip: string | null
+          landing_path: string | null
+          referer: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          affiliate_code: string
+          affiliate_id: string
+          created_at?: string
+          id?: string
+          ip?: string | null
+          landing_path?: string | null
+          referer?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          affiliate_code?: string
+          affiliate_id?: string
+          created_at?: string
+          id?: string
+          ip?: string | null
+          landing_path?: string | null
+          referer?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       affiliate_commissions: {
         Row: {
           affiliate_id: string
