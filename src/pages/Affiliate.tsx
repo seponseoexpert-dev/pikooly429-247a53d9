@@ -61,6 +61,18 @@ const Affiliate = () => {
     },
   });
 
+  const { data: analytics } = useQuery({
+    queryKey: ["affiliate-analytics", affiliate?.id],
+    enabled: !!affiliate?.id,
+    queryFn: async () => {
+      const [clicksRes, ordersRes] = await Promise.all([
+        supabase.from("affiliate_clicks").select("id", { count: "exact", head: true }).eq("affiliate_id", affiliate!.id),
+        supabase.from("orders").select("id", { count: "exact", head: true }).eq("affiliate_id", affiliate!.id),
+      ]);
+      return { clicks: clicksRes.count || 0, attributedOrders: ordersRes.count || 0 };
+    },
+  });
+
   const bonusLabel = useMemo(() => {
     const t = affiliate?.custom_bonus_type || settings?.bonus_type || "percentage";
     const v = affiliate?.custom_bonus_value ?? settings?.bonus_value ?? 5;
