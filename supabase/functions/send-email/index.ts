@@ -51,7 +51,7 @@ serve(async (req) => {
     const port = parseInt(config.mail_port || "587");
     const username = config.mail_username;
     const password = config.mail_password;
-    const fromName = config.mail_from_name || "PikoolyFlora";
+    const fromName = config.mail_from_name || "Pikooly";
     const fromAddress = config.mail_from_address;
     const encryption = config.mail_encryption || "tls";
 

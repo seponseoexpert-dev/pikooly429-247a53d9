@@ -263,7 +263,7 @@ const sectionFields: Record<string, FieldDef[]> = {
     ]},
     { key: "vapid_public_key", label: "VAPID Public Key", fullWidth: true, placeholder: "BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkOs-..." },
     { key: "vapid_private_key", label: "VAPID Private Key", fullWidth: true, placeholder: "UUxI4O8-FbRouAevSmBQ6o18hgE4nSG97jDFlnyYxa8" },
-    { key: "vapid_subject", label: "VAPID Subject (mailto: or URL)", fullWidth: true, placeholder: "mailto:admin@pikoolyflora.com" },
+    { key: "vapid_subject", label: "VAPID Subject (mailto: or URL)", fullWidth: true, placeholder: "mailto:admin@pikooly.com" },
     { key: "push_new_order_enabled", label: "New Order Notification", type: "radio", options: [
       { value: "true", label: "Enable" },
       { value: "false", label: "Disable" },
@@ -277,10 +277,10 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "license_code", label: "License Code" },
   ],
   about: [
-    { key: "homepage_seo_title", label: "Homepage SEO Title (Google Title)", fullWidth: true, placeholder: "PikoolyFlora – Online Flower, Cake & Gift Delivery in Bangladesh" },
+    { key: "homepage_seo_title", label: "Homepage SEO Title (Google Title)", fullWidth: true, placeholder: "Pikooly – Online Flower, Cake & Gift Delivery in Bangladesh" },
     { key: "homepage_meta_description", label: "Homepage Meta Description (Google Snippet)", type: "textarea", fullWidth: true, placeholder: "Order fresh flowers, cakes & gifts online in Bangladesh. Same-day delivery in Dhaka. Best prices guaranteed. 🌸" },
-    { key: "about_title", label: "About Title", fullWidth: true, placeholder: "PikoolyFlora: Online Flower Shop in Bangladesh" },
-    { key: "about_short_text", label: "Short Text (before Read more)", type: "richtext", fullWidth: true, placeholder: "Welcome to PikoolyFlora-Online website..." },
+    { key: "about_title", label: "About Title", fullWidth: true, placeholder: "Pikooly: Online Flower Shop in Bangladesh" },
+    { key: "about_short_text", label: "Short Text (before Read more)", type: "richtext", fullWidth: true, placeholder: "Welcome to Pikooly-Online website..." },
     { key: "about_full_text", label: "Full Text (after Read more)", type: "richtext", fullWidth: true, placeholder: "Extended description shown after clicking Read more..." },
   ],
   about_page: [
@@ -353,7 +353,7 @@ const sectionFields: Record<string, FieldDef[]> = {
   ],
   footer: [
     { key: "site_footer_text", label: "Footer Tagline / Description", type: "textarea", fullWidth: true, placeholder: "e.g. Not just a Gift, It's sharing of Love." },
-    { key: "site_copyright", label: "Copyright Text", fullWidth: true, placeholder: `© ${new Date().getFullYear()} PikoolyFlora. All Rights Reserved.` },
+    { key: "site_copyright", label: "Copyright Text", fullWidth: true, placeholder: `© ${new Date().getFullYear()} Pikooly. All Rights Reserved.` },
     { key: "footer_quick_link_1_label", label: "Quick Link 1 Label", placeholder: "About Us" },
     { key: "footer_quick_link_1_url", label: "Quick Link 1 URL", placeholder: "/about" },
     { key: "footer_quick_link_2_label", label: "Quick Link 2 Label", placeholder: "Contact Us" },
@@ -1024,8 +1024,8 @@ const SendTestEmailButton = () => {
       const { data, error } = await supabase.functions.invoke("send-email", {
         body: {
           to: testEmail.trim(),
-          subject: "PikoolyFlora - Test Email",
-          html: `<div style="font-family:sans-serif;padding:20px;"><h2 style="color:#e85d5d;">🎉 Mail Configuration Working!</h2><p>This is a test email from <strong>PikoolyFlora</strong> Admin Panel.</p><p>Your SMTP settings are configured correctly.</p><hr/><p style="color:#999;font-size:12px;">PikoolyFlora - Not just a Gift, It's sharing of Love.</p></div>`,
+          subject: "Pikooly - Test Email",
+          html: `<div style="font-family:sans-serif;padding:20px;"><h2 style="color:#e85d5d;">🎉 Mail Configuration Working!</h2><p>This is a test email from <strong>Pikooly</strong> Admin Panel.</p><p>Your SMTP settings are configured correctly.</p><hr/><p style="color:#999;font-size:12px;">Pikooly - Not just a Gift, It's sharing of Love.</p></div>`,
         },
       });
       if (error) throw error;

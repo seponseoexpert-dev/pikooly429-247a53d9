@@ -8,11 +8,11 @@ const AboutSection = () => {
   const [expanded, setExpanded] = useState(false);
   const { settings } = useSiteSettings();
 
-  const title = settings.about_title || "PikoolyFlora: Online Flower Shop in Bangladesh";
+  const title = settings.about_title || "Pikooly: Online Flower Shop in Bangladesh";
   const fullContent = (settings.about_short_text || "") + (settings.about_full_text || "");
 
   return (
-    <section className="py-4 sm:py-6 md:py-8 section-container" aria-label="About PikoolyFlora" style={{ contain: "layout style", minHeight: "180px" }}>
+    <section className="py-4 sm:py-6 md:py-8 section-container" aria-label="About Pikooly" style={{ contain: "layout style", minHeight: "180px" }}>
       <div className="mb-3 sm:mb-4">
         <h2 className="display-heading text-foreground font-bold leading-tight" style={{ fontSize: "clamp(1.25rem, 2vw + 0.5rem, 1.75rem)" }}>
           {title}
@@ -32,8 +32,8 @@ const AboutSection = () => {
       </div>
 
       <div className="flex items-center gap-4 mt-5">
-        <img src={medal1} alt="PikoolyFlora Badge" width="140" height="48" className="w-[120px] h-[40px] sm:w-[140px] sm:h-[48px] md:w-[160px] md:h-[54px] object-contain" loading="lazy" decoding="async" />
-        <img src={medal2} alt="PikoolyFlora Badge" width="140" height="48" className="w-[120px] h-[40px] sm:w-[140px] sm:h-[48px] md:w-[160px] md:h-[54px] object-contain" loading="lazy" decoding="async" />
+        <img src={medal1} alt="Pikooly Badge" width="140" height="48" className="w-[120px] h-[40px] sm:w-[140px] sm:h-[48px] md:w-[160px] md:h-[54px] object-contain" loading="lazy" decoding="async" />
+        <img src={medal2} alt="Pikooly Badge" width="140" height="48" className="w-[120px] h-[40px] sm:w-[140px] sm:h-[48px] md:w-[160px] md:h-[54px] object-contain" loading="lazy" decoding="async" />
       </div>
     </section>
   );

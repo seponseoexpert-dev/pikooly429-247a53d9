@@ -130,7 +130,7 @@ serve(async (req) => {
           api_key: config.nexmo_key,
           api_secret: config.nexmo_secret,
           to: formattedTo.replace(/[^0-9]/g, ""),
-          from: "PikoolyFlora",
+          from: "Pikooly",
           text: message,
         }),
       });

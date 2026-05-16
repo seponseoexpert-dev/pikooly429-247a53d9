@@ -1,5 +1,5 @@
 const defaultFaqItems = [
-  { question: "What is PikoolyFlora?", answer: "PikoolyFlora is your trusted online destination for fresh flowers, delicious cakes, and thoughtful gifts in Bangladesh." },
+  { question: "What is Pikooly?", answer: "Pikooly is your trusted online destination for fresh flowers, delicious cakes, and thoughtful gifts in Bangladesh." },
   { question: "Do you offer same-day delivery?", answer: "Yes! We offer same-day delivery in Dhaka for orders placed before 3 PM." },
   { question: "Are the flowers fresh?", answer: "Absolutely! We source our flowers from the finest local and imported suppliers. Every bouquet is handcrafted fresh on the day of delivery." },
 ];

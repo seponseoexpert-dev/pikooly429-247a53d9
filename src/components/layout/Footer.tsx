@@ -18,7 +18,7 @@ const Footer = memo(() => {
 
   const storeName = settings.store_name || "Pikooly";
   const phone = settings.store_phone || "+880 1XXX-XXXXXX";
-  const storeEmail = settings.store_email || "hello@pikoolyflora.com";
+  const storeEmail = settings.store_email || "hello@pikooly.com";
   const address = settings.store_address || "Head Office: House #95, Road #06, sector #09, BD";
   const copyright = settings.site_copyright || `© ${new Date().getFullYear()} ${storeName}. All Rights Reserved.`;
   const footerText = settings.site_footer_text || "";

@@ -162,7 +162,7 @@ const AdminOrders = () => {
       await supabase.functions.invoke("send-email", {
         body: {
           to: order.customer_email,
-          subject: `${template.subject} - ${order.order_number} | PikoolyFlora`,
+          subject: `${template.subject} - ${order.order_number} | Pikooly`,
           html,
         },
       });
