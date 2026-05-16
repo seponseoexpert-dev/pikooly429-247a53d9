@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Copy, Share2, Wallet, TrendingUp, Clock, CheckCircle2, Link2 } from "lucide-react";
+import { Copy, Share2, Wallet, TrendingUp, Clock, CheckCircle2, Link2, MousePointerClick, ShoppingBag, Percent } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Affiliate = () => {
