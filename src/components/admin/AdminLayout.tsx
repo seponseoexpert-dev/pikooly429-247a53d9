@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import {
-  LayoutDashboard, Package, ShoppingCart, FileText, Tag, LogOut, Menu, X, Users, Star, Ticket, Settings, Truck, Coins, Mail, Download, Flower2, CalendarCheck, Camera, Gift, Home, UserCog, ShieldCheck, History, Briefcase,
+  LayoutDashboard, Package, ShoppingCart, FileText, Tag, LogOut, Menu, X, Users, Star, Ticket, Settings, Truck, Coins, Mail, Download, Flower2, CalendarCheck, Camera, Gift, Home, UserCog, ShieldCheck, History, Briefcase, Share2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -32,6 +32,7 @@ const navGroups = [
       { label: "Customers", icon: Users, path: "/admin/customers" },
       { label: "Coupons", icon: Ticket, path: "/admin/coupons" },
       { label: "Cart Add-ons", icon: Gift, path: "/admin/cart-addons" },
+      { label: "Affiliates", icon: Share2, path: "/admin/affiliates" },
       { label: "Shipping", icon: Truck, path: "/admin/shipping" },
       { label: "Currencies", icon: Coins, path: "/admin/currencies" },
     ],

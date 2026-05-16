@@ -523,6 +523,21 @@ const Checkout = () => {
       const { data: session } = await supabase.auth.getSession();
       const userId = session?.session?.user?.id || null;
 
+      // Resolve affiliate (if a referral cookie exists)
+      let affiliateCode: string | null = null;
+      let affiliateId: string | null = null;
+      try {
+        const { getStoredAffiliateCode } = await import("@/components/layout/AffiliateTracker");
+        const code = getStoredAffiliateCode();
+        if (code) {
+          const { data: aff } = await supabase.from("affiliates").select("id, user_id").eq("code", code).eq("status", "approved").maybeSingle();
+          if (aff && aff.user_id !== userId) {
+            affiliateCode = code;
+            affiliateId = aff.id;
+          }
+        }
+      } catch {}
+
       const orderData = {
         customer_name: (form.fullName.trim() || form.recipientName.trim()),
         customer_phone: form.phone.trim(),
@@ -546,6 +561,8 @@ const Checkout = () => {
         due_amount: hasPreorder ? dueOnDelivery : 0,
         user_id: userId,
         order_number: "temp",
+        affiliate_code: affiliateCode,
+        affiliate_id: affiliateId,
       };
 
       const { data: order, error: orderError } = await supabase

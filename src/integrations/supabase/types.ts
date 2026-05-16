@@ -50,6 +50,208 @@ export type Database = {
         }
         Relationships: []
       }
+      affiliate_cashouts: {
+        Row: {
+          account_details: string | null
+          admin_notes: string | null
+          affiliate_id: string
+          amount: number
+          created_at: string
+          id: string
+          method: string
+          processed_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account_details?: string | null
+          admin_notes?: string | null
+          affiliate_id: string
+          amount: number
+          created_at?: string
+          id?: string
+          method: string
+          processed_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account_details?: string | null
+          admin_notes?: string | null
+          affiliate_id?: string
+          amount?: number
+          created_at?: string
+          id?: string
+          method?: string
+          processed_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_cashouts_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      affiliate_commissions: {
+        Row: {
+          affiliate_id: string
+          bonus_type: string
+          bonus_value: number
+          commission_amount: number
+          created_at: string
+          credited_to_wallet: boolean
+          id: string
+          order_id: string
+          order_number: string | null
+          order_total: number
+          status: string
+        }
+        Insert: {
+          affiliate_id: string
+          bonus_type: string
+          bonus_value: number
+          commission_amount?: number
+          created_at?: string
+          credited_to_wallet?: boolean
+          id?: string
+          order_id: string
+          order_number?: string | null
+          order_total?: number
+          status?: string
+        }
+        Update: {
+          affiliate_id?: string
+          bonus_type?: string
+          bonus_value?: number
+          commission_amount?: number
+          created_at?: string
+          credited_to_wallet?: boolean
+          id?: string
+          order_id?: string
+          order_number?: string | null
+          order_total?: number
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_commissions_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      affiliate_settings: {
+        Row: {
+          bonus_type: string
+          bonus_value: number
+          cookie_days: number
+          created_at: string
+          id: string
+          min_cashout: number
+          program_enabled: boolean
+          terms: string | null
+          updated_at: string
+        }
+        Insert: {
+          bonus_type?: string
+          bonus_value?: number
+          cookie_days?: number
+          created_at?: string
+          id?: string
+          min_cashout?: number
+          program_enabled?: boolean
+          terms?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bonus_type?: string
+          bonus_value?: number
+          cookie_days?: number
+          created_at?: string
+          id?: string
+          min_cashout?: number
+          program_enabled?: boolean
+          terms?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      affiliates: {
+        Row: {
+          admin_notes: string | null
+          approved_at: string | null
+          clicks: number
+          code: string
+          created_at: string
+          custom_bonus_type: string | null
+          custom_bonus_value: number | null
+          email: string | null
+          full_name: string | null
+          id: string
+          payout_details: string | null
+          payout_method: string | null
+          pending_balance: number
+          phone: string | null
+          status: string
+          total_earned: number
+          total_paid: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          approved_at?: string | null
+          clicks?: number
+          code: string
+          created_at?: string
+          custom_bonus_type?: string | null
+          custom_bonus_value?: number | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          payout_details?: string | null
+          payout_method?: string | null
+          pending_balance?: number
+          phone?: string | null
+          status?: string
+          total_earned?: number
+          total_paid?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          approved_at?: string | null
+          clicks?: number
+          code?: string
+          created_at?: string
+          custom_bonus_type?: string | null
+          custom_bonus_value?: number | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          payout_details?: string | null
+          payout_method?: string | null
+          pending_balance?: number
+          phone?: string | null
+          status?: string
+          total_earned?: number
+          total_paid?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       blogs: {
         Row: {
           author_id: string | null
@@ -1103,6 +1305,8 @@ export type Database = {
       orders: {
         Row: {
           advance_amount: number
+          affiliate_code: string | null
+          affiliate_id: string | null
           alt_phone: string | null
           billing_country: string | null
           created_at: string
@@ -1134,6 +1338,8 @@ export type Database = {
         }
         Insert: {
           advance_amount?: number
+          affiliate_code?: string | null
+          affiliate_id?: string | null
           alt_phone?: string | null
           billing_country?: string | null
           created_at?: string
@@ -1165,6 +1371,8 @@ export type Database = {
         }
         Update: {
           advance_amount?: number
+          affiliate_code?: string | null
+          affiliate_id?: string | null
           alt_phone?: string | null
           billing_country?: string | null
           created_at?: string
