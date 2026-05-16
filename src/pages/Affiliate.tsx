@@ -247,6 +247,33 @@ const Affiliate = () => {
         </CardContent></Card>
       </div>
 
+      {/* Referral analytics */}
+      <Card>
+        <CardHeader className="pb-2"><CardTitle className="text-base">Referral Analytics</CardTitle></CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="p-3 rounded-lg bg-muted/40">
+              <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1"><MousePointerClick className="w-3.5 h-3.5" /> Link Clicks</div>
+              <div className="text-xl font-bold">{analytics?.clicks ?? 0}</div>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/40">
+              <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1"><ShoppingBag className="w-3.5 h-3.5" /> Attributed Orders</div>
+              <div className="text-xl font-bold">{analytics?.attributedOrders ?? 0}</div>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/40">
+              <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1"><CheckCircle2 className="w-3.5 h-3.5" /> Conversions (paid)</div>
+              <div className="text-xl font-bold">{commissions.length}</div>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/40">
+              <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1"><Percent className="w-3.5 h-3.5" /> Conversion Rate</div>
+              <div className="text-xl font-bold">
+                {analytics?.clicks ? ((commissions.length / analytics.clicks) * 100).toFixed(1) : "0.0"}%
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Referral link */}
       <Card>
         <CardHeader><CardTitle className="text-base">Your Referral Link</CardTitle></CardHeader>
