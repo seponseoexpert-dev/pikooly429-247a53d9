@@ -10,7 +10,7 @@ const AllGifts = () => {
   const [expandedCat, setExpandedCat] = useState<string | null>(null);
   const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
 
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [], isLoading: catsLoading } = useQuery({
     queryKey: ["public-categories"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -23,7 +23,7 @@ const AllGifts = () => {
     },
   });
 
-  const { data: subcategories = [] } = useQuery({
+  const { data: subcategories = [], isLoading: subsLoading } = useQuery({
     queryKey: ["public-subcategories"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -35,6 +35,8 @@ const AllGifts = () => {
       return data as any[];
     },
   });
+
+  const isLoading = catsLoading || subsLoading;
 
   const getTypes = (c: any): string[] =>
     (c.category_types && c.category_types.length > 0) ? c.category_types : [c.category_type].filter(Boolean);
@@ -87,6 +89,14 @@ const AllGifts = () => {
       </div>
 
       <div className="space-y-3">
+        {isLoading && currentList.length === 0 ? (
+          Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="border border-border/60 rounded-xl bg-card p-3 flex items-center gap-3">
+              <div className="w-14 h-14 rounded-lg bg-muted animate-pulse" />
+              <div className="h-4 w-40 rounded bg-muted animate-pulse" />
+            </div>
+          ))
+        ) : (<></>)}
         {currentList.map((cat: any) => {
           const subs = getSubsForCat(cat.id);
           const isExpanded = expandedCat === cat.id;
