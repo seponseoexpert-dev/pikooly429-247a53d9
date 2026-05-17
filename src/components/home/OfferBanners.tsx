@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 const OfferBanners = memo(() => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const { data: banners = [] } = useQuery({
+  const { data: banners = [], isLoading } = useQuery({
     queryKey: ["offer-banners"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -20,6 +20,19 @@ const OfferBanners = memo(() => {
     },
     staleTime: 5 * 60 * 1000,
   });
+
+  if (isLoading && banners.length === 0) {
+    return (
+      <section className="py-3 sm:py-5 md:py-7 section-container">
+        <div className="h-6 w-40 mb-4 rounded bg-muted animate-pulse" />
+        <div className="flex gap-3 sm:gap-4 md:gap-5 overflow-hidden pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="min-w-[280px] w-[80vw] sm:w-[340px] md:flex-1 h-[90px] sm:h-[100px] md:h-[110px] rounded-2xl bg-muted animate-pulse" />
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   if (banners.length === 0) return null;
 
