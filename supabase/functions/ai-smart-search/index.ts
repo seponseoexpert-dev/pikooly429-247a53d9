@@ -1,19 +1,12 @@
 // AI Smart Search — natural language → product recommendations
-// Provider is admin-controlled via site_settings.ai_search_provider:
-//   "lovable" (default) | "gemini" | "openai" | "anthropic"
+// Routes to the admin-selected provider (site_settings.ai_search_provider)
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { callAI, getAIConfig } from "../_shared/ai-call.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
-
-const DEFAULTS: Record<string, string> = {
-  lovable: "google/gemini-2.5-pro",
-  gemini: "gemini-2.5-pro",
-  openai: "gpt-4o-mini",
-  anthropic: "claude-3-5-sonnet-20241022",
 };
 
 Deno.serve(async (req) => {
@@ -27,21 +20,11 @@ Deno.serve(async (req) => {
       });
     }
 
-    const supaUrl = Deno.env.get("SUPABASE_URL")!;
-    const supaKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supaUrl, supaKey);
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
 
-    // Load provider settings
-    const { data: settingsRows } = await supabase
-      .from("site_settings")
-      .select("key, value")
-      .in("key", ["ai_search_provider", "ai_search_model"]);
-    const sMap: Record<string, string> = {};
-    (settingsRows || []).forEach((r: any) => { sMap[r.key] = r.value || ""; });
-    const provider = (sMap.ai_search_provider || "lovable").toLowerCase();
-    const model = sMap.ai_search_model || DEFAULTS[provider] || DEFAULTS.lovable;
-
-    // Fetch candidate products
     const { data: products, error } = await supabase
       .from("products")
       .select("id, name, slug, price, image_url, tags, short_description, category_id, rating")
@@ -81,13 +64,14 @@ Return JSON (intent + reason MUST be in the same language/script as the user que
   "reason": "<1-2 warm sentences in the user's language>"
 }`;
 
-    // ---- Call selected provider ----
+    const { provider, model } = await getAIConfig();
+
     let content = "{}";
     try {
-      content = await callProvider(provider, model, system, user);
+      content = await callAI({ system, user, json: true, provider, model });
     } catch (e) {
       const msg = (e as Error).message || "AI error";
-      const status = msg.includes("429") ? 429 : msg.includes("402") ? 402 : msg.includes("missing key") ? 400 : 500;
+      const status = msg.includes("Rate limit") ? 429 : msg.includes("credits") ? 402 : msg.includes("not configured") ? 400 : 500;
       return new Response(JSON.stringify({ error: msg }), {
         status, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -116,78 +100,3 @@ Return JSON (intent + reason MUST be in the same language/script as the user que
     });
   }
 });
-
-async function callProvider(provider: string, model: string, system: string, user: string): Promise<string> {
-  if (provider === "openai") {
-    const key = Deno.env.get("OPENAI_API_KEY");
-    if (!key) throw new Error("OpenAI missing key — add OPENAI_API_KEY");
-    const r = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
-      body: JSON.stringify({
-        model,
-        messages: [{ role: "system", content: system }, { role: "user", content: user }],
-        response_format: { type: "json_object" },
-      }),
-    });
-    if (!r.ok) throw new Error(`OpenAI ${r.status}: ${(await r.text()).slice(0, 200)}`);
-    const j = await r.json();
-    return j?.choices?.[0]?.message?.content || "{}";
-  }
-
-  if (provider === "anthropic") {
-    const key = Deno.env.get("ANTHROPIC_API_KEY");
-    if (!key) throw new Error("Anthropic missing key — add ANTHROPIC_API_KEY");
-    const r = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": key,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model,
-        max_tokens: 2000,
-        system,
-        messages: [{ role: "user", content: user + "\n\nRespond with ONLY the JSON object, no prose." }],
-      }),
-    });
-    if (!r.ok) throw new Error(`Anthropic ${r.status}: ${(await r.text()).slice(0, 200)}`);
-    const j = await r.json();
-    return j?.content?.[0]?.text || "{}";
-  }
-
-  if (provider === "gemini") {
-    const key = Deno.env.get("GEMINI_API_KEY");
-    if (!key) throw new Error("Gemini missing key — add GEMINI_API_KEY");
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${key}`;
-    const r = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: system }] },
-        contents: [{ role: "user", parts: [{ text: user }] }],
-        generationConfig: { responseMimeType: "application/json" },
-      }),
-    });
-    if (!r.ok) throw new Error(`Gemini ${r.status}: ${(await r.text()).slice(0, 200)}`);
-    const j = await r.json();
-    return j?.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
-  }
-
-  // Default: Lovable AI Gateway
-  const key = Deno.env.get("LOVABLE_API_KEY");
-  if (!key) throw new Error("Lovable AI missing key");
-  const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
-    body: JSON.stringify({
-      model,
-      messages: [{ role: "system", content: system }, { role: "user", content: user }],
-      response_format: { type: "json_object" },
-    }),
-  });
-  if (!r.ok) throw new Error(`Lovable ${r.status}: ${(await r.text()).slice(0, 200)}`);
-  const j = await r.json();
-  return j?.choices?.[0]?.message?.content || "{}";
-}

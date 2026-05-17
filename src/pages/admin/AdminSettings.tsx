@@ -52,7 +52,7 @@ const settingSections = [
   { key: "cart_page", label: "Cart Page", icon: ShoppingCart },
   
   { key: "google_sheets", label: "Google Sheets", icon: FileText },
-  { key: "ai_search", label: "AI Search", icon: Settings },
+  { key: "ai_search", label: "AI Provider (Global)", icon: Settings },
 ];
 
 type FieldDef = {

@@ -1,4 +1,6 @@
-// AI Product Content Generator — uses Lovable AI Gateway
+// AI Product Content Generator — routes via admin-selected provider
+import { callAI } from "../_shared/ai-call.ts";
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -23,13 +25,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    const apiKey = Deno.env.get("LOVABLE_API_KEY");
-    if (!apiKey) {
-      return new Response(JSON.stringify({ error: "AI not configured" }), {
-        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
     const system = `You are a senior SEO copywriter & E-E-A-T content strategist for Pikooly — a premium flower, cake & gift shop in Bangladesh. You write 100% human-sounding, emotive, original product copy in clear natural English (NEVER robotic, NEVER AI-fluff like "in today's fast-paced world", "elevate", "delve", "unleash", "in conclusion"). Content must:
 - Pass AI-detector as human (varied sentence length, contractions, sensory detail, micro-stories, specific concrete nouns).
 - Be optimized for Google Helpful Content + AI Overviews (SGE) + ChatGPT/Perplexity citations: include question-style sub-phrasing, direct answers in the first sentence, semantic keyword variations (LSI), entities, occasion mentions.
@@ -48,51 +43,28 @@ Return JSON with this EXACT shape (every field required, never empty):
 {
   "slug": "<short URL slug, lowercase, hyphenated, max 60 chars, includes primary keyword>",
   "short_description": "<plain-text hook, 140-160 chars, answers 'what is this & why buy' directly>",
-  "description": "<rich semantic HTML, 220-320 words. Structure: <p> opening that DIRECTLY answers what the product is and best occasions (great for AI Overviews). <p> sensory + emotional paragraph (sight, scent, feel, moment). <ul><li> 4-6 short benefit/feature bullets with <strong> on the lead phrase. <p> closing with a soft CTA + 1-2 contextual internal links like <a href=\"/shop\">explore more gifts</a> or <a href=\"/bouquet-builder\">build your own bouquet</a>. Naturally weave LSI keywords (occasion names, recipient types, Dhaka/Bangladesh, same-day delivery). NO H tags, NO emojis spam, NO AI clichés.>",
-  "instructions": "<rich HTML, 60-110 words inside <ul><li> bullets. Practical care/handling/usage tips relevant to the product type (flowers: trim stems, change water; cakes: refrigerate, serve at room temp; gifts: unboxing tips). <strong> on key action verbs.>",
-  "delivery_info": "<rich HTML, 50-90 words. <p> with same-day Dhaka note + nationwide next-day. <ul><li> 3-4 bullets covering delivery time slots, packaging care, contact-on-delivery, and tracking via <a href=\"/track-order\">Track Order</a>.>",
-  "seo_title": "<55-60 chars, primary keyword first, includes 'Bangladesh' or 'Dhaka' or 'Pikooly' for brand cue, no clickbait>",
-  "seo_description": "<150-158 chars meta description, persuasive, includes primary keyword + occasion + soft CTA like 'Order now' or 'Same-day delivery'>",
-  "tags": ["8-12 lowercase semantic tags: include occasion names, recipient types, product type variations, location"]
+  "description": "<rich semantic HTML, 220-320 words with <p>, <ul><li>, <strong>, and 1-2 contextual internal links like <a href=\\"/shop\\">explore more gifts</a>>",
+  "instructions": "<rich HTML, 60-110 words inside <ul><li> bullets with <strong> on key action verbs>",
+  "delivery_info": "<rich HTML, 50-90 words, <p> + <ul><li> bullets, include <a href=\\"/track-order\\">Track Order</a>>",
+  "seo_title": "<55-60 chars, primary keyword first, includes Bangladesh/Dhaka/Pikooly>",
+  "seo_description": "<150-158 chars meta description with primary keyword + occasion + soft CTA>",
+  "tags": ["8-12 lowercase semantic tags"]
 }
 
 Hard rules:
-- NO words: "elevate, delve, unleash, leverage, embark, navigate the world, in today's, in conclusion, furthermore, moreover, it's important to note".
-- Use contractions (it's, you'll, we've) for natural tone.
-- Vary sentence length aggressively (mix 4-word punches with 18-word descriptive lines).
-- Mention at least 2 specific occasions (birthday, anniversary, wedding, get-well, congratulations, etc.) where natural.
-- Internal links MUST be inside <a href="/..."> tags within the description or delivery_info HTML.`;
+- NO words: "elevate, delve, unleash, leverage, embark, in today's, in conclusion, furthermore, moreover".
+- Use contractions, vary sentence length, mention 2+ specific occasions.`;
 
-    const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          { role: "system", content: system },
-          { role: "user", content: user },
-        ],
-        response_format: { type: "json_object" },
-        temperature: 0.85,
-      }),
-    });
-
-    if (!aiRes.ok) {
-      const txt = await aiRes.text();
-      const status = aiRes.status === 429 ? 429 : aiRes.status === 402 ? 402 : 500;
-      const msg = status === 429 ? "Rate limit reached. Try again shortly." :
-                  status === 402 ? "AI credits exhausted. Add credits in workspace." :
-                  `AI error: ${txt.slice(0, 200)}`;
+    let content = "{}";
+    try {
+      content = await callAI({ system, user, json: true, temperature: 0.85, maxTokens: 3000 });
+    } catch (e) {
+      const msg = (e as Error).message || "AI error";
+      const status = msg.includes("Rate limit") ? 429 : msg.includes("credits") ? 402 : msg.includes("not configured") ? 400 : 500;
       return new Response(JSON.stringify({ error: msg }), {
         status, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-
-    const data = await aiRes.json();
-    const content = data?.choices?.[0]?.message?.content || "{}";
     let parsed: any = {};
     try { parsed = JSON.parse(content); } catch {
       const m = content.match(/\{[\s\S]*\}/);
