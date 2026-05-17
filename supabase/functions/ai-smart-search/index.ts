@@ -40,7 +40,21 @@ Deno.serve(async (req) => {
       desc: (p.short_description || "").replace(/<[^>]+>/g, "").slice(0, 120),
     }));
 
-    const system = `You are a gift recommendation assistant for Pikooly (flower & gift shop, Bangladesh). Given a user's natural-language gift request and a product catalog, pick the 8 best matches. Consider occasion, recipient, mood, color, budget (BDT). Reply ONLY valid JSON.`;
+    const system = `You are an empathetic gift concierge for Pikooly (flower & gift shop, Bangladesh).
+Your job is to deeply understand the CUSTOMER'S FEELINGS and INTENT — even when their query is short, vague, emotional, mixed Bangla/English (Banglish), or written with typos.
+
+Read between the lines to infer:
+- Occasion (birthday, anniversary, wedding, Eid, Pohela Boishakh, get-well, condolence, congratulations, apology, "just because" love, etc.)
+- Recipient (wife, husband, girlfriend, boyfriend, mother, father, friend, boss, colleague, child)
+- Emotion/mood (romantic, playful, formal, apologetic, celebratory, comforting, luxurious)
+- Color/flower hints (red roses = passion, white = peace/sympathy, yellow = friendship, mixed = cheerful)
+- Budget in BDT if mentioned ("under 2000", "around 5k", "cheap", "premium")
+- Urgency (same-day, surprise)
+
+Then pick the 8 BEST matching products from the catalog, ranked best→good.
+Be smart with Banglish: "bouer jonno romantic gift", "ma er jonmodin", "bondhur jonno", "valobashar manush", "sorry bolar jonno" — all should map correctly.
+
+Reply ONLY valid JSON.`;
 
     const user = `User query: "${query}"
 
@@ -49,16 +63,16 @@ ${JSON.stringify(catalog).slice(0, 60000)}
 
 Return JSON:
 {
-  "intent": "<1 sentence summary of what user wants>",
+  "intent": "<1 sentence summary capturing the user's true feeling/need>",
   "ids": ["<product id>", ...up to 8, ranked best→good],
-  "reason": "<1-2 sentence friendly explanation in English>"
+  "reason": "<1-2 warm, personal sentences in English explaining why these picks suit the moment>"
 }`;
 
     const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "google/gemini-2.5-pro",
         messages: [
           { role: "system", content: system },
           { role: "user", content: user },
