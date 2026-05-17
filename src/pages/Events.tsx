@@ -267,6 +267,9 @@ const Events = () => {
             </span>
             <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-4 leading-tight" dangerouslySetInnerHTML={{ __html: heroTitle }} />
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">{heroSubtitle}</p>
+            <div className="mt-6 flex justify-center">
+              <AIBookingCTA mode="event" label="Plan with AI Concierge" />
+            </div>
           </motion.div>
         </div>
       </section>
