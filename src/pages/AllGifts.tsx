@@ -10,7 +10,7 @@ const AllGifts = () => {
   const [expandedCat, setExpandedCat] = useState<string | null>(null);
   const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
 
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [], isLoading: catsLoading } = useQuery({
     queryKey: ["public-categories"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -23,7 +23,7 @@ const AllGifts = () => {
     },
   });
 
-  const { data: subcategories = [] } = useQuery({
+  const { data: subcategories = [], isLoading: subsLoading } = useQuery({
     queryKey: ["public-subcategories"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -35,6 +35,8 @@ const AllGifts = () => {
       return data as any[];
     },
   });
+
+  const isLoading = catsLoading || subsLoading;
 
   const getTypes = (c: any): string[] =>
     (c.category_types && c.category_types.length > 0) ? c.category_types : [c.category_type].filter(Boolean);
