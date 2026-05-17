@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback, useMemo, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, ArrowLeft, X, Clock, TrendingUp, ArrowUpRight, Mic } from "lucide-react";
+import { Search, ArrowLeft, X, Clock, TrendingUp, ArrowUpRight, Mic, Sparkles, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
