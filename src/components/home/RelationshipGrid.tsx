@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 
 const RelationshipGrid = memo(() => {
-  const { data: items = [] } = useQuery({
+  const { data: items = [], isLoading } = useQuery({
     queryKey: ["relationship-categories"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -17,6 +17,24 @@ const RelationshipGrid = memo(() => {
     },
     staleTime: 5 * 60 * 1000,
   });
+
+  if (isLoading && items.length === 0) {
+    return (
+      <section className="py-3 sm:py-4 md:py-5 section-container">
+        <div className="h-6 w-48 mb-4 rounded bg-muted animate-pulse" />
+        <div className="-mx-4 px-4">
+          <div className="flex gap-2.5 sm:gap-4 overflow-hidden pb-2">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="shrink-0 w-[24vw] min-w-[24vw] sm:w-[140px] sm:min-w-[140px] md:w-[160px] md:min-w-[160px] space-y-1.5">
+                <div className="w-full aspect-square rounded-2xl bg-muted animate-pulse" />
+                <div className="h-3 w-3/4 mx-auto rounded bg-muted animate-pulse" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   if (items.length === 0) return null;
 
