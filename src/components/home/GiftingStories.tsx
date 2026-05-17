@@ -26,7 +26,7 @@ const GiftingStories = memo(() => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
 
-  const { data: stories = [] } = useQuery({
+  const { data: stories = [], isLoading } = useQuery({
     queryKey: ["gifting-stories"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -39,6 +39,19 @@ const GiftingStories = memo(() => {
     },
     staleTime: 5 * 60 * 1000,
   });
+
+  if (isLoading && stories.length === 0) {
+    return (
+      <section className="py-4 sm:py-6 md:py-8 section-container">
+        <div className="h-6 w-44 mb-4 rounded bg-muted animate-pulse" />
+        <div className="flex gap-3 overflow-hidden pb-2">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="shrink-0 w-[110px] sm:w-[130px] aspect-[3/4] rounded-2xl bg-muted animate-pulse" />
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   if (stories.length === 0) return null;
 
