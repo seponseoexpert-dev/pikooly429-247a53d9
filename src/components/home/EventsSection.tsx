@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Camera, CalendarDays, Clapperboard, Gift, PartyPopper, Sparkles, Users2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AIBookingCTA } from "@/components/ai/AIBookingAssistant";
 
 // Lazy-load fallback images only when needed (not bundled into main chunk)
 const photoEventImg = "/src/assets/photo-event.png";
@@ -114,13 +115,16 @@ const EventsSection = () => {
       <div className="section-container space-y-6 md:space-y-8">
         {eventCards.length > 0 && (
           <div>
-            <div className="mb-2.5 flex items-center justify-between sm:mb-3">
+            <div className="mb-2.5 flex items-center justify-between gap-2 sm:mb-3">
               <h2 className="section-heading font-display font-bold text-foreground">Event Services</h2>
-              <Link to="/events">
-                <Button variant="outline" size="sm" className="h-8 gap-1 rounded-full border-border/60 px-3 text-xs font-medium shadow-sm hover:bg-accent/40">
-                  View All <ArrowRight className="h-3.5 w-3.5" />
-                </Button>
-              </Link>
+              <div className="flex items-center gap-2">
+                <AIBookingCTA mode="event" label="AI Concierge" size="sm" className="h-8 gap-1 rounded-full px-3 text-xs font-medium shadow-sm" />
+                <Link to="/events">
+                  <Button variant="outline" size="sm" className="h-8 gap-1 rounded-full border-border/60 px-3 text-xs font-medium shadow-sm hover:bg-accent/40">
+                    View All <ArrowRight className="h-3.5 w-3.5" />
+                  </Button>
+                </Link>
+              </div>
             </div>
 
             <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 scrollbar-hide sm:gap-3.5 lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-4 lg:overflow-visible lg:px-0">
@@ -167,13 +171,16 @@ const EventsSection = () => {
 
         {photoCards.length > 0 && (
           <div>
-            <div className="mb-2.5 flex items-center justify-between sm:mb-3">
+            <div className="mb-2.5 flex items-center justify-between gap-2 sm:mb-3">
               <h2 className="section-heading font-display font-bold text-foreground">Photography</h2>
-              <Link to="/photography">
-                <Button variant="outline" size="sm" className="h-8 gap-1 rounded-full border-border/60 px-3 text-xs font-medium shadow-sm hover:bg-accent/40">
-                  View All <ArrowRight className="h-3.5 w-3.5" />
-                </Button>
-              </Link>
+              <div className="flex items-center gap-2">
+                <AIBookingCTA mode="photo" label="AI Concierge" size="sm" className="h-8 gap-1 rounded-full px-3 text-xs font-medium shadow-sm" />
+                <Link to="/photography">
+                  <Button variant="outline" size="sm" className="h-8 gap-1 rounded-full border-border/60 px-3 text-xs font-medium shadow-sm hover:bg-accent/40">
+                    View All <ArrowRight className="h-3.5 w-3.5" />
+                  </Button>
+                </Link>
+              </div>
             </div>
 
             <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 scrollbar-hide sm:gap-3.5 lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-4 lg:overflow-visible lg:px-0">
