@@ -176,8 +176,20 @@ const EventCategoryDetail = () => {
 
   if (catLoading) {
     return (
-      <main className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      <main className="min-h-screen section-container py-6 space-y-6">
+        <div className="h-6 w-32 rounded bg-muted animate-pulse" />
+        <div className="w-full aspect-[16/7] rounded-2xl bg-muted animate-pulse" />
+        <div className="h-8 w-2/3 rounded bg-muted animate-pulse" />
+        <div className="space-y-2">
+          <div className="h-4 w-full rounded bg-muted animate-pulse" />
+          <div className="h-4 w-5/6 rounded bg-muted animate-pulse" />
+          <div className="h-4 w-3/4 rounded bg-muted animate-pulse" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="h-56 rounded-2xl bg-muted animate-pulse" />
+          ))}
+        </div>
       </main>
     );
   }
