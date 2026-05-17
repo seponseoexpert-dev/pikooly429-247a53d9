@@ -18,6 +18,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { AIBookingCTA } from "@/components/ai/AIBookingAssistant";
 
 const serviceIcons = [Camera, Video, Gift];
 
@@ -206,7 +207,8 @@ const Photography = () => {
             {heroSubtitle}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Button size="lg" className="rounded-full px-8 h-11 sm:h-12 text-sm font-semibold shadow-lg shadow-primary/25 w-full sm:w-auto" onClick={() => document.getElementById("services-section")?.scrollIntoView({ behavior: "smooth" })}>
+            <AIBookingCTA mode="photo" label="Book with AI Concierge" />
+            <Button size="lg" variant="outline" className="rounded-full px-8 h-11 sm:h-12 text-sm font-semibold w-full sm:w-auto" onClick={() => document.getElementById("services-section")?.scrollIntoView({ behavior: "smooth" })}>
               Explore Services <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
             <Button size="lg" variant="outline" className="rounded-full px-8 h-11 sm:h-12 text-sm font-semibold w-full sm:w-auto" onClick={() => document.getElementById("portfolio-section")?.scrollIntoView({ behavior: "smooth" })}>

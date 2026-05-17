@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import PageBottomSEO from "@/components/seo/PageBottomSEO";
+import { AIBookingCTA } from "@/components/ai/AIBookingAssistant";
 
 const CATEGORY_ICONS: Record<string, LucideIcon> = {
   birthday: PartyPopper,
