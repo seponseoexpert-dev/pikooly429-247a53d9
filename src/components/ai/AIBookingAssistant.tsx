@@ -228,16 +228,17 @@ const AIBookingAssistant = ({ mode, open, onOpenChange }: Props) => {
 export default AIBookingAssistant;
 
 // Floating CTA button for pages
-export const AIBookingCTA = ({ mode, label }: { mode: Mode; label?: string }) => {
+export const AIBookingCTA = ({ mode, label, className, size }: { mode: Mode; label?: string; className?: string; size?: "default" | "sm" | "lg" | "icon" }) => {
   const [open, setOpen] = useState(false);
   return (
     <>
       <Button
         onClick={() => setOpen(true)}
-        className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg"
+        size={size}
+        className={cn("gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg text-primary-foreground", className)}
       >
         <Sparkles className="w-4 h-4" />
-        {label || (mode === "event" ? "Book with AI Concierge" : "Book with AI Concierge")}
+        {label || "Book with AI Concierge"}
       </Button>
       <AIBookingAssistant mode={mode} open={open} onOpenChange={setOpen} />
     </>
