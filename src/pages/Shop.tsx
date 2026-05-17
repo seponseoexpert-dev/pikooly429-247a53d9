@@ -71,7 +71,7 @@ const Shop = () => {
     placeholderData: (prev) => prev,
   });
 
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [], isLoading: catsLoading } = useQuery({
     queryKey: ["shop-categories"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -86,7 +86,7 @@ const Shop = () => {
     placeholderData: (prev) => prev,
   });
 
-  const { data: subcategories = [] } = useQuery({
+  const { data: subcategories = [], isLoading: subsLoading } = useQuery({
     queryKey: ["shop-subcategories"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -347,14 +347,14 @@ const Shop = () => {
       )}
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4 lg:gap-5">
-        {productsLoading
+        {(productsLoading || catsLoading || subsLoading)
           ? Array.from({ length: 10 }).map((_, i) => <ProductCardSkeleton key={i} />)
           : filtered.map((product: any) => (
               <ProductCard key={product.id} product={product} />
             ))}
       </div>
 
-      {!productsLoading && filtered.length === 0 && (
+      {!productsLoading && !catsLoading && !subsLoading && filtered.length === 0 && (
         <div className="text-center py-16 sm:py-20 flex flex-col items-center gap-3">
           <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center">
             <ShoppingCart size={24} className="text-muted-foreground/50" />
