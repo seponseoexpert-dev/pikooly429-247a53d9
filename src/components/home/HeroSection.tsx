@@ -131,26 +131,26 @@ const HeroSection = memo(() => {
           ) : (
             <div className="relative w-full aspect-[16/7] sm:aspect-[16/6] lg:aspect-[16/5.5] xl:aspect-[16/5] bg-muted/30" />
           )}
-        </div>
 
-        {slides.length > 1 && (
-          <>
-            <button
-              onClick={prev}
-              className="absolute left-1.5 sm:left-3 lg:-left-2 top-1/2 -translate-y-1/2 z-20 w-7 h-7 sm:w-9 sm:h-9 lg:w-11 lg:h-11 rounded-full bg-card/80 backdrop-blur-md shadow-soft border border-[hsl(var(--gold)/0.30)] flex items-center justify-center text-foreground/70 hover:text-foreground hover:bg-card hover:border-[hsl(var(--gold)/0.6)] transition-all duration-500 ease-luxe"
-              aria-label="Previous slide"
-            >
-              <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </button>
-            <button
-              onClick={next}
-              className="absolute right-1.5 sm:right-3 lg:-right-2 top-1/2 -translate-y-1/2 z-20 w-7 h-7 sm:w-9 sm:h-9 lg:w-11 lg:h-11 rounded-full bg-card/80 backdrop-blur-md shadow-soft border border-[hsl(var(--gold)/0.30)] flex items-center justify-center text-foreground/70 hover:text-foreground hover:bg-card hover:border-[hsl(var(--gold)/0.6)] transition-all duration-500 ease-luxe"
-              aria-label="Next slide"
-            >
-              <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </button>
-          </>
-        )}
+          {slides.length > 1 && (
+            <>
+              <button
+                onClick={prev}
+                className="absolute left-1.5 sm:left-3 top-1/2 -translate-y-1/2 z-20 w-7 h-7 sm:w-9 sm:h-9 lg:w-11 lg:h-11 rounded-full bg-card/80 backdrop-blur-md shadow-soft border border-[hsl(var(--gold)/0.30)] flex items-center justify-center text-foreground/70 hover:text-foreground hover:bg-card hover:border-[hsl(var(--gold)/0.6)] transition-all duration-500 ease-luxe"
+                aria-label="Previous slide"
+              >
+                <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              </button>
+              <button
+                onClick={next}
+                className="absolute right-1.5 sm:right-3 top-1/2 -translate-y-1/2 z-20 w-7 h-7 sm:w-9 sm:h-9 lg:w-11 lg:h-11 rounded-full bg-card/80 backdrop-blur-md shadow-soft border border-[hsl(var(--gold)/0.30)] flex items-center justify-center text-foreground/70 hover:text-foreground hover:bg-card hover:border-[hsl(var(--gold)/0.6)] transition-all duration-500 ease-luxe"
+                aria-label="Next slide"
+              >
+                <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              </button>
+            </>
+          )}
+        </div>
 
         {slides.length > 1 && (
           <div className="flex items-center justify-center gap-2.5 mt-3 sm:mt-4">
