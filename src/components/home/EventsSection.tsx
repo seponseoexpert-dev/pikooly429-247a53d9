@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Camera, CalendarDays, Clapperboard, Gift, PartyPopper, Sparkles, Users2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { AIBookingCTA } from "@/components/ai/AIBookingAssistant";
 
 // Lazy-load fallback images only when needed (not bundled into main chunk)
 const photoEventImg = "/src/assets/photo-event.png";
@@ -118,7 +117,6 @@ const EventsSection = () => {
             <div className="mb-2.5 flex items-center justify-between gap-2 sm:mb-3">
               <h2 className="section-heading font-display font-bold text-foreground">Event Services</h2>
               <div className="flex items-center gap-2">
-                <AIBookingCTA mode="event" label="AI Concierge" size="sm" className="h-8 gap-1 rounded-full px-3 text-xs font-medium shadow-sm" />
                 <Link to="/events">
                   <Button variant="outline" size="sm" className="h-8 gap-1 rounded-full border-border/60 px-3 text-xs font-medium shadow-sm hover:bg-accent/40">
                     View All <ArrowRight className="h-3.5 w-3.5" />
@@ -174,7 +172,6 @@ const EventsSection = () => {
             <div className="mb-2.5 flex items-center justify-between gap-2 sm:mb-3">
               <h2 className="section-heading font-display font-bold text-foreground">Photography</h2>
               <div className="flex items-center gap-2">
-                <AIBookingCTA mode="photo" label="AI Concierge" size="sm" className="h-8 gap-1 rounded-full px-3 text-xs font-medium shadow-sm" />
                 <Link to="/photography">
                   <Button variant="outline" size="sm" className="h-8 gap-1 rounded-full border-border/60 px-3 text-xs font-medium shadow-sm hover:bg-accent/40">
                     View All <ArrowRight className="h-3.5 w-3.5" />

@@ -8,8 +8,6 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
 import SEOHead from "@/components/seo/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import sameDayDeliveryBanner from "@/assets/same-day-delivery-banner.png";
-import { AIBookingCTA } from "@/components/ai/AIBookingAssistant";
-
 // Lazy load all below-fold sections
 const OfferBanners = lazy(() => import("@/components/home/OfferBanners"));
 const AISmartSearch = lazy(() => import("@/components/shop/AISmartSearch"));
@@ -103,22 +101,6 @@ const Index = () => {
         jsonLd={combinedJsonLd}
       />
       <HeroSection />
-      <section className="container mx-auto px-3 pb-2 sm:px-4 sm:pb-3">
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-          <AIBookingCTA
-            mode="event"
-            label="Plan Event with AI"
-            size="sm"
-            className="h-10 min-w-[158px] flex-1 rounded-full px-4 text-[13px] font-semibold shadow-sm"
-          />
-          <AIBookingCTA
-            mode="photo"
-            label="Photo/Video AI"
-            size="sm"
-            className="h-10 min-w-[158px] flex-1 rounded-full px-4 text-[13px] font-semibold shadow-sm"
-          />
-        </div>
-      </section>
       {settings.homepage_banner_enabled !== "false" && (
         <section className="container mx-auto px-3 sm:px-4 pt-3 sm:pt-4">
           {settings.homepage_banner_link ? (
