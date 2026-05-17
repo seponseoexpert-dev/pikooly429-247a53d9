@@ -384,7 +384,7 @@ const SearchPage = () => {
         )}
 
         {/* Search Results */}
-        {!showIdle && (
+        {!showIdle && !aiActive && (
           <div className="animate-fade-in">
             {isSearching && (
               <div className="flex items-center gap-3 px-4 py-6 text-sm text-muted-foreground">
