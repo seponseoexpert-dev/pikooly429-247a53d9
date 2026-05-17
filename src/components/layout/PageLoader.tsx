@@ -7,7 +7,7 @@ const PageLoader = () => {
   const letter = (brandName.trim()[0] || "P").toUpperCase();
 
   return (
-    <div className="min-h-[50vh] sm:min-h-[60vh] flex flex-col items-center justify-center gap-4 sm:gap-5 md:gap-6 px-4">
+    <div className="fixed inset-0 z-[60] flex flex-col items-center justify-center gap-4 sm:gap-5 md:gap-6 px-4 bg-background/80 backdrop-blur-sm pointer-events-none">
       <motion.div
         className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 flex items-center justify-center"
         initial={{ opacity: 0, scale: 0.85 }}
