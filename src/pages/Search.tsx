@@ -262,10 +262,10 @@ const SearchPage = () => {
             <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 via-background to-primary/5 p-3.5">
               <div className="flex items-start gap-2 mb-3">
                 <Sparkles className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                <p className="text-xs text-foreground/80 italic flex-1">
+                <p className="text-xs text-foreground/80 italic flex-1 min-w-0 break-words leading-relaxed text-left">
                   {aiLoading ? "Thinking of the best matches for you…" : aiReason || "Here are AI-picked matches:"}
                 </p>
-                <button onClick={() => { setAiActive(false); setAiProducts([]); setAiReason(""); }} className="text-muted-foreground hover:text-foreground p-0.5" aria-label="Close AI">
+                <button onClick={() => { setAiActive(false); setAiProducts([]); setAiReason(""); }} className="shrink-0 text-muted-foreground hover:text-foreground p-0.5" aria-label="Close AI">
                   <X size={14} />
                 </button>
               </div>
