@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Camera, CalendarDays, Clapperboard, Gift, PartyPopper, Sparkles, Users2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AIBookingCTA } from "@/components/ai/AIBookingAssistant";
 
 // Lazy-load fallback images only when needed (not bundled into main chunk)
 const photoEventImg = "/src/assets/photo-event.png";
