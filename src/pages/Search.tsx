@@ -196,7 +196,7 @@ const SearchPage = () => {
       {/* Search Header - sticky, FNP style */}
       <div className="sticky top-0 z-50 bg-card safe-area-top">
         <div className="px-3 py-3 sm:px-4 md:px-6">
-          <form onSubmit={handleSearch} className="flex items-center gap-2.5 rounded-lg border border-border/60 bg-card px-3 py-2.5 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.10)]">
+          <form onSubmit={handleSearch} className="flex items-center gap-2 rounded-lg border border-border/60 bg-card px-3 py-2.5 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.10)]">
             <button type="button" onClick={() => navigate(-1)} className="shrink-0 text-foreground/60 hover:text-foreground transition-colors active:scale-95" aria-label="Go back">
               <ArrowLeft size={22} />
             </button>
@@ -208,20 +208,48 @@ const SearchPage = () => {
               inputMode="search"
               maxLength={60}
               value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value.slice(0, 60))}
-              placeholder="Search flowers, cakes, gifts..."
+              onChange={e => { setSearchQuery(e.target.value.slice(0, 60)); if (aiActive) setAiActive(false); }}
+              placeholder="Ask AI or search gifts…"
               className="flex-1 bg-transparent text-base outline-none placeholder:text-muted-foreground/50"
+              style={{ fontSize: 16 }}
             />
-            {searchQuery ? (
-              <button type="button" onClick={() => setSearchQuery("")} className="shrink-0 text-muted-foreground hover:text-foreground transition-colors">
+            {searchQuery && (
+              <button type="button" onClick={() => { setSearchQuery(""); setAiActive(false); setAiProducts([]); setAiReason(""); }} className="shrink-0 text-muted-foreground hover:text-foreground transition-colors" aria-label="Clear">
                 <X size={18} />
               </button>
-            ) : (
+            )}
+            {!searchQuery && (
               <button type="button" onClick={startVoiceSearch} className={`shrink-0 transition-colors ${isListening ? "text-destructive animate-pulse" : "text-primary/70 hover:text-primary"}`} aria-label="Voice search">
                 <Mic size={20} />
               </button>
             )}
+            <button
+              type="button"
+              onClick={() => runAiSearch()}
+              disabled={aiLoading || !searchQuery.trim()}
+              className="shrink-0 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-2.5 py-1.5 text-[11px] font-semibold disabled:opacity-50 active:scale-95 transition-all"
+              aria-label="Ask AI"
+            >
+              {aiLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+              <span>AI</span>
+            </button>
           </form>
+          {/* AI suggestion chips when idle */}
+          {!searchQuery && !aiActive && (
+            <div className="flex gap-1.5 mt-2 overflow-x-auto scrollbar-hide -mx-1 px-1 pb-1">
+              {["Romantic gift for wife under 2500", "Birthday surprise for friend", "Sorry bolar jonno phool", "Anniversary red roses", "Ma er jonno gift"].map(s => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => runAiSearch(s)}
+                  className="inline-flex items-center gap-1 text-[11px] bg-primary/8 hover:bg-primary hover:text-primary-foreground border border-primary/20 text-primary rounded-full px-2.5 py-1 whitespace-nowrap shrink-0 transition-colors"
+                >
+                  <Sparkles className="h-3 w-3" />
+                  {s}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <div className="border-b border-border/30" />
       </div>
