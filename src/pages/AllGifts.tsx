@@ -89,6 +89,14 @@ const AllGifts = () => {
       </div>
 
       <div className="space-y-3">
+        {isLoading && currentList.length === 0 ? (
+          Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="border border-border/60 rounded-xl bg-card p-3 flex items-center gap-3">
+              <div className="w-14 h-14 rounded-lg bg-muted animate-pulse" />
+              <div className="h-4 w-40 rounded bg-muted animate-pulse" />
+            </div>
+          ))
+        ) : (<></>)}
         {currentList.map((cat: any) => {
           const subs = getSubsForCat(cat.id);
           const isExpanded = expandedCat === cat.id;
