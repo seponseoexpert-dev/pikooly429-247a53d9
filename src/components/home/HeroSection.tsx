@@ -137,17 +137,17 @@ const HeroSection = memo(() => {
           <>
             <button
               onClick={prev}
-              className="absolute left-2 sm:left-3 lg:-left-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-full bg-card/95 backdrop-blur-md shadow-soft border border-[hsl(var(--gold)/0.30)] flex items-center justify-center text-foreground/70 hover:text-foreground hover:bg-card hover:border-[hsl(var(--gold)/0.6)] transition-all duration-500 ease-luxe"
+              className="absolute left-1.5 sm:left-3 lg:-left-2 top-1/2 -translate-y-1/2 z-20 w-7 h-7 sm:w-9 sm:h-9 lg:w-11 lg:h-11 rounded-full bg-card/80 backdrop-blur-md shadow-soft border border-[hsl(var(--gold)/0.30)] flex items-center justify-center text-foreground/70 hover:text-foreground hover:bg-card hover:border-[hsl(var(--gold)/0.6)] transition-all duration-500 ease-luxe"
               aria-label="Previous slide"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
             <button
               onClick={next}
-              className="absolute right-2 sm:right-3 lg:-right-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-full bg-card/95 backdrop-blur-md shadow-soft border border-[hsl(var(--gold)/0.30)] flex items-center justify-center text-foreground/70 hover:text-foreground hover:bg-card hover:border-[hsl(var(--gold)/0.6)] transition-all duration-500 ease-luxe"
+              className="absolute right-1.5 sm:right-3 lg:-right-2 top-1/2 -translate-y-1/2 z-20 w-7 h-7 sm:w-9 sm:h-9 lg:w-11 lg:h-11 rounded-full bg-card/80 backdrop-blur-md shadow-soft border border-[hsl(var(--gold)/0.30)] flex items-center justify-center text-foreground/70 hover:text-foreground hover:bg-card hover:border-[hsl(var(--gold)/0.6)] transition-all duration-500 ease-luxe"
               aria-label="Next slide"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
           </>
         )}
