@@ -256,8 +256,53 @@ const SearchPage = () => {
 
       {/* Content */}
       <div className="max-w-2xl mx-auto">
+        {/* AI Results */}
+        {aiActive && (
+          <div className="px-4 pt-4 pb-2 animate-fade-in">
+            <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 via-background to-primary/5 p-3.5">
+              <div className="flex items-start gap-2 mb-3">
+                <Sparkles className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                <p className="text-xs text-foreground/80 italic flex-1">
+                  {aiLoading ? "Thinking of the best matches for you…" : aiReason || "Here are AI-picked matches:"}
+                </p>
+                <button onClick={() => { setAiActive(false); setAiProducts([]); setAiReason(""); }} className="text-muted-foreground hover:text-foreground p-0.5" aria-label="Close AI">
+                  <X size={14} />
+                </button>
+              </div>
+              {aiLoading && (
+                <div className="grid grid-cols-2 gap-2.5">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="rounded-xl overflow-hidden bg-muted/40 animate-pulse">
+                      <div className="aspect-square bg-muted" />
+                      <div className="p-2 space-y-1.5"><div className="h-3 bg-muted rounded w-3/4" /><div className="h-3 bg-muted rounded w-1/2" /></div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {!aiLoading && aiProducts.length > 0 && (
+                <div className="grid grid-cols-2 gap-2.5">
+                  {aiProducts.slice(0, 8).map((p: any) => (
+                    <button key={p.id} onClick={() => handleSelect(p.slug)} className="flex flex-col rounded-xl overflow-hidden bg-card border border-border/40 hover:border-primary/40 hover:shadow-md transition-all text-left group">
+                      <div className="aspect-square w-full overflow-hidden bg-muted/30">
+                        {p.image_url && <img src={p.image_url} alt={p.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />}
+                      </div>
+                      <div className="px-2.5 py-2 space-y-0.5">
+                        <p className="text-[12px] font-semibold text-foreground/90 line-clamp-2 leading-snug group-hover:text-primary transition-colors">{p.name}</p>
+                        <p className="text-[13px] text-primary font-bold">{formatPrice(Number(p.price) || 0)}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {!aiLoading && aiProducts.length === 0 && aiReason && (
+                <p className="text-xs text-muted-foreground py-2 text-center">No AI matches. Try rewording.</p>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Idle State - Recent + Trending + Popular */}
-        {showIdle && (
+        {showIdle && !aiActive && (
           <div className="animate-fade-in">
             {/* Recent Searches */}
             {recentSearches.length > 0 && (
