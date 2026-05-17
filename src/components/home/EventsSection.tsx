@@ -118,7 +118,7 @@ const EventsSection = () => {
             <div className="mb-2.5 flex items-center justify-between gap-2 sm:mb-3">
               <h2 className="section-heading font-display font-bold text-foreground">Event Services</h2>
               <div className="flex items-center gap-2">
-                <AIBookingCTA mode="event" label="AI Concierge" size="sm" variant="default" className="h-8 gap-1 rounded-full px-3 text-xs font-medium shadow-sm" />
+                <AIBookingCTA mode="event" label="AI Concierge" size="sm" className="h-8 gap-1 rounded-full px-3 text-xs font-medium shadow-sm" />
                 <Link to="/events">
                   <Button variant="outline" size="sm" className="h-8 gap-1 rounded-full border-border/60 px-3 text-xs font-medium shadow-sm hover:bg-accent/40">
                     View All <ArrowRight className="h-3.5 w-3.5" />
