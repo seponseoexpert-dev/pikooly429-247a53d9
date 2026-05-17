@@ -163,8 +163,60 @@ const AccountSkeleton = () => (
   </main>
 );
 
+const HeroSkeleton = () => (
+  <section className="section-container py-3 sm:py-5 lg:py-7">
+    <Skeleton className="w-full aspect-[16/7] sm:aspect-[16/6] lg:aspect-[16/5.5] xl:aspect-[16/5] rounded-2xl sm:rounded-[24px] lg:rounded-[28px]" />
+  </section>
+);
+
+const HorizontalScrollSkeleton = ({ count = 6, aspect = "aspect-square", widthClass = "w-[44vw] sm:w-[180px] md:w-[200px] lg:w-[210px]" }: { count?: number; aspect?: string; widthClass?: string }) => (
+  <section className="py-3 sm:py-5 section-container">
+    <Skeleton className="h-6 w-40 mb-4" />
+    <div className="flex gap-3 sm:gap-4 overflow-hidden pb-2">
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className={`${widthClass} shrink-0 space-y-2`}>
+          <Skeleton className={`w-full ${aspect} rounded-2xl`} />
+          <Skeleton className="h-3 w-3/4" />
+        </div>
+      ))}
+    </div>
+  </section>
+);
+
+const OfferBannersSkeleton = () => (
+  <section className="py-3 sm:py-5 md:py-7 section-container">
+    <Skeleton className="h-6 w-40 mb-4" />
+    <div className="flex gap-3 sm:gap-4 md:gap-5 overflow-hidden pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <Skeleton key={i} className="min-w-[280px] w-[80vw] sm:w-[340px] md:flex-1 h-[90px] sm:h-[100px] md:h-[110px] rounded-2xl" />
+      ))}
+    </div>
+  </section>
+);
+
+const AffiliateSkeleton = () => (
+  <main className="container max-w-5xl mx-auto px-4 py-6 space-y-6">
+    <Skeleton className="h-8 w-48" />
+    <Skeleton className="h-4 w-72" />
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} className="bg-card rounded-xl border border-border p-4 space-y-2">
+          <Skeleton className="h-3 w-16" />
+          <Skeleton className="h-6 w-24" />
+        </div>
+      ))}
+    </div>
+    <Skeleton className="h-32 w-full rounded-xl" />
+    <Skeleton className="h-64 w-full rounded-xl" />
+  </main>
+);
+
 export {
   ProductCardSkeleton,
+  HeroSkeleton,
+  HorizontalScrollSkeleton,
+  OfferBannersSkeleton,
+  AffiliateSkeleton,
   CategoryGridSkeleton,
   BlogCardSkeleton,
   ProductDetailSkeleton,

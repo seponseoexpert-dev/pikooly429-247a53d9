@@ -31,7 +31,7 @@ const DateLabel = ({ label }: { label: string }) => {
 const CelebrationsCalendar = memo(() => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const { data: celebrations = [] } = useQuery<CelebrationItem[]>({
+  const { data: celebrations = [], isLoading } = useQuery<CelebrationItem[]>({
     queryKey: ["celebrations-calendar"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -45,6 +45,19 @@ const CelebrationsCalendar = memo(() => {
     },
     staleTime: 5 * 60 * 1000,
   });
+
+  if (isLoading && celebrations.length === 0) {
+    return (
+      <section className="section-container py-2 sm:py-4 md:py-5">
+        <div className="h-6 w-52 mb-4 rounded bg-muted animate-pulse" />
+        <div className="flex gap-3 overflow-hidden pb-2">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="shrink-0 w-[140px] sm:w-[160px] h-[180px] rounded-2xl bg-muted animate-pulse" />
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   if (celebrations.length === 0) return null;
 
