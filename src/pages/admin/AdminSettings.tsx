@@ -396,6 +396,15 @@ const sectionFields: Record<string, FieldDef[]> = {
     { key: "cloudinary_api_key", label: "API Key", placeholder: "Your Cloudinary API key" },
     { key: "cloudinary_api_secret", label: "API Secret", placeholder: "Your Cloudinary API secret" },
   ],
+  ai_search: [
+    { key: "ai_search_provider", label: "AI Provider", type: "select", options: [
+      { value: "lovable", label: "Lovable AI (default, no key needed)" },
+      { value: "gemini", label: "Google Gemini (uses GEMINI_API_KEY)" },
+      { value: "openai", label: "OpenAI (uses OPENAI_API_KEY)" },
+      { value: "anthropic", label: "Anthropic Claude (uses ANTHROPIC_API_KEY)" },
+    ]},
+    { key: "ai_search_model", label: "Model Name", placeholder: "e.g. gemini-2.5-pro, gpt-4o-mini, claude-3-5-sonnet-20241022 (leave blank for default)" },
+  ],
   checkout: [
     { key: "checkout_billing_visible", label: "Show Billing Details Section", type: "radio", options: [
       { value: "true", label: "Show" },
