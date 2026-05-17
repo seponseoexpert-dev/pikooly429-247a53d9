@@ -1,4 +1,6 @@
-// AI Product Content Generator — uses Lovable AI Gateway
+// AI Product Content Generator — routes via admin-selected provider
+import { callAI } from "../_shared/ai-call.ts";
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
