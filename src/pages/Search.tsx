@@ -456,10 +456,16 @@ const SearchPage = () => {
             )}
 
             {!isSearching && !hasResults && debouncedSearch.length >= 1 && (
-              <div className="px-4 py-12 text-center">
+              <div className="px-4 py-10 text-center">
                 <Search size={32} className="mx-auto text-muted-foreground/20 mb-3" />
                 <p className="text-sm text-muted-foreground">No results found for "{debouncedSearch}"</p>
-                <p className="text-xs text-muted-foreground/60 mt-1">Try a different keyword</p>
+                <p className="text-xs text-muted-foreground/60 mt-1 mb-4">Let AI find the perfect gift for you</p>
+                <button
+                  onClick={() => runAiSearch()}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-4 py-2 text-xs font-semibold shadow-sm active:scale-95 transition-all"
+                >
+                  <Sparkles className="h-3.5 w-3.5" /> Ask AI for "{debouncedSearch}"
+                </button>
               </div>
             )}
           </div>
