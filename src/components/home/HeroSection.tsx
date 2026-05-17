@@ -22,7 +22,7 @@ const HeroSection = memo(() => {
   const [current, setCurrent] = useState(0);
   const touchStartX = useRef(0);
 
-  const { data: slides = [] } = useQuery({
+  const { data: slides = [], isLoading } = useQuery({
     queryKey: ["homepage-sliders"],
     queryFn: async () => {
       const { data, error } = await supabase
