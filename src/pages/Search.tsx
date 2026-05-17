@@ -58,6 +58,33 @@ const SearchPage = () => {
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiReason, setAiReason] = useState("");
+  const [aiProducts, setAiProducts] = useState<any[]>([]);
+  const [aiActive, setAiActive] = useState(false);
+
+  const runAiSearch = useCallback(async (q?: string) => {
+    const text = (q ?? searchQuery).trim();
+    if (!text) return;
+    setSearchQuery(text);
+    setAiActive(true);
+    setAiLoading(true);
+    setAiProducts([]);
+    setAiReason("");
+    try {
+      const { data, error } = await supabase.functions.invoke("ai-smart-search", { body: { query: text } });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      setAiProducts((data as any).products || []);
+      setAiReason((data as any).reason || "");
+      saveRecentSearch(text);
+    } catch (e: any) {
+      setAiReason(e?.message || "AI search failed. Try again.");
+    } finally {
+      setAiLoading(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
 
   const startVoiceSearch = useCallback(() => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
