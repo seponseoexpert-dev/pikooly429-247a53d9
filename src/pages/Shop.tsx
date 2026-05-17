@@ -86,7 +86,7 @@ const Shop = () => {
     placeholderData: (prev) => prev,
   });
 
-  const { data: subcategories = [] } = useQuery({
+  const { data: subcategories = [], isLoading: subsLoading } = useQuery({
     queryKey: ["shop-subcategories"],
     queryFn: async () => {
       const { data, error } = await supabase
