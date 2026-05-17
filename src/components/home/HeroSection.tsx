@@ -88,6 +88,15 @@ const HeroSection = memo(() => {
   const bgColor = slide?.bg_color || "hsl(152 20% 94%)";
   const hasBgImage = !!slide?.bg_image_url;
 
+  if (isLoading && slides.length === 0) {
+    return (
+      <section className="section-container py-3 sm:py-5 lg:py-7">
+        <div className="w-full aspect-[16/7] sm:aspect-[16/6] lg:aspect-[16/5.5] xl:aspect-[16/5] rounded-2xl sm:rounded-[24px] lg:rounded-[28px] bg-muted animate-pulse" />
+      </section>
+    );
+  }
+  if (!slide) return null;
+
   return (
     <section className="section-container py-3 sm:py-5 lg:py-7" style={{ contain: "layout style", minHeight: "clamp(140px, 25vw, 280px)" }}>
       <div className="relative">
