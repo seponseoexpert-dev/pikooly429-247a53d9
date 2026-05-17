@@ -203,6 +203,7 @@ const App = () => (
             <Routes>
               {/* Public routes */}
               <Route path="/" element={<PublicLayout><Index /></PublicLayout>} />
+              <Route path="/index" element={<Navigate to="/" replace />} />
               <Route path="/shop" element={<PublicLayout><Shop /></PublicLayout>} />
               <Route path="/product-category/:catSlug" element={<PublicLayout><Shop /></PublicLayout>} />
               <Route path="/product-category/:catSlug/:subSlug" element={<PublicLayout><Shop /></PublicLayout>} />
