@@ -12,7 +12,13 @@ const DEFAULTS: Record<AIProvider, string> = {
   anthropic: "claude-3-5-sonnet-20241022",
 };
 
-export async function getAIConfig(): Promise<{ provider: AIProvider; model: string }> {
+export interface AIConfig {
+  provider: AIProvider;
+  model: string;
+  keys: { openai?: string; anthropic?: string; gemini?: string };
+}
+
+export async function getAIConfig(): Promise<AIConfig> {
   try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -21,16 +27,27 @@ export async function getAIConfig(): Promise<{ provider: AIProvider; model: stri
     const { data } = await supabase
       .from("site_settings")
       .select("key, value")
-      .in("key", ["ai_search_provider", "ai_search_model"]);
+      .in("key", [
+        "ai_search_provider", "ai_search_model",
+        "ai_openai_api_key", "ai_anthropic_api_key", "ai_gemini_api_key",
+      ]);
     const m: Record<string, string> = {};
     (data || []).forEach((r: any) => { m[r.key] = r.value || ""; });
     const provider = ((m.ai_search_provider || "lovable").toLowerCase() as AIProvider);
     const valid: AIProvider[] = ["lovable", "gemini", "openai", "anthropic"];
     const p = valid.includes(provider) ? provider : "lovable";
     const model = m.ai_search_model?.trim() || DEFAULTS[p];
-    return { provider: p, model };
+    return {
+      provider: p,
+      model,
+      keys: {
+        openai: m.ai_openai_api_key?.trim() || undefined,
+        anthropic: m.ai_anthropic_api_key?.trim() || undefined,
+        gemini: m.ai_gemini_api_key?.trim() || undefined,
+      },
+    };
   } catch {
-    return { provider: "lovable", model: DEFAULTS.lovable };
+    return { provider: "lovable", model: DEFAULTS.lovable, keys: {} };
   }
 }
 
@@ -47,16 +64,14 @@ export interface AICallOpts {
 /** Calls the admin-selected AI provider and returns the raw text content. */
 export async function callAI(opts: AICallOpts): Promise<string> {
   let { provider, model } = opts;
-  if (!provider || !model) {
-    const cfg = await getAIConfig();
-    provider = provider || cfg.provider;
-    model = model || cfg.model;
-  }
+  const cfg = await getAIConfig();
+  provider = provider || cfg.provider;
+  model = model || cfg.model;
   const { system, user, json, temperature = 0.8, maxTokens = 2000 } = opts;
 
   if (provider === "openai") {
-    const key = Deno.env.get("OPENAI_API_KEY");
-    if (!key) throw new Error("OpenAI not configured — add OPENAI_API_KEY");
+    const key = cfg.keys.openai || Deno.env.get("OPENAI_API_KEY");
+    if (!key) throw new Error("OpenAI not configured — add OpenAI API Key in Admin → Settings → AI Provider");
     const r = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
@@ -73,8 +88,8 @@ export async function callAI(opts: AICallOpts): Promise<string> {
   }
 
   if (provider === "anthropic") {
-    const key = Deno.env.get("ANTHROPIC_API_KEY");
-    if (!key) throw new Error("Anthropic not configured — add ANTHROPIC_API_KEY");
+    const key = cfg.keys.anthropic || Deno.env.get("ANTHROPIC_API_KEY");
+    if (!key) throw new Error("Anthropic not configured — add Anthropic API Key in Admin → Settings → AI Provider");
     const u = json ? user + "\n\nRespond with ONLY the JSON object, no prose, no markdown fences." : user;
     const r = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -97,8 +112,8 @@ export async function callAI(opts: AICallOpts): Promise<string> {
   }
 
   if (provider === "gemini") {
-    const key = Deno.env.get("GEMINI_API_KEY");
-    if (!key) throw new Error("Gemini not configured — add GEMINI_API_KEY");
+    const key = cfg.keys.gemini || Deno.env.get("GEMINI_API_KEY");
+    if (!key) throw new Error("Gemini not configured — add Gemini API Key in Admin → Settings → AI Provider");
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${key}`;
     const r = await fetch(url, {
       method: "POST",
