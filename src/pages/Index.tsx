@@ -101,7 +101,7 @@ const Index = () => {
         jsonLd={combinedJsonLd}
       />
       <HeroSection />
-      {settings.homepage_banner_enabled !== "false" && (
+      {settings.homepage_banner_enabled === "true" && (
         <section className="container mx-auto px-3 sm:px-4 pt-3 sm:pt-4">
           {settings.homepage_banner_link ? (
             <a href={settings.homepage_banner_link} className="block">
