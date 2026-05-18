@@ -12,7 +12,13 @@ const DEFAULTS: Record<AIProvider, string> = {
   anthropic: "claude-3-5-sonnet-20241022",
 };
 
-export async function getAIConfig(): Promise<{ provider: AIProvider; model: string }> {
+export interface AIConfig {
+  provider: AIProvider;
+  model: string;
+  keys: { openai?: string; anthropic?: string; gemini?: string };
+}
+
+export async function getAIConfig(): Promise<AIConfig> {
   try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -21,16 +27,27 @@ export async function getAIConfig(): Promise<{ provider: AIProvider; model: stri
     const { data } = await supabase
       .from("site_settings")
       .select("key, value")
-      .in("key", ["ai_search_provider", "ai_search_model"]);
+      .in("key", [
+        "ai_search_provider", "ai_search_model",
+        "ai_openai_api_key", "ai_anthropic_api_key", "ai_gemini_api_key",
+      ]);
     const m: Record<string, string> = {};
     (data || []).forEach((r: any) => { m[r.key] = r.value || ""; });
     const provider = ((m.ai_search_provider || "lovable").toLowerCase() as AIProvider);
     const valid: AIProvider[] = ["lovable", "gemini", "openai", "anthropic"];
     const p = valid.includes(provider) ? provider : "lovable";
     const model = m.ai_search_model?.trim() || DEFAULTS[p];
-    return { provider: p, model };
+    return {
+      provider: p,
+      model,
+      keys: {
+        openai: m.ai_openai_api_key?.trim() || undefined,
+        anthropic: m.ai_anthropic_api_key?.trim() || undefined,
+        gemini: m.ai_gemini_api_key?.trim() || undefined,
+      },
+    };
   } catch {
-    return { provider: "lovable", model: DEFAULTS.lovable };
+    return { provider: "lovable", model: DEFAULTS.lovable, keys: {} };
   }
 }
 
