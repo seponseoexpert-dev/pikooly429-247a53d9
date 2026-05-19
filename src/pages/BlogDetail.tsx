@@ -1,12 +1,102 @@
 import { useParams, Link } from "react-router-dom";
-import { Calendar, ArrowLeft, Clock, Share2, List, ChevronDown } from "lucide-react";
+import { Calendar, ArrowLeft, Clock, Share2, List, ChevronDown, Copy, Check, Facebook, Twitter } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useMemo, useState } from "react";
+import { useMemo, useState, Fragment } from "react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import SEOHead from "@/components/seo/SEOHead";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
+
+// Caption card: shows quote text + share/copy buttons
+const CaptionCard = ({ text, shareUrl }: { text: string; shareUrl: string }) => {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      toast.success("Caption copied!");
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      toast.error("Copy failed");
+    }
+  };
+  const encoded = encodeURIComponent(text);
+  const encodedUrl = encodeURIComponent(shareUrl);
+  return (
+    <div className="my-5 sm:my-6 rounded-2xl border-2 border-primary/40 bg-gradient-to-br from-primary/5 via-background to-primary/5 p-4 sm:p-6 shadow-sm">
+      <p className="text-center text-foreground text-[15px] sm:text-lg leading-[1.85] font-medium whitespace-pre-wrap">
+        {text}
+      </p>
+      <div className="mt-4 sm:mt-5 flex items-center justify-center sm:justify-start gap-2 sm:gap-3 flex-wrap">
+        <span className="text-[11px] sm:text-xs font-semibold tracking-wider text-muted-foreground uppercase">Share:</span>
+        <a
+          href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encoded}`}
+          target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook"
+          className="w-9 h-9 rounded-full bg-[#1877F2] hover:opacity-90 flex items-center justify-center text-white transition"
+        ><Facebook size={16} fill="white" /></a>
+        <a
+          href={`https://wa.me/?text=${encoded}%20${encodedUrl}`}
+          target="_blank" rel="noopener noreferrer" aria-label="Share on WhatsApp"
+          className="w-9 h-9 rounded-full bg-[#25D366] hover:opacity-90 flex items-center justify-center text-white transition"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.5h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3zM12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4c1.5.8 3.1 1.2 4.8 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
+        </a>
+        <a
+          href={`https://twitter.com/intent/tweet?text=${encoded}&url=${encodedUrl}`}
+          target="_blank" rel="noopener noreferrer" aria-label="Share on Twitter"
+          className="w-9 h-9 rounded-full bg-[#1DA1F2] hover:opacity-90 flex items-center justify-center text-white transition"
+        ><Twitter size={16} fill="white" /></a>
+        <button
+          onClick={handleCopy}
+          className="h-9 px-4 rounded-full bg-primary hover:opacity-90 flex items-center gap-1.5 text-primary-foreground text-xs font-semibold transition"
+        >
+          {copied ? <><Check size={14} /> Copied</> : <><Copy size={14} /> Copy</>}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// Splits content into HTML segments and caption blocks marked by [caption]...[/caption]
+const renderContentWithCaptions = (
+  html: string,
+  proseClasses: string,
+  shareUrl: string,
+  insertTOCBefore?: (segment: string) => React.ReactNode,
+) => {
+  const regex = /\[caption\]([\s\S]*?)\[\/caption\]/gi;
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match;
+  let tocInserted = !insertTOCBefore;
+  let key = 0;
+  while ((match = regex.exec(html)) !== null) {
+    const before = html.substring(lastIndex, match.index);
+    if (before) {
+      if (!tocInserted) {
+        parts.push(<Fragment key={key++}>{insertTOCBefore!(before)}</Fragment>);
+        tocInserted = true;
+      } else {
+        parts.push(<div key={key++} className={proseClasses} dangerouslySetInnerHTML={{ __html: before }} />);
+      }
+    }
+    // Strip HTML tags from caption text to get clean quote
+    const captionText = match[1].replace(/<br\s*\/?>/gi, "\n").replace(/<\/p>\s*<p[^>]*>/gi, "\n\n").replace(/<[^>]*>/g, "").trim();
+    parts.push(<CaptionCard key={key++} text={captionText} shareUrl={shareUrl} />);
+    lastIndex = regex.lastIndex;
+  }
+  const remaining = html.substring(lastIndex);
+  if (remaining) {
+    if (!tocInserted) {
+      parts.push(<Fragment key={key++}>{insertTOCBefore!(remaining)}</Fragment>);
+    } else {
+      parts.push(<div key={key++} className={proseClasses} dangerouslySetInnerHTML={{ __html: remaining }} />);
+    }
+  }
+  return parts;
+};
 
 const extractHeadings = (html: string) => {
   const regex = /<h([2-3])[^>]*>(.*?)<\/h[2-3]>/gi;
@@ -280,29 +370,31 @@ const BlogDetail = () => {
             </div>
           )}
 
-          {/* Content with TOC inserted before first H2 */}
+          {/* Content with TOC inserted before first H2, and [caption]...[/caption] rendered as share cards */}
           {(() => {
             const fullHtml = addHeadingIds(post.content || "");
-            const firstH2Index = fullHtml.search(/<h2[\s>]/i);
             const proseClasses = "prose prose-sm sm:prose-base dark:prose-invert max-w-none prose-headings:font-display prose-headings:text-foreground prose-headings:font-semibold prose-p:text-muted-foreground prose-p:leading-[1.8] prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-img:shadow-md prose-blockquote:border-primary/30 prose-blockquote:text-muted-foreground prose-blockquote:bg-muted/30 prose-blockquote:rounded-r-lg prose-blockquote:py-1 prose-li:text-muted-foreground prose-strong:text-foreground rich-text-content";
-            
-            if (firstH2Index > 0) {
-              const beforeH2 = fullHtml.substring(0, firstH2Index);
-              const afterH2 = fullHtml.substring(firstH2Index);
+
+            const insertTOC = (segment: string) => {
+              const firstH2 = segment.search(/<h2[\s>]/i);
+              if (firstH2 > 0) {
+                return (
+                  <>
+                    <div className={proseClasses} dangerouslySetInnerHTML={{ __html: segment.substring(0, firstH2) }} />
+                    <TableOfContents content={post.content || ""} />
+                    <div className={proseClasses} dangerouslySetInnerHTML={{ __html: segment.substring(firstH2) }} />
+                  </>
+                );
+              }
               return (
                 <>
-                  <div className={proseClasses} dangerouslySetInnerHTML={{ __html: beforeH2 }} />
                   <TableOfContents content={post.content || ""} />
-                  <div className={proseClasses} dangerouslySetInnerHTML={{ __html: afterH2 }} />
+                  <div className={proseClasses} dangerouslySetInnerHTML={{ __html: segment }} />
                 </>
               );
-            }
-            return (
-              <>
-                <TableOfContents content={post.content || ""} />
-                <div className={proseClasses} dangerouslySetInnerHTML={{ __html: fullHtml }} />
-              </>
-            );
+            };
+
+            return <>{renderContentWithCaptions(fullHtml, proseClasses, shareUrl, insertTOC)}</>;
           })()}
 
           {/* Share Section */}
