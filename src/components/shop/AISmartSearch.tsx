@@ -36,6 +36,9 @@ export default function AISmartSearch() {
       if ((data as any)?.error) throw new Error((data as any).error);
       setProducts((data as any).products || []);
       setReason((data as any).reason || "");
+      if ((data as any)?.warning) {
+        toast({ title: "AI provider issue", description: (data as any).warning });
+      }
     } catch (e: any) {
       toast({ title: "AI search failed", description: e.message || "Try again", variant: "destructive" });
       setProducts([]);
