@@ -370,29 +370,31 @@ const BlogDetail = () => {
             </div>
           )}
 
-          {/* Content with TOC inserted before first H2 */}
+          {/* Content with TOC inserted before first H2, and [caption]...[/caption] rendered as share cards */}
           {(() => {
             const fullHtml = addHeadingIds(post.content || "");
-            const firstH2Index = fullHtml.search(/<h2[\s>]/i);
             const proseClasses = "prose prose-sm sm:prose-base dark:prose-invert max-w-none prose-headings:font-display prose-headings:text-foreground prose-headings:font-semibold prose-p:text-muted-foreground prose-p:leading-[1.8] prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-img:shadow-md prose-blockquote:border-primary/30 prose-blockquote:text-muted-foreground prose-blockquote:bg-muted/30 prose-blockquote:rounded-r-lg prose-blockquote:py-1 prose-li:text-muted-foreground prose-strong:text-foreground rich-text-content";
-            
-            if (firstH2Index > 0) {
-              const beforeH2 = fullHtml.substring(0, firstH2Index);
-              const afterH2 = fullHtml.substring(firstH2Index);
+
+            const insertTOC = (segment: string) => {
+              const firstH2 = segment.search(/<h2[\s>]/i);
+              if (firstH2 > 0) {
+                return (
+                  <>
+                    <div className={proseClasses} dangerouslySetInnerHTML={{ __html: segment.substring(0, firstH2) }} />
+                    <TableOfContents content={post.content || ""} />
+                    <div className={proseClasses} dangerouslySetInnerHTML={{ __html: segment.substring(firstH2) }} />
+                  </>
+                );
+              }
               return (
                 <>
-                  <div className={proseClasses} dangerouslySetInnerHTML={{ __html: beforeH2 }} />
                   <TableOfContents content={post.content || ""} />
-                  <div className={proseClasses} dangerouslySetInnerHTML={{ __html: afterH2 }} />
+                  <div className={proseClasses} dangerouslySetInnerHTML={{ __html: segment }} />
                 </>
               );
-            }
-            return (
-              <>
-                <TableOfContents content={post.content || ""} />
-                <div className={proseClasses} dangerouslySetInnerHTML={{ __html: fullHtml }} />
-              </>
-            );
+            };
+
+            return <>{renderContentWithCaptions(fullHtml, proseClasses, shareUrl, insertTOC)}</>;
           })()}
 
           {/* Share Section */}
