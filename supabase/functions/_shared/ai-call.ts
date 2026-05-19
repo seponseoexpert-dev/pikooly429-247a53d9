@@ -36,7 +36,16 @@ export async function getAIConfig(): Promise<AIConfig> {
     const provider = ((m.ai_search_provider || "lovable").toLowerCase() as AIProvider);
     const valid: AIProvider[] = ["lovable", "gemini", "openai", "anthropic"];
     const p = valid.includes(provider) ? provider : "lovable";
-    const model = m.ai_search_model?.trim() || DEFAULTS[p];
+    // Validate model — fall back to default if it doesn't look like a real model id
+    const rawModel = (m.ai_search_model || "").trim();
+    const looksValid = (() => {
+      if (!rawModel || rawModel.length < 4) return false;
+      if (p === "openai") return /^(gpt-|o\d|chatgpt)/i.test(rawModel);
+      if (p === "anthropic") return /^claude-/i.test(rawModel);
+      if (p === "gemini") return /^gemini-/i.test(rawModel);
+      return /\//.test(rawModel); // lovable expects "provider/model"
+    })();
+    const model = looksValid ? rawModel : DEFAULTS[p];
     return {
       provider: p,
       model,
