@@ -105,7 +105,7 @@ export async function callAI(opts: AICallOpts): Promise<string> {
         temperature,
       }),
     });
-    if (!r.ok) throw new Error(`OpenAI ${r.status}: ${(await r.text()).slice(0, 200)}`);
+    if (!r.ok) throw new Error(friendlyProviderError("openai", r.status, await r.text()));
     const j = await r.json();
     return j?.choices?.[0]?.message?.content || "";
   }
@@ -129,7 +129,7 @@ export async function callAI(opts: AICallOpts): Promise<string> {
         temperature,
       }),
     });
-    if (!r.ok) throw new Error(`Anthropic ${r.status}: ${(await r.text()).slice(0, 200)}`);
+    if (!r.ok) throw new Error(friendlyProviderError("anthropic", r.status, await r.text()));
     const j = await r.json();
     return j?.content?.[0]?.text || "";
   }
@@ -151,7 +151,7 @@ export async function callAI(opts: AICallOpts): Promise<string> {
         },
       }),
     });
-    if (!r.ok) throw new Error(`Gemini ${r.status}: ${(await r.text()).slice(0, 200)}`);
+    if (!r.ok) throw new Error(friendlyProviderError("gemini", r.status, await r.text()));
     const j = await r.json();
     return j?.candidates?.[0]?.content?.parts?.[0]?.text || "";
   }
@@ -171,9 +171,7 @@ export async function callAI(opts: AICallOpts): Promise<string> {
   });
   if (!r.ok) {
     const t = await r.text();
-    if (r.status === 429) throw new Error("Rate limit reached. Try again shortly.");
-    if (r.status === 402) throw new Error("AI credits exhausted. Add credits in workspace.");
-    throw new Error(`Lovable AI ${r.status}: ${t.slice(0, 200)}`);
+    throw new Error(friendlyProviderError("lovable", r.status, t));
   }
   const j = await r.json();
   return j?.choices?.[0]?.message?.content || "";
