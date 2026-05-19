@@ -6,10 +6,24 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 export type AIProvider = "lovable" | "gemini" | "openai" | "anthropic";
 
 const DEFAULTS: Record<AIProvider, string> = {
-  lovable: "google/gemini-2.5-pro",
+  lovable: "google/gemini-3-flash-preview",
   gemini: "gemini-2.5-pro",
   openai: "gpt-4o-mini",
   anthropic: "claude-3-5-sonnet-20241022",
+};
+
+const friendlyProviderError = (provider: AIProvider, status: number, body: string) => {
+  const text = body.toLowerCase();
+  if (status === 429 || text.includes("quota") || text.includes("rate_limit") || text.includes("insufficient_quota")) {
+    return `${provider === "openai" ? "OpenAI" : provider === "gemini" ? "Gemini" : provider === "anthropic" ? "Anthropic" : "Lovable AI"} quota or rate limit reached. Switch provider or add billing/credits.`;
+  }
+  if (status === 401 || status === 403 || text.includes("api key")) {
+    return `${provider === "openai" ? "OpenAI" : provider === "gemini" ? "Gemini" : provider === "anthropic" ? "Anthropic" : "Lovable AI"} API key is invalid or unauthorized.`;
+  }
+  if (status === 404 || text.includes("model") || text.includes("not found")) {
+    return `${provider === "openai" ? "OpenAI" : provider === "gemini" ? "Gemini" : provider === "anthropic" ? "Anthropic" : "Lovable AI"} model is unavailable. Use the default model name.`;
+  }
+  return `${provider} ${status}: ${body.slice(0, 200)}`;
 };
 
 export interface AIConfig {
@@ -91,7 +105,7 @@ export async function callAI(opts: AICallOpts): Promise<string> {
         temperature,
       }),
     });
-    if (!r.ok) throw new Error(`OpenAI ${r.status}: ${(await r.text()).slice(0, 200)}`);
+    if (!r.ok) throw new Error(friendlyProviderError("openai", r.status, await r.text()));
     const j = await r.json();
     return j?.choices?.[0]?.message?.content || "";
   }
@@ -115,7 +129,7 @@ export async function callAI(opts: AICallOpts): Promise<string> {
         temperature,
       }),
     });
-    if (!r.ok) throw new Error(`Anthropic ${r.status}: ${(await r.text()).slice(0, 200)}`);
+    if (!r.ok) throw new Error(friendlyProviderError("anthropic", r.status, await r.text()));
     const j = await r.json();
     return j?.content?.[0]?.text || "";
   }
@@ -137,7 +151,7 @@ export async function callAI(opts: AICallOpts): Promise<string> {
         },
       }),
     });
-    if (!r.ok) throw new Error(`Gemini ${r.status}: ${(await r.text()).slice(0, 200)}`);
+    if (!r.ok) throw new Error(friendlyProviderError("gemini", r.status, await r.text()));
     const j = await r.json();
     return j?.candidates?.[0]?.content?.parts?.[0]?.text || "";
   }
@@ -157,9 +171,7 @@ export async function callAI(opts: AICallOpts): Promise<string> {
   });
   if (!r.ok) {
     const t = await r.text();
-    if (r.status === 429) throw new Error("Rate limit reached. Try again shortly.");
-    if (r.status === 402) throw new Error("AI credits exhausted. Add credits in workspace.");
-    throw new Error(`Lovable AI ${r.status}: ${t.slice(0, 200)}`);
+    throw new Error(friendlyProviderError("lovable", r.status, t));
   }
   const j = await r.json();
   return j?.choices?.[0]?.message?.content || "";

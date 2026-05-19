@@ -77,9 +77,12 @@ const SearchPage = () => {
       if ((data as any)?.error) throw new Error((data as any).error);
       setAiProducts((data as any).products || []);
       setAiReason((data as any).reason || "");
+      if ((data as any)?.warning && !((data as any).products || []).length) {
+        setAiReason((data as any).warning);
+      }
       saveRecentSearch(text);
     } catch (e: any) {
-      setAiReason(e?.message || "AI search failed. Try again.");
+      setAiReason("AI provider issue. Try again or switch provider in Admin Settings.");
     } finally {
       setAiLoading(false);
     }

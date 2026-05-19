@@ -563,8 +563,9 @@ const FieldRenderer = ({
       </RadioGroup>
     );
   }
+  const isApiKey = field.key.endsWith("_api_key") || field.key.includes("api_secret");
   return (
-    <Input value={value} onChange={(e) => onChange(e.target.value)} placeholder={field.placeholder || field.label} />
+    <Input type={isApiKey ? "password" : "text"} value={value} onChange={(e) => onChange(e.target.value)} placeholder={field.placeholder || field.label} />
   );
 };
 

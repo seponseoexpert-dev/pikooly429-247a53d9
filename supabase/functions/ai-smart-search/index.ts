@@ -66,15 +66,34 @@ Return JSON (intent + reason MUST be in the same language/script as the user que
 
     const { provider, model } = await getAIConfig();
 
+    const fallbackMatches = () => {
+      const q = query.toLowerCase();
+      const words = q.split(/[^\p{L}\p{N}]+/u).filter((w) => w.length > 2);
+      return (products || [])
+        .map((p) => {
+          const haystack = [p.name, p.short_description, (p.tags || []).join(" ")].join(" ").toLowerCase();
+          const score = words.reduce((sum, w) => sum + (haystack.includes(w) ? 1 : 0), 0) + (Number(p.rating) || 0) / 10;
+          return { p, score };
+        })
+        .filter((x) => x.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 8)
+        .map((x) => x.p);
+    };
+
     let content = "{}";
     try {
       content = await callAI({ system, user, json: true, provider, model });
     } catch (e) {
       const msg = (e as Error).message || "AI error";
-      const status = msg.includes("Rate limit") ? 429 : msg.includes("credits") ? 402 : msg.includes("not configured") ? 400 : 500;
-      return new Response(JSON.stringify({ error: msg }), {
-        status, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(JSON.stringify({
+        intent: "",
+        reason: msg,
+        products: fallbackMatches(),
+        provider,
+        model,
+        warning: msg,
+      }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     let parsed: any = {};
