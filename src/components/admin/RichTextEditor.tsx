@@ -55,6 +55,8 @@ const ToolBtn = forwardRef<HTMLButtonElement, ToolBtnProps>(({ active, disabled,
 ToolBtn.displayName = "ToolBtn";
 
 const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
+  const [captionOpen, setCaptionOpen] = useState(false);
+  const [captionText, setCaptionText] = useState("");
   const editor = useEditor({
     extensions: [
       StarterKit,
