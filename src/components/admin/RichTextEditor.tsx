@@ -13,7 +13,7 @@ import { useEffect, useCallback, forwardRef } from "react";
 import {
   Bold, Italic, Underline as UnderlineIcon, Strikethrough, List, ListOrdered, Quote,
   AlignLeft, AlignCenter, AlignRight, AlignJustify, Link as LinkIcon, Undo, Redo, Code,
-  Table as TableIcon, Plus, Minus, Trash2,
+  Table as TableIcon, Plus, Minus, Trash2, MessageSquareQuote,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
