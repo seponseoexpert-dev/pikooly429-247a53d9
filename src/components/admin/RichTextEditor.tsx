@@ -154,6 +154,13 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
     editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
   };
 
+  const insertCaption = () => {
+    const text = window.prompt("Caption text likhun:");
+    if (!text) return;
+    const safe = text.replace(/[\[\]]/g, "");
+    editor.chain().focus().insertContent(`<p>[caption]${safe}[/caption]</p><p></p>`).run();
+  };
+
   return (
     <div className="border rounded-lg overflow-hidden" onClick={handleEditorClick}>
       <div
