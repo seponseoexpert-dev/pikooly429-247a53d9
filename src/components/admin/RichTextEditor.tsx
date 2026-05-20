@@ -252,6 +252,9 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
           </>
         )}
 
+        <div className="w-px h-5 bg-border mx-0.5" />
+        <ToolBtn onClick={insertCaption} title="Insert Caption Block"><MessageSquareQuote size={14} /></ToolBtn>
+
         <ToolBtn disabled={!editorState?.canUndo} onClick={() => editor.chain().focus().undo().run()} title="Undo"><Undo size={14} /></ToolBtn>
         <ToolBtn disabled={!editorState?.canRedo} onClick={() => editor.chain().focus().redo().run()} title="Redo"><Redo size={14} /></ToolBtn>
       </div>
