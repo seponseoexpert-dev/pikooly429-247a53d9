@@ -13,7 +13,7 @@ import { useEffect, useCallback, forwardRef } from "react";
 import {
   Bold, Italic, Underline as UnderlineIcon, Strikethrough, List, ListOrdered, Quote,
   AlignLeft, AlignCenter, AlignRight, AlignJustify, Link as LinkIcon, Undo, Redo, Code,
-  Table as TableIcon, Plus, Minus, Trash2,
+  Table as TableIcon, Plus, Minus, Trash2, MessageSquareQuote,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -154,6 +154,13 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
     editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
   };
 
+  const insertCaption = () => {
+    const text = window.prompt("Caption text likhun:");
+    if (!text) return;
+    const safe = text.replace(/[\[\]]/g, "");
+    editor.chain().focus().insertContent(`<p>[caption]${safe}[/caption]</p><p></p>`).run();
+  };
+
   return (
     <div className="border rounded-lg overflow-hidden" onClick={handleEditorClick}>
       <div
@@ -244,6 +251,9 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
             <ToolBtn onClick={() => editor.chain().focus().deleteTable().run()} title="Delete Table"><Trash2 size={14} /></ToolBtn>
           </>
         )}
+
+        <div className="w-px h-5 bg-border mx-0.5" />
+        <ToolBtn onClick={insertCaption} title="Insert Caption Block"><MessageSquareQuote size={14} /></ToolBtn>
 
         <ToolBtn disabled={!editorState?.canUndo} onClick={() => editor.chain().focus().undo().run()} title="Undo"><Undo size={14} /></ToolBtn>
         <ToolBtn disabled={!editorState?.canRedo} onClick={() => editor.chain().focus().redo().run()} title="Redo"><Redo size={14} /></ToolBtn>
