@@ -159,10 +159,12 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
   };
 
   const insertCaption = () => {
-    const text = window.prompt("Caption text likhun:");
+    const text = captionText.trim();
     if (!text) return;
     const safe = text.replace(/[\[\]]/g, "");
     editor.chain().focus().insertContent(`<p>[caption]${safe}[/caption]</p><p></p>`).run();
+    setCaptionText("");
+    setCaptionOpen(false);
   };
 
   return (
