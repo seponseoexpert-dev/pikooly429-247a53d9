@@ -9,13 +9,15 @@ import { TableCell } from "@tiptap/extension-table-cell";
 import { TableHeader } from "@tiptap/extension-table-header";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { FontSize } from "@tiptap/extension-font-size";
-import { useEffect, useCallback, forwardRef } from "react";
+import { useEffect, useCallback, forwardRef, useState } from "react";
 import {
   Bold, Italic, Underline as UnderlineIcon, Strikethrough, List, ListOrdered, Quote,
   AlignLeft, AlignCenter, AlignRight, AlignJustify, Link as LinkIcon, Undo, Redo, Code,
-  Table as TableIcon, Plus, Minus, Trash2, MessageSquareQuote,
+  Table as TableIcon, Plus, Minus, Trash2, MessageSquareQuote, Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 interface RichTextEditorProps {
   value: string;
@@ -53,6 +55,8 @@ const ToolBtn = forwardRef<HTMLButtonElement, ToolBtnProps>(({ active, disabled,
 ToolBtn.displayName = "ToolBtn";
 
 const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
+  const [captionOpen, setCaptionOpen] = useState(false);
+  const [captionText, setCaptionText] = useState("");
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -155,10 +159,12 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
   };
 
   const insertCaption = () => {
-    const text = window.prompt("Caption text likhun:");
+    const text = captionText.trim();
     if (!text) return;
     const safe = text.replace(/[\[\]]/g, "");
     editor.chain().focus().insertContent(`<p>[caption]${safe}[/caption]</p><p></p>`).run();
+    setCaptionText("");
+    setCaptionOpen(false);
   };
 
   return (
@@ -253,7 +259,7 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
         )}
 
         <div className="w-px h-5 bg-border mx-0.5" />
-        <ToolBtn onClick={insertCaption} title="Insert Caption Block"><MessageSquareQuote size={14} /></ToolBtn>
+        <ToolBtn onClick={() => setCaptionOpen(true)} title="Insert Caption Block"><MessageSquareQuote size={14} /></ToolBtn>
 
         <ToolBtn disabled={!editorState?.canUndo} onClick={() => editor.chain().focus().undo().run()} title="Undo"><Undo size={14} /></ToolBtn>
         <ToolBtn disabled={!editorState?.canRedo} onClick={() => editor.chain().focus().redo().run()} title="Redo"><Redo size={14} /></ToolBtn>
@@ -262,6 +268,52 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
         editor={editor}
         className="prose prose-sm max-w-none p-2 sm:p-3 min-h-[100px] sm:min-h-[150px] focus-within:outline-none [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[90px] sm:[&_.ProseMirror]:min-h-[140px]"
       />
+
+      <Dialog open={captionOpen} onOpenChange={(o) => { setCaptionOpen(o); if (!o) setCaptionText(""); }}>
+        <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden gap-0">
+          <div className="bg-gradient-to-br from-primary/10 via-background to-primary/5 px-5 py-4 border-b">
+            <DialogHeader className="space-y-1.5 text-left">
+              <DialogTitle className="flex items-center gap-2 text-base font-semibold">
+                <span className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center">
+                  <Sparkles size={15} className="text-primary" />
+                </span>
+                Insert Caption Block
+              </DialogTitle>
+              <DialogDescription className="text-xs">
+                Highlighted quote card with share & copy buttons in the post.
+              </DialogDescription>
+            </DialogHeader>
+          </div>
+          <div className="px-5 py-4 space-y-3">
+            <label className="text-xs font-medium text-muted-foreground">Caption text</label>
+            <Textarea
+              autoFocus
+              value={captionText}
+              onChange={(e) => setCaptionText(e.target.value)}
+              placeholder="Apnar caption ekhane likhun..."
+              rows={4}
+              className="resize-none text-[16px] leading-relaxed"
+              onKeyDown={(e) => {
+                if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+                  e.preventDefault();
+                  insertCaption();
+                }
+              }}
+            />
+            <p className="text-[11px] text-muted-foreground">
+              Tip: <kbd className="px-1.5 py-0.5 rounded border bg-muted text-[10px]">Ctrl/⌘ + Enter</kbd> to insert quickly.
+            </p>
+          </div>
+          <DialogFooter className="px-5 py-3 border-t bg-muted/30 gap-2 sm:gap-2">
+            <Button type="button" variant="ghost" size="sm" onClick={() => { setCaptionOpen(false); setCaptionText(""); }}>
+              Cancel
+            </Button>
+            <Button type="button" size="sm" onClick={insertCaption} disabled={!captionText.trim()}>
+              <MessageSquareQuote size={14} className="mr-1.5" /> Insert
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
