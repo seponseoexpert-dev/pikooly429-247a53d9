@@ -13,11 +13,25 @@ import { useEffect, useCallback, forwardRef, useState } from "react";
 import {
   Bold, Italic, Underline as UnderlineIcon, Strikethrough, List, ListOrdered, Quote,
   AlignLeft, AlignCenter, AlignRight, AlignJustify, Link as LinkIcon, Undo, Redo, Code,
-  Table as TableIcon, Plus, Minus, Trash2, MessageSquareQuote, Sparkles,
+  Table as TableIcon, Plus, Minus, Trash2, MessageSquareQuote, Sparkles, Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+
+const SAFE_INTERNAL_LINKS = [
+  { label: "Shop — All Gifts", href: "/shop" },
+  { label: "Shop — Flowers", href: "/shop?category=flowers" },
+  { label: "Shop — Cakes", href: "/shop?category=cakes" },
+  { label: "Shop — Gifts", href: "/shop?category=gifts" },
+  { label: "Bouquet Builder", href: "/bouquet-builder" },
+  { label: "Events", href: "/events" },
+  { label: "Blog", href: "/blog" },
+  { label: "Contact Us", href: "/contact" },
+  { label: "Track Order", href: "/track-order" },
+  { label: "About Us", href: "/about-us" },
+];
 
 interface RichTextEditorProps {
   value: string;
