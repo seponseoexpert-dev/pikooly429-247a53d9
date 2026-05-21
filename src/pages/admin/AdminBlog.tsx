@@ -404,8 +404,70 @@ const AdminBlog = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* AI Generator Dialog */}
+      <Dialog open={aiOpen} onOpenChange={(o) => { if (!aiLoading) setAiOpen(o); }}>
+        <DialogContent className="sm:max-w-[520px] p-0 overflow-hidden gap-0">
+          <div className="bg-gradient-to-br from-primary/10 via-background to-primary/5 px-5 py-4 border-b">
+            <DialogHeader className="space-y-1.5 text-left">
+              <DialogTitle className="flex items-center gap-2 text-base font-semibold">
+                <span className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center">
+                  <Sparkles size={15} className="text-primary" />
+                </span>
+                AI Blog Content Generator
+              </DialogTitle>
+              <p className="text-xs text-muted-foreground">
+                Generates Title, Slug, Excerpt, Content, SEO Title & Meta — Bangladesh-targeted, semantic SEO, safe internal links, 0% AI-feel.
+              </p>
+            </DialogHeader>
+          </div>
+          <div className="px-5 py-4 space-y-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs">Topic / blog idea *</Label>
+              <Input
+                value={aiTopic}
+                onChange={(e) => setAiTopic(e.target.value)}
+                placeholder="e.g. Best birthday flower bouquets in Dhaka"
+                className="text-[16px]"
+                autoFocus
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Focus keywords (comma-separated, optional)</Label>
+              <Input
+                value={aiKeywords}
+                onChange={(e) => setAiKeywords(e.target.value)}
+                placeholder="birthday flowers, dhaka delivery, rose bouquet"
+                className="text-[16px]"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Tone</Label>
+              <Input
+                value={aiTone}
+                onChange={(e) => setAiTone(e.target.value)}
+                placeholder="warm, locally-rooted Bangladeshi"
+                className="text-[16px]"
+              />
+            </div>
+            <div className="rounded-lg bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground leading-relaxed">
+              ✓ Semantic SEO (LSI keywords woven naturally)<br />
+              ✓ 2–4 safe internal links from whitelist only<br />
+              ✓ Question-style H2s + FAQ for AI Overviews<br />
+              ✓ Bangladesh context (cities, occasions) · No banned AI phrases
+            </div>
+          </div>
+          <div className="px-5 py-3 border-t bg-muted/30 flex gap-2 justify-end">
+            <Button type="button" variant="ghost" size="sm" disabled={aiLoading} onClick={() => setAiOpen(false)}>Cancel</Button>
+            <Button type="button" size="sm" onClick={runAiGenerate} disabled={aiLoading || !aiTopic.trim()}>
+              {aiLoading ? <><Loader2 size={14} className="mr-1.5 animate-spin" /> Generating...</> : <><Sparkles size={14} className="mr-1.5" /> Generate</>}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
+
 };
 
 export default AdminBlog;
