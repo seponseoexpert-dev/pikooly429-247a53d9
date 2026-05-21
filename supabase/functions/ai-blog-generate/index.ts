@@ -63,14 +63,23 @@ Hard rules:
 - Do NOT use <h1>.`;
 
     let content = "{}";
+    let fallbackNote = "";
     try {
       content = await callAI({ system, user, json: true, temperature: 0.85, maxTokens: 4000 });
     } catch (e) {
       const msg = (e as Error).message || "AI error";
-      const status = msg.includes("Rate limit") ? 429 : msg.includes("credits") ? 402 : msg.includes("not configured") ? 400 : 500;
-      return new Response(JSON.stringify({ error: msg }), {
-        status, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      // Auto-fallback to Lovable AI if the admin-selected provider failed (quota, key, etc.)
+      try {
+        content = await callAI({ system, user, json: true, temperature: 0.85, maxTokens: 4000, provider: "lovable", model: "google/gemini-2.5-flash" });
+        fallbackNote = `Primary AI provider failed (${msg}). Used Lovable AI fallback.`;
+      } catch (e2) {
+        const msg2 = (e2 as Error).message || "AI error";
+        const combined = `Primary: ${msg} | Fallback (Lovable AI): ${msg2}`;
+        const status = msg2.includes("Rate limit") ? 429 : msg2.includes("credits") ? 402 : msg2.includes("not configured") ? 400 : 500;
+        return new Response(JSON.stringify({ error: combined }), {
+          status, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
     }
 
     let parsed: any = {};
