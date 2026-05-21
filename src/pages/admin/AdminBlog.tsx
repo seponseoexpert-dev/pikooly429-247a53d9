@@ -34,6 +34,42 @@ const AdminBlog = () => {
   const defaultForm = { title: "", slug: "", content: "", excerpt: "", image_url: "", is_published: false, seo_title: "", seo_description: "", category: "General" };
   const [form, setForm] = useState(defaultForm);
 
+  // AI Generator
+  const [aiOpen, setAiOpen] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiTopic, setAiTopic] = useState("");
+  const [aiKeywords, setAiKeywords] = useState("");
+  const [aiTone, setAiTone] = useState("warm, locally-rooted Bangladeshi");
+
+  const runAiGenerate = async () => {
+    if (!aiTopic.trim()) { toast({ title: "Topic required", variant: "destructive" }); return; }
+    setAiLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("ai-blog-generate", {
+        body: { topic: aiTopic.trim(), keywords: aiKeywords.trim(), category: form.category, tone: aiTone.trim() },
+      });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      const d = data as any;
+      setForm((f) => ({
+        ...f,
+        title: d.title || f.title,
+        slug: d.slug || f.slug,
+        excerpt: d.excerpt || f.excerpt,
+        content: d.content || f.content,
+        seo_title: d.seo_title || f.seo_title,
+        seo_description: d.seo_description || f.seo_description,
+      }));
+      toast({ title: "Content generated", description: "Review & edit before saving." });
+      setAiOpen(false);
+      setAiTopic(""); setAiKeywords("");
+    } catch (e: any) {
+      toast({ title: "Generation failed", description: e.message || "AI error", variant: "destructive" });
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   // Load categories from DB
   const fetchCategories = async () => {
     const { data } = await supabase.from("site_settings").select("value").eq("key", "blog_categories").single();
