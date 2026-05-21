@@ -197,6 +197,22 @@ const AdminBlog = () => {
               <DialogTitle>{editing ? "Edit Post" : "New Post"}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
+              <button
+                type="button"
+                onClick={() => setAiOpen(true)}
+                className="w-full group relative overflow-hidden rounded-xl border border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-background px-4 py-3 text-left transition-all hover:border-primary/60 hover:shadow-md"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/15 text-primary">
+                    <Sparkles size={18} />
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-semibold">AI Content Generator</div>
+                    <div className="text-[11px] text-muted-foreground">SEO-friendly · Bangladesh-targeted · Semantic + safe internal links · 100% human-style</div>
+                  </div>
+                </div>
+              </button>
+
               <div className="space-y-2">
                 <Label>Title *</Label>
                 <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value, slug: generateSlug(e.target.value) })} required />
