@@ -71,6 +71,9 @@ ToolBtn.displayName = "ToolBtn";
 const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
   const [captionOpen, setCaptionOpen] = useState(false);
   const [captionText, setCaptionText] = useState("");
+  const [linkOpen, setLinkOpen] = useState(false);
+  const [linkUrl, setLinkUrl] = useState("");
+  const [linkText, setLinkText] = useState("");
   const editor = useEditor({
     extensions: [
       StarterKit,
