@@ -106,6 +106,7 @@ Hard rules:
       seo_title: parsed.seo_title || "",
       seo_description: parsed.seo_description || "",
       tags: Array.isArray(parsed.tags) ? parsed.tags : [],
+      ...(fallbackNote ? { warning: fallbackNote } : {}),
     }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (err) {
     return new Response(JSON.stringify({ error: (err as Error).message }), {
