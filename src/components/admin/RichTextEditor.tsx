@@ -156,8 +156,28 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
   if (!editor) return null;
 
   const addLink = () => {
-    const url = window.prompt("Enter URL:");
-    if (url) editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+    const { from, to } = editor.state.selection;
+    const selected = editor.state.doc.textBetween(from, to, " ").trim();
+    setLinkText(selected);
+    setLinkUrl(editor.getAttributes("link").href || "");
+    setLinkOpen(true);
+  };
+
+  const applyLink = (href: string) => {
+    const url = href.trim();
+    if (!url) return;
+    const isSafe = url.startsWith("/") || /^https?:\/\//i.test(url);
+    if (!isSafe) return;
+    const chain = editor.chain().focus().extendMarkRange("link");
+    const { from, to } = editor.state.selection;
+    if (from === to && linkText.trim()) {
+      chain.insertContent(`<a href="${url}">${linkText.trim()}</a>`).run();
+    } else {
+      chain.setLink({ href: url }).run();
+    }
+    setLinkOpen(false);
+    setLinkUrl("");
+    setLinkText("");
   };
 
   const currentBlock = editorState?.currentBlock ?? "p";
