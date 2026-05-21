@@ -13,11 +13,25 @@ import { useEffect, useCallback, forwardRef, useState } from "react";
 import {
   Bold, Italic, Underline as UnderlineIcon, Strikethrough, List, ListOrdered, Quote,
   AlignLeft, AlignCenter, AlignRight, AlignJustify, Link as LinkIcon, Undo, Redo, Code,
-  Table as TableIcon, Plus, Minus, Trash2, MessageSquareQuote, Sparkles,
+  Table as TableIcon, Plus, Minus, Trash2, MessageSquareQuote, Sparkles, Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+
+const SAFE_INTERNAL_LINKS = [
+  { label: "Shop — All Gifts", href: "/shop" },
+  { label: "Shop — Flowers", href: "/shop?category=flowers" },
+  { label: "Shop — Cakes", href: "/shop?category=cakes" },
+  { label: "Shop — Gifts", href: "/shop?category=gifts" },
+  { label: "Bouquet Builder", href: "/bouquet-builder" },
+  { label: "Events", href: "/events" },
+  { label: "Blog", href: "/blog" },
+  { label: "Contact Us", href: "/contact" },
+  { label: "Track Order", href: "/track-order" },
+  { label: "About Us", href: "/about-us" },
+];
 
 interface RichTextEditorProps {
   value: string;
@@ -57,6 +71,9 @@ ToolBtn.displayName = "ToolBtn";
 const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
   const [captionOpen, setCaptionOpen] = useState(false);
   const [captionText, setCaptionText] = useState("");
+  const [linkOpen, setLinkOpen] = useState(false);
+  const [linkUrl, setLinkUrl] = useState("");
+  const [linkText, setLinkText] = useState("");
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -139,8 +156,28 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
   if (!editor) return null;
 
   const addLink = () => {
-    const url = window.prompt("Enter URL:");
-    if (url) editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+    const { from, to } = editor.state.selection;
+    const selected = editor.state.doc.textBetween(from, to, " ").trim();
+    setLinkText(selected);
+    setLinkUrl(editor.getAttributes("link").href || "");
+    setLinkOpen(true);
+  };
+
+  const applyLink = (href: string) => {
+    const url = href.trim();
+    if (!url) return;
+    const isSafe = url.startsWith("/") || /^https?:\/\//i.test(url);
+    if (!isSafe) return;
+    const chain = editor.chain().focus().extendMarkRange("link");
+    const { from, to } = editor.state.selection;
+    if (from === to && linkText.trim()) {
+      chain.insertContent(`<a href="${url}">${linkText.trim()}</a>`).run();
+    } else {
+      chain.setLink({ href: url }).run();
+    }
+    setLinkOpen(false);
+    setLinkUrl("");
+    setLinkText("");
   };
 
   const currentBlock = editorState?.currentBlock ?? "p";
@@ -314,6 +351,76 @@ const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Safe Internal Link Dialog */}
+      <Dialog open={linkOpen} onOpenChange={(o) => { setLinkOpen(o); if (!o) { setLinkUrl(""); setLinkText(""); } }}>
+        <DialogContent className="sm:max-w-[520px] p-0 overflow-hidden gap-0">
+          <div className="bg-gradient-to-br from-primary/10 via-background to-primary/5 px-5 py-4 border-b">
+            <DialogHeader className="space-y-1.5 text-left">
+              <DialogTitle className="flex items-center gap-2 text-base font-semibold">
+                <span className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center">
+                  <Shield size={15} className="text-primary" />
+                </span>
+                Insert Link
+              </DialogTitle>
+              <DialogDescription className="text-xs">
+                Pick a safe internal page or paste a custom URL. Internal links boost semantic SEO.
+              </DialogDescription>
+            </DialogHeader>
+          </div>
+          <div className="px-5 py-4 space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-muted-foreground">Safe internal pages</label>
+              <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto">
+                {SAFE_INTERNAL_LINKS.map((l) => (
+                  <button
+                    key={l.href}
+                    type="button"
+                    onClick={() => setLinkUrl(l.href)}
+                    className={`text-[11px] px-2 py-1 rounded-full border transition-colors ${linkUrl === l.href ? "bg-primary text-primary-foreground border-primary" : "bg-muted/40 hover:bg-muted border-border"}`}
+                  >
+                    {l.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-muted-foreground">Link text (optional if text already selected)</label>
+              <Input
+                value={linkText}
+                onChange={(e) => setLinkText(e.target.value)}
+                placeholder="e.g. explore our fresh flowers"
+                className="text-[16px]"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-muted-foreground">URL</label>
+              <Input
+                value={linkUrl}
+                onChange={(e) => setLinkUrl(e.target.value)}
+                placeholder="/shop or https://..."
+                className="text-[16px]"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") { e.preventDefault(); applyLink(linkUrl); }
+                }}
+              />
+              <p className="text-[11px] text-muted-foreground">Internal paths start with <code>/</code>. External must use <code>https://</code>.</p>
+            </div>
+          </div>
+          <DialogFooter className="px-5 py-3 border-t bg-muted/30 gap-2 sm:gap-2">
+            {editorState?.isLink && (
+              <Button type="button" variant="ghost" size="sm" className="text-destructive mr-auto" onClick={() => { editor.chain().focus().unsetLink().run(); setLinkOpen(false); }}>
+                Remove link
+              </Button>
+            )}
+            <Button type="button" variant="ghost" size="sm" onClick={() => setLinkOpen(false)}>Cancel</Button>
+            <Button type="button" size="sm" onClick={() => applyLink(linkUrl)} disabled={!linkUrl.trim()}>
+              <LinkIcon size={14} className="mr-1.5" /> Insert Link
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 };

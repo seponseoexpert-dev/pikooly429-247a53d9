@@ -10,7 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Eye, EyeOff, X } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, EyeOff, X, Sparkles, Loader2 } from "lucide-react";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import RichTextEditor from "@/components/admin/RichTextEditor";
@@ -33,6 +33,42 @@ const AdminBlog = () => {
 
   const defaultForm = { title: "", slug: "", content: "", excerpt: "", image_url: "", is_published: false, seo_title: "", seo_description: "", category: "General" };
   const [form, setForm] = useState(defaultForm);
+
+  // AI Generator
+  const [aiOpen, setAiOpen] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiTopic, setAiTopic] = useState("");
+  const [aiKeywords, setAiKeywords] = useState("");
+  const [aiTone, setAiTone] = useState("warm, locally-rooted Bangladeshi");
+
+  const runAiGenerate = async () => {
+    if (!aiTopic.trim()) { toast({ title: "Topic required", variant: "destructive" }); return; }
+    setAiLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("ai-blog-generate", {
+        body: { topic: aiTopic.trim(), keywords: aiKeywords.trim(), category: form.category, tone: aiTone.trim() },
+      });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      const d = data as any;
+      setForm((f) => ({
+        ...f,
+        title: d.title || f.title,
+        slug: d.slug || f.slug,
+        excerpt: d.excerpt || f.excerpt,
+        content: d.content || f.content,
+        seo_title: d.seo_title || f.seo_title,
+        seo_description: d.seo_description || f.seo_description,
+      }));
+      toast({ title: "Content generated", description: "Review & edit before saving." });
+      setAiOpen(false);
+      setAiTopic(""); setAiKeywords("");
+    } catch (e: any) {
+      toast({ title: "Generation failed", description: e.message || "AI error", variant: "destructive" });
+    } finally {
+      setAiLoading(false);
+    }
+  };
 
   // Load categories from DB
   const fetchCategories = async () => {
@@ -161,6 +197,22 @@ const AdminBlog = () => {
               <DialogTitle>{editing ? "Edit Post" : "New Post"}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
+              <button
+                type="button"
+                onClick={() => setAiOpen(true)}
+                className="w-full group relative overflow-hidden rounded-xl border border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-background px-4 py-3 text-left transition-all hover:border-primary/60 hover:shadow-md"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/15 text-primary">
+                    <Sparkles size={18} />
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-semibold">AI Content Generator</div>
+                    <div className="text-[11px] text-muted-foreground">SEO-friendly · Bangladesh-targeted · Semantic + safe internal links · 100% human-style</div>
+                  </div>
+                </div>
+              </button>
+
               <div className="space-y-2">
                 <Label>Title *</Label>
                 <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value, slug: generateSlug(e.target.value) })} required />
@@ -352,8 +404,70 @@ const AdminBlog = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* AI Generator Dialog */}
+      <Dialog open={aiOpen} onOpenChange={(o) => { if (!aiLoading) setAiOpen(o); }}>
+        <DialogContent className="sm:max-w-[520px] p-0 overflow-hidden gap-0">
+          <div className="bg-gradient-to-br from-primary/10 via-background to-primary/5 px-5 py-4 border-b">
+            <DialogHeader className="space-y-1.5 text-left">
+              <DialogTitle className="flex items-center gap-2 text-base font-semibold">
+                <span className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center">
+                  <Sparkles size={15} className="text-primary" />
+                </span>
+                AI Blog Content Generator
+              </DialogTitle>
+              <p className="text-xs text-muted-foreground">
+                Generates Title, Slug, Excerpt, Content, SEO Title & Meta — Bangladesh-targeted, semantic SEO, safe internal links, 0% AI-feel.
+              </p>
+            </DialogHeader>
+          </div>
+          <div className="px-5 py-4 space-y-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs">Topic / blog idea *</Label>
+              <Input
+                value={aiTopic}
+                onChange={(e) => setAiTopic(e.target.value)}
+                placeholder="e.g. Best birthday flower bouquets in Dhaka"
+                className="text-[16px]"
+                autoFocus
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Focus keywords (comma-separated, optional)</Label>
+              <Input
+                value={aiKeywords}
+                onChange={(e) => setAiKeywords(e.target.value)}
+                placeholder="birthday flowers, dhaka delivery, rose bouquet"
+                className="text-[16px]"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Tone</Label>
+              <Input
+                value={aiTone}
+                onChange={(e) => setAiTone(e.target.value)}
+                placeholder="warm, locally-rooted Bangladeshi"
+                className="text-[16px]"
+              />
+            </div>
+            <div className="rounded-lg bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground leading-relaxed">
+              ✓ Semantic SEO (LSI keywords woven naturally)<br />
+              ✓ 2–4 safe internal links from whitelist only<br />
+              ✓ Question-style H2s + FAQ for AI Overviews<br />
+              ✓ Bangladesh context (cities, occasions) · No banned AI phrases
+            </div>
+          </div>
+          <div className="px-5 py-3 border-t bg-muted/30 flex gap-2 justify-end">
+            <Button type="button" variant="ghost" size="sm" disabled={aiLoading} onClick={() => setAiOpen(false)}>Cancel</Button>
+            <Button type="button" size="sm" onClick={runAiGenerate} disabled={aiLoading || !aiTopic.trim()}>
+              {aiLoading ? <><Loader2 size={14} className="mr-1.5 animate-spin" /> Generating...</> : <><Sparkles size={14} className="mr-1.5" /> Generate</>}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
+
 };
 
 export default AdminBlog;
