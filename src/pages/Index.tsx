@@ -127,11 +127,6 @@ const Index = () => {
       <CategoryGrid />
       <div className="deferred-section">
         <Suspense fallback={<LazyFallback />}>
-          <AISmartSearch />
-        </Suspense>
-      </div>
-      <div className="deferred-section">
-        <Suspense fallback={<LazyFallback />}>
           <OfferBanners />
         </Suspense>
       </div>
