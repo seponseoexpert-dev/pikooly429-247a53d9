@@ -80,12 +80,16 @@ const AdminBlog = () => {
         seo_title: d.seo_title || f.seo_title,
         seo_description: d.seo_description || f.seo_description,
       }));
+      setAiStep(aiWorkflowSteps.length); // mark all done
       toast({ title: "Content generated", description: "Review & edit before saving." });
-      setAiOpen(false);
-      setAiTopic(""); setAiKeywords("");
+      setTimeout(() => {
+        setAiOpen(false);
+        setAiTopic(""); setAiKeywords("");
+      }, 600);
     } catch (e: any) {
       toast({ title: "Generation failed", description: e.message || "AI error", variant: "destructive" });
     } finally {
+      clearInterval(stepTimer);
       setAiLoading(false);
     }
   };
