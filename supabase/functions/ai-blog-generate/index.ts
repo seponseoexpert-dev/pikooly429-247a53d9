@@ -99,12 +99,12 @@ ${kwList.length ? `- Before returning, verify EVERY focus keyword appears at lea
     let content = "{}";
     let fallbackNote = "";
     try {
-      content = await callAI({ system, user, json: true, temperature: 0.85, maxTokens: 4000 });
+      content = await callAI({ system, user, json: true, temperature: 0.85, maxTokens: Math.max(4000, targetWords * 6) });
     } catch (e) {
       const msg = (e as Error).message || "AI error";
       // Auto-fallback to Lovable AI if the admin-selected provider failed (quota, key, etc.)
       try {
-        content = await callAI({ system, user, json: true, temperature: 0.85, maxTokens: 4000, provider: "lovable", model: "google/gemini-2.5-flash" });
+        content = await callAI({ system, user, json: true, temperature: 0.85, maxTokens: Math.max(4000, targetWords * 6), provider: "lovable", model: "google/gemini-2.5-flash" });
         fallbackNote = `Primary AI provider failed (${msg}). Used Lovable AI fallback.`;
       } catch (e2) {
         const msg2 = (e2 as Error).message || "AI error";
