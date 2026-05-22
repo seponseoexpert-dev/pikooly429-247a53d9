@@ -474,12 +474,30 @@ const AdminBlog = () => {
                 className="text-[16px]"
               />
             </div>
-            <div className="rounded-lg bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground leading-relaxed">
-              ✓ Semantic SEO (LSI keywords woven naturally)<br />
-              ✓ 2–4 safe internal links from whitelist only<br />
-              ✓ Question-style H2s + FAQ for AI Overviews<br />
-              ✓ Bangladesh context (cities, occasions) · No banned AI phrases
-            </div>
+            {aiLoading ? (
+              <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 space-y-1.5 max-h-72 overflow-y-auto">
+                <div className="text-[11px] font-semibold text-primary mb-1.5 uppercase tracking-wide">SEO Workflow in progress</div>
+                {aiWorkflowSteps.map((step, i) => {
+                  const done = i < aiStep;
+                  const active = i === aiStep;
+                  return (
+                    <div key={step} className={`flex items-center gap-2 text-xs transition-all ${done ? "text-foreground" : active ? "text-primary font-medium" : "text-muted-foreground/60"}`}>
+                      <span className={`flex items-center justify-center w-4 h-4 rounded-full shrink-0 ${done ? "bg-primary text-primary-foreground" : active ? "bg-primary/20 border border-primary" : "bg-muted border border-border"}`}>
+                        {done ? <Check size={10} strokeWidth={3} /> : active ? <Loader2 size={10} className="animate-spin" /> : <span className="text-[9px]">{i + 1}</span>}
+                      </span>
+                      <span>{step}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="rounded-lg bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground leading-relaxed">
+                ✓ Semantic SEO (LSI keywords woven naturally)<br />
+                ✓ 2–4 safe internal links from whitelist only<br />
+                ✓ Question-style H2s + FAQ for AI Overviews<br />
+                ✓ Bangladesh context (cities, occasions) · No banned AI phrases
+              </div>
+            )}
           </div>
           <div className="px-5 py-3 border-t bg-muted/30 flex gap-2 justify-end">
             <Button type="button" variant="ghost" size="sm" disabled={aiLoading} onClick={() => setAiOpen(false)}>Cancel</Button>
