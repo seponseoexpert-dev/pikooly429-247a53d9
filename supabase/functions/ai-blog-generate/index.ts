@@ -70,18 +70,19 @@ Reply with VALID JSON ONLY — no prose, no markdown fences, no exposed workflow
 
 - Topic: ${topic}
 ${category ? `- Category: ${category}` : ""}
-${keywords ? `- Focus keywords (use semantically, not stuffed): ${keywords}` : ""}
+${kwList.length ? `- MANDATORY focus keywords (MUST USE every single one naturally inside the content body, distributed across paragraphs — not stuffed, not skipped): ${kwList.join(", ")}\n- Primary keyword (first one): "${kwList[0]}" — MUST appear in: title, slug, meta description, first 100 words, and at least one <h2>.` : ""}
 ${tone ? `- Tone: ${tone}` : "- Tone: warm, knowledgeable, locally-rooted Bangladeshi"}
+- TARGET WORD COUNT: ${targetWords} words (acceptable range: ${minWords}-${maxWords} words). Count words in the content body only. Do NOT go below ${minWords} or above ${maxWords}.
 
 Return JSON with this EXACT shape (every field required, never empty):
 {
   "title": "<compelling 50-65 char blog title, primary keyword near front, includes Bangladesh context if natural>",
   "slug": "<short URL slug, lowercase, hyphenated, max 60 chars, primary keyword>",
   "excerpt": "<plain text hook, 140-160 chars, directly answers the topic & sparks curiosity>",
-  "content": "<RICH SEMANTIC HTML, 800-1200 words. Use very short 5-8 word sentences only. Structure: opening <p> (direct answer in first 2 lines), 4-6 <h2> question-style subheadings, each with 2-3 short <p> + at least one <ul>/<ol>/<table>, 2-4 manual internal <a href='/shop'> style links, 1-2 [caption]Key insight here[/caption] blocks, closing <h2>FAQ</h2> with 3-4 Q&A in <h3>+<p>>",
+  "content": "<RICH SEMANTIC HTML, ${minWords}-${maxWords} words (target ${targetWords}). Use very short 5-8 word sentences only. Structure: opening <p> (direct answer in first 2 lines), question-style <h2> subheadings (scale count to word target), each with 2-4 short <p> + at least one <ul>/<ol>/<table>, 2-4 manual internal <a href='/shop'> style links, 1-2 [caption]Key insight here[/caption] blocks, closing <h2>FAQ</h2> with 3-5 Q&A in <h3>+<p>>",
   "seo_title": "<55-60 chars, primary keyword first, brand 'Pikooly' or 'Bangladesh' at end>",
   "seo_description": "<150-158 chars meta description, primary keyword + benefit + soft CTA>",
-  "tags": ["8-12 lowercase semantic tags including bangla terms where natural"]
+  "tags": ["8-12 lowercase semantic tags including bangla terms where natural${kwList.length ? `, MUST include all focus keywords: ${kwList.join(", ")}` : ""}"]
 }
 
 Hard rules:
@@ -91,7 +92,9 @@ Hard rules:
 - Use simple words only. Avoid complex words when a plain word works.
 - If the draft sounds like AI or scores below Flesch 100, rewrite before returning.
 - Do NOT invent product names or prices.
-- Do NOT use <h1>.`;
+- Do NOT use <h1>.
+- Before returning, silently COUNT the words in content. If under ${minWords}, EXPAND with more sections/FAQ/examples. If over ${maxWords}, TRIM. Re-check.
+${kwList.length ? `- Before returning, verify EVERY focus keyword appears at least once in the content body. If any is missing, rewrite to include it naturally.` : ""}`;
 
     let content = "{}";
     let fallbackNote = "";
