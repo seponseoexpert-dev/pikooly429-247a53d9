@@ -67,7 +67,7 @@ const AdminBlog = () => {
     }, 1400);
     try {
       const { data, error } = await supabase.functions.invoke("ai-blog-generate", {
-        body: { topic: aiTopic.trim(), keywords: aiKeywords.trim(), category: form.category, tone: aiTone.trim() },
+        body: { topic: aiTopic.trim(), keywords: aiKeywords.trim(), category: form.category, tone: aiTone.trim(), wordCount: aiWordCount },
       });
       if (error) throw error;
       if ((data as any)?.error) throw new Error((data as any).error);
