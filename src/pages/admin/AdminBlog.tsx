@@ -40,6 +40,7 @@ const AdminBlog = () => {
   const [aiTopic, setAiTopic] = useState("");
   const [aiKeywords, setAiKeywords] = useState("");
   const [aiTone, setAiTone] = useState("warm, locally-rooted Bangladeshi");
+  const [aiWordCount, setAiWordCount] = useState<number>(1000);
   const [aiStep, setAiStep] = useState(0);
 
   const aiWorkflowSteps = [
