@@ -458,13 +458,33 @@ const AdminBlog = () => {
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Focus keywords (comma-separated, optional)</Label>
+              <Label className="text-xs">Focus keywords (comma-separated)</Label>
               <Input
                 value={aiKeywords}
                 onChange={(e) => setAiKeywords(e.target.value)}
                 placeholder="birthday flowers, dhaka delivery, rose bouquet"
                 className="text-[16px]"
               />
+              {aiKeywords.trim() && (
+                <p className="text-[10px] text-muted-foreground">
+                  {aiKeywords.split(",").map(k => k.trim()).filter(Boolean).length} keyword(s) will be woven into the post
+                </p>
+              )}
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs">
+                Word count: <span className="text-primary font-semibold">{aiWordCount}</span> words
+              </Label>
+              <Input
+                type="number"
+                min={300}
+                max={4000}
+                step={50}
+                value={aiWordCount}
+                onChange={(e) => setAiWordCount(Math.max(300, Math.min(4000, Number(e.target.value) || 1000)))}
+                className="text-[16px]"
+              />
+              <p className="text-[10px] text-muted-foreground">Min 300 · Max 4000 · Recommended 800–1500</p>
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">Tone</Label>
