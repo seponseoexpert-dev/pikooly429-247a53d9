@@ -18,12 +18,16 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { topic, keywords, category, tone } = await req.json();
+    const { topic, keywords, category, tone, wordCount } = await req.json();
     if (!topic || typeof topic !== "string") {
       return new Response(JSON.stringify({ error: "Topic is required" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    const targetWords = Math.max(300, Math.min(4000, Number(wordCount) || 1000));
+    const minWords = Math.max(250, Math.floor(targetWords * 0.9));
+    const maxWords = Math.ceil(targetWords * 1.1);
+    const kwList = (keywords || "").split(",").map((k: string) => k.trim()).filter(Boolean);
 
     const system = `You are a senior SEO + E-E-A-T content strategist for **Pikooly** — a premium flower, cake & gift e-commerce brand in **Bangladesh** (Dhaka, Chattogram, Sylhet, nationwide delivery). You write 100% human-sounding, original blog posts in very clear, simple English.
 
