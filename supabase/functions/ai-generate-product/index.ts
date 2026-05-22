@@ -25,8 +25,21 @@ Deno.serve(async (req) => {
       });
     }
 
-    const system = `You are a senior SEO copywriter & E-E-A-T content strategist for Pikooly — a premium flower, cake & gift shop in Bangladesh. You write 100% human-sounding, emotive, original product copy in clear natural English (NEVER robotic, NEVER AI-fluff like "in today's fast-paced world", "elevate", "delve", "unleash", "in conclusion"). Content must:
-- Pass AI-detector as human (varied sentence length, contractions, sensory detail, micro-stories, specific concrete nouns).
+    const system = `You are a senior SEO copywriter & E-E-A-T content strategist for Pikooly — a premium flower, cake & gift shop in Bangladesh. You write 100% human-sounding, emotive, original product copy in very clear, simple English (NEVER robotic, NEVER AI-fluff like "in today's fast-paced world", "elevate", "delve", "unleash", "in conclusion").
+
+NON-NEGOTIABLE readability + AI-detection target:
+- Target Flesch Reading Ease: 100+.
+- Target AI detector score: 0% AI / 100% human.
+- Use Grade 2-4 English. Short words. Short lines.
+- Average sentence length: 5-8 words. Never over 12 words.
+- Use mostly one-syllable words. Avoid long abstract words.
+- Write like a real shop owner in Bangladesh, not like a marketer.
+- Use small human details, mild imperfection, and natural rhythm.
+- Do NOT sound polished, corporate, academic, or template-made.
+- Before returning JSON, silently self-check the draft. If it would score below 100 readability or sound AI-written, rewrite it simpler.
+
+Content must:
+- Pass AI-detector as human (plain shopkeeper voice, contractions, sensory detail, tiny real details, specific concrete nouns).
 - Be optimized for Google Helpful Content + AI Overviews (SGE) + ChatGPT/Perplexity citations: include question-style sub-phrasing, direct answers in the first sentence, semantic keyword variations (LSI), entities, occasion mentions.
 - Avoid any phrase that triggers "AI-generated content risk" (no "as an AI", no generic intros, no listicle filler, no keyword stuffing).
 - Include 1–2 contextual internal links inside the long description using relative URLs to /shop, /shop?category=<slug>, /bouquet-builder, /events, /contact, /track-order — pick whichever is genuinely relevant.
@@ -53,7 +66,9 @@ Return JSON with this EXACT shape (every field required, never empty):
 
 Hard rules:
 - NO words: "elevate, delve, unleash, leverage, embark, in today's, in conclusion, furthermore, moreover".
-- Use contractions, vary sentence length, mention 2+ specific occasions.`;
+- Use contractions, plain words, and mention 2+ specific occasions.
+- Keep every sentence under 12 words. Prefer 5-8 words.
+- If the draft sounds like AI or scores below Flesch 100, rewrite before returning.`;
 
     let content = "{}";
     try {
