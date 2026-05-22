@@ -40,10 +40,30 @@ const AdminBlog = () => {
   const [aiTopic, setAiTopic] = useState("");
   const [aiKeywords, setAiKeywords] = useState("");
   const [aiTone, setAiTone] = useState("warm, locally-rooted Bangladeshi");
+  const [aiStep, setAiStep] = useState(0);
+
+  const aiWorkflowSteps = [
+    "Keyword Research",
+    "Competitor Analysis",
+    "Website Structure Planning",
+    "Content Strategy",
+    "Technical SEO Planning",
+    "Final Keyword List",
+    "On-Page SEO Setup",
+    "Technical SEO Implementation",
+    "Website Development",
+    "Content Creation",
+    "Analytics & Tracking Setup",
+    "High-Quality Blog Post Writing",
+  ];
 
   const runAiGenerate = async () => {
     if (!aiTopic.trim()) { toast({ title: "Topic required", variant: "destructive" }); return; }
     setAiLoading(true);
+    setAiStep(0);
+    const stepTimer = setInterval(() => {
+      setAiStep((s) => (s < aiWorkflowSteps.length - 1 ? s + 1 : s));
+    }, 1400);
     try {
       const { data, error } = await supabase.functions.invoke("ai-blog-generate", {
         body: { topic: aiTopic.trim(), keywords: aiKeywords.trim(), category: form.category, tone: aiTone.trim() },
