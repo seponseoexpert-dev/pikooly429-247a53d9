@@ -10,7 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Eye, EyeOff, X, Sparkles, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, EyeOff, X, Sparkles, Loader2, Check } from "lucide-react";
 import { CloudinaryUpload } from "@/components/admin/CloudinaryUpload";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import RichTextEditor from "@/components/admin/RichTextEditor";
@@ -40,10 +40,30 @@ const AdminBlog = () => {
   const [aiTopic, setAiTopic] = useState("");
   const [aiKeywords, setAiKeywords] = useState("");
   const [aiTone, setAiTone] = useState("warm, locally-rooted Bangladeshi");
+  const [aiStep, setAiStep] = useState(0);
+
+  const aiWorkflowSteps = [
+    "Keyword Research",
+    "Competitor Analysis",
+    "Website Structure Planning",
+    "Content Strategy",
+    "Technical SEO Planning",
+    "Final Keyword List",
+    "On-Page SEO Setup",
+    "Technical SEO Implementation",
+    "Website Development",
+    "Content Creation",
+    "Analytics & Tracking Setup",
+    "High-Quality Blog Post Writing",
+  ];
 
   const runAiGenerate = async () => {
     if (!aiTopic.trim()) { toast({ title: "Topic required", variant: "destructive" }); return; }
     setAiLoading(true);
+    setAiStep(0);
+    const stepTimer = setInterval(() => {
+      setAiStep((s) => (s < aiWorkflowSteps.length - 1 ? s + 1 : s));
+    }, 1400);
     try {
       const { data, error } = await supabase.functions.invoke("ai-blog-generate", {
         body: { topic: aiTopic.trim(), keywords: aiKeywords.trim(), category: form.category, tone: aiTone.trim() },
@@ -60,12 +80,16 @@ const AdminBlog = () => {
         seo_title: d.seo_title || f.seo_title,
         seo_description: d.seo_description || f.seo_description,
       }));
+      setAiStep(aiWorkflowSteps.length); // mark all done
       toast({ title: "Content generated", description: "Review & edit before saving." });
-      setAiOpen(false);
-      setAiTopic(""); setAiKeywords("");
+      setTimeout(() => {
+        setAiOpen(false);
+        setAiTopic(""); setAiKeywords("");
+      }, 600);
     } catch (e: any) {
       toast({ title: "Generation failed", description: e.message || "AI error", variant: "destructive" });
     } finally {
+      clearInterval(stepTimer);
       setAiLoading(false);
     }
   };
@@ -450,12 +474,30 @@ const AdminBlog = () => {
                 className="text-[16px]"
               />
             </div>
-            <div className="rounded-lg bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground leading-relaxed">
-              ✓ Semantic SEO (LSI keywords woven naturally)<br />
-              ✓ 2–4 safe internal links from whitelist only<br />
-              ✓ Question-style H2s + FAQ for AI Overviews<br />
-              ✓ Bangladesh context (cities, occasions) · No banned AI phrases
-            </div>
+            {aiLoading ? (
+              <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 space-y-1.5 max-h-72 overflow-y-auto">
+                <div className="text-[11px] font-semibold text-primary mb-1.5 uppercase tracking-wide">SEO Workflow in progress</div>
+                {aiWorkflowSteps.map((step, i) => {
+                  const done = i < aiStep;
+                  const active = i === aiStep;
+                  return (
+                    <div key={step} className={`flex items-center gap-2 text-xs transition-all ${done ? "text-foreground" : active ? "text-primary font-medium" : "text-muted-foreground/60"}`}>
+                      <span className={`flex items-center justify-center w-4 h-4 rounded-full shrink-0 ${done ? "bg-primary text-primary-foreground" : active ? "bg-primary/20 border border-primary" : "bg-muted border border-border"}`}>
+                        {done ? <Check size={10} strokeWidth={3} /> : active ? <Loader2 size={10} className="animate-spin" /> : <span className="text-[9px]">{i + 1}</span>}
+                      </span>
+                      <span>{step}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="rounded-lg bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground leading-relaxed">
+                ✓ Semantic SEO (LSI keywords woven naturally)<br />
+                ✓ 2–4 safe internal links from whitelist only<br />
+                ✓ Question-style H2s + FAQ for AI Overviews<br />
+                ✓ Bangladesh context (cities, occasions) · No banned AI phrases
+              </div>
+            )}
           </div>
           <div className="px-5 py-3 border-t bg-muted/30 flex gap-2 justify-end">
             <Button type="button" variant="ghost" size="sm" disabled={aiLoading} onClick={() => setAiOpen(false)}>Cancel</Button>
