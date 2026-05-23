@@ -243,11 +243,12 @@ const Shop = () => {
         );
       }
     } else if (selectedCat) {
+      const cat = categories.find((c: any) => c.slug === selectedCat);
       list = list.filter((p: any) => {
         if (p.categories?.slug === selectedCat) return true;
+        if (cat && (p as any).category_id === cat.id) return true;
         if (p.product_categories?.some((pc: any) => pc.categories?.slug === selectedCat)) return true;
         // also include products whose subcategory belongs to this category
-        const cat = categories.find((c: any) => c.slug === selectedCat);
         if (cat) {
           const subIds = subcategories.filter((s: any) => s.category_id === cat.id).map((s: any) => s.id);
           if ((p as any).subcategory_id && subIds.includes((p as any).subcategory_id)) return true;
