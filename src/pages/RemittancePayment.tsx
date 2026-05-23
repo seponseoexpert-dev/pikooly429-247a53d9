@@ -146,14 +146,35 @@ const RemittancePayment = () => {
   const selectedService = enabledServices.find((s) => s.key === service);
   const selectedMethod = METHODS.find((m) => m.key === method);
 
+  const handleProofUpload = async (file: File) => {
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { toast.error("Image must be under 5MB."); return; }
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop() || "jpg";
+      const path = `remittance-proofs/${order?.order_number || "order"}-${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from("images").upload(path, file, { upsert: true, contentType: file.type });
+      if (error) throw error;
+      const { data } = supabase.storage.from("images").getPublicUrl(path);
+      setProofUrl(data.publicUrl);
+      toast.success("Screenshot uploaded ✓");
+    } catch (e: any) {
+      console.error(e);
+      toast.error("Upload failed. Please try again.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleConfirm = async () => {
     if (!order) return;
     if (!service) { toast.error("Please select a remittance service."); return; }
     if (!method) { toast.error("Please select a payment method."); return; }
     if (!mtcn.trim()) { toast.error("Please enter the MTCN / reference number."); return; }
+    if (!proofUrl) { toast.error("Please upload your payment screenshot."); return; }
     setSubmitting(true);
     try {
-      const note = `Global Remittance via ${selectedService?.label} → ${selectedMethod?.label} | Ref: ${mtcn.trim()}`;
+      const note = `Global Remittance via ${selectedService?.label} → ${selectedMethod?.label} | Ref: ${mtcn.trim()} | Proof: ${proofUrl}`;
       const mergedNotes = [order.notes || "", note].filter(Boolean).join("\n");
       const { error } = await supabase
         .from("orders")
