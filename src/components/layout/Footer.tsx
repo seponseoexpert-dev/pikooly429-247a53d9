@@ -176,7 +176,7 @@ const Footer = memo(() => {
       <div className="bg-foreground/95 relative">
         <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--gold)/0.25)] to-transparent" />
         <div className="section-container py-10 sm:py-12 lg:py-16">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4 lg:gap-12">
+          <div className="grid grid-cols-1 divide-y divide-background/10 sm:divide-y-0 gap-0 sm:gap-8 sm:grid-cols-2 md:grid-cols-4 lg:gap-12 [&>*]:py-5 sm:[&>*]:py-0 first:[&>*]:pt-0">
             {/* Brand */}
             <div className="sm:col-span-2 md:col-span-1">
               {(settings.footer_logo || settings.company_logo) ? (
