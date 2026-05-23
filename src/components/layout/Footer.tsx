@@ -262,7 +262,11 @@ const Footer = memo(() => {
                   {openSection === "cat" ? <Minus size={16} /> : <Plus size={16} />}
                 </span>
               </button>
-              <ul className={`space-y-2.5 ${openSection === "cat" ? "block" : "hidden"} sm:block`}>
+              <ul
+                ref={catRef}
+                className="space-y-2.5 overflow-hidden transition-[height] duration-300 ease-luxe sm:!h-auto"
+                style={{ height: openSection === "cat" ? heights.cat : 0 }}
+              >
                 {finalCategoryLinks.map((link, i) => (
                   <li key={i}>
                     <Link
@@ -292,7 +296,11 @@ const Footer = memo(() => {
                   {openSection === "contact" ? <Minus size={16} /> : <Plus size={16} />}
                 </span>
               </button>
-              <ul className={`space-y-3 ${openSection === "contact" ? "block" : "hidden"} sm:block`}>
+              <ul
+                ref={contactRef}
+                className="space-y-3 overflow-hidden transition-[height] duration-300 ease-luxe sm:!h-auto"
+                style={{ height: openSection === "contact" ? heights.contact : 0 }}
+              >
                 <li>
                   <a href={`tel:${phone}`} className="flex items-start gap-2.5 text-sm text-background/60 hover:text-[hsl(var(--gold))] transition-colors duration-300">
                     <Phone size={14} className="mt-0.5 shrink-0 text-[hsl(var(--gold))]" />
