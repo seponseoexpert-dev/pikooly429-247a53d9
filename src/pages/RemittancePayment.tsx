@@ -98,6 +98,8 @@ const RemittancePayment = () => {
   const [service, setService] = useState<string>("");
   const [method, setMethod] = useState<MethodKey | "">("");
   const [mtcn, setMtcn] = useState("");
+  const [proofUrl, setProofUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
