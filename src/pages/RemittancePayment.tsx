@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { ArrowLeft, CheckCircle2, Copy, Loader2, X } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Copy, Loader2, Upload, X } from "lucide-react";
 
 import bkashLogo from "@/assets/payments/bkash.png";
 import nagadLogo from "@/assets/payments/nagad.png";
