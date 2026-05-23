@@ -556,20 +556,40 @@ const Checkout = () => {
         }
       } catch {}
 
+      const selectedRemittance = remittanceServices.find((s) => s.key === form.remittanceService);
+      const isRemittance = form.paymentMethod === "remittance";
+      if (isRemittance) {
+        if (!selectedRemittance) {
+          toast.error("Please select a remittance service.");
+          setLoading(false);
+          return;
+        }
+        if (!form.remittanceTxnRef.trim()) {
+          toast.error("Please enter the transaction / sender reference (MTCN).");
+          setLoading(false);
+          return;
+        }
+      }
+
+      const remittanceNote = isRemittance
+        ? `Global Remittance via ${selectedRemittance?.label} | Ref: ${form.remittanceTxnRef.trim()}`
+        : "";
+      const mergedNotes = [form.notes.trim(), remittanceNote].filter(Boolean).join("\n");
+
       const orderData = {
         customer_name: (form.fullName.trim() || form.recipientName.trim()),
         customer_phone: form.phone.trim(),
         customer_email: form.email.trim() || null,
         billing_country: form.billingCountry.trim() || 'Bangladesh',
         delivery_address: `${activeDistrict?.name ? activeDistrict.name + " - " : ""}${form.address.trim()}`,
-        notes: form.notes.trim() || null,
+        notes: mergedNotes || null,
         recipient_name: form.recipientName.trim() || null,
         alt_phone: form.recipientPhone.trim() || null,
         gift_message: form.giftMessage.trim() || null,
         delivery_date: form.deliveryDate || null,
         delivery_time: form.deliveryTime || null,
         delivery_type: deliveryGroups.map((g) => g.mode.key).join("+") || "standard",
-        payment_method: form.paymentMethod,
+        payment_method: isRemittance ? `remittance:${selectedRemittance?.key}` : form.paymentMethod,
         subtotal: totalPrice,
         delivery_fee: deliveryFee,
         discount: couponDiscount,
