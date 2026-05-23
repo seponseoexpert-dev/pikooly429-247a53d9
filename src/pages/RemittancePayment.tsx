@@ -358,10 +358,22 @@ const RemittancePayment = () => {
               </div>
 
               <div className="rounded-xl bg-muted/40 px-4 py-1">
-                {method === "bkash" && <CopyRow label="Number" value={settings.remittance_bkash_personal} />}
-                {method === "nagad" && <CopyRow label="Number" value={settings.remittance_nagad_personal} />}
-                {method === "upay" && <CopyRow label="Number" value={settings.remittance_upay_personal} />}
-                {method === "rocket" && <CopyRow label="Number" value={settings.remittance_rocket_personal} />}
+                {method === "bkash" && (<>
+                  <CopyRow label="Account Name" value={settings.remittance_bkash_name || "Md Ripon"} />
+                  <CopyRow label="Number" value={settings.remittance_bkash_personal} />
+                </>)}
+                {method === "nagad" && (<>
+                  <CopyRow label="Account Name" value={settings.remittance_nagad_name || "Md Ripon"} />
+                  <CopyRow label="Number" value={settings.remittance_nagad_personal} />
+                </>)}
+                {method === "upay" && (<>
+                  <CopyRow label="Account Name" value={settings.remittance_upay_name || "Md Ripon"} />
+                  <CopyRow label="Number" value={settings.remittance_upay_personal} />
+                </>)}
+                {method === "rocket" && (<>
+                  <CopyRow label="Account Name" value={settings.remittance_rocket_name || "Md Ripon"} />
+                  <CopyRow label="Number" value={settings.remittance_rocket_personal} />
+                </>)}
                 {method === "bank" && (
                   <>
                     <CopyRow label="Bank" value={settings.remittance_bank_name} />
