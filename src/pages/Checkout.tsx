@@ -195,7 +195,7 @@ const Checkout = () => {
     remittanceService: "",
     remittanceTxnRef: "",
   });
-  const [remittancePickerOpen, setRemittancePickerOpen] = useState(false);
+  
 
   // Auto-fill form for logged-in users
   const { data: userProfile } = useQuery({
@@ -654,25 +654,8 @@ const Checkout = () => {
         }
       } catch {}
 
-      const selectedRemittance = remittanceServices.find((s) => s.key === form.remittanceService);
       const isRemittance = form.paymentMethod === "remittance";
-      if (isRemittance) {
-        if (!selectedRemittance) {
-          toast.error("Please select a remittance service.");
-          setLoading(false);
-          return;
-        }
-        if (!form.remittanceTxnRef.trim()) {
-          toast.error("Please enter the transaction / sender reference (MTCN).");
-          setLoading(false);
-          return;
-        }
-      }
-
-      const remittanceNote = isRemittance
-        ? `Global Remittance via ${selectedRemittance?.label} | Ref: ${form.remittanceTxnRef.trim()}`
-        : "";
-      const mergedNotes = [form.notes.trim(), remittanceNote].filter(Boolean).join("\n");
+      const mergedNotes = form.notes.trim() || "";
 
       const orderData = {
         customer_name: (form.fullName.trim() || form.recipientName.trim()),
@@ -687,7 +670,7 @@ const Checkout = () => {
         delivery_date: form.deliveryDate || null,
         delivery_time: form.deliveryTime || null,
         delivery_type: deliveryGroups.map((g) => g.mode.key).join("+") || "standard",
-        payment_method: isRemittance ? `remittance:${selectedRemittance?.key}` : form.paymentMethod,
+        payment_method: isRemittance ? "remittance" : form.paymentMethod,
         subtotal: totalPrice,
         delivery_fee: deliveryFee,
         discount: couponDiscount,
@@ -830,7 +813,16 @@ const Checkout = () => {
         }
       }
 
+      // Global Remittance — redirect to dedicated payment page
+      if (isRemittance) {
+        clearCart();
+        toast.success("Order created! Complete your payment below.");
+        navigate(`/remittance-payment/${order.id}`);
+        return;
+      }
+
       // COD orders go straight to success
+
 
       // Fetch alert settings for notification toggles
       const alertSettings = siteSettings;
@@ -1197,52 +1189,13 @@ const Checkout = () => {
                   </div>
                 )}
                 {form.paymentMethod === "remittance" && (
-                  <div className="mt-3 pt-3 border-t border-border space-y-3">
-                    {remittanceServices.length === 0 ? (
-                      <p className="text-xs text-muted-foreground">No remittance services are enabled. Please contact support.</p>
-                    ) : (
-                      <>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className="w-full justify-between h-11"
-                          onClick={() => setRemittancePickerOpen(true)}
-                        >
-                          <span className="flex items-center gap-2 text-sm">
-                            <Globe size={16} className="text-primary" />
-                            {form.remittanceService
-                              ? remittanceServices.find((s) => s.key === form.remittanceService)?.label
-                              : "Choose remittance service"}
-                          </span>
-                          <ChevronsUpDown size={14} className="text-muted-foreground" />
-                        </Button>
-
-                        {form.remittanceService && (
-                          <RemittanceDetails
-                            settings={gatewaySettings}
-                            serviceLabel={remittanceServices.find((s) => s.key === form.remittanceService)?.label || ""}
-                          />
-                        )}
-
-                        {form.remittanceService && (
-                          <div className="space-y-1.5">
-                            <Label htmlFor="remittanceTxnRef" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                              Transaction / Sender Reference (MTCN) *
-                            </Label>
-                            <Input
-                              id="remittanceTxnRef"
-                              placeholder="Enter the reference number you received"
-                              value={form.remittanceTxnRef}
-                              onChange={(e) => handleChange("remittanceTxnRef", e.target.value)}
-                              className="h-11 text-sm"
-                            />
-                            <p className="text-[11px] text-muted-foreground">
-                              After sending, paste the tracking/MTCN number here so we can verify your payment.
-                            </p>
-                          </div>
-                        )}
-                      </>
-                    )}
+                  <div className="mt-3 pt-3 border-t border-border">
+                    <div className="rounded-xl bg-primary/5 border border-primary/20 px-3.5 py-3 flex items-start gap-2.5">
+                      <Globe size={16} className="text-primary mt-0.5 shrink-0" />
+                      <p className="text-xs text-foreground leading-relaxed">
+                        After placing your order, you'll be taken to a secure page to choose your remittance service (Western Union, MoneyGram, Ria, Xpress, TapTap Send) and submit the MTCN reference.
+                      </p>
+                    </div>
                   </div>
                 )}
               </section>
@@ -1407,45 +1360,6 @@ const Checkout = () => {
         </form>
       </div>
 
-      <Dialog open={remittancePickerOpen} onOpenChange={setRemittancePickerOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2"><Globe size={18} className="text-primary" /> Choose Remittance Service</DialogTitle>
-            <DialogDescription>
-              Select the service you want to send money through. We will show you the matching bKash, Nagad or Bank details to send to.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid grid-cols-1 gap-2 mt-2">
-            {remittanceServices.map((s) => (
-              <button
-                key={s.key}
-                type="button"
-                onClick={() => {
-                  handleChange("remittanceService", s.key);
-                  setRemittancePickerOpen(false);
-                }}
-                className={`flex items-center justify-between p-3.5 rounded-xl border text-left transition-all ${
-                  form.remittanceService === s.key
-                    ? "border-primary bg-primary/5 ring-1 ring-primary"
-                    : "border-border hover:border-primary/40 hover:bg-muted/30"
-                }`}
-              >
-                <span className="flex items-center gap-3">
-                  <span className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Globe size={16} className="text-primary" />
-                  </span>
-                  <span className="font-medium text-sm">{s.label}</span>
-                </span>
-                {form.remittanceService === s.key && (
-                  <span className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                    <Check size={12} className="text-primary-foreground" />
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
-        </DialogContent>
-      </Dialog>
     </main>
   );
 };
