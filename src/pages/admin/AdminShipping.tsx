@@ -405,7 +405,253 @@ const AdminShipping = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* CUSTOM BOUQUET — DISTRICT DELIVERY SPEEDS */}
+      <BouquetDistrictsCard />
     </div>
+  );
+};
+
+// ---------------------------------------------------------------
+// Custom Bouquet — district delivery speed manager
+// Powers the Bouquet Builder's Same-Day / Next-Day / Standard badge logic.
+// Reads & writes the `shipping_districts` table.
+// ---------------------------------------------------------------
+const BouquetDistrictsCard = () => {
+  const { toast } = useToast();
+  const qc = useQueryClient();
+
+  const { data: districts = [] } = useQuery({
+    queryKey: ["bouquet-shipping-districts"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("shipping_districts")
+        .select("id, name, same_day_fee, next_day_fee, delivery_fee")
+        .order("name");
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  type Row = { same_day_fee: string; next_day_fee: string; delivery_fee: string };
+  const [drafts, setDrafts] = useState<Record<string, Row>>({});
+  useEffect(() => {
+    const seed: Record<string, Row> = {};
+    districts.forEach((d: any) => {
+      seed[d.id] = {
+        same_day_fee: d.same_day_fee != null ? String(d.same_day_fee) : "",
+        next_day_fee: d.next_day_fee != null ? String(d.next_day_fee) : "",
+        delivery_fee: d.delivery_fee != null ? String(d.delivery_fee) : "",
+      };
+    });
+    setDrafts(seed);
+  }, [districts]);
+
+  const [newRow, setNewRow] = useState({ name: "", same_day_fee: "", next_day_fee: "", delivery_fee: "" });
+  const [filter, setFilter] = useState("");
+
+  const filtered = useMemo(
+    () => districts.filter((d: any) => d.name.toLowerCase().includes(filter.toLowerCase())),
+    [districts, filter]
+  );
+
+  const saveRow = async (id: string) => {
+    const d = drafts[id];
+    if (!d) return;
+    const payload: any = {
+      same_day_fee: d.same_day_fee.trim() === "" ? null : Number(d.same_day_fee),
+      next_day_fee: d.next_day_fee.trim() === "" ? null : Number(d.next_day_fee),
+      delivery_fee: d.delivery_fee.trim() === "" ? null : Number(d.delivery_fee),
+    };
+    const { error } = await supabase.from("shipping_districts").update(payload).eq("id", id);
+    if (error) toast({ title: "Save failed", description: error.message, variant: "destructive" });
+    else {
+      toast({ title: "District updated" });
+      qc.invalidateQueries({ queryKey: ["bouquet-shipping-districts"] });
+      qc.invalidateQueries({ queryKey: ["shipping-districts-builder"] });
+    }
+  };
+
+  const removeRow = async (id: string) => {
+    await supabase.from("shipping_districts").delete().eq("id", id);
+    qc.invalidateQueries({ queryKey: ["bouquet-shipping-districts"] });
+    qc.invalidateQueries({ queryKey: ["shipping-districts-builder"] });
+  };
+
+  const addRow = async () => {
+    const name = newRow.name.trim();
+    if (!name) return;
+    const payload: any = { name };
+    if (newRow.same_day_fee.trim()) payload.same_day_fee = Number(newRow.same_day_fee);
+    if (newRow.next_day_fee.trim()) payload.next_day_fee = Number(newRow.next_day_fee);
+    if (newRow.delivery_fee.trim()) payload.delivery_fee = Number(newRow.delivery_fee);
+    const { error } = await supabase.from("shipping_districts").insert(payload);
+    if (error) toast({ title: "Add failed", description: error.message, variant: "destructive" });
+    else {
+      setNewRow({ name: "", same_day_fee: "", next_day_fee: "", delivery_fee: "" });
+      qc.invalidateQueries({ queryKey: ["bouquet-shipping-districts"] });
+      qc.invalidateQueries({ queryKey: ["shipping-districts-builder"] });
+      toast({ title: "District added" });
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+            <Flower2 className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <CardTitle className="text-lg">Custom Bouquet — District Delivery Speeds</CardTitle>
+            <p className="text-xs text-muted-foreground mt-1">
+              Sets the Same-Day / Next-Day / Standard badge shown inside the Custom Bouquet builder.
+              Leave a fee empty to disable that speed for the district.
+            </p>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {/* Legend */}
+        <div className="flex flex-wrap gap-2 text-[11px]">
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-700">
+            <Zap className="h-3 w-3" /> Same-Day fee set → shows Same-Day
+          </span>
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-amber-500/15 text-amber-700">
+            <Clock className="h-3 w-3" /> Next-Day fee set → shows Next-Day
+          </span>
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-muted">
+            Both empty → Standard only
+          </span>
+        </div>
+
+        {/* Search */}
+        <Input
+          placeholder="Search district…"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="h-9 max-w-xs"
+          style={{ fontSize: 16 }}
+        />
+
+        {/* Rows */}
+        <div className="space-y-2">
+          {filtered.map((d: any) => {
+            const row = drafts[d.id] || { same_day_fee: "", next_day_fee: "", delivery_fee: "" };
+            const speed =
+              row.same_day_fee.trim() !== ""
+                ? "same_day"
+                : row.next_day_fee.trim() !== ""
+                ? "next_day"
+                : "standard";
+            return (
+              <div
+                key={d.id}
+                className="grid grid-cols-2 sm:grid-cols-[1.4fr_1fr_1fr_1fr_auto_auto] gap-2 items-center bg-background rounded-md border p-2"
+              >
+                <div className="col-span-2 sm:col-span-1 flex items-center gap-2 min-w-0">
+                  <span className="text-sm font-medium truncate">{d.name}</span>
+                  <span
+                    className={`hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-semibold ${
+                      speed === "same_day"
+                        ? "bg-emerald-500/15 text-emerald-700"
+                        : speed === "next_day"
+                        ? "bg-amber-500/15 text-amber-700"
+                        : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {speed === "same_day" ? "Same-Day" : speed === "next_day" ? "Next-Day" : "Standard"}
+                  </span>
+                </div>
+                <Input
+                  type="number"
+                  inputMode="numeric"
+                  placeholder="Same-Day ৳"
+                  value={row.same_day_fee}
+                  onChange={(e) => setDrafts((p) => ({ ...p, [d.id]: { ...row, same_day_fee: e.target.value } }))}
+                  className="h-9"
+                  style={{ fontSize: 16 }}
+                />
+                <Input
+                  type="number"
+                  inputMode="numeric"
+                  placeholder="Next-Day ৳"
+                  value={row.next_day_fee}
+                  onChange={(e) => setDrafts((p) => ({ ...p, [d.id]: { ...row, next_day_fee: e.target.value } }))}
+                  className="h-9"
+                  style={{ fontSize: 16 }}
+                />
+                <Input
+                  type="number"
+                  inputMode="numeric"
+                  placeholder="Standard ৳"
+                  value={row.delivery_fee}
+                  onChange={(e) => setDrafts((p) => ({ ...p, [d.id]: { ...row, delivery_fee: e.target.value } }))}
+                  className="h-9"
+                  style={{ fontSize: 16 }}
+                />
+                <Button size="sm" variant="outline" onClick={() => saveRow(d.id)} className="h-9">
+                  <Save className="h-3.5 w-3.5" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => removeRow(d.id)}
+                  className="h-9 text-destructive hover:text-destructive"
+                  aria-label={`Remove ${d.name}`}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            );
+          })}
+          {filtered.length === 0 && (
+            <p className="text-xs text-muted-foreground py-2">No districts match — add one below.</p>
+          )}
+        </div>
+
+        {/* Add new */}
+        <div className="rounded-lg border-2 border-dashed p-3 bg-muted/20">
+          <Label className="text-xs font-semibold">Add a missing district</Label>
+          <div className="mt-2 grid grid-cols-2 sm:grid-cols-[1.4fr_1fr_1fr_1fr_auto] gap-2">
+            <Input
+              placeholder="District name (e.g. Rajshahi)"
+              value={newRow.name}
+              onChange={(e) => setNewRow((p) => ({ ...p, name: e.target.value }))}
+              className="h-9 col-span-2 sm:col-span-1"
+              style={{ fontSize: 16 }}
+            />
+            <Input
+              type="number"
+              placeholder="Same-Day ৳"
+              value={newRow.same_day_fee}
+              onChange={(e) => setNewRow((p) => ({ ...p, same_day_fee: e.target.value }))}
+              className="h-9"
+              style={{ fontSize: 16 }}
+            />
+            <Input
+              type="number"
+              placeholder="Next-Day ৳"
+              value={newRow.next_day_fee}
+              onChange={(e) => setNewRow((p) => ({ ...p, next_day_fee: e.target.value }))}
+              className="h-9"
+              style={{ fontSize: 16 }}
+            />
+            <Input
+              type="number"
+              placeholder="Standard ৳"
+              value={newRow.delivery_fee}
+              onChange={(e) => setNewRow((p) => ({ ...p, delivery_fee: e.target.value }))}
+              className="h-9"
+              style={{ fontSize: 16 }}
+            />
+            <Button size="sm" onClick={addRow} className="h-9 col-span-2 sm:col-span-1">
+              <Plus className="h-4 w-4 mr-1" /> Add
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
