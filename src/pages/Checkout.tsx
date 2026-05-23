@@ -78,6 +78,77 @@ interface CheckoutDistrict extends DistrictFees {
   next_day_label?: string | null;
 }
 
+const CopyRow = ({ label, value }: { label: string; value: string }) => {
+  if (!value) return null;
+  return (
+    <div className="flex items-center justify-between gap-3 py-2">
+      <div className="min-w-0">
+        <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
+        <p className="text-sm font-medium text-foreground break-all">{value}</p>
+      </div>
+      <button
+        type="button"
+        onClick={() => { navigator.clipboard.writeText(value); toast.success(`${label} copied`); }}
+        className="shrink-0 text-xs flex items-center gap-1 text-primary hover:text-primary/80 font-medium"
+      >
+        <Copy size={12} /> Copy
+      </button>
+    </div>
+  );
+};
+
+const RemittanceDetails = ({ settings, serviceLabel }: { settings: Record<string, string>; serviceLabel: string }) => {
+  const hasBkash = !!settings.remittance_bkash_personal;
+  const hasNagad = !!settings.remittance_nagad_personal;
+  const hasBank = !!(settings.remittance_bank_account_number || settings.remittance_bank_name);
+  return (
+    <div className="rounded-xl border border-border bg-muted/30 p-3 sm:p-4 space-y-3">
+      <div className="flex items-center gap-2">
+        <Globe size={14} className="text-primary" />
+        <p className="text-xs font-semibold text-foreground">Send via {serviceLabel} to any of the receivers below</p>
+      </div>
+      {settings.remittance_instructions && (
+        <p className="text-[11px] text-muted-foreground whitespace-pre-line leading-relaxed">
+          {settings.remittance_instructions}
+        </p>
+      )}
+      {hasBkash && (
+        <div className="rounded-lg bg-card border border-border/60 px-3 py-1.5">
+          <div className="flex items-center gap-2 pt-1.5">
+            <Smartphone size={13} className="text-primary" />
+            <p className="text-xs font-semibold">bKash (Personal)</p>
+          </div>
+          <CopyRow label="Number" value={settings.remittance_bkash_personal} />
+        </div>
+      )}
+      {hasNagad && (
+        <div className="rounded-lg bg-card border border-border/60 px-3 py-1.5">
+          <div className="flex items-center gap-2 pt-1.5">
+            <Smartphone size={13} className="text-primary" />
+            <p className="text-xs font-semibold">Nagad (Personal)</p>
+          </div>
+          <CopyRow label="Number" value={settings.remittance_nagad_personal} />
+        </div>
+      )}
+      {hasBank && (
+        <div className="rounded-lg bg-card border border-border/60 px-3 py-1.5">
+          <div className="flex items-center gap-2 pt-1.5">
+            <Building2 size={13} className="text-primary" />
+            <p className="text-xs font-semibold">Bank Transfer</p>
+          </div>
+          <CopyRow label="Bank" value={settings.remittance_bank_name} />
+          <CopyRow label="A/C Name" value={settings.remittance_bank_account_name} />
+          <CopyRow label="A/C Number" value={settings.remittance_bank_account_number} />
+          <CopyRow label="Routing / SWIFT" value={settings.remittance_bank_routing} />
+          <CopyRow label="Branch" value={settings.remittance_bank_branch} />
+        </div>
+      )}
+    </div>
+  );
+};
+
+
+
 const Checkout = () => {
   const { items, totalPrice, clearCart, updateQuantity, removeItem } = useCart();
   const navigate = useNavigate();
