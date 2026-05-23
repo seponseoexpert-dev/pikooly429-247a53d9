@@ -27,6 +27,10 @@ const CartPage = () => {
   const { formatPrice } = useMultiCurrency();
   const navigate = useNavigate();
   const { groups: deliveryGroups } = useCheckoutDelivery(items as any);
+  const productModeMap = new Map<string, { name: string; delivery_time: string; badge_text: string | null; icon: string | null }>();
+  deliveryGroups.forEach((g) => {
+    g.productIds.forEach((pid) => productModeMap.set(pid, g.mode));
+  });
 
   // Compute totals & savings (Floweraura-style)
   const originalTotal = items.reduce((sum, i) => {
