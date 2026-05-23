@@ -1379,6 +1379,46 @@ const Checkout = () => {
           </div>
         </form>
       </div>
+
+      <Dialog open={remittancePickerOpen} onOpenChange={setRemittancePickerOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2"><Globe size={18} className="text-primary" /> Choose Remittance Service</DialogTitle>
+            <DialogDescription>
+              Select the service you want to send money through. We will show you the matching bKash, Nagad or Bank details to send to.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid grid-cols-1 gap-2 mt-2">
+            {remittanceServices.map((s) => (
+              <button
+                key={s.key}
+                type="button"
+                onClick={() => {
+                  handleChange("remittanceService", s.key);
+                  setRemittancePickerOpen(false);
+                }}
+                className={`flex items-center justify-between p-3.5 rounded-xl border text-left transition-all ${
+                  form.remittanceService === s.key
+                    ? "border-primary bg-primary/5 ring-1 ring-primary"
+                    : "border-border hover:border-primary/40 hover:bg-muted/30"
+                }`}
+              >
+                <span className="flex items-center gap-3">
+                  <span className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Globe size={16} className="text-primary" />
+                  </span>
+                  <span className="font-medium text-sm">{s.label}</span>
+                </span>
+                {form.remittanceService === s.key && (
+                  <span className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                    <Check size={12} className="text-primary-foreground" />
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 };
