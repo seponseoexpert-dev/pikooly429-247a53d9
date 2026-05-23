@@ -178,12 +178,18 @@ const Checkout = () => {
     { value: "paypal", label: "PayPal", desc: "Pay securely via PayPal", statusKeys: ["paypal_status"], icon: "Wallet" as const },
     { value: "stripe", label: "Stripe", desc: "Pay with credit/debit card via Stripe", statusKeys: ["stripe_status"], icon: "CreditCard" as const },
     { value: "eps", label: "Local & Global Payment", desc: "Pay with Cards, Bkash, Nagad, Upay, etc.", statusKeys: ["eps_status"], icon: "Smartphone" as const },
+    { value: "remittance", label: "Global Remittance", desc: "Western Union, MoneyGram, Ria, Xpress, TapTap Send", statusKeys: ["remittance_status"], icon: "Globe" as const },
   ];
 
   const { data: gatewaySettings = {} } = useQuery({
     queryKey: ["payment-gateway-settings"],
     queryFn: async () => {
-      const keys = ["cod_enabled", "cod_status", "paypal_status", "stripe_status", "eps_status", "store_email", "admin_notification_email", "checkout_billing_visible"];
+      const keys = [
+        "cod_enabled", "cod_status", "paypal_status", "stripe_status", "eps_status", "store_email", "admin_notification_email", "checkout_billing_visible",
+        "remittance_status", "remittance_wu_enabled", "remittance_mg_enabled", "remittance_ria_enabled", "remittance_xm_enabled", "remittance_tts_enabled",
+        "remittance_bkash_personal", "remittance_nagad_personal", "remittance_bank_name", "remittance_bank_account_name", "remittance_bank_account_number",
+        "remittance_bank_routing", "remittance_bank_branch", "remittance_instructions",
+      ];
       const { data, error } = await supabase
         .from("site_settings")
         .select("key, value")
@@ -199,6 +205,14 @@ const Checkout = () => {
   const enabledPaymentMethods = allPaymentMethods.filter((method) =>
     method.statusKeys.some((key) => isGatewayEnabled(gatewaySettings[key]))
   );
+
+  const remittanceServices = [
+    { key: "wu", label: "Western Union", enabledKey: "remittance_wu_enabled" },
+    { key: "mg", label: "MoneyGram", enabledKey: "remittance_mg_enabled" },
+    { key: "ria", label: "Ria", enabledKey: "remittance_ria_enabled" },
+    { key: "xm", label: "Xpress Money", enabledKey: "remittance_xm_enabled" },
+    { key: "tts", label: "TapTap Send", enabledKey: "remittance_tts_enabled" },
+  ].filter((s) => isGatewayEnabled(gatewaySettings[s.enabledKey]));
 
   // Auto-select first enabled method if current selection is disabled
   const selectedMethodEnabled = enabledPaymentMethods.some((m) => m.value === form.paymentMethod);
