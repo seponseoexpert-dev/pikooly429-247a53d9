@@ -358,6 +358,7 @@ const ProductDetail = () => {
 
   const handleBuyNow = () => {
     if (!validateVariants()) return;
+    if (!checkDeliveryCity()) return;
     // Allow buy now even if stock is 0 — it becomes a pre-order
     const variant = buildVariantPayload();
     // Quick checkout: keep selected addons, replace main product line with this one at selected qty
