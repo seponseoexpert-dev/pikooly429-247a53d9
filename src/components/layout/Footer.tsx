@@ -202,10 +202,20 @@ const Footer = memo(() => {
 
             {/* Quick Links */}
             <div>
-              <h4 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--gold))] mb-4">
-                {t("quick_links")}
-              </h4>
-              <ul className="space-y-2.5">
+              <button
+                type="button"
+                onClick={() => toggleSection("quick")}
+                className="w-full flex items-center justify-between sm:cursor-default sm:pointer-events-none mb-4"
+                aria-expanded={openSection === "quick"}
+              >
+                <h4 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--gold))]">
+                  {t("quick_links")}
+                </h4>
+                <span className="sm:hidden text-[hsl(var(--gold))]">
+                  {openSection === "quick" ? <Minus size={16} /> : <Plus size={16} />}
+                </span>
+              </button>
+              <ul className={`space-y-2.5 ${openSection === "quick" ? "block" : "hidden"} sm:block`}>
                 {finalQuickLinks.map((link, i) => (
                   <li key={i}>
                     <Link
@@ -222,10 +232,20 @@ const Footer = memo(() => {
 
             {/* Categories */}
             <div>
-              <h4 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--gold))] mb-4">
-                {t("categories")}
-              </h4>
-              <ul className="space-y-2.5">
+              <button
+                type="button"
+                onClick={() => toggleSection("cat")}
+                className="w-full flex items-center justify-between sm:cursor-default sm:pointer-events-none mb-4"
+                aria-expanded={openSection === "cat"}
+              >
+                <h4 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--gold))]">
+                  {t("categories")}
+                </h4>
+                <span className="sm:hidden text-[hsl(var(--gold))]">
+                  {openSection === "cat" ? <Minus size={16} /> : <Plus size={16} />}
+                </span>
+              </button>
+              <ul className={`space-y-2.5 ${openSection === "cat" ? "block" : "hidden"} sm:block`}>
                 {finalCategoryLinks.map((link, i) => (
                   <li key={i}>
                     <Link
