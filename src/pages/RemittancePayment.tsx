@@ -44,6 +44,7 @@ const SERVICES: Service[] = [
   { key: "ria", label: "Ria", enabledKey: "remittance_ria_enabled", logo: riaLogo, bg: "bg-white" },
   { key: "xm", label: "Xpress Money", enabledKey: "remittance_xm_enabled", logo: xpressLogo, bg: "bg-[#EE5A1F]" },
   { key: "tts", label: "TapTap Send", enabledKey: "remittance_tts_enabled", logo: taptapLogo, bg: "bg-white" },
+  { key: "remitly", label: "Remitly", enabledKey: "remittance_remitly_enabled", logo: remitlyLogo, bg: "bg-white" },
 ];
 
 type MethodKey = "bkash" | "nagad" | "upay" | "rocket" | "bank";
