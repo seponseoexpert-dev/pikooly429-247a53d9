@@ -508,10 +508,6 @@ const BouquetDistrictsCard = () => {
           </div>
           <div>
             <CardTitle className="text-lg">Custom Bouquet — District Delivery Speeds</CardTitle>
-            <p className="text-xs text-muted-foreground mt-1">
-              Sets the Same-Day / Next-Day / Standard badge shown inside the Custom Bouquet builder.
-              Leave a fee empty to disable that speed for the district.
-            </p>
           </div>
         </div>
       </CardHeader>
