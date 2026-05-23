@@ -654,25 +654,8 @@ const Checkout = () => {
         }
       } catch {}
 
-      const selectedRemittance = remittanceServices.find((s) => s.key === form.remittanceService);
       const isRemittance = form.paymentMethod === "remittance";
-      if (isRemittance) {
-        if (!selectedRemittance) {
-          toast.error("Please select a remittance service.");
-          setLoading(false);
-          return;
-        }
-        if (!form.remittanceTxnRef.trim()) {
-          toast.error("Please enter the transaction / sender reference (MTCN).");
-          setLoading(false);
-          return;
-        }
-      }
-
-      const remittanceNote = isRemittance
-        ? `Global Remittance via ${selectedRemittance?.label} | Ref: ${form.remittanceTxnRef.trim()}`
-        : "";
-      const mergedNotes = [form.notes.trim(), remittanceNote].filter(Boolean).join("\n");
+      const mergedNotes = form.notes.trim() || "";
 
       const orderData = {
         customer_name: (form.fullName.trim() || form.recipientName.trim()),
