@@ -16,6 +16,12 @@ import { toast } from "sonner";
 
 type ItemType = "flowers" | "materials" | "sizes" | "colors";
 
+interface FlowerColor {
+  name: string;
+  hex: string;
+  image_url?: string;
+}
+
 interface FormData {
   name: string;
   image_url: string;
@@ -28,9 +34,10 @@ interface FormData {
   available_districts?: string[];
   same_day_districts?: string[];
   next_day_districts?: string[];
+  colors?: FlowerColor[];
 }
 
-const defaultForm: FormData = { name: "", image_url: "", price: 0, hex_code: "#ec4899", is_active: true, display_order: 0, available_districts: [], same_day_districts: [], next_day_districts: [] };
+const defaultForm: FormData = { name: "", image_url: "", price: 0, hex_code: "#ec4899", is_active: true, display_order: 0, available_districts: [], same_day_districts: [], next_day_districts: [], colors: [] };
 
 const AdminBouquet = () => {
   const qc = useQueryClient();
