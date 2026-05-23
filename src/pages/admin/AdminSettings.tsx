@@ -922,6 +922,8 @@ const paymentGatewayProviders = [
       ]},
       { key: "remittance_bkash_personal", label: "bKash Personal Number" },
       { key: "remittance_nagad_personal", label: "Nagad Personal Number" },
+      { key: "remittance_upay_personal", label: "Upay Personal Number" },
+      { key: "remittance_rocket_personal", label: "Rocket Personal Number" },
       { key: "remittance_bank_name", label: "Bank Name" },
       { key: "remittance_bank_account_name", label: "Bank A/C Holder Name" },
       { key: "remittance_bank_account_number", label: "Bank A/C Number" },
