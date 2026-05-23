@@ -1079,6 +1079,7 @@ const Checkout = () => {
                         {method.icon === "Wallet" && <Wallet size={20} className="text-primary" />}
                         {method.icon === "CreditCard" && <CreditCard size={20} className="text-primary" />}
                         {method.icon === "Smartphone" && <Smartphone size={20} className="text-primary" />}
+                        {method.icon === "Globe" && <Globe size={20} className="text-primary" />}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-sm leading-tight">{method.label}</p>
@@ -1095,6 +1096,55 @@ const Checkout = () => {
                 {form.paymentMethod === "eps" && (
                   <div className="mt-3 pt-3 border-t border-border">
                     <img src={paymentMethodsImg} alt="Accepted payment methods - Visa, Mastercard, bKash, Nagad, Rocket, EPS and more" className="w-full h-auto object-contain" loading="lazy" />
+                  </div>
+                )}
+                {form.paymentMethod === "remittance" && (
+                  <div className="mt-3 pt-3 border-t border-border space-y-3">
+                    {remittanceServices.length === 0 ? (
+                      <p className="text-xs text-muted-foreground">No remittance services are enabled. Please contact support.</p>
+                    ) : (
+                      <>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="w-full justify-between h-11"
+                          onClick={() => setRemittancePickerOpen(true)}
+                        >
+                          <span className="flex items-center gap-2 text-sm">
+                            <Globe size={16} className="text-primary" />
+                            {form.remittanceService
+                              ? remittanceServices.find((s) => s.key === form.remittanceService)?.label
+                              : "Choose remittance service"}
+                          </span>
+                          <ChevronsUpDown size={14} className="text-muted-foreground" />
+                        </Button>
+
+                        {form.remittanceService && (
+                          <RemittanceDetails
+                            settings={gatewaySettings}
+                            serviceLabel={remittanceServices.find((s) => s.key === form.remittanceService)?.label || ""}
+                          />
+                        )}
+
+                        {form.remittanceService && (
+                          <div className="space-y-1.5">
+                            <Label htmlFor="remittanceTxnRef" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                              Transaction / Sender Reference (MTCN) *
+                            </Label>
+                            <Input
+                              id="remittanceTxnRef"
+                              placeholder="Enter the reference number you received"
+                              value={form.remittanceTxnRef}
+                              onChange={(e) => handleChange("remittanceTxnRef", e.target.value)}
+                              className="h-11 text-sm"
+                            />
+                            <p className="text-[11px] text-muted-foreground">
+                              After sending, paste the tracking/MTCN number here so we can verify your payment.
+                            </p>
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
                 )}
               </section>
