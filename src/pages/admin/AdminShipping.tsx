@@ -355,13 +355,20 @@ const AdminShipping = () => {
         </CardHeader>
         <CardContent>
           <div className="divide-y">
-            {categories.map((c: any) => {
+            {([
+              ...categories.map((c: any) => ({ id: c.id, name: c.name, isVirtual: false })),
+              { id: "00000000-0000-0000-0000-0000000b0001", name: "Custom Bouquet", isVirtual: true },
+            ]).map((c: any) => {
               const row = catModes.find((cm) => cm.category_id === c.id);
               const current = row?.mode_id || "";
               const fallback = row?.fallback_mode_id || "";
               return (
                 <div key={c.id} className="py-3 grid grid-cols-1 sm:grid-cols-[1fr_auto_auto] items-center gap-3">
-                  <span className="text-sm font-medium">{c.name}</span>
+                  <span className="text-sm font-medium flex items-center gap-2">
+                    {c.isVirtual && <Flower2 className="h-4 w-4 text-primary" />}
+                    {c.name}
+                    {c.isVirtual && <span className="text-[10px] uppercase tracking-wide text-muted-foreground">(builder)</span>}
+                  </span>
                   <div className="w-full sm:w-44">
                     <Label className="text-[10px] text-muted-foreground uppercase tracking-wide">Primary</Label>
                     <Select
@@ -399,9 +406,6 @@ const AdminShipping = () => {
                 </div>
               );
             })}
-            {categories.length === 0 && (
-              <p className="text-sm text-muted-foreground py-4">No categories found.</p>
-            )}
           </div>
         </CardContent>
       </Card>
