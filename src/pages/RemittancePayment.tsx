@@ -18,6 +18,7 @@ import moneygramLogo from "@/assets/payments/moneygram.png";
 import riaLogo from "@/assets/payments/ria.jpeg";
 import xpressLogo from "@/assets/payments/xpressmoney.png";
 import taptapLogo from "@/assets/payments/taptap.jpeg";
+import remitlyLogo from "@/assets/payments/remitly.png";
 
 interface OrderRow {
   id: string;
