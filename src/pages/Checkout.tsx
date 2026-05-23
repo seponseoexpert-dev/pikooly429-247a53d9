@@ -195,7 +195,7 @@ const Checkout = () => {
     remittanceService: "",
     remittanceTxnRef: "",
   });
-  const [remittancePickerOpen, setRemittancePickerOpen] = useState(false);
+  
 
   // Auto-fill form for logged-in users
   const { data: userProfile } = useQuery({
