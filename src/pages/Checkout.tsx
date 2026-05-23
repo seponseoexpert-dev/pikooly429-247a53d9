@@ -813,7 +813,16 @@ const Checkout = () => {
         }
       }
 
+      // Global Remittance — redirect to dedicated payment page
+      if (isRemittance) {
+        clearCart();
+        toast.success("Order created! Complete your payment below.");
+        navigate(`/remittance-payment/${order.id}`);
+        return;
+      }
+
       // COD orders go straight to success
+
 
       // Fetch alert settings for notification toggles
       const alertSettings = siteSettings;
