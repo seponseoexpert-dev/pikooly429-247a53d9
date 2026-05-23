@@ -91,6 +91,7 @@ const AdminBouquet = () => {
           payload.available_districts = form.available_districts || [];
           payload.same_day_districts = form.same_day_districts || [];
           payload.next_day_districts = form.next_day_districts || [];
+          payload.colors = (form.colors || []).filter((c) => c.name && c.hex);
         }
       }
 
