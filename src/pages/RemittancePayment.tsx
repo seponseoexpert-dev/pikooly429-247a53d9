@@ -464,7 +464,7 @@ const RemittancePayment = () => {
                 disabled={submitting}
                 className="w-full h-14 rounded-2xl text-base font-bold shadow-lg"
               >
-                {submitting ? <Loader2 className="animate-spin" size={20} /> : `Confirm Payment ৳${amount.toFixed(2)}`}
+                {submitting ? <Loader2 className="animate-spin" size={20} /> : `Confirm Payment ${displayAmount}`}
               </Button>
               <p className="text-[11px] text-center text-muted-foreground mt-2 px-4">
                 By clicking confirm, you acknowledge that you have sent the amount and provided a valid reference for verification.
