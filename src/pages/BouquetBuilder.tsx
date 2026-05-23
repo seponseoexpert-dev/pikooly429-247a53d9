@@ -434,7 +434,7 @@ const BouquetBuilder = () => {
                   </DialogTitle>
                 </DialogHeader>
                 <div className="p-4 max-h-[70vh] overflow-y-auto">
-                  <DeliveryChecker product={{ same_day_districts: [], next_day_districts: [], standard_delivery_days: 3 }} />
+                  <DeliveryChecker categoryId="00000000-0000-0000-0000-0000000b0001" product={{ same_day_districts: [], next_day_districts: [], standard_delivery_days: 3 }} />
                   {selectedDistrict && (
                     <Button onClick={() => setLocationDialogOpen(false)} className="w-full mt-4">
                       Continue
