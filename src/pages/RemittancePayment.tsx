@@ -156,10 +156,7 @@ const RemittancePayment = () => {
 
   return (
     <main className="min-h-screen bg-muted/30 py-4 sm:py-8 px-3 sm:px-4">
-      <Helmet>
-        <title>Global Remittance Payment — {brand}</title>
-        <meta name="robots" content="noindex,nofollow" />
-      </Helmet>
+      <SEOHead title={`Global Remittance Payment — ${brand}`} description="Complete your order via Global Remittance." noindex />
 
       <div className="max-w-xl mx-auto space-y-4">
         {/* Brand header card */}
