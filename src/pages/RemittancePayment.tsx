@@ -6,7 +6,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { ArrowLeft, Building2, Copy, Globe, Loader2, Smartphone, X } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Copy, Loader2, X } from "lucide-react";
+
+import bkashLogo from "@/assets/payments/bkash.png";
+import nagadLogo from "@/assets/payments/nagad.png";
+import upayLogo from "@/assets/payments/upay.jpg";
+import rocketLogo from "@/assets/payments/rocket.png";
+import bankLogo from "@/assets/payments/bank.png";
+import wuLogo from "@/assets/payments/wu.png";
+import moneygramLogo from "@/assets/payments/moneygram.png";
+import riaLogo from "@/assets/payments/ria.jpeg";
+import xpressLogo from "@/assets/payments/xpressmoney.png";
+import taptapLogo from "@/assets/payments/taptap.jpeg";
 
 interface OrderRow {
   id: string;
@@ -18,12 +29,20 @@ interface OrderRow {
   payment_method: string | null;
 }
 
-const SERVICES = [
-  { key: "wu", label: "Western Union", enabledKey: "remittance_wu_enabled" },
-  { key: "mg", label: "MoneyGram", enabledKey: "remittance_mg_enabled" },
-  { key: "ria", label: "Ria", enabledKey: "remittance_ria_enabled" },
-  { key: "xm", label: "Xpress Money", enabledKey: "remittance_xm_enabled" },
-  { key: "tts", label: "TapTap Send", enabledKey: "remittance_tts_enabled" },
+interface Service {
+  key: string;
+  label: string;
+  enabledKey: string;
+  logo: string;
+  bg: string; // brand tile bg
+}
+
+const SERVICES: Service[] = [
+  { key: "wu", label: "Western Union", enabledKey: "remittance_wu_enabled", logo: wuLogo, bg: "bg-[#FFDD00]" },
+  { key: "mg", label: "MoneyGram", enabledKey: "remittance_mg_enabled", logo: moneygramLogo, bg: "bg-white" },
+  { key: "ria", label: "Ria", enabledKey: "remittance_ria_enabled", logo: riaLogo, bg: "bg-white" },
+  { key: "xm", label: "Xpress Money", enabledKey: "remittance_xm_enabled", logo: xpressLogo, bg: "bg-[#EE5A1F]" },
+  { key: "tts", label: "TapTap Send", enabledKey: "remittance_tts_enabled", logo: taptapLogo, bg: "bg-white" },
 ];
 
 type MethodKey = "bkash" | "nagad" | "upay" | "rocket" | "bank";
@@ -32,18 +51,18 @@ interface Method {
   key: MethodKey;
   label: string;
   shortLabel: string;
-  brandColor: string; // tailwind bg
-  textColor: string;
-  initial: string;
+  logo: string;
+  tileBg: string;
+  ring: string;
   type: "wallet" | "bank";
 }
 
 const METHODS: Method[] = [
-  { key: "bkash", label: "bKash (Personal)", shortLabel: "bKash", brandColor: "bg-[#E2136E]", textColor: "text-white", initial: "bK", type: "wallet" },
-  { key: "nagad", label: "Nagad (Personal)", shortLabel: "Nagad", brandColor: "bg-[#EC1C24]", textColor: "text-white", initial: "N", type: "wallet" },
-  { key: "upay", label: "Upay (Personal)", shortLabel: "Upay", brandColor: "bg-[#E94E1B]", textColor: "text-white", initial: "U", type: "wallet" },
-  { key: "rocket", label: "Rocket (Personal)", shortLabel: "Rocket", brandColor: "bg-[#8B2C8B]", textColor: "text-white", initial: "R", type: "wallet" },
-  { key: "bank", label: "Bank Transfer", shortLabel: "Bank", brandColor: "bg-[#1E40AF]", textColor: "text-white", initial: "B", type: "bank" },
+  { key: "bkash", label: "bKash (Personal)", shortLabel: "bKash", logo: bkashLogo, tileBg: "bg-[#E2136E]", ring: "ring-[#E2136E]/40", type: "wallet" },
+  { key: "nagad", label: "Nagad (Personal)", shortLabel: "Nagad", logo: nagadLogo, tileBg: "bg-white", ring: "ring-[#EC1C24]/40", type: "wallet" },
+  { key: "upay", label: "Upay (Personal)", shortLabel: "Upay", logo: upayLogo, tileBg: "bg-white", ring: "ring-[#FFCB05]/50", type: "wallet" },
+  { key: "rocket", label: "Rocket (Personal)", shortLabel: "Rocket", logo: rocketLogo, tileBg: "bg-[#F3EAF5]", ring: "ring-[#8B2C8B]/40", type: "wallet" },
+  { key: "bank", label: "Bank Transfer", shortLabel: "Bank", logo: bankLogo, tileBg: "bg-white", ring: "ring-foreground/20", type: "bank" },
 ];
 
 const isExplicitlyDisabled = (value?: string | null) =>
@@ -105,11 +124,6 @@ const RemittancePayment = () => {
     [settings]
   );
 
-  useEffect(() => {
-    if (!service && enabledServices.length > 0) setService(enabledServices[0].key);
-  }, [enabledServices, service]);
-
-  // Reset method when service changes
   useEffect(() => { setMethod(""); }, [service]);
 
   const availableMethods = useMemo(() => {
@@ -124,7 +138,7 @@ const RemittancePayment = () => {
   }, [settings]);
 
   const amount = order ? Number(order.is_preorder ? (order.advance_amount || order.total) : order.total) : 0;
-  const serviceLabel = enabledServices.find((s) => s.key === service)?.label || "";
+  const selectedService = enabledServices.find((s) => s.key === service);
   const selectedMethod = METHODS.find((m) => m.key === method);
 
   const handleConfirm = async () => {
@@ -134,7 +148,7 @@ const RemittancePayment = () => {
     if (!mtcn.trim()) { toast.error("Please enter the MTCN / reference number."); return; }
     setSubmitting(true);
     try {
-      const note = `Global Remittance via ${serviceLabel} → ${selectedMethod?.label} | Ref: ${mtcn.trim()}`;
+      const note = `Global Remittance via ${selectedService?.label} → ${selectedMethod?.label} | Ref: ${mtcn.trim()}`;
       const mergedNotes = [order.notes || "", note].filter(Boolean).join("\n");
       const { error } = await supabase
         .from("orders")
@@ -171,7 +185,7 @@ const RemittancePayment = () => {
   const brand = settings.company_name || "Pikooly";
 
   return (
-    <main className="min-h-screen bg-muted/30 py-4 sm:py-8 px-3 sm:px-4">
+    <main className="min-h-screen bg-gradient-to-b from-muted/40 to-background py-4 sm:py-8 px-3 sm:px-4">
       <SEOHead title={`Global Remittance Payment — ${brand}`} description="Complete your order via Global Remittance." noindex />
 
       <div className="max-w-xl mx-auto space-y-4">
@@ -186,7 +200,7 @@ const RemittancePayment = () => {
           )}
           <div className="flex-1 min-w-0">
             <p className="text-[17px] font-bold text-foreground leading-tight">{brand}</p>
-            <p className="text-[11px] text-muted-foreground mt-0.5">Order: {order.order_number}</p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">Order: {order.order_number} · ৳{amount.toFixed(2)}</p>
           </div>
           <button
             type="button"
@@ -198,78 +212,32 @@ const RemittancePayment = () => {
           </button>
         </div>
 
-        {/* Service tabs */}
-        {enabledServices.length === 0 ? (
-          <div className="rounded-2xl bg-card border border-border p-6 text-center text-sm text-muted-foreground">
-            No remittance services are enabled. Please contact support.
-          </div>
-        ) : (
-          <div className="rounded-2xl bg-card border border-border p-2 shadow-sm">
-            <div className="flex gap-1 overflow-x-auto scrollbar-hide">
-              {enabledServices.map((s) => {
-                const active = service === s.key;
-                return (
+        {/* STEP 1: Choose remittance service */}
+        {!service && (
+          <div className="rounded-2xl bg-card border border-border p-4 sm:p-5 space-y-4 shadow-sm">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground font-semibold">Step 1</p>
+              <h2 className="text-[17px] font-bold text-foreground mt-0.5">Choose remittance service</h2>
+            </div>
+
+            {enabledServices.length === 0 ? (
+              <p className="text-sm text-center text-muted-foreground py-6">
+                No remittance services are enabled. Please contact support.
+              </p>
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+                {enabledServices.map((s) => (
                   <button
                     key={s.key}
                     type="button"
                     onClick={() => setService(s.key)}
-                    className={`shrink-0 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-                      active
-                        ? "bg-primary text-primary-foreground shadow-sm"
-                        : "text-muted-foreground hover:bg-muted/60"
-                    }`}
+                    className="group flex flex-col items-center gap-2.5 p-3 rounded-2xl border-2 border-border bg-background hover:border-primary hover:shadow-md transition-all"
                   >
-                    {s.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Step: pick a payment method */}
-        {service && !method && (
-          <div className="rounded-2xl bg-card border border-border p-4 sm:p-5 space-y-4 shadow-sm">
-            <div className="flex items-start gap-2.5">
-              <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                <Globe size={16} className="text-primary" />
-              </span>
-              <div className="pt-0.5">
-                <p className="text-[15px] font-bold text-foreground leading-snug">
-                  Send via {serviceLabel}
-                </p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Amount: <span className="font-semibold text-foreground">৳{amount.toFixed(2)}</span> · Choose where to receive
-                </p>
-              </div>
-            </div>
-
-            {settings.remittance_instructions && (
-              <p className="text-xs text-muted-foreground whitespace-pre-line leading-relaxed pl-[46px]">
-                {settings.remittance_instructions}
-              </p>
-            )}
-
-            {availableMethods.length === 0 ? (
-              <p className="text-sm text-center text-muted-foreground py-4">
-                No receiver methods configured. Please contact support.
-              </p>
-            ) : (
-              <div className="grid grid-cols-3 gap-3">
-                {availableMethods.map((m) => (
-                  <button
-                    key={m.key}
-                    type="button"
-                    onClick={() => setMethod(m.key)}
-                    className="group flex flex-col items-center gap-2 p-3 rounded-2xl border border-border bg-background hover:border-primary hover:shadow-md transition-all"
-                  >
-                    <span
-                      className={`h-14 w-14 rounded-2xl ${m.brandColor} ${m.textColor} flex items-center justify-center font-extrabold text-lg shadow-sm group-hover:scale-105 transition-transform`}
-                    >
-                      {m.type === "bank" ? <Building2 size={22} /> : m.initial}
+                    <span className={`h-16 w-16 rounded-2xl ${s.bg} flex items-center justify-center overflow-hidden ring-1 ring-border/50 group-hover:scale-105 transition-transform`}>
+                      <img src={s.logo} alt={s.label} className="h-full w-full object-contain p-1.5" loading="lazy" />
                     </span>
-                    <span className="text-xs font-semibold text-foreground text-center leading-tight">
-                      {m.shortLabel}
+                    <span className="text-[13px] font-semibold text-foreground text-center leading-tight">
+                      {s.label}
                     </span>
                   </button>
                 ))}
@@ -278,8 +246,68 @@ const RemittancePayment = () => {
           </div>
         )}
 
-        {/* Step: show selected method's details + MTCN */}
-        {service && method && selectedMethod && (
+        {/* STEP 2: Pick a payment method */}
+        {service && selectedService && !method && (
+          <>
+            <div className="rounded-2xl bg-card border border-border p-4 shadow-sm flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setService("")}
+                className="h-9 w-9 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground shrink-0"
+                aria-label="Back to services"
+              >
+                <ArrowLeft size={18} />
+              </button>
+              <span className={`h-11 w-11 rounded-xl ${selectedService.bg} flex items-center justify-center overflow-hidden ring-1 ring-border/50 shrink-0`}>
+                <img src={selectedService.logo} alt={selectedService.label} className="h-full w-full object-contain p-1" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-[11px] text-muted-foreground">Sending via</p>
+                <p className="text-[15px] font-bold text-foreground leading-tight">{selectedService.label}</p>
+              </div>
+            </div>
+
+            <div className="rounded-2xl bg-card border border-border p-4 sm:p-5 space-y-4 shadow-sm">
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground font-semibold">Step 2</p>
+                <h2 className="text-[17px] font-bold text-foreground mt-0.5">Choose payment method</h2>
+              </div>
+
+              {settings.remittance_instructions && (
+                <p className="text-xs text-muted-foreground whitespace-pre-line leading-relaxed">
+                  {settings.remittance_instructions}
+                </p>
+              )}
+
+              {availableMethods.length === 0 ? (
+                <p className="text-sm text-center text-muted-foreground py-4">
+                  No receiver methods configured. Please contact support.
+                </p>
+              ) : (
+                <div className="grid grid-cols-3 gap-3">
+                  {availableMethods.map((m) => (
+                    <button
+                      key={m.key}
+                      type="button"
+                      onClick={() => setMethod(m.key)}
+                      className="group flex flex-col items-center gap-2 p-2.5 rounded-2xl border-2 border-border bg-background hover:border-primary hover:shadow-md transition-all"
+                    >
+                      <span className={`h-14 w-14 rounded-2xl ${m.tileBg} flex items-center justify-center overflow-hidden ring-1 ring-border/40 group-hover:scale-105 transition-transform`}>
+                        <img src={m.logo} alt={m.shortLabel} className="h-full w-full object-contain p-1" loading="lazy" />
+                      </span>
+                      <span className="text-[12px] font-semibold text-foreground text-center leading-tight">
+                        {m.shortLabel}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* STEP 3: details + MTCN */}
+        {service && selectedService && method && selectedMethod && (
           <>
             <div className="rounded-2xl bg-card border border-border p-4 sm:p-5 space-y-4 shadow-sm">
               <div className="flex items-center gap-3">
@@ -291,32 +319,23 @@ const RemittancePayment = () => {
                 >
                   <ArrowLeft size={18} />
                 </button>
-                <span
-                  className={`h-11 w-11 rounded-xl ${selectedMethod.brandColor} ${selectedMethod.textColor} flex items-center justify-center font-extrabold text-base shrink-0`}
-                >
-                  {selectedMethod.type === "bank" ? <Building2 size={20} /> : selectedMethod.initial}
+                <span className={`h-12 w-12 rounded-xl ${selectedMethod.tileBg} flex items-center justify-center overflow-hidden ring-1 ring-border/40 shrink-0`}>
+                  <img src={selectedMethod.logo} alt={selectedMethod.shortLabel} className="h-full w-full object-contain p-1" />
                 </span>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="text-[15px] font-bold text-foreground leading-tight">{selectedMethod.label}</p>
-                  <p className="text-[11px] text-muted-foreground mt-0.5">
-                    via {serviceLabel} · ৳{amount.toFixed(2)}
+                  <p className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1.5">
+                    <CheckCircle2 size={11} className="text-primary" />
+                    via {selectedService.label} · ৳{amount.toFixed(2)}
                   </p>
                 </div>
               </div>
 
               <div className="rounded-xl bg-muted/40 px-4 py-1">
-                {method === "bkash" && (
-                  <CopyRow label="Number" value={settings.remittance_bkash_personal} />
-                )}
-                {method === "nagad" && (
-                  <CopyRow label="Number" value={settings.remittance_nagad_personal} />
-                )}
-                {method === "upay" && (
-                  <CopyRow label="Number" value={settings.remittance_upay_personal} />
-                )}
-                {method === "rocket" && (
-                  <CopyRow label="Number" value={settings.remittance_rocket_personal} />
-                )}
+                {method === "bkash" && <CopyRow label="Number" value={settings.remittance_bkash_personal} />}
+                {method === "nagad" && <CopyRow label="Number" value={settings.remittance_nagad_personal} />}
+                {method === "upay" && <CopyRow label="Number" value={settings.remittance_upay_personal} />}
+                {method === "rocket" && <CopyRow label="Number" value={settings.remittance_rocket_personal} />}
                 {method === "bank" && (
                   <>
                     <CopyRow label="Bank" value={settings.remittance_bank_name} />
