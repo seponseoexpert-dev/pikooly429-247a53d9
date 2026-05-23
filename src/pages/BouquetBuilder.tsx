@@ -302,12 +302,12 @@ const BouquetBuilder = () => {
       ? ` + Addons: ${selectedAddonsList.map((a) => `${a.name} x${a.qty}`).join(", ")}`
       : "";
     const designLabel = designImages.length > 0 ? " + Custom Design" : "";
-    const bouquetName = `Custom Bouquet (${selectedFlowersList.map((f) => `${f.name} x${f.qty}`).join(", ")})${designLabel}${addonLabel}`;
+    const bouquetName = `Custom Bouquet (${selectedFlowersList.map((f) => `${f.displayName} x${f.qty}`).join(", ")})${designLabel}${addonLabel}`;
     addItem({
       id: `bouquet-${Date.now()}`,
       name: bouquetName,
       price: totalPrice,
-      image: selectedFlowersList[0]?.image_url || "/placeholder.svg",
+      image: selectedFlowersList[0]?.displayImage || "/placeholder.svg",
       category: "Custom Bouquet",
       inStock: true,
     }, undefined, true);
