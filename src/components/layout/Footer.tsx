@@ -13,6 +13,8 @@ const Footer = memo(() => {
   const location = useLocation();
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [openSection, setOpenSection] = useState<string | null>(null);
+  const toggleSection = (s: string) => setOpenSection(prev => prev === s ? null : s);
 
   if (location.pathname === "/cart") return null;
 
