@@ -670,7 +670,7 @@ const Checkout = () => {
         delivery_date: form.deliveryDate || null,
         delivery_time: form.deliveryTime || null,
         delivery_type: deliveryGroups.map((g) => g.mode.key).join("+") || "standard",
-        payment_method: isRemittance ? `remittance:${selectedRemittance?.key}` : form.paymentMethod,
+        payment_method: isRemittance ? "remittance" : form.paymentMethod,
         subtotal: totalPrice,
         delivery_fee: deliveryFee,
         discount: couponDiscount,
