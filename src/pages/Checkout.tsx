@@ -81,67 +81,79 @@ interface CheckoutDistrict extends DistrictFees {
 const CopyRow = ({ label, value }: { label: string; value: string }) => {
   if (!value) return null;
   return (
-    <div className="flex items-center justify-between gap-3 py-2">
+    <div className="flex items-center justify-between gap-3 py-2.5 border-t border-border/40 first:border-t-0">
       <div className="min-w-0">
-        <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
-        <p className="text-sm font-medium text-foreground break-all">{value}</p>
+        <p className="text-[10px] uppercase tracking-[0.08em] text-muted-foreground font-medium">{label}</p>
+        <p className="text-[15px] font-semibold text-foreground break-all leading-tight mt-0.5">{value}</p>
       </div>
       <button
         type="button"
         onClick={() => { navigator.clipboard.writeText(value); toast.success(`${label} copied`); }}
-        className="shrink-0 text-xs flex items-center gap-1 text-primary hover:text-primary/80 font-medium"
+        className="shrink-0 inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
       >
-        <Copy size={12} /> Copy
+        <Copy size={14} /> Copy
       </button>
     </div>
   );
 };
+
+const RemittanceInfoCard = ({
+  icon: Icon,
+  title,
+  children,
+}: {
+  icon: typeof Smartphone;
+  title: string;
+  children: React.ReactNode;
+}) => (
+  <div className="rounded-2xl bg-card border border-border px-4 py-3 shadow-sm">
+    <div className="flex items-center gap-2.5 mb-1">
+      <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+        <Icon size={15} className="text-primary" />
+      </span>
+      <p className="text-[15px] font-bold text-foreground">{title}</p>
+    </div>
+    <div className="pl-[42px]">{children}</div>
+  </div>
+);
 
 const RemittanceDetails = ({ settings, serviceLabel }: { settings: Record<string, string>; serviceLabel: string }) => {
   const hasBkash = !!settings.remittance_bkash_personal;
   const hasNagad = !!settings.remittance_nagad_personal;
   const hasBank = !!(settings.remittance_bank_account_number || settings.remittance_bank_name);
   return (
-    <div className="rounded-xl border border-border bg-muted/30 p-3 sm:p-4 space-y-3">
-      <div className="flex items-center gap-2">
-        <Globe size={14} className="text-primary" />
-        <p className="text-xs font-semibold text-foreground">Send via {serviceLabel} to any of the receivers below</p>
+    <div className="rounded-2xl border border-border bg-muted/30 p-4 sm:p-5 space-y-3.5">
+      <div className="flex items-start gap-2.5">
+        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10">
+          <Globe size={16} className="text-primary" />
+        </span>
+        <p className="text-[15px] font-bold text-foreground leading-snug pt-1">
+          Send via {serviceLabel} to any of the receivers below
+        </p>
       </div>
       {settings.remittance_instructions && (
-        <p className="text-[11px] text-muted-foreground whitespace-pre-line leading-relaxed">
+        <p className="text-xs text-muted-foreground whitespace-pre-line leading-relaxed pl-[46px]">
           {settings.remittance_instructions}
         </p>
       )}
       {hasBkash && (
-        <div className="rounded-lg bg-card border border-border/60 px-3 py-1.5">
-          <div className="flex items-center gap-2 pt-1.5">
-            <Smartphone size={13} className="text-primary" />
-            <p className="text-xs font-semibold">bKash (Personal)</p>
-          </div>
+        <RemittanceInfoCard icon={Smartphone} title="bKash (Personal)">
           <CopyRow label="Number" value={settings.remittance_bkash_personal} />
-        </div>
+        </RemittanceInfoCard>
       )}
       {hasNagad && (
-        <div className="rounded-lg bg-card border border-border/60 px-3 py-1.5">
-          <div className="flex items-center gap-2 pt-1.5">
-            <Smartphone size={13} className="text-primary" />
-            <p className="text-xs font-semibold">Nagad (Personal)</p>
-          </div>
+        <RemittanceInfoCard icon={Smartphone} title="Nagad (Personal)">
           <CopyRow label="Number" value={settings.remittance_nagad_personal} />
-        </div>
+        </RemittanceInfoCard>
       )}
       {hasBank && (
-        <div className="rounded-lg bg-card border border-border/60 px-3 py-1.5">
-          <div className="flex items-center gap-2 pt-1.5">
-            <Building2 size={13} className="text-primary" />
-            <p className="text-xs font-semibold">Bank Transfer</p>
-          </div>
+        <RemittanceInfoCard icon={Building2} title="Bank Transfer">
           <CopyRow label="Bank" value={settings.remittance_bank_name} />
           <CopyRow label="A/C Name" value={settings.remittance_bank_account_name} />
           <CopyRow label="A/C Number" value={settings.remittance_bank_account_number} />
           <CopyRow label="Routing / SWIFT" value={settings.remittance_bank_routing} />
           <CopyRow label="Branch" value={settings.remittance_bank_branch} />
-        </div>
+        </RemittanceInfoCard>
       )}
     </div>
   );
