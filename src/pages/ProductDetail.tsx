@@ -327,8 +327,26 @@ const ProductDetail = () => {
     return true;
   };
 
+  const checkDeliveryCity = () => {
+    const city = typeof window !== "undefined" ? localStorage.getItem("pikooly_delivery_city") : "";
+    if (!city) {
+      toast.error("Please select your delivery city first", {
+        description: "Check Delivery Availability above before continuing.",
+      });
+      if (typeof document !== "undefined") {
+        const el = document.querySelector('[data-delivery-checker]') as HTMLElement | null;
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
+        el?.classList.add("ring-2", "ring-primary", "ring-offset-2");
+        setTimeout(() => el?.classList.remove("ring-2", "ring-primary", "ring-offset-2"), 2000);
+      }
+      return false;
+    }
+    return true;
+  };
+
   const handleAddToCart = () => {
     if (!validateVariants()) return;
+    if (!checkDeliveryCity()) return;
     const variant = buildVariantPayload();
     for (let i = 0; i < qty; i++) addItem(cartProduct, customImages.length ? customImages : undefined, false, variant);
   };
@@ -340,6 +358,7 @@ const ProductDetail = () => {
 
   const handleBuyNow = () => {
     if (!validateVariants()) return;
+    if (!checkDeliveryCity()) return;
     // Allow buy now even if stock is 0 — it becomes a pre-order
     const variant = buildVariantPayload();
     // Quick checkout: keep selected addons, replace main product line with this one at selected qty

@@ -76,7 +76,7 @@ const DeliveryChecker = ({ categoryId }: Props) => {
   const Icon = ICONS[resolvedMode.icon || "truck"] || Truck;
 
   return (
-    <div className="rounded-xl border border-border bg-muted/30 p-3 space-y-2.5">
+    <div data-delivery-checker className="rounded-xl border border-border bg-muted/30 p-3 space-y-2.5 transition-shadow">
       <div className="flex items-center gap-2">
         <MapPin className="h-4 w-4 text-primary" />
         <span className="text-sm font-semibold">Check Delivery Availability</span>
