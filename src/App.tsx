@@ -52,6 +52,7 @@ const Checkout = lazy(() => lazyRetry(() => import("./pages/Checkout")));
 const Cart = lazy(() => lazyRetry(() => import("./pages/Cart")));
 
 const OrderSuccess = lazy(() => lazyRetry(() => import("./pages/OrderSuccess")));
+const RemittancePayment = lazy(() => lazyRetry(() => import("./pages/RemittancePayment")));
 const TrackOrder = lazy(() => lazyRetry(() => import("./pages/TrackOrder")));
 const NotFound = lazy(() => lazyRetry(() => import("./pages/NotFound")));
 const Auth = lazy(() => lazyRetry(() => import("./pages/Auth")));
