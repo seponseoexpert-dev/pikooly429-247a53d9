@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo, useState, useRef, useEffect } from "react";
 import paymentMethodsImg from "@/assets/payment-methods.webp";
 import { Link, useLocation } from "react-router-dom";
 import { Facebook, Instagram, Twitter, Youtube, Send, Phone, Mail, MapPin, Heart, Plus, Minus } from "lucide-react";
