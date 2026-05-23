@@ -1189,52 +1189,13 @@ const Checkout = () => {
                   </div>
                 )}
                 {form.paymentMethod === "remittance" && (
-                  <div className="mt-3 pt-3 border-t border-border space-y-3">
-                    {remittanceServices.length === 0 ? (
-                      <p className="text-xs text-muted-foreground">No remittance services are enabled. Please contact support.</p>
-                    ) : (
-                      <>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className="w-full justify-between h-11"
-                          onClick={() => setRemittancePickerOpen(true)}
-                        >
-                          <span className="flex items-center gap-2 text-sm">
-                            <Globe size={16} className="text-primary" />
-                            {form.remittanceService
-                              ? remittanceServices.find((s) => s.key === form.remittanceService)?.label
-                              : "Choose remittance service"}
-                          </span>
-                          <ChevronsUpDown size={14} className="text-muted-foreground" />
-                        </Button>
-
-                        {form.remittanceService && (
-                          <RemittanceDetails
-                            settings={gatewaySettings}
-                            serviceLabel={remittanceServices.find((s) => s.key === form.remittanceService)?.label || ""}
-                          />
-                        )}
-
-                        {form.remittanceService && (
-                          <div className="space-y-1.5">
-                            <Label htmlFor="remittanceTxnRef" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                              Transaction / Sender Reference (MTCN) *
-                            </Label>
-                            <Input
-                              id="remittanceTxnRef"
-                              placeholder="Enter the reference number you received"
-                              value={form.remittanceTxnRef}
-                              onChange={(e) => handleChange("remittanceTxnRef", e.target.value)}
-                              className="h-11 text-sm"
-                            />
-                            <p className="text-[11px] text-muted-foreground">
-                              After sending, paste the tracking/MTCN number here so we can verify your payment.
-                            </p>
-                          </div>
-                        )}
-                      </>
-                    )}
+                  <div className="mt-3 pt-3 border-t border-border">
+                    <div className="rounded-xl bg-primary/5 border border-primary/20 px-3.5 py-3 flex items-start gap-2.5">
+                      <Globe size={16} className="text-primary mt-0.5 shrink-0" />
+                      <p className="text-xs text-foreground leading-relaxed">
+                        After placing your order, you'll be taken to a secure page to choose your remittance service (Western Union, MoneyGram, Ria, Xpress, TapTap Send) and submit the MTCN reference.
+                      </p>
+                    </div>
                   </div>
                 )}
               </section>
