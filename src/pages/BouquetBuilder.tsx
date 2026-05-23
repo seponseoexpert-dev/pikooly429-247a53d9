@@ -31,6 +31,7 @@ const BouquetBuilder = () => {
   const { settings } = useSiteSettings();
   const [step, setStep] = useState(1);
   const [selectedFlowers, setSelectedFlowers] = useState<Record<string, number>>({});
+  const [selectedColors, setSelectedColors] = useState<Record<string, number>>({}); // flowerId -> color index
   const [designImages, setDesignImages] = useState<File[]>([]);
   const [designPreviews, setDesignPreviews] = useState<string[]>([]);
   const [aiPreviewUrl, setAiPreviewUrl] = useState<string | null>(null);
