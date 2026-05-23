@@ -140,6 +140,7 @@ const AdminBouquet = () => {
       available_districts: item.available_districts || [],
       same_day_districts: item.same_day_districts || [],
       next_day_districts: item.next_day_districts || [],
+      colors: Array.isArray(item.colors) ? item.colors : [],
     });
     setDialogOpen(true);
   };
