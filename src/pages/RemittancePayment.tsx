@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { ArrowLeft, CheckCircle2, Copy, Loader2, Upload, X } from "lucide-react";
+import { useMultiCurrency } from "@/contexts/CurrencyContext";
 
 import bkashLogo from "@/assets/payments/bkash.png";
 import nagadLogo from "@/assets/payments/nagad.png";
@@ -142,7 +143,14 @@ const RemittancePayment = () => {
     });
   }, [settings]);
 
+  const { selectedCurrency, convert } = useMultiCurrency();
   const amount = order ? Number(order.is_preorder ? (order.advance_amount || order.total) : order.total) : 0;
+  const isForeign = !!selectedCurrency && !selectedCurrency.is_default;
+  const convertedAmount = convert(amount);
+  const fxDecimals = isForeign ? 2 : 0;
+  const fxSymbol = selectedCurrency?.symbol || "৳";
+  const displayAmount = `${fxSymbol}${convertedAmount.toLocaleString(undefined, { minimumFractionDigits: fxDecimals, maximumFractionDigits: fxDecimals })}`;
+  const bdtAmount = `৳${amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
   const selectedService = enabledServices.find((s) => s.key === service);
   const selectedMethod = METHODS.find((m) => m.key === method);
 
@@ -226,7 +234,7 @@ const RemittancePayment = () => {
           )}
           <div className="flex-1 min-w-0">
             <p className="text-[17px] font-bold text-foreground leading-tight">{brand}</p>
-            <p className="text-[11px] text-muted-foreground mt-0.5">Order: {order.order_number} · ৳{amount.toFixed(2)}</p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">Order: {order.order_number} · {displayAmount}{isForeign ? ` (≈ ${bdtAmount})` : ""}</p>
           </div>
           <button
             type="button"
@@ -352,7 +360,7 @@ const RemittancePayment = () => {
                   <p className="text-[15px] font-bold text-foreground leading-tight">{selectedMethod.label}</p>
                   <p className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1.5">
                     <CheckCircle2 size={11} className="text-primary" />
-                    via {selectedService.label} · ৳{amount.toFixed(2)}
+                    via {selectedService.label} · {displayAmount}{isForeign ? ` (≈ ${bdtAmount})` : ""}
                   </p>
                 </div>
               </div>
@@ -456,7 +464,7 @@ const RemittancePayment = () => {
                 disabled={submitting}
                 className="w-full h-14 rounded-2xl text-base font-bold shadow-lg"
               >
-                {submitting ? <Loader2 className="animate-spin" size={20} /> : `Confirm Payment ৳${amount.toFixed(2)}`}
+                {submitting ? <Loader2 className="animate-spin" size={20} /> : `Confirm Payment ${displayAmount}`}
               </Button>
               <p className="text-[11px] text-center text-muted-foreground mt-2 px-4">
                 By clicking confirm, you acknowledge that you have sent the amount and provided a valid reference for verification.
