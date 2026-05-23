@@ -14,7 +14,8 @@ import { Separator } from "@/components/ui/separator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { toast } from "sonner";
-import { Loader2, ShoppingBag, Truck, CreditCard, Minus, Plus, X, Ticket, Check, ChevronsUpDown, Banknote, Wallet, Smartphone, CalendarDays, Clock, MapPin, Sparkles, ShieldCheck, AlertTriangle } from "lucide-react";
+import { Loader2, ShoppingBag, Truck, CreditCard, Minus, Plus, X, Ticket, Check, ChevronsUpDown, Banknote, Wallet, Smartphone, CalendarDays, Clock, MapPin, Sparkles, ShieldCheck, AlertTriangle, Globe, Copy, Building2 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { cn } from "@/lib/utils";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -77,6 +78,77 @@ interface CheckoutDistrict extends DistrictFees {
   next_day_label?: string | null;
 }
 
+const CopyRow = ({ label, value }: { label: string; value: string }) => {
+  if (!value) return null;
+  return (
+    <div className="flex items-center justify-between gap-3 py-2">
+      <div className="min-w-0">
+        <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
+        <p className="text-sm font-medium text-foreground break-all">{value}</p>
+      </div>
+      <button
+        type="button"
+        onClick={() => { navigator.clipboard.writeText(value); toast.success(`${label} copied`); }}
+        className="shrink-0 text-xs flex items-center gap-1 text-primary hover:text-primary/80 font-medium"
+      >
+        <Copy size={12} /> Copy
+      </button>
+    </div>
+  );
+};
+
+const RemittanceDetails = ({ settings, serviceLabel }: { settings: Record<string, string>; serviceLabel: string }) => {
+  const hasBkash = !!settings.remittance_bkash_personal;
+  const hasNagad = !!settings.remittance_nagad_personal;
+  const hasBank = !!(settings.remittance_bank_account_number || settings.remittance_bank_name);
+  return (
+    <div className="rounded-xl border border-border bg-muted/30 p-3 sm:p-4 space-y-3">
+      <div className="flex items-center gap-2">
+        <Globe size={14} className="text-primary" />
+        <p className="text-xs font-semibold text-foreground">Send via {serviceLabel} to any of the receivers below</p>
+      </div>
+      {settings.remittance_instructions && (
+        <p className="text-[11px] text-muted-foreground whitespace-pre-line leading-relaxed">
+          {settings.remittance_instructions}
+        </p>
+      )}
+      {hasBkash && (
+        <div className="rounded-lg bg-card border border-border/60 px-3 py-1.5">
+          <div className="flex items-center gap-2 pt-1.5">
+            <Smartphone size={13} className="text-primary" />
+            <p className="text-xs font-semibold">bKash (Personal)</p>
+          </div>
+          <CopyRow label="Number" value={settings.remittance_bkash_personal} />
+        </div>
+      )}
+      {hasNagad && (
+        <div className="rounded-lg bg-card border border-border/60 px-3 py-1.5">
+          <div className="flex items-center gap-2 pt-1.5">
+            <Smartphone size={13} className="text-primary" />
+            <p className="text-xs font-semibold">Nagad (Personal)</p>
+          </div>
+          <CopyRow label="Number" value={settings.remittance_nagad_personal} />
+        </div>
+      )}
+      {hasBank && (
+        <div className="rounded-lg bg-card border border-border/60 px-3 py-1.5">
+          <div className="flex items-center gap-2 pt-1.5">
+            <Building2 size={13} className="text-primary" />
+            <p className="text-xs font-semibold">Bank Transfer</p>
+          </div>
+          <CopyRow label="Bank" value={settings.remittance_bank_name} />
+          <CopyRow label="A/C Name" value={settings.remittance_bank_account_name} />
+          <CopyRow label="A/C Number" value={settings.remittance_bank_account_number} />
+          <CopyRow label="Routing / SWIFT" value={settings.remittance_bank_routing} />
+          <CopyRow label="Branch" value={settings.remittance_bank_branch} />
+        </div>
+      )}
+    </div>
+  );
+};
+
+
+
 const Checkout = () => {
   const { items, totalPrice, clearCart, updateQuantity, removeItem } = useCart();
   const navigate = useNavigate();
@@ -108,7 +180,10 @@ const Checkout = () => {
     deliveryDate: "",
     deliveryTime: "",
     paymentMethod: "eps",
+    remittanceService: "",
+    remittanceTxnRef: "",
   });
+  const [remittancePickerOpen, setRemittancePickerOpen] = useState(false);
 
   // Auto-fill form for logged-in users
   const { data: userProfile } = useQuery({
@@ -174,12 +249,18 @@ const Checkout = () => {
     { value: "paypal", label: "PayPal", desc: "Pay securely via PayPal", statusKeys: ["paypal_status"], icon: "Wallet" as const },
     { value: "stripe", label: "Stripe", desc: "Pay with credit/debit card via Stripe", statusKeys: ["stripe_status"], icon: "CreditCard" as const },
     { value: "eps", label: "Local & Global Payment", desc: "Pay with Cards, Bkash, Nagad, Upay, etc.", statusKeys: ["eps_status"], icon: "Smartphone" as const },
+    { value: "remittance", label: "Global Remittance", desc: "Western Union, MoneyGram, Ria, Xpress, TapTap Send", statusKeys: ["remittance_status"], icon: "Globe" as const },
   ];
 
   const { data: gatewaySettings = {} } = useQuery({
     queryKey: ["payment-gateway-settings"],
     queryFn: async () => {
-      const keys = ["cod_enabled", "cod_status", "paypal_status", "stripe_status", "eps_status", "store_email", "admin_notification_email", "checkout_billing_visible"];
+      const keys = [
+        "cod_enabled", "cod_status", "paypal_status", "stripe_status", "eps_status", "store_email", "admin_notification_email", "checkout_billing_visible",
+        "remittance_status", "remittance_wu_enabled", "remittance_mg_enabled", "remittance_ria_enabled", "remittance_xm_enabled", "remittance_tts_enabled",
+        "remittance_bkash_personal", "remittance_nagad_personal", "remittance_bank_name", "remittance_bank_account_name", "remittance_bank_account_number",
+        "remittance_bank_routing", "remittance_bank_branch", "remittance_instructions",
+      ];
       const { data, error } = await supabase
         .from("site_settings")
         .select("key, value")
@@ -195,6 +276,14 @@ const Checkout = () => {
   const enabledPaymentMethods = allPaymentMethods.filter((method) =>
     method.statusKeys.some((key) => isGatewayEnabled(gatewaySettings[key]))
   );
+
+  const remittanceServices = [
+    { key: "wu", label: "Western Union", enabledKey: "remittance_wu_enabled" },
+    { key: "mg", label: "MoneyGram", enabledKey: "remittance_mg_enabled" },
+    { key: "ria", label: "Ria", enabledKey: "remittance_ria_enabled" },
+    { key: "xm", label: "Xpress Money", enabledKey: "remittance_xm_enabled" },
+    { key: "tts", label: "TapTap Send", enabledKey: "remittance_tts_enabled" },
+  ].filter((s) => isGatewayEnabled(gatewaySettings[s.enabledKey]));
 
   // Auto-select first enabled method if current selection is disabled
   const selectedMethodEnabled = enabledPaymentMethods.some((m) => m.value === form.paymentMethod);
@@ -538,20 +627,40 @@ const Checkout = () => {
         }
       } catch {}
 
+      const selectedRemittance = remittanceServices.find((s) => s.key === form.remittanceService);
+      const isRemittance = form.paymentMethod === "remittance";
+      if (isRemittance) {
+        if (!selectedRemittance) {
+          toast.error("Please select a remittance service.");
+          setLoading(false);
+          return;
+        }
+        if (!form.remittanceTxnRef.trim()) {
+          toast.error("Please enter the transaction / sender reference (MTCN).");
+          setLoading(false);
+          return;
+        }
+      }
+
+      const remittanceNote = isRemittance
+        ? `Global Remittance via ${selectedRemittance?.label} | Ref: ${form.remittanceTxnRef.trim()}`
+        : "";
+      const mergedNotes = [form.notes.trim(), remittanceNote].filter(Boolean).join("\n");
+
       const orderData = {
         customer_name: (form.fullName.trim() || form.recipientName.trim()),
         customer_phone: form.phone.trim(),
         customer_email: form.email.trim() || null,
         billing_country: form.billingCountry.trim() || 'Bangladesh',
         delivery_address: `${activeDistrict?.name ? activeDistrict.name + " - " : ""}${form.address.trim()}`,
-        notes: form.notes.trim() || null,
+        notes: mergedNotes || null,
         recipient_name: form.recipientName.trim() || null,
         alt_phone: form.recipientPhone.trim() || null,
         gift_message: form.giftMessage.trim() || null,
         delivery_date: form.deliveryDate || null,
         delivery_time: form.deliveryTime || null,
         delivery_type: deliveryGroups.map((g) => g.mode.key).join("+") || "standard",
-        payment_method: form.paymentMethod,
+        payment_method: isRemittance ? `remittance:${selectedRemittance?.key}` : form.paymentMethod,
         subtotal: totalPrice,
         delivery_fee: deliveryFee,
         discount: couponDiscount,
@@ -1041,6 +1150,7 @@ const Checkout = () => {
                         {method.icon === "Wallet" && <Wallet size={20} className="text-primary" />}
                         {method.icon === "CreditCard" && <CreditCard size={20} className="text-primary" />}
                         {method.icon === "Smartphone" && <Smartphone size={20} className="text-primary" />}
+                        {method.icon === "Globe" && <Globe size={20} className="text-primary" />}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-sm leading-tight">{method.label}</p>
@@ -1057,6 +1167,55 @@ const Checkout = () => {
                 {form.paymentMethod === "eps" && (
                   <div className="mt-3 pt-3 border-t border-border">
                     <img src={paymentMethodsImg} alt="Accepted payment methods - Visa, Mastercard, bKash, Nagad, Rocket, EPS and more" className="w-full h-auto object-contain" loading="lazy" />
+                  </div>
+                )}
+                {form.paymentMethod === "remittance" && (
+                  <div className="mt-3 pt-3 border-t border-border space-y-3">
+                    {remittanceServices.length === 0 ? (
+                      <p className="text-xs text-muted-foreground">No remittance services are enabled. Please contact support.</p>
+                    ) : (
+                      <>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="w-full justify-between h-11"
+                          onClick={() => setRemittancePickerOpen(true)}
+                        >
+                          <span className="flex items-center gap-2 text-sm">
+                            <Globe size={16} className="text-primary" />
+                            {form.remittanceService
+                              ? remittanceServices.find((s) => s.key === form.remittanceService)?.label
+                              : "Choose remittance service"}
+                          </span>
+                          <ChevronsUpDown size={14} className="text-muted-foreground" />
+                        </Button>
+
+                        {form.remittanceService && (
+                          <RemittanceDetails
+                            settings={gatewaySettings}
+                            serviceLabel={remittanceServices.find((s) => s.key === form.remittanceService)?.label || ""}
+                          />
+                        )}
+
+                        {form.remittanceService && (
+                          <div className="space-y-1.5">
+                            <Label htmlFor="remittanceTxnRef" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                              Transaction / Sender Reference (MTCN) *
+                            </Label>
+                            <Input
+                              id="remittanceTxnRef"
+                              placeholder="Enter the reference number you received"
+                              value={form.remittanceTxnRef}
+                              onChange={(e) => handleChange("remittanceTxnRef", e.target.value)}
+                              className="h-11 text-sm"
+                            />
+                            <p className="text-[11px] text-muted-foreground">
+                              After sending, paste the tracking/MTCN number here so we can verify your payment.
+                            </p>
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
                 )}
               </section>
@@ -1220,6 +1379,46 @@ const Checkout = () => {
           </div>
         </form>
       </div>
+
+      <Dialog open={remittancePickerOpen} onOpenChange={setRemittancePickerOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2"><Globe size={18} className="text-primary" /> Choose Remittance Service</DialogTitle>
+            <DialogDescription>
+              Select the service you want to send money through. We will show you the matching bKash, Nagad or Bank details to send to.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid grid-cols-1 gap-2 mt-2">
+            {remittanceServices.map((s) => (
+              <button
+                key={s.key}
+                type="button"
+                onClick={() => {
+                  handleChange("remittanceService", s.key);
+                  setRemittancePickerOpen(false);
+                }}
+                className={`flex items-center justify-between p-3.5 rounded-xl border text-left transition-all ${
+                  form.remittanceService === s.key
+                    ? "border-primary bg-primary/5 ring-1 ring-primary"
+                    : "border-border hover:border-primary/40 hover:bg-muted/30"
+                }`}
+              >
+                <span className="flex items-center gap-3">
+                  <span className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Globe size={16} className="text-primary" />
+                  </span>
+                  <span className="font-medium text-sm">{s.label}</span>
+                </span>
+                {form.remittanceService === s.key && (
+                  <span className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                    <Check size={12} className="text-primary-foreground" />
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 };

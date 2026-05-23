@@ -892,6 +892,44 @@ const paymentGatewayProviders = [
       ]},
     ],
   },
+  {
+    key: "remittance",
+    label: "Global Remittance",
+    fields: [
+      { key: "remittance_status", label: "Global Remittance Status", type: "select" as const, options: [
+        { value: "enable", label: "Enable" },
+        { value: "disable", label: "Disable" },
+      ]},
+      { key: "remittance_wu_enabled", label: "Western Union", type: "select" as const, options: [
+        { value: "enable", label: "Enable" },
+        { value: "disable", label: "Disable" },
+      ]},
+      { key: "remittance_mg_enabled", label: "MoneyGram", type: "select" as const, options: [
+        { value: "enable", label: "Enable" },
+        { value: "disable", label: "Disable" },
+      ]},
+      { key: "remittance_ria_enabled", label: "Ria", type: "select" as const, options: [
+        { value: "enable", label: "Enable" },
+        { value: "disable", label: "Disable" },
+      ]},
+      { key: "remittance_xm_enabled", label: "Xpress Money", type: "select" as const, options: [
+        { value: "enable", label: "Enable" },
+        { value: "disable", label: "Disable" },
+      ]},
+      { key: "remittance_tts_enabled", label: "TapTap Send", type: "select" as const, options: [
+        { value: "enable", label: "Enable" },
+        { value: "disable", label: "Disable" },
+      ]},
+      { key: "remittance_bkash_personal", label: "bKash Personal Number" },
+      { key: "remittance_nagad_personal", label: "Nagad Personal Number" },
+      { key: "remittance_bank_name", label: "Bank Name" },
+      { key: "remittance_bank_account_name", label: "Bank A/C Holder Name" },
+      { key: "remittance_bank_account_number", label: "Bank A/C Number" },
+      { key: "remittance_bank_routing", label: "Routing / SWIFT Code" },
+      { key: "remittance_bank_branch", label: "Bank Branch" },
+      { key: "remittance_instructions", label: "Customer Instructions (shown in popup)" },
+    ],
+  },
 ];
 
 const PaymentGatewaySection = ({
@@ -903,9 +941,9 @@ const PaymentGatewaySection = ({
 }) => {
   return (
     <Tabs defaultValue="paypal">
-      <TabsList className="w-full grid grid-cols-3 mb-4">
+      <TabsList className="w-full grid grid-cols-2 sm:grid-cols-4 mb-4 h-auto">
         {paymentGatewayProviders.map((p) => (
-          <TabsTrigger key={p.key} value={p.key}>{p.label}</TabsTrigger>
+          <TabsTrigger key={p.key} value={p.key} className="text-xs sm:text-sm">{p.label}</TabsTrigger>
         ))}
       </TabsList>
       {paymentGatewayProviders.map((provider) => (
