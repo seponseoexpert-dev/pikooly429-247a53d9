@@ -1750,13 +1750,18 @@ const AdminSettings = () => {
   const saveMutation = useMutation({
     mutationFn: async (vals: Record<string, string>) => {
       const keys = getActiveKeys();
-      // For radio fields, use the default (first option) if value is empty
-      const fields = sectionFields[activeSection] || [];
+      // For visible select/radio fields, save the displayed default when value is empty.
+      const fields = activeSection === "payment_gateway"
+        ? paymentGatewayProviders.flatMap((p) => p.fields)
+        : activeSection === "sms_gateway"
+          ? smsGatewayProviders.flatMap((p) => p.fields)
+          : activeSection === "social_login"
+            ? socialLoginProviders.flatMap((p) => p.fields)
+            : sectionFields[activeSection] || [];
       const promises = keys.map(async (key) => {
         let value = vals[key] || "";
-        // If the field is a radio and value is empty, use the first option as default
         const fieldDef = fields.find((f) => f.key === key);
-        if (fieldDef?.type === "radio" && !value && fieldDef.options?.length) {
+        if ((fieldDef?.type === "radio" || fieldDef?.type === "select") && !value && fieldDef.options?.length) {
           value = fieldDef.options[0].value;
         }
         const existing = settings.find((s: any) => s.key === key);

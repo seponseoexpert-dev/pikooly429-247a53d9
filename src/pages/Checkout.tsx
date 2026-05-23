@@ -244,6 +244,9 @@ const Checkout = () => {
   const isGatewayEnabled = (value?: string | null) =>
     ["enable", "enabled", "true", "1", "yes", "on"].includes((value ?? "").toLowerCase());
 
+  const isExplicitlyDisabled = (value?: string | null) =>
+    ["disable", "disabled", "false", "0", "no", "off"].includes((value ?? "").toLowerCase());
+
   const allPaymentMethods = [
     { value: "cod", label: "Cash on Delivery", desc: "Pay when you receive your order", statusKeys: ["cod_enabled", "cod_status"], icon: "Banknote" as const },
     { value: "paypal", label: "PayPal", desc: "Pay securely via PayPal", statusKeys: ["paypal_status"], icon: "Wallet" as const },
@@ -273,9 +276,21 @@ const Checkout = () => {
     staleTime: 60 * 1000,
   });
 
-  const enabledPaymentMethods = allPaymentMethods.filter((method) =>
-    method.statusKeys.some((key) => isGatewayEnabled(gatewaySettings[key]))
+  const hasRemittanceReceiverDetails = !!(
+    gatewaySettings.remittance_bkash_personal ||
+    gatewaySettings.remittance_nagad_personal ||
+    gatewaySettings.remittance_bank_name ||
+    gatewaySettings.remittance_bank_account_number
   );
+
+  const isRemittanceGatewayEnabled =
+    isGatewayEnabled(gatewaySettings.remittance_status) ||
+    (!isExplicitlyDisabled(gatewaySettings.remittance_status) && hasRemittanceReceiverDetails);
+
+  const enabledPaymentMethods = allPaymentMethods.filter((method) => {
+    if (method.value === "remittance") return isRemittanceGatewayEnabled;
+    return method.statusKeys.some((key) => isGatewayEnabled(gatewaySettings[key]));
+  });
 
   const remittanceServices = [
     { key: "wu", label: "Western Union", enabledKey: "remittance_wu_enabled" },
@@ -283,7 +298,7 @@ const Checkout = () => {
     { key: "ria", label: "Ria", enabledKey: "remittance_ria_enabled" },
     { key: "xm", label: "Xpress Money", enabledKey: "remittance_xm_enabled" },
     { key: "tts", label: "TapTap Send", enabledKey: "remittance_tts_enabled" },
-  ].filter((s) => isGatewayEnabled(gatewaySettings[s.enabledKey]));
+  ].filter((s) => !isExplicitlyDisabled(gatewaySettings[s.enabledKey]));
 
   // Auto-select first enabled method if current selection is disabled
   const selectedMethodEnabled = enabledPaymentMethods.some((m) => m.value === form.paymentMethod);
