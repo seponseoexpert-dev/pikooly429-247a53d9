@@ -460,12 +460,17 @@ const BouquetBuilder = () => {
                       {flowerSpeed && (
                         <div
                           className={cn(
-                            "absolute top-2 left-2 px-1.5 py-0.5 rounded-md text-[10px] font-semibold shadow-sm",
+                            "absolute top-2 left-2 inline-flex items-center gap-1 pl-1.5 pr-2 py-0.5 rounded-full text-[10px] font-bold shadow-md backdrop-blur-sm ring-1",
                             flowerSpeed === "same_day"
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-amber-500 text-white"
+                              ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white ring-emerald-300/40"
+                              : "bg-gradient-to-r from-amber-500 to-orange-500 text-white ring-amber-300/40"
                           )}
                         >
+                          {flowerSpeed === "same_day" ? (
+                            <Zap className="h-2.5 w-2.5 fill-current" />
+                          ) : (
+                            <Clock className="h-2.5 w-2.5" />
+                          )}
                           {flowerSpeed === "same_day" ? "Same-Day" : "Next-Day"}
                         </div>
                       )}
