@@ -109,7 +109,10 @@ const Checkout = () => {
     deliveryDate: "",
     deliveryTime: "",
     paymentMethod: "eps",
+    remittanceService: "",
+    remittanceTxnRef: "",
   });
+  const [remittancePickerOpen, setRemittancePickerOpen] = useState(false);
 
   // Auto-fill form for logged-in users
   const { data: userProfile } = useQuery({
