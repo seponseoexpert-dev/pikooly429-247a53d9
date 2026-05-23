@@ -16,6 +16,19 @@ const Footer = memo(() => {
   const [openSection, setOpenSection] = useState<string | null>(null);
   const toggleSection = (s: string) => setOpenSection(prev => prev === s ? null : s);
 
+  const quickRef = useRef<HTMLUListElement>(null);
+  const catRef = useRef<HTMLUListElement>(null);
+  const contactRef = useRef<HTMLUListElement>(null);
+  const [heights, setHeights] = useState({ quick: 0, cat: 0, contact: 0 });
+
+  useEffect(() => {
+    setHeights({
+      quick: quickRef.current?.scrollHeight || 0,
+      cat: catRef.current?.scrollHeight || 0,
+      contact: contactRef.current?.scrollHeight || 0,
+    });
+  }, []);
+
   if (location.pathname === "/cart") return null;
 
   const storeName = settings.store_name || "Pikooly";
