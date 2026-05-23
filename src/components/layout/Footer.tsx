@@ -1,7 +1,7 @@
 import { memo, useState } from "react";
 import paymentMethodsImg from "@/assets/payment-methods.webp";
 import { Link, useLocation } from "react-router-dom";
-import { Facebook, Instagram, Twitter, Youtube, Send, Phone, Mail, MapPin, Heart } from "lucide-react";
+import { Facebook, Instagram, Twitter, Youtube, Send, Phone, Mail, MapPin, Heart, Plus, Minus } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -13,6 +13,8 @@ const Footer = memo(() => {
   const location = useLocation();
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [openSection, setOpenSection] = useState<string | null>(null);
+  const toggleSection = (s: string) => setOpenSection(prev => prev === s ? null : s);
 
   if (location.pathname === "/cart") return null;
 
@@ -200,10 +202,20 @@ const Footer = memo(() => {
 
             {/* Quick Links */}
             <div>
-              <h4 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--gold))] mb-4">
-                {t("quick_links")}
-              </h4>
-              <ul className="space-y-2.5">
+              <button
+                type="button"
+                onClick={() => toggleSection("quick")}
+                className="w-full flex items-center justify-between sm:cursor-default sm:pointer-events-none mb-4"
+                aria-expanded={openSection === "quick"}
+              >
+                <h4 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--gold))]">
+                  {t("quick_links")}
+                </h4>
+                <span className="sm:hidden text-[hsl(var(--gold))]">
+                  {openSection === "quick" ? <Minus size={16} /> : <Plus size={16} />}
+                </span>
+              </button>
+              <ul className={`space-y-2.5 ${openSection === "quick" ? "block" : "hidden"} sm:block`}>
                 {finalQuickLinks.map((link, i) => (
                   <li key={i}>
                     <Link
@@ -220,10 +232,20 @@ const Footer = memo(() => {
 
             {/* Categories */}
             <div>
-              <h4 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--gold))] mb-4">
-                {t("categories")}
-              </h4>
-              <ul className="space-y-2.5">
+              <button
+                type="button"
+                onClick={() => toggleSection("cat")}
+                className="w-full flex items-center justify-between sm:cursor-default sm:pointer-events-none mb-4"
+                aria-expanded={openSection === "cat"}
+              >
+                <h4 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--gold))]">
+                  {t("categories")}
+                </h4>
+                <span className="sm:hidden text-[hsl(var(--gold))]">
+                  {openSection === "cat" ? <Minus size={16} /> : <Plus size={16} />}
+                </span>
+              </button>
+              <ul className={`space-y-2.5 ${openSection === "cat" ? "block" : "hidden"} sm:block`}>
                 {finalCategoryLinks.map((link, i) => (
                   <li key={i}>
                     <Link
@@ -240,10 +262,20 @@ const Footer = memo(() => {
 
             {/* Contact */}
             <div>
-              <h4 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--gold))] mb-4">
-                {t("contact_us")}
-              </h4>
-              <ul className="space-y-3">
+              <button
+                type="button"
+                onClick={() => toggleSection("contact")}
+                className="w-full flex items-center justify-between sm:cursor-default sm:pointer-events-none mb-4"
+                aria-expanded={openSection === "contact"}
+              >
+                <h4 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--gold))]">
+                  {t("contact_us")}
+                </h4>
+                <span className="sm:hidden text-[hsl(var(--gold))]">
+                  {openSection === "contact" ? <Minus size={16} /> : <Plus size={16} />}
+                </span>
+              </button>
+              <ul className={`space-y-3 ${openSection === "contact" ? "block" : "hidden"} sm:block`}>
                 <li>
                   <a href={`tel:${phone}`} className="flex items-start gap-2.5 text-sm text-background/60 hover:text-[hsl(var(--gold))] transition-colors duration-300">
                     <Phone size={14} className="mt-0.5 shrink-0 text-[hsl(var(--gold))]" />
