@@ -786,7 +786,7 @@ const BouquetBuilder = () => {
                 <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2"><Flower2 className="h-4 w-4 text-primary" /> Flowers</h3>
                 {selectedFlowersList.map((f) => (
                   <div key={f.id} className="flex justify-between items-center py-1.5 text-sm">
-                    <span className="text-foreground">{f.name} × {f.qty}</span>
+                    <span className="text-foreground">{f.displayName} × {f.qty}</span>
                     <span className="text-muted-foreground">{formatPrice(f.price * f.qty)}</span>
                   </div>
                 ))}
