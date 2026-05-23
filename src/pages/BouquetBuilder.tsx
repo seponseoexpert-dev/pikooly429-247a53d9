@@ -153,10 +153,16 @@ const BouquetBuilder = () => {
       .filter(([, qty]) => qty > 0)
       .map(([id, qty]) => {
         const f = allFlowers.find((fl: any) => fl.id === id);
-        return f ? { ...f, qty } : null;
+        if (!f) return null;
+        const colors: any[] = Array.isArray(f.colors) ? f.colors : [];
+        const colorIdx = selectedColors[id] ?? 0;
+        const color = colors[colorIdx] || null;
+        const displayName = color?.name ? `${color.name} ${f.name}` : f.name;
+        const displayImage = color?.image_url || f.image_url;
+        return { ...f, qty, color, displayName, displayImage };
       })
       .filter(Boolean) as any[];
-  }, [selectedFlowers, allFlowers]);
+  }, [selectedFlowers, selectedColors, allFlowers]);
 
   const selectedAddonsList = useMemo(() => {
     return Object.entries(selectedAddons)
