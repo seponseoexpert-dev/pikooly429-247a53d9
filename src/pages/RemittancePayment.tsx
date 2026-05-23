@@ -26,6 +26,9 @@ const SERVICES = [
   { key: "tts", label: "TapTap Send", enabledKey: "remittance_tts_enabled" },
 ];
 
+const isExplicitlyDisabled = (value?: string | null) =>
+  ["disable", "disabled", "false", "0", "no", "off"].includes((value ?? "").toLowerCase());
+
 const CopyRow = ({ label, value }: { label: string; value: string }) => {
   if (!value) return null;
   return (
@@ -97,7 +100,7 @@ const RemittancePayment = () => {
   }, [orderId]);
 
   const enabledServices = useMemo(
-    () => SERVICES.filter((s) => (settings[s.enabledKey] || "").toLowerCase() === "true" || settings[s.enabledKey] === "1" || settings[s.enabledKey] === "enable"),
+    () => SERVICES.filter((s) => !isExplicitlyDisabled(settings[s.enabledKey])),
     [settings]
   );
 
