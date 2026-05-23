@@ -372,6 +372,7 @@ export type Database = {
       bouquet_flowers: {
         Row: {
           available_districts: string[]
+          colors: Json
           created_at: string
           display_order: number
           id: string
@@ -385,6 +386,7 @@ export type Database = {
         }
         Insert: {
           available_districts?: string[]
+          colors?: Json
           created_at?: string
           display_order?: number
           id?: string
@@ -398,6 +400,7 @@ export type Database = {
         }
         Update: {
           available_districts?: string[]
+          colors?: Json
           created_at?: string
           display_order?: number
           id?: string

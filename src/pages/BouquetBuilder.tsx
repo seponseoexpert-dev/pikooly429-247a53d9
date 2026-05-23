@@ -31,6 +31,7 @@ const BouquetBuilder = () => {
   const { settings } = useSiteSettings();
   const [step, setStep] = useState(1);
   const [selectedFlowers, setSelectedFlowers] = useState<Record<string, number>>({});
+  const [selectedColors, setSelectedColors] = useState<Record<string, number>>({}); // flowerId -> color index
   const [designImages, setDesignImages] = useState<File[]>([]);
   const [designPreviews, setDesignPreviews] = useState<string[]>([]);
   const [aiPreviewUrl, setAiPreviewUrl] = useState<string | null>(null);
@@ -152,10 +153,16 @@ const BouquetBuilder = () => {
       .filter(([, qty]) => qty > 0)
       .map(([id, qty]) => {
         const f = allFlowers.find((fl: any) => fl.id === id);
-        return f ? { ...f, qty } : null;
+        if (!f) return null;
+        const colors: any[] = Array.isArray(f.colors) ? f.colors : [];
+        const colorIdx = selectedColors[id] ?? 0;
+        const color = colors[colorIdx] || null;
+        const displayName = color?.name ? `${color.name} ${f.name}` : f.name;
+        const displayImage = color?.image_url || f.image_url;
+        return { ...f, qty, color, displayName, displayImage };
       })
       .filter(Boolean) as any[];
-  }, [selectedFlowers, allFlowers]);
+  }, [selectedFlowers, selectedColors, allFlowers]);
 
   const selectedAddonsList = useMemo(() => {
     return Object.entries(selectedAddons)
@@ -264,7 +271,7 @@ const BouquetBuilder = () => {
       const dataUrls = await Promise.all(designImages.map(fileToDataUrl));
       const { data, error } = await supabase.functions.invoke("ai-bouquet-preview", {
         body: {
-          flowers: selectedFlowersList.map((f) => ({ name: f.name, qty: f.qty })),
+          flowers: selectedFlowersList.map((f) => ({ name: f.displayName, qty: f.qty })),
           designImages: dataUrls,
         },
       });
@@ -295,12 +302,12 @@ const BouquetBuilder = () => {
       ? ` + Addons: ${selectedAddonsList.map((a) => `${a.name} x${a.qty}`).join(", ")}`
       : "";
     const designLabel = designImages.length > 0 ? " + Custom Design" : "";
-    const bouquetName = `Custom Bouquet (${selectedFlowersList.map((f) => `${f.name} x${f.qty}`).join(", ")})${designLabel}${addonLabel}`;
+    const bouquetName = `Custom Bouquet (${selectedFlowersList.map((f) => `${f.displayName} x${f.qty}`).join(", ")})${designLabel}${addonLabel}`;
     addItem({
       id: `bouquet-${Date.now()}`,
       name: bouquetName,
       price: totalPrice,
-      image: selectedFlowersList[0]?.image_url || "/placeholder.svg",
+      image: selectedFlowersList[0]?.displayImage || "/placeholder.svg",
       category: "Custom Bouquet",
       inStock: true,
     }, undefined, true);
@@ -481,6 +488,11 @@ const BouquetBuilder = () => {
                   else if (nextDay.includes(selectedDistrict)) flowerSpeed = "next_day";
                   else if (deliverySpeed === "same_day" || deliverySpeed === "next_day") flowerSpeed = deliverySpeed;
                 }
+                const flowerColors: any[] = Array.isArray(flower.colors) ? flower.colors : [];
+                const hasColors = flowerColors.length > 0;
+                const activeColorIdx = selectedColors[flower.id] ?? 0;
+                const activeColor = hasColors ? flowerColors[activeColorIdx] : null;
+                const cardImage = activeColor?.image_url || flower.image_url || "/placeholder.svg";
                 return (
                   <div
                     key={flower.id}
@@ -490,7 +502,7 @@ const BouquetBuilder = () => {
                     )}
                   >
                     <div className="aspect-square bg-secondary/20 overflow-hidden relative" onClick={() => toggleFlower(flower.id)}>
-                      <img src={flower.image_url || "/placeholder.svg"} alt={flower.name} className="w-full h-full object-cover" loading="lazy" />
+                      <img src={cardImage} alt={flower.name} className="w-full h-full object-cover transition-all" loading="lazy" />
                       {flowerSpeed && (
                         <div
                           className={cn(
@@ -509,13 +521,47 @@ const BouquetBuilder = () => {
                         </div>
                       )}
                       {isSelected && (
-                        <div className="absolute top-2 right-2 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
+                        <div className="absolute top-2 right-2 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center shadow-md">
                           <Check className="h-3.5 w-3.5" />
+                        </div>
+                      )}
+                      {hasColors && (
+                        <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-center">
+                          <div className="inline-flex items-center gap-1 px-1.5 py-1 rounded-full bg-background/85 backdrop-blur-sm shadow ring-1 ring-border/60">
+                            {flowerColors.slice(0, 5).map((c: any, i: number) => {
+                              const isActive = activeColorIdx === i;
+                              return (
+                                <button
+                                  key={i}
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedColors((prev) => ({ ...prev, [flower.id]: i }));
+                                    if (!isSelected) toggleFlower(flower.id);
+                                  }}
+                                  aria-label={`Choose ${c.name || "color"}`}
+                                  className={cn(
+                                    "h-4 w-4 rounded-full border transition-all",
+                                    isActive
+                                      ? "border-foreground scale-125 ring-2 ring-background"
+                                      : "border-border/70 hover:scale-110"
+                                  )}
+                                  style={{ backgroundColor: c.hex || "#ccc" }}
+                                  title={c.name}
+                                />
+                              );
+                            })}
+                            {flowerColors.length > 5 && (
+                              <span className="text-[9px] font-semibold text-muted-foreground px-0.5">+{flowerColors.length - 5}</span>
+                            )}
+                          </div>
                         </div>
                       )}
                     </div>
                     <div className="p-2.5 sm:p-3">
-                      <h3 className="font-medium text-sm text-foreground line-clamp-1">{flower.name}</h3>
+                      <h3 className="font-medium text-sm text-foreground line-clamp-1">
+                        {activeColor?.name ? `${activeColor.name} ${flower.name}` : flower.name}
+                      </h3>
                       <p className="text-primary font-bold text-sm mt-0.5">{formatPrice(flower.price)}</p>
                       {isSelected && (
                         <div className="flex items-center gap-2 mt-2">
@@ -779,7 +825,7 @@ const BouquetBuilder = () => {
                 <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2"><Flower2 className="h-4 w-4 text-primary" /> Flowers</h3>
                 {selectedFlowersList.map((f) => (
                   <div key={f.id} className="flex justify-between items-center py-1.5 text-sm">
-                    <span className="text-foreground">{f.name} × {f.qty}</span>
+                    <span className="text-foreground">{f.displayName} × {f.qty}</span>
                     <span className="text-muted-foreground">{formatPrice(f.price * f.qty)}</span>
                   </div>
                 ))}
