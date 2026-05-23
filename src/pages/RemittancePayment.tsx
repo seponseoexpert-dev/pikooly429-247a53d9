@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { ArrowLeft, CheckCircle2, Copy, Loader2, X } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Copy, Loader2, Upload, X } from "lucide-react";
 
 import bkashLogo from "@/assets/payments/bkash.png";
 import nagadLogo from "@/assets/payments/nagad.png";
@@ -98,6 +98,8 @@ const RemittancePayment = () => {
   const [service, setService] = useState<string>("");
   const [method, setMethod] = useState<MethodKey | "">("");
   const [mtcn, setMtcn] = useState("");
+  const [proofUrl, setProofUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -109,6 +111,7 @@ const RemittancePayment = () => {
           "company_name", "company_logo",
           "remittance_wu_enabled", "remittance_mg_enabled", "remittance_ria_enabled", "remittance_xm_enabled", "remittance_tts_enabled", "remittance_remitly_enabled",
           "remittance_bkash_personal", "remittance_nagad_personal", "remittance_upay_personal", "remittance_rocket_personal",
+          "remittance_bkash_name", "remittance_nagad_name", "remittance_upay_name", "remittance_rocket_name",
           "remittance_bank_name", "remittance_bank_account_name", "remittance_bank_account_number",
           "remittance_bank_routing", "remittance_bank_branch", "remittance_instructions",
         ]),
@@ -143,14 +146,35 @@ const RemittancePayment = () => {
   const selectedService = enabledServices.find((s) => s.key === service);
   const selectedMethod = METHODS.find((m) => m.key === method);
 
+  const handleProofUpload = async (file: File) => {
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { toast.error("Image must be under 5MB."); return; }
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop() || "jpg";
+      const path = `remittance-proofs/${order?.order_number || "order"}-${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from("images").upload(path, file, { upsert: true, contentType: file.type });
+      if (error) throw error;
+      const { data } = supabase.storage.from("images").getPublicUrl(path);
+      setProofUrl(data.publicUrl);
+      toast.success("Screenshot uploaded ✓");
+    } catch (e: any) {
+      console.error(e);
+      toast.error("Upload failed. Please try again.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleConfirm = async () => {
     if (!order) return;
     if (!service) { toast.error("Please select a remittance service."); return; }
     if (!method) { toast.error("Please select a payment method."); return; }
     if (!mtcn.trim()) { toast.error("Please enter the MTCN / reference number."); return; }
+    if (!proofUrl) { toast.error("Please upload your payment screenshot."); return; }
     setSubmitting(true);
     try {
-      const note = `Global Remittance via ${selectedService?.label} → ${selectedMethod?.label} | Ref: ${mtcn.trim()}`;
+      const note = `Global Remittance via ${selectedService?.label} → ${selectedMethod?.label} | Ref: ${mtcn.trim()} | Proof: ${proofUrl}`;
       const mergedNotes = [order.notes || "", note].filter(Boolean).join("\n");
       const { error } = await supabase
         .from("orders")
@@ -334,10 +358,22 @@ const RemittancePayment = () => {
               </div>
 
               <div className="rounded-xl bg-muted/40 px-4 py-1">
-                {method === "bkash" && <CopyRow label="Number" value={settings.remittance_bkash_personal} />}
-                {method === "nagad" && <CopyRow label="Number" value={settings.remittance_nagad_personal} />}
-                {method === "upay" && <CopyRow label="Number" value={settings.remittance_upay_personal} />}
-                {method === "rocket" && <CopyRow label="Number" value={settings.remittance_rocket_personal} />}
+                {method === "bkash" && (<>
+                  <CopyRow label="Account Name" value={settings.remittance_bkash_name || "Md Ripon"} />
+                  <CopyRow label="Number" value={settings.remittance_bkash_personal} />
+                </>)}
+                {method === "nagad" && (<>
+                  <CopyRow label="Account Name" value={settings.remittance_nagad_name || "Md Ripon"} />
+                  <CopyRow label="Number" value={settings.remittance_nagad_personal} />
+                </>)}
+                {method === "upay" && (<>
+                  <CopyRow label="Account Name" value={settings.remittance_upay_name || "Md Ripon"} />
+                  <CopyRow label="Number" value={settings.remittance_upay_personal} />
+                </>)}
+                {method === "rocket" && (<>
+                  <CopyRow label="Account Name" value={settings.remittance_rocket_name || "Md Ripon"} />
+                  <CopyRow label="Number" value={settings.remittance_rocket_personal} />
+                </>)}
                 {method === "bank" && (
                   <>
                     <CopyRow label="Bank" value={settings.remittance_bank_name} />
@@ -365,6 +401,53 @@ const RemittancePayment = () => {
                 After sending, paste the tracking/MTCN number here so we can verify your payment.
               </p>
             </div>
+
+            <div className="rounded-2xl bg-card border border-border p-4 sm:p-5 space-y-3 shadow-sm">
+              <Label className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                Payment Screenshot (Proof) *
+              </Label>
+              {proofUrl ? (
+                <div className="relative rounded-xl overflow-hidden border border-border bg-muted/30">
+                  <img src={proofUrl} alt="Payment proof" className="w-full max-h-64 object-contain" />
+                  <button
+                    type="button"
+                    onClick={() => setProofUrl("")}
+                    className="absolute top-2 right-2 h-8 w-8 rounded-full bg-background/90 backdrop-blur flex items-center justify-center text-foreground shadow-md hover:bg-background"
+                    aria-label="Remove screenshot"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              ) : (
+                <label
+                  htmlFor="proof-upload"
+                  className="flex flex-col items-center justify-center gap-2 py-6 px-4 rounded-xl border-2 border-dashed border-border bg-muted/30 hover:bg-muted/50 hover:border-primary cursor-pointer transition-colors"
+                >
+                  {uploading ? (
+                    <Loader2 className="animate-spin text-primary" size={24} />
+                  ) : (
+                    <>
+                      <div className="h-11 w-11 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Upload size={20} className="text-primary" />
+                      </div>
+                      <p className="text-sm font-semibold text-foreground">Upload screenshot</p>
+                      <p className="text-[11px] text-muted-foreground">PNG or JPG, up to 5MB</p>
+                    </>
+                  )}
+                </label>
+              )}
+              <input
+                id="proof-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => { const f = e.target.files?.[0]; if (f) handleProofUpload(f); e.target.value = ""; }}
+              />
+              <p className="text-[11px] text-muted-foreground">
+                Share a screenshot of your successful transfer so we can verify quickly.
+              </p>
+            </div>
+
 
             <div className="sticky bottom-3 sm:bottom-4 z-10">
               <Button
