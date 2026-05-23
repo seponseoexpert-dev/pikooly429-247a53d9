@@ -360,7 +360,7 @@ const RemittancePayment = () => {
                   <p className="text-[15px] font-bold text-foreground leading-tight">{selectedMethod.label}</p>
                   <p className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1.5">
                     <CheckCircle2 size={11} className="text-primary" />
-                    via {selectedService.label} · ৳{amount.toFixed(2)}
+                    via {selectedService.label} · {displayAmount}{isForeign ? ` (≈ ${bdtAmount})` : ""}
                   </p>
                 </div>
               </div>
