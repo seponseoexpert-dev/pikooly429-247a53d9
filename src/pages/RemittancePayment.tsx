@@ -111,6 +111,7 @@ const RemittancePayment = () => {
           "company_name", "company_logo",
           "remittance_wu_enabled", "remittance_mg_enabled", "remittance_ria_enabled", "remittance_xm_enabled", "remittance_tts_enabled", "remittance_remitly_enabled",
           "remittance_bkash_personal", "remittance_nagad_personal", "remittance_upay_personal", "remittance_rocket_personal",
+          "remittance_bkash_name", "remittance_nagad_name", "remittance_upay_name", "remittance_rocket_name",
           "remittance_bank_name", "remittance_bank_account_name", "remittance_bank_account_number",
           "remittance_bank_routing", "remittance_bank_branch", "remittance_instructions",
         ]),
