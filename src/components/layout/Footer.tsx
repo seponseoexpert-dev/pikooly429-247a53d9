@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo, useState, useRef, useEffect } from "react";
 import paymentMethodsImg from "@/assets/payment-methods.webp";
 import { Link, useLocation } from "react-router-dom";
 import { Facebook, Instagram, Twitter, Youtube, Send, Phone, Mail, MapPin, Heart, Plus, Minus } from "lucide-react";
@@ -15,6 +15,19 @@ const Footer = memo(() => {
   const [submitting, setSubmitting] = useState(false);
   const [openSection, setOpenSection] = useState<string | null>(null);
   const toggleSection = (s: string) => setOpenSection(prev => prev === s ? null : s);
+
+  const quickRef = useRef<HTMLUListElement>(null);
+  const catRef = useRef<HTMLUListElement>(null);
+  const contactRef = useRef<HTMLUListElement>(null);
+  const [heights, setHeights] = useState({ quick: 0, cat: 0, contact: 0 });
+
+  useEffect(() => {
+    setHeights({
+      quick: quickRef.current?.scrollHeight || 0,
+      cat: catRef.current?.scrollHeight || 0,
+      contact: contactRef.current?.scrollHeight || 0,
+    });
+  }, []);
 
   if (location.pathname === "/cart") return null;
 
@@ -215,7 +228,11 @@ const Footer = memo(() => {
                   {openSection === "quick" ? <Minus size={16} /> : <Plus size={16} />}
                 </span>
               </button>
-              <ul className={`space-y-2.5 ${openSection === "quick" ? "block" : "hidden"} sm:block`}>
+              <ul
+                ref={quickRef}
+                className="space-y-2.5 overflow-hidden transition-[height] duration-300 ease-luxe sm:!h-auto"
+                style={{ height: openSection === "quick" ? heights.quick : 0 }}
+              >
                 {finalQuickLinks.map((link, i) => (
                   <li key={i}>
                     <Link
@@ -245,7 +262,11 @@ const Footer = memo(() => {
                   {openSection === "cat" ? <Minus size={16} /> : <Plus size={16} />}
                 </span>
               </button>
-              <ul className={`space-y-2.5 ${openSection === "cat" ? "block" : "hidden"} sm:block`}>
+              <ul
+                ref={catRef}
+                className="space-y-2.5 overflow-hidden transition-[height] duration-300 ease-luxe sm:!h-auto"
+                style={{ height: openSection === "cat" ? heights.cat : 0 }}
+              >
                 {finalCategoryLinks.map((link, i) => (
                   <li key={i}>
                     <Link
@@ -275,7 +296,11 @@ const Footer = memo(() => {
                   {openSection === "contact" ? <Minus size={16} /> : <Plus size={16} />}
                 </span>
               </button>
-              <ul className={`space-y-3 ${openSection === "contact" ? "block" : "hidden"} sm:block`}>
+              <ul
+                ref={contactRef}
+                className="space-y-3 overflow-hidden transition-[height] duration-300 ease-luxe sm:!h-auto"
+                style={{ height: openSection === "contact" ? heights.contact : 0 }}
+              >
                 <li>
                   <a href={`tel:${phone}`} className="flex items-start gap-2.5 text-sm text-background/60 hover:text-[hsl(var(--gold))] transition-colors duration-300">
                     <Phone size={14} className="mt-0.5 shrink-0 text-[hsl(var(--gold))]" />
