@@ -271,7 +271,7 @@ const BouquetBuilder = () => {
       const dataUrls = await Promise.all(designImages.map(fileToDataUrl));
       const { data, error } = await supabase.functions.invoke("ai-bouquet-preview", {
         body: {
-          flowers: selectedFlowersList.map((f) => ({ name: f.name, qty: f.qty })),
+          flowers: selectedFlowersList.map((f) => ({ name: f.displayName, qty: f.qty })),
           designImages: dataUrls,
         },
       });
