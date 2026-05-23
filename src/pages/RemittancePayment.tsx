@@ -18,6 +18,7 @@ import moneygramLogo from "@/assets/payments/moneygram.png";
 import riaLogo from "@/assets/payments/ria.jpeg";
 import xpressLogo from "@/assets/payments/xpressmoney.png";
 import taptapLogo from "@/assets/payments/taptap.jpeg";
+import remitlyLogo from "@/assets/payments/remitly.png";
 
 interface OrderRow {
   id: string;
@@ -43,6 +44,7 @@ const SERVICES: Service[] = [
   { key: "ria", label: "Ria", enabledKey: "remittance_ria_enabled", logo: riaLogo, bg: "bg-white" },
   { key: "xm", label: "Xpress Money", enabledKey: "remittance_xm_enabled", logo: xpressLogo, bg: "bg-[#EE5A1F]" },
   { key: "tts", label: "TapTap Send", enabledKey: "remittance_tts_enabled", logo: taptapLogo, bg: "bg-white" },
+  { key: "remitly", label: "Remitly", enabledKey: "remittance_remitly_enabled", logo: remitlyLogo, bg: "bg-white" },
 ];
 
 type MethodKey = "bkash" | "nagad" | "upay" | "rocket" | "bank";
@@ -105,7 +107,7 @@ const RemittancePayment = () => {
         supabase.from("orders").select("id, order_number, total, advance_amount, is_preorder, notes, payment_method").eq("id", orderId).maybeSingle(),
         supabase.from("site_settings").select("key, value").in("key", [
           "company_name", "company_logo",
-          "remittance_wu_enabled", "remittance_mg_enabled", "remittance_ria_enabled", "remittance_xm_enabled", "remittance_tts_enabled",
+          "remittance_wu_enabled", "remittance_mg_enabled", "remittance_ria_enabled", "remittance_xm_enabled", "remittance_tts_enabled", "remittance_remitly_enabled",
           "remittance_bkash_personal", "remittance_nagad_personal", "remittance_upay_personal", "remittance_rocket_personal",
           "remittance_bank_name", "remittance_bank_account_name", "remittance_bank_account_number",
           "remittance_bank_routing", "remittance_bank_branch", "remittance_instructions",
