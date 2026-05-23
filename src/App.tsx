@@ -214,6 +214,7 @@ const App = () => (
               <Route path="/cart" element={<PublicLayout><Cart /></PublicLayout>} />
               <Route path="/checkout" element={<PublicLayout><Checkout /></PublicLayout>} />
               <Route path="/order-success/:orderNumber" element={<PublicLayout><OrderSuccess /></PublicLayout>} />
+              <Route path="/remittance-payment/:orderId" element={<PublicLayout><RemittancePayment /></PublicLayout>} />
               <Route path="/track-order" element={<PublicLayout><TrackOrder /></PublicLayout>} />
               <Route path="/eps-callback" element={<PublicLayout><EpsCallback /></PublicLayout>} />
               <Route path="/about-us" element={<PublicLayout><AboutUs /></PublicLayout>} />
