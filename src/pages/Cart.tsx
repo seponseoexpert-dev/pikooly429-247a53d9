@@ -27,6 +27,10 @@ const CartPage = () => {
   const { formatPrice } = useMultiCurrency();
   const navigate = useNavigate();
   const { groups: deliveryGroups } = useCheckoutDelivery(items as any);
+  const productModeMap = new Map<string, { name: string; delivery_time: string; badge_text: string | null; icon: string | null }>();
+  deliveryGroups.forEach((g) => {
+    g.productIds.forEach((pid) => productModeMap.set(pid, g.mode));
+  });
 
   // Compute totals & savings (Floweraura-style)
   const originalTotal = items.reduce((sum, i) => {
@@ -78,6 +82,7 @@ const CartPage = () => {
               {items.map((item) => {
                 const variantKey = buildVariantKey(item.variant);
                 const lineUnit = item.product.price + (item.variant?.size?.extraPrice || 0);
+                const mode = productModeMap.get(item.product.id);
                 let badge = parseDeliveryBadge(item.product.deliveryTime);
                 if (!badge) {
                   const sd = item.product.sameDayDistricts;
@@ -91,13 +96,15 @@ const CartPage = () => {
                     key={`${item.product.id}-${variantKey}`}
                     className="bg-card rounded-2xl border border-border/50 shadow-sm overflow-hidden"
                   >
-                    {badge && (
+                    {(mode || badge) && (
                       <div className="flex items-center gap-2 px-3.5 py-2 bg-cart-delivery border-b border-border/40 text-[12px]">
                         <span className={cn("inline-flex items-center gap-1 font-bold text-cart-teal")}>
-                          <badge.Icon size={13} className="shrink-0" />
-                          Fast Delivery {badge.label}
+                          {badge && <badge.Icon size={13} className="shrink-0" />}
+                          {mode ? `${mode.name} · ${mode.delivery_time}` : `Fast Delivery ${badge!.label}`}
                         </span>
-                        <span className="text-cart-teal/70">· bike. CNG. Private Car</span>
+                        {mode?.badge_text && (
+                          <span className="text-cart-teal/70">· {mode.badge_text}</span>
+                        )}
                       </div>
                     )}
                     <div className="flex gap-3.5 p-3">
