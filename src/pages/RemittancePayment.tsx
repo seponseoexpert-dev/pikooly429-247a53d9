@@ -143,7 +143,14 @@ const RemittancePayment = () => {
     });
   }, [settings]);
 
+  const { selectedCurrency, convert } = useMultiCurrency();
   const amount = order ? Number(order.is_preorder ? (order.advance_amount || order.total) : order.total) : 0;
+  const isForeign = !!selectedCurrency && !selectedCurrency.is_default;
+  const convertedAmount = convert(amount);
+  const fxDecimals = isForeign ? 2 : 0;
+  const fxSymbol = selectedCurrency?.symbol || "৳";
+  const displayAmount = `${fxSymbol}${convertedAmount.toLocaleString(undefined, { minimumFractionDigits: fxDecimals, maximumFractionDigits: fxDecimals })}`;
+  const bdtAmount = `৳${amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
   const selectedService = enabledServices.find((s) => s.key === service);
   const selectedMethod = METHODS.find((m) => m.key === method);
 
