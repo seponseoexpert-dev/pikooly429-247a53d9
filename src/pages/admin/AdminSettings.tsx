@@ -941,9 +941,9 @@ const PaymentGatewaySection = ({
 }) => {
   return (
     <Tabs defaultValue="paypal">
-      <TabsList className="w-full grid grid-cols-3 mb-4">
+      <TabsList className="w-full grid grid-cols-2 sm:grid-cols-4 mb-4 h-auto">
         {paymentGatewayProviders.map((p) => (
-          <TabsTrigger key={p.key} value={p.key}>{p.label}</TabsTrigger>
+          <TabsTrigger key={p.key} value={p.key} className="text-xs sm:text-sm">{p.label}</TabsTrigger>
         ))}
       </TabsList>
       {paymentGatewayProviders.map((provider) => (
