@@ -234,7 +234,7 @@ const RemittancePayment = () => {
           )}
           <div className="flex-1 min-w-0">
             <p className="text-[17px] font-bold text-foreground leading-tight">{brand}</p>
-            <p className="text-[11px] text-muted-foreground mt-0.5">Order: {order.order_number} · ৳{amount.toFixed(2)}</p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">Order: {order.order_number} · {displayAmount}{isForeign ? ` (≈ ${bdtAmount})` : ""}</p>
           </div>
           <button
             type="button"
