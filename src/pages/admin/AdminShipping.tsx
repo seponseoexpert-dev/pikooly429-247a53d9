@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import { useToast } from "@/hooks/use-toast";
-import { Rocket, Package, Shield, Save, Plus, X, Truck } from "lucide-react";
+import { Rocket, Package, Shield, Save, Plus, X, Truck, Flower2 } from "lucide-react";
 import {
   useDeliveryModes,
   useDeliveryCities,
