@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/contexts/CartContext";
 import { useMultiCurrency } from "@/contexts/CurrencyContext";
 import { useNavigate, Link } from "react-router-dom";
-import { Check, ChevronRight, ChevronLeft, Flower2, Upload, MessageSquare, ShoppingCart, ImagePlus, X, MapPin, Pencil, Gift, Plus, Sparkles, Loader2, RefreshCw } from "lucide-react";
+import { Check, ChevronRight, ChevronLeft, Flower2, Upload, MessageSquare, ShoppingCart, ImagePlus, X, MapPin, Pencil, Gift, Plus, Sparkles, Loader2, RefreshCw, Zap, Clock } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import SEOHead from "@/components/seo/SEOHead";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -378,25 +378,44 @@ const BouquetBuilder = () => {
       <div className="min-h-[400px]">
         {step === 1 && (
           <div>
-            {/* Compact location summary / change button */}
+            {/* Premium location card with live delivery speed */}
             <button
               type="button"
               onClick={() => setLocationDialogOpen(true)}
-              className="mb-6 w-full max-w-md flex items-center justify-between gap-3 rounded-lg border border-border bg-card px-3 py-2.5 text-left hover:border-primary/50 transition-colors"
+              className="mb-5 w-full flex items-center justify-between gap-3 rounded-2xl border border-border bg-gradient-to-br from-card to-muted/30 px-3.5 py-3 text-left shadow-sm hover:shadow-md hover:border-primary/40 transition-all group"
             >
-              <div className="flex items-center gap-2 min-w-0">
-                <MapPin className="h-4 w-4 text-primary shrink-0" />
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors">
+                  <MapPin className="h-4 w-4 text-primary" />
+                </div>
                 <div className="min-w-0">
-                  <p className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Gift Receiver's Location</p>
-                  <p className="text-sm font-semibold text-foreground truncate">
-                    {selectedDistrict || "Select your district"}
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Gift Receiver's Location</p>
+                  <p className="text-sm font-semibold text-foreground truncate leading-tight">
+                    {selectedDistrict || "Tap to choose district"}
                   </p>
                 </div>
               </div>
-              <span className="inline-flex items-center gap-1 text-xs font-medium text-primary shrink-0">
-                <Pencil className="h-3 w-3" />
-                {selectedDistrict ? "Change" : "Choose"}
-              </span>
+              <div className="flex items-center gap-2 shrink-0">
+                {selectedDistrict && deliverySpeed && (
+                  <span
+                    className={cn(
+                      "hidden xs:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ring-1",
+                      deliverySpeed === "same_day"
+                        ? "bg-emerald-50 text-emerald-700 ring-emerald-200 dark:bg-emerald-950 dark:text-emerald-300 dark:ring-emerald-800"
+                        : deliverySpeed === "next_day"
+                          ? "bg-amber-50 text-amber-700 ring-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:ring-amber-800"
+                          : "bg-muted text-muted-foreground ring-border"
+                    )}
+                  >
+                    {deliverySpeed === "same_day" ? <Zap className="h-2.5 w-2.5 fill-current" /> : <Clock className="h-2.5 w-2.5" />}
+                    {deliverySpeed === "same_day" ? "Same-Day" : deliverySpeed === "next_day" ? "Next-Day" : "Standard"}
+                  </span>
+                )}
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-primary">
+                  <Pencil className="h-3 w-3" />
+                  {selectedDistrict ? "Change" : "Choose"}
+                </span>
+              </div>
             </button>
 
             <Dialog open={locationDialogOpen} onOpenChange={setLocationDialogOpen}>
@@ -418,16 +437,31 @@ const BouquetBuilder = () => {
               </DialogContent>
             </Dialog>
 
-            <h2 className="text-xl md:text-2xl font-display font-bold text-foreground mb-1">Choose Your Flowers</h2>
-            <p className="text-sm text-muted-foreground mb-6">
-              {selectedDistrict
-                ? `Showing flowers available in ${selectedDistrict}${
-                    deliverySpeed === "same_day" ? " (Same-Day Delivery)" :
-                    deliverySpeed === "next_day" ? " (Next-Day Delivery)" :
-                    ""
-                  }`
-                : "Select your delivery location above to see flowers available in your area"}
-            </p>
+            <h2 className="text-xl md:text-2xl font-display font-bold text-foreground mb-1.5">Choose Your Flowers</h2>
+            {selectedDistrict ? (
+              <div className="flex items-center flex-wrap gap-2 mb-5">
+                <p className="text-sm text-muted-foreground">
+                  Available in <span className="font-semibold text-foreground">{selectedDistrict}</span>
+                </p>
+                {deliverySpeed && (
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold",
+                      deliverySpeed === "same_day"
+                        ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+                        : deliverySpeed === "next_day"
+                          ? "bg-amber-500/15 text-amber-700 dark:text-amber-300"
+                          : "bg-muted text-muted-foreground"
+                    )}
+                  >
+                    {deliverySpeed === "same_day" ? <Zap className="h-3 w-3 fill-current" /> : <Clock className="h-3 w-3" />}
+                    {deliverySpeed === "same_day" ? "Same-Day Delivery" : deliverySpeed === "next_day" ? "Next-Day Delivery" : "Standard Delivery"}
+                  </span>
+                )}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground mb-5">Select your delivery location above to see flowers available in your area.</p>
+            )}
             {flowers.length === 0 && (
               <div className="text-center py-12 border-2 border-dashed border-border rounded-xl bg-muted/30 mb-6">
                 <Flower2 className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
@@ -460,12 +494,17 @@ const BouquetBuilder = () => {
                       {flowerSpeed && (
                         <div
                           className={cn(
-                            "absolute top-2 left-2 px-1.5 py-0.5 rounded-md text-[10px] font-semibold shadow-sm",
+                            "absolute top-2 left-2 inline-flex items-center gap-1 pl-1.5 pr-2 py-0.5 rounded-full text-[10px] font-bold shadow-md backdrop-blur-sm ring-1",
                             flowerSpeed === "same_day"
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-amber-500 text-white"
+                              ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white ring-emerald-300/40"
+                              : "bg-gradient-to-r from-amber-500 to-orange-500 text-white ring-amber-300/40"
                           )}
                         >
+                          {flowerSpeed === "same_day" ? (
+                            <Zap className="h-2.5 w-2.5 fill-current" />
+                          ) : (
+                            <Clock className="h-2.5 w-2.5" />
+                          )}
                           {flowerSpeed === "same_day" ? "Same-Day" : "Next-Day"}
                         </div>
                       )}
