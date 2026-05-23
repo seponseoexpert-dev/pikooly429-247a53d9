@@ -220,15 +220,18 @@ const Footer = memo(() => {
                 onClick={() => toggleSection("quick")}
                 className="w-full flex items-center justify-between sm:cursor-default sm:pointer-events-none mb-4"
                 aria-expanded={openSection === "quick"}
+                aria-controls="footer-quick-links"
+                aria-label={`${t("quick_links")} section, press to toggle`}
               >
                 <h4 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--gold))]">
                   {t("quick_links")}
                 </h4>
-                <span className="sm:hidden text-[hsl(var(--gold))]">
+                <span className="sm:hidden text-[hsl(var(--gold))]" aria-hidden="true">
                   {openSection === "quick" ? <Minus size={16} /> : <Plus size={16} />}
                 </span>
               </button>
               <ul
+                id="footer-quick-links"
                 ref={quickRef}
                 className="space-y-2.5 overflow-hidden transition-[height] duration-300 ease-luxe sm:!h-auto"
                 style={{ height: openSection === "quick" ? heights.quick : 0 }}
@@ -254,15 +257,18 @@ const Footer = memo(() => {
                 onClick={() => toggleSection("cat")}
                 className="w-full flex items-center justify-between sm:cursor-default sm:pointer-events-none mb-4"
                 aria-expanded={openSection === "cat"}
+                aria-controls="footer-categories"
+                aria-label={`${t("categories")} section, press to toggle`}
               >
                 <h4 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--gold))]">
                   {t("categories")}
                 </h4>
-                <span className="sm:hidden text-[hsl(var(--gold))]">
+                <span className="sm:hidden text-[hsl(var(--gold))]" aria-hidden="true">
                   {openSection === "cat" ? <Minus size={16} /> : <Plus size={16} />}
                 </span>
               </button>
               <ul
+                id="footer-categories"
                 ref={catRef}
                 className="space-y-2.5 overflow-hidden transition-[height] duration-300 ease-luxe sm:!h-auto"
                 style={{ height: openSection === "cat" ? heights.cat : 0 }}
@@ -288,15 +294,18 @@ const Footer = memo(() => {
                 onClick={() => toggleSection("contact")}
                 className="w-full flex items-center justify-between sm:cursor-default sm:pointer-events-none mb-4"
                 aria-expanded={openSection === "contact"}
+                aria-controls="footer-contact"
+                aria-label={`${t("contact_us")} section, press to toggle`}
               >
                 <h4 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--gold))]">
                   {t("contact_us")}
                 </h4>
-                <span className="sm:hidden text-[hsl(var(--gold))]">
+                <span className="sm:hidden text-[hsl(var(--gold))]" aria-hidden="true">
                   {openSection === "contact" ? <Minus size={16} /> : <Plus size={16} />}
                 </span>
               </button>
               <ul
+                id="footer-contact"
                 ref={contactRef}
                 className="space-y-3 overflow-hidden transition-[height] duration-300 ease-luxe sm:!h-auto"
                 style={{ height: openSection === "contact" ? heights.contact : 0 }}
