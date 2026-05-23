@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Building2, Copy, Globe, Loader2, Smartphone, X } from "lucide-react";
+import { ArrowLeft, Building2, Copy, Globe, Loader2, Smartphone, X } from "lucide-react";
 
 interface OrderRow {
   id: string;
@@ -24,6 +24,26 @@ const SERVICES = [
   { key: "ria", label: "Ria", enabledKey: "remittance_ria_enabled" },
   { key: "xm", label: "Xpress Money", enabledKey: "remittance_xm_enabled" },
   { key: "tts", label: "TapTap Send", enabledKey: "remittance_tts_enabled" },
+];
+
+type MethodKey = "bkash" | "nagad" | "upay" | "rocket" | "bank";
+
+interface Method {
+  key: MethodKey;
+  label: string;
+  shortLabel: string;
+  brandColor: string; // tailwind bg
+  textColor: string;
+  initial: string;
+  type: "wallet" | "bank";
+}
+
+const METHODS: Method[] = [
+  { key: "bkash", label: "bKash (Personal)", shortLabel: "bKash", brandColor: "bg-[#E2136E]", textColor: "text-white", initial: "bK", type: "wallet" },
+  { key: "nagad", label: "Nagad (Personal)", shortLabel: "Nagad", brandColor: "bg-[#EC1C24]", textColor: "text-white", initial: "N", type: "wallet" },
+  { key: "upay", label: "Upay (Personal)", shortLabel: "Upay", brandColor: "bg-[#E94E1B]", textColor: "text-white", initial: "U", type: "wallet" },
+  { key: "rocket", label: "Rocket (Personal)", shortLabel: "Rocket", brandColor: "bg-[#8B2C8B]", textColor: "text-white", initial: "R", type: "wallet" },
+  { key: "bank", label: "Bank Transfer", shortLabel: "Bank", brandColor: "bg-[#1E40AF]", textColor: "text-white", initial: "B", type: "bank" },
 ];
 
 const isExplicitlyDisabled = (value?: string | null) =>
@@ -48,26 +68,6 @@ const CopyRow = ({ label, value }: { label: string; value: string }) => {
   );
 };
 
-const InfoCard = ({
-  icon: Icon,
-  title,
-  children,
-}: {
-  icon: typeof Smartphone;
-  title: string;
-  children: React.ReactNode;
-}) => (
-  <div className="rounded-2xl bg-card border border-border px-4 py-3.5 shadow-sm">
-    <div className="flex items-center gap-2.5 mb-1">
-      <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary/10">
-        <Icon size={16} className="text-primary" />
-      </span>
-      <p className="text-[15px] font-bold text-foreground">{title}</p>
-    </div>
-    <div className="pl-[44px]">{children}</div>
-  </div>
-);
-
 const RemittancePayment = () => {
   const { orderId } = useParams<{ orderId: string }>();
   const navigate = useNavigate();
@@ -75,6 +75,7 @@ const RemittancePayment = () => {
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [service, setService] = useState<string>("");
+  const [method, setMethod] = useState<MethodKey | "">("");
   const [mtcn, setMtcn] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -86,7 +87,7 @@ const RemittancePayment = () => {
         supabase.from("site_settings").select("key, value").in("key", [
           "company_name", "company_logo",
           "remittance_wu_enabled", "remittance_mg_enabled", "remittance_ria_enabled", "remittance_xm_enabled", "remittance_tts_enabled",
-          "remittance_bkash_personal", "remittance_nagad_personal",
+          "remittance_bkash_personal", "remittance_nagad_personal", "remittance_upay_personal", "remittance_rocket_personal",
           "remittance_bank_name", "remittance_bank_account_name", "remittance_bank_account_number",
           "remittance_bank_routing", "remittance_bank_branch", "remittance_instructions",
         ]),
@@ -104,25 +105,40 @@ const RemittancePayment = () => {
     [settings]
   );
 
-  // Auto-pick first enabled service
   useEffect(() => {
     if (!service && enabledServices.length > 0) setService(enabledServices[0].key);
   }, [enabledServices, service]);
 
+  // Reset method when service changes
+  useEffect(() => { setMethod(""); }, [service]);
+
+  const availableMethods = useMemo(() => {
+    return METHODS.filter((m) => {
+      if (m.key === "bkash") return !!settings.remittance_bkash_personal;
+      if (m.key === "nagad") return !!settings.remittance_nagad_personal;
+      if (m.key === "upay") return !!settings.remittance_upay_personal;
+      if (m.key === "rocket") return !!settings.remittance_rocket_personal;
+      if (m.key === "bank") return !!(settings.remittance_bank_account_number || settings.remittance_bank_name);
+      return false;
+    });
+  }, [settings]);
+
   const amount = order ? Number(order.is_preorder ? (order.advance_amount || order.total) : order.total) : 0;
   const serviceLabel = enabledServices.find((s) => s.key === service)?.label || "";
+  const selectedMethod = METHODS.find((m) => m.key === method);
 
   const handleConfirm = async () => {
     if (!order) return;
     if (!service) { toast.error("Please select a remittance service."); return; }
+    if (!method) { toast.error("Please select a payment method."); return; }
     if (!mtcn.trim()) { toast.error("Please enter the MTCN / reference number."); return; }
     setSubmitting(true);
     try {
-      const note = `Global Remittance via ${serviceLabel} | Ref: ${mtcn.trim()}`;
+      const note = `Global Remittance via ${serviceLabel} → ${selectedMethod?.label} | Ref: ${mtcn.trim()}`;
       const mergedNotes = [order.notes || "", note].filter(Boolean).join("\n");
       const { error } = await supabase
         .from("orders")
-        .update({ payment_method: `remittance:${service}`, notes: mergedNotes })
+        .update({ payment_method: `remittance:${service}:${method}`, notes: mergedNotes })
         .eq("id", order.id);
       if (error) throw error;
       toast.success("Payment details submitted! We'll verify shortly. 🎉");
@@ -152,9 +168,6 @@ const RemittancePayment = () => {
     );
   }
 
-  const hasBkash = !!settings.remittance_bkash_personal;
-  const hasNagad = !!settings.remittance_nagad_personal;
-  const hasBank = !!(settings.remittance_bank_account_number || settings.remittance_bank_name);
   const brand = settings.company_name || "Pikooly";
 
   return (
@@ -162,7 +175,7 @@ const RemittancePayment = () => {
       <SEOHead title={`Global Remittance Payment — ${brand}`} description="Complete your order via Global Remittance." noindex />
 
       <div className="max-w-xl mx-auto space-y-4">
-        {/* Brand header card */}
+        {/* Brand header */}
         <div className="rounded-2xl bg-card border border-border shadow-sm px-4 py-3.5 flex items-center gap-3">
           {settings.company_logo ? (
             <img src={settings.company_logo} alt={brand} className="h-10 w-10 rounded-lg object-contain bg-muted/40" />
@@ -214,19 +227,19 @@ const RemittancePayment = () => {
           </div>
         )}
 
-        {/* Receivers */}
-        {service && (
-          <div className="rounded-2xl bg-card border border-border p-4 sm:p-5 space-y-3.5 shadow-sm">
+        {/* Step: pick a payment method */}
+        {service && !method && (
+          <div className="rounded-2xl bg-card border border-border p-4 sm:p-5 space-y-4 shadow-sm">
             <div className="flex items-start gap-2.5">
               <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10">
                 <Globe size={16} className="text-primary" />
               </span>
               <div className="pt-0.5">
                 <p className="text-[15px] font-bold text-foreground leading-snug">
-                  Send via {serviceLabel} to any receiver below
+                  Send via {serviceLabel}
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Amount: <span className="font-semibold text-foreground">৳{amount.toFixed(2)}</span>
+                  Amount: <span className="font-semibold text-foreground">৳{amount.toFixed(2)}</span> · Choose where to receive
                 </p>
               </div>
             </div>
@@ -237,61 +250,116 @@ const RemittancePayment = () => {
               </p>
             )}
 
-            {hasBkash && (
-              <InfoCard icon={Smartphone} title="bKash (Personal)">
-                <CopyRow label="Number" value={settings.remittance_bkash_personal} />
-              </InfoCard>
-            )}
-            {hasNagad && (
-              <InfoCard icon={Smartphone} title="Nagad (Personal)">
-                <CopyRow label="Number" value={settings.remittance_nagad_personal} />
-              </InfoCard>
-            )}
-            {hasBank && (
-              <InfoCard icon={Building2} title="Bank Transfer">
-                <CopyRow label="Bank" value={settings.remittance_bank_name} />
-                <CopyRow label="A/C Name" value={settings.remittance_bank_account_name} />
-                <CopyRow label="A/C Number" value={settings.remittance_bank_account_number} />
-                <CopyRow label="Routing / SWIFT" value={settings.remittance_bank_routing} />
-                <CopyRow label="Branch" value={settings.remittance_bank_branch} />
-              </InfoCard>
+            {availableMethods.length === 0 ? (
+              <p className="text-sm text-center text-muted-foreground py-4">
+                No receiver methods configured. Please contact support.
+              </p>
+            ) : (
+              <div className="grid grid-cols-3 gap-3">
+                {availableMethods.map((m) => (
+                  <button
+                    key={m.key}
+                    type="button"
+                    onClick={() => setMethod(m.key)}
+                    className="group flex flex-col items-center gap-2 p-3 rounded-2xl border border-border bg-background hover:border-primary hover:shadow-md transition-all"
+                  >
+                    <span
+                      className={`h-14 w-14 rounded-2xl ${m.brandColor} ${m.textColor} flex items-center justify-center font-extrabold text-lg shadow-sm group-hover:scale-105 transition-transform`}
+                    >
+                      {m.type === "bank" ? <Building2 size={22} /> : m.initial}
+                    </span>
+                    <span className="text-xs font-semibold text-foreground text-center leading-tight">
+                      {m.shortLabel}
+                    </span>
+                  </button>
+                ))}
+              </div>
             )}
           </div>
         )}
 
-        {/* MTCN */}
-        {service && (
-          <div className="rounded-2xl bg-card border border-border p-4 sm:p-5 space-y-2 shadow-sm">
-            <Label htmlFor="mtcn" className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-              Transaction / Sender Reference (MTCN) *
-            </Label>
-            <Input
-              id="mtcn"
-              placeholder="Enter the reference number you received"
-              value={mtcn}
-              onChange={(e) => setMtcn(e.target.value)}
-              className="h-12 text-base"
-            />
-            <p className="text-[11px] text-muted-foreground">
-              After sending, paste the tracking/MTCN number here so we can verify your payment.
-            </p>
-          </div>
-        )}
+        {/* Step: show selected method's details + MTCN */}
+        {service && method && selectedMethod && (
+          <>
+            <div className="rounded-2xl bg-card border border-border p-4 sm:p-5 space-y-4 shadow-sm">
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setMethod("")}
+                  className="h-9 w-9 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground shrink-0"
+                  aria-label="Back to methods"
+                >
+                  <ArrowLeft size={18} />
+                </button>
+                <span
+                  className={`h-11 w-11 rounded-xl ${selectedMethod.brandColor} ${selectedMethod.textColor} flex items-center justify-center font-extrabold text-base shrink-0`}
+                >
+                  {selectedMethod.type === "bank" ? <Building2 size={20} /> : selectedMethod.initial}
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[15px] font-bold text-foreground leading-tight">{selectedMethod.label}</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">
+                    via {serviceLabel} · ৳{amount.toFixed(2)}
+                  </p>
+                </div>
+              </div>
 
-        {/* Confirm bar */}
-        <div className="sticky bottom-3 sm:bottom-4 z-10">
-          <Button
-            type="button"
-            onClick={handleConfirm}
-            disabled={submitting || enabledServices.length === 0}
-            className="w-full h-14 rounded-2xl text-base font-bold shadow-lg"
-          >
-            {submitting ? <Loader2 className="animate-spin" size={20} /> : `Confirm Payment ৳${amount.toFixed(2)}`}
-          </Button>
-          <p className="text-[11px] text-center text-muted-foreground mt-2 px-4">
-            By clicking confirm, you acknowledge that you have sent the amount and provided a valid reference for verification.
-          </p>
-        </div>
+              <div className="rounded-xl bg-muted/40 px-4 py-1">
+                {method === "bkash" && (
+                  <CopyRow label="Number" value={settings.remittance_bkash_personal} />
+                )}
+                {method === "nagad" && (
+                  <CopyRow label="Number" value={settings.remittance_nagad_personal} />
+                )}
+                {method === "upay" && (
+                  <CopyRow label="Number" value={settings.remittance_upay_personal} />
+                )}
+                {method === "rocket" && (
+                  <CopyRow label="Number" value={settings.remittance_rocket_personal} />
+                )}
+                {method === "bank" && (
+                  <>
+                    <CopyRow label="Bank" value={settings.remittance_bank_name} />
+                    <CopyRow label="A/C Name" value={settings.remittance_bank_account_name} />
+                    <CopyRow label="A/C Number" value={settings.remittance_bank_account_number} />
+                    <CopyRow label="Routing / SWIFT" value={settings.remittance_bank_routing} />
+                    <CopyRow label="Branch" value={settings.remittance_bank_branch} />
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div className="rounded-2xl bg-card border border-border p-4 sm:p-5 space-y-2 shadow-sm">
+              <Label htmlFor="mtcn" className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                Transaction / Sender Reference (MTCN) *
+              </Label>
+              <Input
+                id="mtcn"
+                placeholder="Enter the reference number you received"
+                value={mtcn}
+                onChange={(e) => setMtcn(e.target.value)}
+                className="h-12 text-base"
+              />
+              <p className="text-[11px] text-muted-foreground">
+                After sending, paste the tracking/MTCN number here so we can verify your payment.
+              </p>
+            </div>
+
+            <div className="sticky bottom-3 sm:bottom-4 z-10">
+              <Button
+                type="button"
+                onClick={handleConfirm}
+                disabled={submitting}
+                className="w-full h-14 rounded-2xl text-base font-bold shadow-lg"
+              >
+                {submitting ? <Loader2 className="animate-spin" size={20} /> : `Confirm Payment ৳${amount.toFixed(2)}`}
+              </Button>
+              <p className="text-[11px] text-center text-muted-foreground mt-2 px-4">
+                By clicking confirm, you acknowledge that you have sent the amount and provided a valid reference for verification.
+              </p>
+            </div>
+          </>
+        )}
       </div>
     </main>
   );
