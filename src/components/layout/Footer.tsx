@@ -228,7 +228,11 @@ const Footer = memo(() => {
                   {openSection === "quick" ? <Minus size={16} /> : <Plus size={16} />}
                 </span>
               </button>
-              <ul className={`space-y-2.5 ${openSection === "quick" ? "block" : "hidden"} sm:block`}>
+              <ul
+                ref={quickRef}
+                className="space-y-2.5 overflow-hidden transition-[height] duration-300 ease-luxe sm:!h-auto"
+                style={{ height: openSection === "quick" ? heights.quick : 0 }}
+              >
                 {finalQuickLinks.map((link, i) => (
                   <li key={i}>
                     <Link
