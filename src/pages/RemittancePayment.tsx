@@ -107,7 +107,7 @@ const RemittancePayment = () => {
         supabase.from("orders").select("id, order_number, total, advance_amount, is_preorder, notes, payment_method").eq("id", orderId).maybeSingle(),
         supabase.from("site_settings").select("key, value").in("key", [
           "company_name", "company_logo",
-          "remittance_wu_enabled", "remittance_mg_enabled", "remittance_ria_enabled", "remittance_xm_enabled", "remittance_tts_enabled",
+          "remittance_wu_enabled", "remittance_mg_enabled", "remittance_ria_enabled", "remittance_xm_enabled", "remittance_tts_enabled", "remittance_remitly_enabled",
           "remittance_bkash_personal", "remittance_nagad_personal", "remittance_upay_personal", "remittance_rocket_personal",
           "remittance_bank_name", "remittance_bank_account_name", "remittance_bank_account_number",
           "remittance_bank_routing", "remittance_bank_branch", "remittance_instructions",
