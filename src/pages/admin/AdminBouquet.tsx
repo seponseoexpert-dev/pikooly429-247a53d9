@@ -278,6 +278,87 @@ const AdminBouquet = () => {
                     })}
                   </div>
                 )}
+                {tab === "flowers" && (
+                  <div className="space-y-3 rounded-lg border border-border p-3 bg-muted/20">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">Color Variants</p>
+                        <p className="text-[11px] text-muted-foreground">Same flower in different colors (e.g. Red Rose, White Rose). Customers can pick a color.</p>
+                      </div>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() =>
+                          setForm({
+                            ...form,
+                            colors: [...(form.colors || []), { name: "", hex: "#ec4899", image_url: "" }],
+                          })
+                        }
+                      >
+                        <Plus className="h-3.5 w-3.5 mr-1" /> Add Color
+                      </Button>
+                    </div>
+                    {(form.colors || []).length === 0 && (
+                      <p className="text-xs text-muted-foreground italic">No color variants. Add one to let customers pick.</p>
+                    )}
+                    <div className="space-y-2">
+                      {(form.colors || []).map((c, i) => (
+                        <div key={i} className="flex items-start gap-2 rounded-md border border-border bg-background p-2">
+                          <div className="flex flex-col items-center gap-1.5 shrink-0">
+                            <input
+                              type="color"
+                              value={c.hex || "#ec4899"}
+                              onChange={(e) => {
+                                const next = [...(form.colors || [])];
+                                next[i] = { ...next[i], hex: e.target.value };
+                                setForm({ ...form, colors: next });
+                              }}
+                              className="h-9 w-9 rounded-full cursor-pointer border-0 p-0 bg-transparent"
+                            />
+                            {c.image_url ? (
+                              <img src={c.image_url} alt="" className="h-9 w-9 rounded object-cover border" />
+                            ) : null}
+                          </div>
+                          <div className="flex-1 space-y-1.5">
+                            <Input
+                              placeholder="Color name (e.g. Red, White)"
+                              value={c.name}
+                              onChange={(e) => {
+                                const next = [...(form.colors || [])];
+                                next[i] = { ...next[i], name: e.target.value };
+                                setForm({ ...form, colors: next });
+                              }}
+                              className="h-8 text-sm"
+                            />
+                            <CloudinaryUpload
+                              value={c.image_url || ""}
+                              onChange={(url) => {
+                                const next = [...(form.colors || [])];
+                                next[i] = { ...next[i], image_url: url };
+                                setForm({ ...form, colors: next });
+                              }}
+                              folder="bouquet-flower-colors"
+                              label="Variant image (optional)"
+                            />
+                          </div>
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            className="text-destructive shrink-0"
+                            onClick={() => {
+                              const next = (form.colors || []).filter((_, idx) => idx !== i);
+                              setForm({ ...form, colors: next });
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <div>
                   <Label>Display Order</Label>
                   <Input type="number" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: +e.target.value })} />
