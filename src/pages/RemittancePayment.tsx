@@ -402,6 +402,53 @@ const RemittancePayment = () => {
               </p>
             </div>
 
+            <div className="rounded-2xl bg-card border border-border p-4 sm:p-5 space-y-3 shadow-sm">
+              <Label className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                Payment Screenshot (Proof) *
+              </Label>
+              {proofUrl ? (
+                <div className="relative rounded-xl overflow-hidden border border-border bg-muted/30">
+                  <img src={proofUrl} alt="Payment proof" className="w-full max-h-64 object-contain" />
+                  <button
+                    type="button"
+                    onClick={() => setProofUrl("")}
+                    className="absolute top-2 right-2 h-8 w-8 rounded-full bg-background/90 backdrop-blur flex items-center justify-center text-foreground shadow-md hover:bg-background"
+                    aria-label="Remove screenshot"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              ) : (
+                <label
+                  htmlFor="proof-upload"
+                  className="flex flex-col items-center justify-center gap-2 py-6 px-4 rounded-xl border-2 border-dashed border-border bg-muted/30 hover:bg-muted/50 hover:border-primary cursor-pointer transition-colors"
+                >
+                  {uploading ? (
+                    <Loader2 className="animate-spin text-primary" size={24} />
+                  ) : (
+                    <>
+                      <div className="h-11 w-11 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Upload size={20} className="text-primary" />
+                      </div>
+                      <p className="text-sm font-semibold text-foreground">Upload screenshot</p>
+                      <p className="text-[11px] text-muted-foreground">PNG or JPG, up to 5MB</p>
+                    </>
+                  )}
+                </label>
+              )}
+              <input
+                id="proof-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => { const f = e.target.files?.[0]; if (f) handleProofUpload(f); e.target.value = ""; }}
+              />
+              <p className="text-[11px] text-muted-foreground">
+                Share a screenshot of your successful transfer so we can verify quickly.
+              </p>
+            </div>
+
+
             <div className="sticky bottom-3 sm:bottom-4 z-10">
               <Button
                 type="button"
