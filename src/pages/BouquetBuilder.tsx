@@ -168,7 +168,7 @@ const BouquetBuilder = () => {
 
   // Flowers that are dragging the bouquet down (slower than the district's best possible speed)
   const slowSelectedFlowers = useMemo(() => {
-    if (!selectedDistrict || !bouquetSpeed || bs === "same_day") return [] as any[];
+    if (!selectedDistrict || !bouquetSpeed || bouquetSpeed === "same_day") return [] as any[];
     const districtBest: FlowerSpeed = deliverySpeed === "same_day" ? "same_day" : deliverySpeed === "next_day" ? "next_day" : "slow";
     return Object.entries(selectedFlowers)
       .filter(([, q]) => q > 0)
