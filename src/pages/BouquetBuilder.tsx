@@ -517,52 +517,76 @@ const BouquetBuilder = () => {
             {flowers.length === 0 && (
               <div className="text-center py-12 border-2 border-dashed border-border rounded-xl bg-muted/30 mb-6">
                 <Flower2 className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-                <p className="text-sm font-medium text-foreground">No flowers available in {selectedDistrict}</p>
-                <p className="text-xs text-muted-foreground mt-1">Please choose a different district to see available flowers.</p>
+                <p className="text-sm font-medium text-foreground">No flowers available yet</p>
               </div>
             )}
+
+            {/* Slow-flower warning: shown when bouquet is held back by some flowers */}
+            {selectedDistrict && slowSelectedFlowers.length > 0 && (
+              <div className="mb-5 rounded-xl border-2 border-amber-300/60 bg-amber-50/70 dark:bg-amber-950/30 dark:border-amber-800/60 p-3.5">
+                <div className="flex items-start gap-2.5">
+                  <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-amber-900 dark:text-amber-100">
+                      Bouquet ships in {speedLabel(bouquetSpeed)}
+                    </p>
+                    <p className="text-xs text-amber-800/90 dark:text-amber-200/90 mt-0.5 leading-snug">
+                      {slowSelectedFlowers.length === 1 ? (
+                        <><span className="font-semibold">{slowSelectedFlowers[0].name}</span> needs longer in {selectedDistrict}. Remove it to ship faster.</>
+                      ) : (
+                        <>{slowSelectedFlowers.length} flowers need longer in {selectedDistrict}: <span className="font-semibold">{slowSelectedFlowers.map((f: any) => f.name).join(", ")}</span>. Remove them to ship faster.</>
+                      )}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={removeSlowFlowers}
+                      className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-amber-900 dark:text-amber-100 bg-amber-200/70 dark:bg-amber-900/50 hover:bg-amber-300/70 dark:hover:bg-amber-900/70 px-2.5 py-1 rounded-full transition-colors"
+                    >
+                      <X className="h-3 w-3" /> Remove slow items
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {flowers.map((flower: any) => {
                 const qty = selectedFlowers[flower.id] || 0;
                 const isSelected = qty > 0;
-                const sameDay = (flower.same_day_districts || []) as string[];
-                const nextDay = (flower.next_day_districts || []) as string[];
-                let flowerSpeed: "same_day" | "next_day" | null = null;
-                if (selectedDistrict) {
-                  if (sameDay.includes(selectedDistrict)) flowerSpeed = "same_day";
-                  else if (nextDay.includes(selectedDistrict)) flowerSpeed = "next_day";
-                  else if (deliverySpeed === "same_day" || deliverySpeed === "next_day") flowerSpeed = deliverySpeed;
-                }
+                const flowerSpeed = getFlowerSpeed(flower);
+                const isUnavailable = flowerSpeed === "unavailable";
                 const flowerColors: any[] = Array.isArray(flower.colors) ? flower.colors : [];
                 const hasColors = flowerColors.length > 0;
                 const activeColorIdx = selectedColors[flower.id] ?? 0;
                 const activeColor = hasColors ? flowerColors[activeColorIdx] : null;
                 const cardImage = activeColor?.image_url || flower.image_url || "/placeholder.svg";
+                const badgeStyle =
+                  flowerSpeed === "same_day"
+                    ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white ring-emerald-300/40"
+                    : flowerSpeed === "next_day"
+                      ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white ring-amber-300/40"
+                      : flowerSpeed === "slow"
+                        ? "bg-gradient-to-r from-slate-500 to-slate-600 text-white ring-slate-300/40"
+                        : "bg-destructive/90 text-destructive-foreground ring-destructive/30";
+                const BadgeIcon = flowerSpeed === "same_day" ? Zap : flowerSpeed === "unavailable" ? X : Clock;
                 return (
                   <div
                     key={flower.id}
                     className={cn(
-                      "relative rounded-xl border-2 overflow-hidden cursor-pointer transition-all bg-card",
+                      "relative rounded-xl border-2 overflow-hidden transition-all bg-card",
+                      isUnavailable ? "opacity-60 cursor-not-allowed" : "cursor-pointer",
                       isSelected ? "border-primary shadow-md" : "border-border/50 hover:border-primary/30"
                     )}
                   >
-                    <div className="aspect-square bg-secondary/20 overflow-hidden relative" onClick={() => toggleFlower(flower.id)}>
-                      <img src={cardImage} alt={flower.name} className="w-full h-full object-cover transition-all" loading="lazy" />
+                    <div
+                      className="aspect-square bg-secondary/20 overflow-hidden relative"
+                      onClick={() => { if (!isUnavailable) toggleFlower(flower.id); else toast.error(`${flower.name} not available in ${selectedDistrict}`); }}
+                    >
+                      <img src={cardImage} alt={flower.name} className={cn("w-full h-full object-cover transition-all", isUnavailable && "grayscale")} loading="lazy" />
                       {flowerSpeed && (
-                        <div
-                          className={cn(
-                            "absolute top-2 left-2 inline-flex items-center gap-1 pl-1.5 pr-2 py-0.5 rounded-full text-[10px] font-bold shadow-md backdrop-blur-sm ring-1",
-                            flowerSpeed === "same_day"
-                              ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white ring-emerald-300/40"
-                              : "bg-gradient-to-r from-amber-500 to-orange-500 text-white ring-amber-300/40"
-                          )}
-                        >
-                          {flowerSpeed === "same_day" ? (
-                            <Zap className="h-2.5 w-2.5 fill-current" />
-                          ) : (
-                            <Clock className="h-2.5 w-2.5" />
-                          )}
-                          {flowerSpeed === "same_day" ? "Same-Day" : "Next-Day"}
+                        <div className={cn("absolute top-2 left-2 inline-flex items-center gap-1 pl-1.5 pr-2 py-0.5 rounded-full text-[10px] font-bold shadow-md backdrop-blur-sm ring-1", badgeStyle)}>
+                          <BadgeIcon className={cn("h-2.5 w-2.5", flowerSpeed === "same_day" && "fill-current")} />
+                          {speedLabel(flowerSpeed)}
                         </div>
                       )}
                       {isSelected && (
@@ -570,7 +594,7 @@ const BouquetBuilder = () => {
                           <Check className="h-3.5 w-3.5" />
                         </div>
                       )}
-                      {hasColors && (
+                      {hasColors && !isUnavailable && (
                         <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-center">
                           <div className="inline-flex items-center gap-1 px-1.5 py-1 rounded-full bg-background/85 backdrop-blur-sm shadow ring-1 ring-border/60">
                             {flowerColors.slice(0, 5).map((c: any, i: number) => {
@@ -608,7 +632,7 @@ const BouquetBuilder = () => {
                         {activeColor?.name ? `${activeColor.name} ${flower.name}` : flower.name}
                       </h3>
                       <p className="text-primary font-bold text-sm mt-0.5">{formatPrice(flower.price)}</p>
-                      {isSelected && (
+                      {isSelected && !isUnavailable && (
                         <div className="flex items-center gap-2 mt-2">
                           <button onClick={() => updateFlowerQty(flower.id, -1)} className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-foreground font-bold text-sm">−</button>
                           <span className="text-sm font-semibold min-w-[20px] text-center">{qty}</span>
