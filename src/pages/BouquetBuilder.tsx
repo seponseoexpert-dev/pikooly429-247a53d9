@@ -168,7 +168,7 @@ const BouquetBuilder = () => {
 
   // Flowers that are dragging the bouquet down (slower than the district's best possible speed)
   const slowSelectedFlowers = useMemo(() => {
-    if (!selectedDistrict || !bouquetSpeed || bouquetSpeed === "same_day") return [] as any[];
+    if (!selectedDistrict || !bouquetSpeed || bs === "same_day") return [] as any[];
     const districtBest: FlowerSpeed = deliverySpeed === "same_day" ? "same_day" : deliverySpeed === "next_day" ? "next_day" : "slow";
     return Object.entries(selectedFlowers)
       .filter(([, q]) => q > 0)
@@ -894,24 +894,24 @@ const BouquetBuilder = () => {
                 <div
                   className={cn(
                     "rounded-xl border-2 p-3.5 flex items-center gap-3",
-                    bouquetSpeed === "same_day" && "border-emerald-300/60 bg-emerald-50/70 dark:bg-emerald-950/30 dark:border-emerald-800/60",
-                    bouquetSpeed === "next_day" && "border-amber-300/60 bg-amber-50/70 dark:bg-amber-950/30 dark:border-amber-800/60",
-                    bouquetSpeed === "slow" && "border-slate-300/60 bg-slate-50/70 dark:bg-slate-900/40 dark:border-slate-700/60"
+                    bs === "same_day" && "border-emerald-300/60 bg-emerald-50/70 dark:bg-emerald-950/30 dark:border-emerald-800/60",
+                    bs === "next_day" && "border-amber-300/60 bg-amber-50/70 dark:bg-amber-950/30 dark:border-amber-800/60",
+                    bs === "slow" && "border-slate-300/60 bg-slate-50/70 dark:bg-slate-900/40 dark:border-slate-700/60"
                   )}
                 >
                   <div className={cn(
                     "h-9 w-9 rounded-xl flex items-center justify-center shrink-0",
-                    bouquetSpeed === "same_day" ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" :
-                    bouquetSpeed === "next_day" ? "bg-amber-500/15 text-amber-700 dark:text-amber-300" :
+                    bs === "same_day" ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" :
+                    bs === "next_day" ? "bg-amber-500/15 text-amber-700 dark:text-amber-300" :
                     "bg-slate-500/15 text-slate-700 dark:text-slate-300"
                   )}>
-                    {bouquetSpeed === "same_day" ? <Zap className="h-4 w-4 fill-current" /> : <Clock className="h-4 w-4" />}
+                    {bs === "same_day" ? <Zap className="h-4 w-4 fill-current" /> : <Clock className="h-4 w-4" />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-foreground">Ships in {speedLabel(bouquetSpeed)}</p>
                     <p className="text-[11px] text-muted-foreground leading-snug">
                       Delivery to <span className="font-semibold text-foreground">{selectedDistrict}</span>
-                      {bouquetSpeed === "slow" && " · takes 2–3 days for some selected flowers"}
+                      {bs === "slow" && " · takes 2–3 days for some selected flowers"}
                     </p>
                   </div>
                   {slowSelectedFlowers.length > 0 && (
