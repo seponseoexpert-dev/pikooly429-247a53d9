@@ -890,7 +890,7 @@ const BouquetBuilder = () => {
             <p className="text-sm text-muted-foreground mb-6">Review your custom bouquet</p>
 
             <div className="space-y-4 max-w-xl">
-              {selectedDistrict && bouquetSpeed && (
+              {selectedDistrict && bouquetSpeed && (() => { const bs: string = bouquetSpeed; return (
                 <div
                   className={cn(
                     "rounded-xl border-2 p-3.5 flex items-center gap-3",
