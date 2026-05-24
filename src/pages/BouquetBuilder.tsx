@@ -116,37 +116,82 @@ const BouquetBuilder = () => {
     return "standard";
   }, [selectedDistrict, shippingDistricts]);
 
-  // Filter flowers by selected district + delivery speed.
-  // Logic: prefer speed-specific list when set; otherwise fall back to general available_districts.
-  const flowers = useMemo(() => {
-    if (!selectedDistrict) return allFlowers;
-    return allFlowers.filter((f: any) => {
-      const speedList: string[] =
-        deliverySpeed === "same_day" ? (f.same_day_districts || []) :
-        deliverySpeed === "next_day" ? (f.next_day_districts || []) :
-        [];
-      // If admin configured a speed-specific list, it takes priority
-      if (speedList.length > 0) return speedList.includes(selectedDistrict);
-      // Otherwise use the general allow-list (empty = available everywhere)
-      const general: string[] = f.available_districts || [];
-      return general.length === 0 || general.includes(selectedDistrict);
-    });
-  }, [allFlowers, selectedDistrict, deliverySpeed]);
+  // Per-flower delivery speed for the selected district.
+  // Returns "same_day" | "next_day" | "slow" (2-3 days) | "unavailable" | null (no district chosen).
+  type FlowerSpeed = "same_day" | "next_day" | "slow" | "unavailable";
+  const getFlowerSpeed = (f: any): FlowerSpeed | null => {
+    if (!selectedDistrict) return null;
+    const sameDay: string[] = f.same_day_districts || [];
+    const nextDay: string[] = f.next_day_districts || [];
+    const general: string[] = f.available_districts || [];
+    if (sameDay.includes(selectedDistrict)) return "same_day";
+    if (nextDay.includes(selectedDistrict)) return "next_day";
+    if (general.length === 0 || general.includes(selectedDistrict)) return "slow";
+    return "unavailable";
+  };
+
+  // Show ALL active flowers; the per-card badge tells the user what's possible.
+  const flowers = allFlowers;
 
   // Auto-remove flowers from selection if they become unavailable for the chosen district
   useEffect(() => {
     if (!selectedDistrict) return;
     setSelectedFlowers((prev) => {
-      const visibleIds = new Set(flowers.map((f: any) => f.id));
       const next: Record<string, number> = {};
       let changed = false;
       Object.entries(prev).forEach(([id, qty]) => {
-        if (visibleIds.has(id)) next[id] = qty;
+        const f = allFlowers.find((fl: any) => fl.id === id);
+        const sp = f ? getFlowerSpeed(f) : "unavailable";
+        if (sp && sp !== "unavailable") next[id] = qty;
         else changed = true;
       });
       return changed ? next : prev;
     });
-  }, [flowers, selectedDistrict]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allFlowers, selectedDistrict]);
+
+  // Slowest selected flower → bouquet's effective delivery time
+  const speedRank: Record<FlowerSpeed, number> = { same_day: 0, next_day: 1, slow: 2, unavailable: 3 };
+  const bouquetSpeed: FlowerSpeed | null = useMemo(() => {
+    if (!selectedDistrict) return null;
+    const selectedIds = Object.entries(selectedFlowers).filter(([, q]) => q > 0).map(([id]) => id);
+    if (!selectedIds.length) return null;
+    let worst: FlowerSpeed = "same_day";
+    selectedIds.forEach((id) => {
+      const f = allFlowers.find((fl: any) => fl.id === id);
+      const sp = f ? getFlowerSpeed(f) : null;
+      if (sp && speedRank[sp] > speedRank[worst]) worst = sp;
+    });
+    return worst;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedFlowers, allFlowers, selectedDistrict]);
+
+  // Flowers that are dragging the bouquet down (slower than the district's best possible speed)
+  const slowSelectedFlowers = useMemo(() => {
+    if (!selectedDistrict || !bouquetSpeed || bouquetSpeed === "same_day") return [] as any[];
+    const districtBest: FlowerSpeed = deliverySpeed === "same_day" ? "same_day" : deliverySpeed === "next_day" ? "next_day" : "slow";
+    return Object.entries(selectedFlowers)
+      .filter(([, q]) => q > 0)
+      .map(([id]) => allFlowers.find((fl: any) => fl.id === id))
+      .filter((f: any) => {
+        if (!f) return false;
+        const sp = getFlowerSpeed(f);
+        return sp && speedRank[sp] > speedRank[districtBest];
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedFlowers, allFlowers, selectedDistrict, deliverySpeed, bouquetSpeed]);
+
+  const removeSlowFlowers = () => {
+    setSelectedFlowers((prev) => {
+      const next = { ...prev };
+      slowSelectedFlowers.forEach((f: any) => { delete next[f.id]; });
+      return next;
+    });
+    toast.success("Slow items removed — your bouquet now ships faster!");
+  };
+
+  const speedLabel = (s: FlowerSpeed | null) =>
+    s === "same_day" ? "Same-Day" : s === "next_day" ? "Next-Day" : s === "slow" ? "2-3 Days" : s === "unavailable" ? "Unavailable" : "";
 
   const selectedFlowersList = useMemo(() => {
     return Object.entries(selectedFlowers)
