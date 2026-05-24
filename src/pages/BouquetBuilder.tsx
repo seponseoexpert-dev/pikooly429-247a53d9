@@ -890,6 +890,43 @@ const BouquetBuilder = () => {
             <p className="text-sm text-muted-foreground mb-6">Review your custom bouquet</p>
 
             <div className="space-y-4 max-w-xl">
+              {selectedDistrict && bouquetSpeed && (
+                <div
+                  className={cn(
+                    "rounded-xl border-2 p-3.5 flex items-center gap-3",
+                    bouquetSpeed === "same_day" && "border-emerald-300/60 bg-emerald-50/70 dark:bg-emerald-950/30 dark:border-emerald-800/60",
+                    bouquetSpeed === "next_day" && "border-amber-300/60 bg-amber-50/70 dark:bg-amber-950/30 dark:border-amber-800/60",
+                    bouquetSpeed === "slow" && "border-slate-300/60 bg-slate-50/70 dark:bg-slate-900/40 dark:border-slate-700/60"
+                  )}
+                >
+                  <div className={cn(
+                    "h-9 w-9 rounded-xl flex items-center justify-center shrink-0",
+                    bouquetSpeed === "same_day" ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" :
+                    bouquetSpeed === "next_day" ? "bg-amber-500/15 text-amber-700 dark:text-amber-300" :
+                    "bg-slate-500/15 text-slate-700 dark:text-slate-300"
+                  )}>
+                    {bouquetSpeed === "same_day" ? <Zap className="h-4 w-4 fill-current" /> : <Clock className="h-4 w-4" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-foreground">Ships in {speedLabel(bouquetSpeed)}</p>
+                    <p className="text-[11px] text-muted-foreground leading-snug">
+                      Delivery to <span className="font-semibold text-foreground">{selectedDistrict}</span>
+                      {bouquetSpeed === "slow" && " · takes 2–3 days for some selected flowers"}
+                    </p>
+                  </div>
+                  {slowSelectedFlowers.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={removeSlowFlowers}
+                      className="text-[11px] font-bold text-primary hover:underline shrink-0"
+                    >
+                      Speed up
+                    </button>
+                  )}
+                </div>
+              )}
+
+
               <div className="bg-card border border-border rounded-xl p-4">
                 <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2"><Flower2 className="h-4 w-4 text-primary" /> Flowers</h3>
                 {selectedFlowersList.map((f) => (
